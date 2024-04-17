@@ -1480,16 +1480,20 @@
     border:1px solid red;
     padding: 5px;
     margin-top:5px;
+    flex-wrap: wrap;
+    justify-content: space-between;
 }
 .switch_box_content_2_content_1_page_content_box{
     display: flex;
     flex-direction:column;
-    width:13%;
+    max-width:13%;
+    width: 18%;
     height: 200px;
     border:1px solid red;
     border-radius: 15px;
     padding:5px;
     position: relative;
+    margin-right: 20px;
 }
 .switch_box_content_2_content_1_page_content_box_img{
     width: 100%;

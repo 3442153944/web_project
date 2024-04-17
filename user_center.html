@@ -1200,24 +1200,7 @@
 
                             </div>
                         </div>
-                        <collect_work_info_box switch_box_content_2_love_show_1="switch_box_content_2_love_show_1"
-                            switch_box_content_2_love_show_1_btn="switch_box_content_2_love_show_1_btn"
-                            switch_box_content_2_love_show_2="switch_box_content_2_love_show_2"
-                            content_box_privacy="content_box_privacy"
-                            
-                            jump_imgpage="jump_imgpage"
-                            content_box_title="content_box_title"
-                            setpublic_btn="setpublic_btn"
-                            setpublic="setpublic"
-                            setcollection_btn="setcollection_btn"
-                            setcollection="setcollection"
-                            settag_btn="settag_btn"
-                            settag="settag"
-                            showsubusercenter="showsubusercenter"
-                            hidesubusercenter="hidesubusercenter"
-                            author_introduction_show="author_introduction_show"
-                            items="items"
-                            >
+                        <collect_work_info_box v-for="index in 11" :key="index" :item="items[index - 1]">
                         </collect_work_info_box>
                     </div>
                 </div>
