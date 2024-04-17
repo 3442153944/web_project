@@ -1,21 +1,64 @@
-<script src="js/vue3.js"></script>
-<script type="module">
-    import { createApp, reactive, ref } from 'vue'
-    
-    createApp({
-      setup() {
-        const counter = reactive({ count: 0 })
-        const message = ref('Hello World!')
-    
-        return {
-          counter,
-          message
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vue Component Communication</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+</head>
+<body>
+
+<div id="app">
+    <main-component @trigger-function="handleFunction"></main-component>
+    <sub-component :call-function="callParentFunction"></sub-component>
+</div>
+
+<script>
+    // 主组件
+    Vue.component('main-component', {
+        template: `
+            <div>
+                <h2>Main Component</h2>
+                <button @click="triggerFunction">Trigger Function in Main Component</button>
+            </div>
+        `,
+        methods: {
+            triggerFunction() {
+                console.log('Function in Main Component is triggered');
+                // 触发事件，告诉子组件调用函数
+                this.$emit('trigger-function');
+            }
         }
-      }
-    }).mount('#app')
-    </script>
-    
-    <div id="app">
-      <h1>{{ message }}</h1>
-      <p>Count is: {{ counter.count }}</p>
-    </div>
+    });
+
+    // 子组件
+    Vue.component('sub-component', {
+        props: ['callFunction'],
+        template: `
+            <div>
+                <h2>Sub Component</h2>
+                <button @click="callFunction">Call Function in Main Component</button>
+            </div>
+        `
+    });
+
+    new Vue({
+        el: '#app',
+        methods: {
+            // 主组件中的函数
+            handleFunction() {
+                console.log('Function in Main Component is handled');
+                console.log('主组件');
+            },
+            // 子组件中调用主组件的函数
+            callParentFunction() {
+                console.log('Function in Main Component is called from Sub Component');
+                console.log('子组件调用');
+                this.handleFunction();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
