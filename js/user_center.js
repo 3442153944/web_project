@@ -48,7 +48,7 @@ Vue.component('sub-main-usercenter-selected-works', {
 });
 
 Vue.component('collect_work_info_box', {
-    props: ['items'],
+    props: ['items',],
     data: function () {
         return {
             switch_box_content_2_love_show_1: true,
@@ -66,7 +66,8 @@ Vue.component('collect_work_info_box', {
             imgnum2:'1',
             img3: 'image/116707350_p0_master1200.jpg', 
             imgnum3:'2',
-        }
+            
+         }
     },
     template: `
     <div class="switch_box_content_2_content_1_page_content_box">
@@ -140,7 +141,7 @@ Vue.component('collect_work_info_box', {
     </div>
     <div class="switch_box_content_2_content_1_page_content_box_userbox_name">用户名</div>
     <div class="switch_box_content_2_content_1_page_content_box_userbox_author_introduction"
-      v-show="author_introduction_show">
+      v-show="author_introduction_show" style="top:-250px;">
       <div class="sub_main_usercenter">
         <div class="sub_main_usercenter_background">
           <div class="sub_main_usercenter_background_img">
@@ -166,8 +167,8 @@ Vue.component('collect_work_info_box', {
           </div>
         </div>
         <div class="sub_main_usercenter_follow">已关注</div>
-        <div class="sub_main_usercenter_selected_works_box">
-          <div class="sub_main_usercenter_selected_works">
+        <div class="sub_main_usercenter_selected_works_box" >
+          <div class="sub_main_usercenter_selected_works" >
             <div class="sub_main_usercenter_selected_works_img">
               <img :src="img1">
               <div class="sub_main_usercenter_selected_works_ico">
@@ -305,7 +306,7 @@ Vue.component('collect_work_info_box', {
             console.log(mainpage.offsetHeight+ '主高度');
             var mainpage_height=mainpage.getBoundingClientRect();  
             console.log(mainpage_height.y+'主窗口距底部高度');
-            var test_height = document.querySelector('.sub_main_usercenter').clientHeight;
+            var test_height = 160;
             console.log(test_height + '子窗口高度');
         },
         hidesubusercenter1() {
