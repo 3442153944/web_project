@@ -295,16 +295,18 @@ Vue.component('collect_work_info_box', {
         showsubusercenter1() {
 
             var windows_hidth = window.innerHeight;
-            console.log(windows_hidth);
+            console.log(windows_hidth+'窗口高度');
 
             this.timeoutid = setTimeout(() => {
                 this.author_introduction_show = true;
 
             }, 500);
-            var sub_windows_hidth = document.querySelector('.switch_box_content_2_content_1_page_content_box_userbox_author_introduction').innerHeight;
-            console.log(sub_windows_hidth);
-            var test_height = document.querySelector('.sub_main_usercenter').innerHeight;
-            console.log(test_height);
+            var mainpage = this.$el;
+            console.log(mainpage.offsetHeight+ '主高度');
+            var mainpage_height=mainpage.getBoundingClientRect();  
+            console.log(mainpage_height.y+'主窗口距底部高度');
+            var test_height = document.querySelector('.sub_main_usercenter').clientHeight;
+            console.log(test_height + '子窗口高度');
         },
         hidesubusercenter1() {
             this.timeoutid = setTimeout(() => {
