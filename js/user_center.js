@@ -28,6 +28,7 @@ var model = `<div class="edit_userinfo_box_contact_information_text">
     </select>
 </div>
 </div>`;
+// eslint-disable-next-line no-unused-vars
 const eventbus = new Vue();
 
 Vue.component('sub-main-usercenter-selected-works', {
