@@ -1812,3 +1812,26 @@
     height: 100%;
     object-fit:fill;
 }
+.switch_box_content_2_content_2_page{
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+    height: auto;
+    padding:5px;
+    margin-top:5px;
+    border:1px solid red;
+    position: relative;
+    justify-content: flex-start;
+}
+.per_novel_box{
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    width: 13%;
+    border-radius: 15px;
+    margin-right: 10px;
+    margin-left:10px;
+    margin-top:10px;
+    border:1px solid red;
+    height: 160px;
+}

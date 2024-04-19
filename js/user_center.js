@@ -336,7 +336,8 @@ var vm = new Vue({
             },
             temp: {
                 'border-top': "4px solid rgba(0, 150, 250, 1)",
-                opacity: 1
+                opacity: 1,
+                
             },
             action: {
                 'background-color': 'rgba(200,200,200,0.5)',
@@ -355,9 +356,10 @@ var vm = new Vue({
             switch_box_content_1: false,
             switch_box_content_2: true,
             // eslint-disable-next-line no-dupe-keys
-            temp: {
-                'background-color': 'rgba(199, 197, 197,0.5)',
+            temp_title: {
+                'background-color': 'rgba(199, 197, 197,0.8)',
             },
+            switch_box_content_2_title_temp:{ 'background-color': 'rgba(199, 197, 197,0.5)', },
             switch_box_content_2_title_1: { 'background-color': 'rgba(199, 197, 197,0.5)', },
             switch_box_content_2_title_2: "",
             switch_box_content_2_title_3: "",
@@ -377,6 +379,8 @@ var vm = new Vue({
             ],
             timeoutid: null,
             message_test: 'test',
+            content_1_page:false,
+            content_2_page:true,
         };
     },
 
@@ -423,7 +427,7 @@ var vm = new Vue({
 
         },
         switch_box_btn: function (type) {
-            temp = this.temp;
+            temp = ' background-color: rgba(199, 197, 197,0.8);border-top:4px solid rgba(0, 150, 250, 1)';
             if (type == 'indexpage') {
                 this.indexpage_style = temp;
                 this.collection_style = null;
@@ -610,7 +614,22 @@ var vm = new Vue({
             }, 500);
 
         },
-
+        switch_content_page:function(){
+            console.log('test');
+            if( this.content_1_page==false){
+                this.content_1_page=true;
+                this.content_2_page=false;
+                this.switch_box_content_2_title_1=this.switch_box_content_2_title_temp;
+                this.switch_box_content_2_title_2=null;
+                
+            }
+            else{
+                this.content_1_page=false;
+                this.content_2_page=true;
+                this.switch_box_content_2_title_1=null;
+                this.switch_box_content_2_title_2=this.switch_box_content_2_title_temp;
+            }
+        },
     }
 });
 

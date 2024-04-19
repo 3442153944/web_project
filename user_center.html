@@ -1060,9 +1060,9 @@
                 <div class="switch_box_content_2_title">
                     <div class="switch_box_content_2_title_switchpage">
                         <div class="switch_box_content_2_title_switchpage_tag1" :style="switch_box_content_2_title_1"
-                            @click="switch_box_content_2_title_btn(1)">插画·漫画</div>
+                            @click="switch_content_page">插画·漫画</div>
                         <div class="switch_box_content_2_title_switchpage_tag2" :style="switch_box_content_2_title_2"
-                            @click="switch_box_content_2_title_btn(2)">小说</div>
+                            @click="switch_content_page">小说</div>
                     </div>
                     <div class="switch_box_content_2_title_switchopen">
                         <div class="switch_box_content_2_title_switchopen_tag1" :style="switch_box_content_2_title_3"
@@ -1071,7 +1071,7 @@
                             @click="switch_box_content_2_title_btn(4)">不公开</div>
                     </div>
                 </div>
-                <div class="switch_box_content_2_content_1_page">
+                <div class="switch_box_content_2_content_1_page" v-show="content_1_page">
                     <div class="switch_box_content_2_content_1_page_title">
                         <div class="switch_box_content_2_content_1_page_title_text">我的作品</div>
                         <div class="switch_box_content_2_content_1_page_title_collection">
@@ -1202,6 +1202,11 @@
                         </div>
                         <collect_work_info_box v-for="index in 11" :key="index" :item="items[index - 1]" >
                         </collect_work_info_box>
+                        
+                    </div>
+                </div>
+                <div class="switch_box_content_2_content_2_page" v-show="content_2_page">
+                    <div class="per_novel_box">
                         
                     </div>
                 </div>
