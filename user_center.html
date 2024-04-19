@@ -1207,8 +1207,73 @@
                 </div>
                 <div class="switch_box_content_2_content_2_page" v-show="content_2_page">
                     <div class="per_novel_box">
-                        
+                        <div class="per_novel_box_cover">
+                            <img src="image/87328997_p0.jpg">
+                        </div>
+                        <div class="per_novel_box_content">
+                            <div class="per_novel_box_content_title">
+                                <b>这是小说标题</b>
+                            </div>
+                            <div class="per_novel_box_content_introduction mt">
+                                这是小说的简介
+                            </div>
+                            <div class="per_novel_box_content_author mt">
+                                这是作者名字
+                            </div>
+                            <div class="per_novel_box_content_info mt">
+                                <div class="per_novel_box_content_info_wcount">
+                                    114514字
+                                </div>
+                                <div class="per_novel_box_content_info_time">
+                                    4月19日
+                                </div>
+                                <div class="per_novel_box_content_info_like">
+                                    <span>114</span>
+                                    <svg t="1713529816096" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="3158"
+                                        width="200" height="200">
+                                        <path
+                                            d="M672 192a222.72 222.72 0 0 0-160 67.68A222.592 222.592 0 0 0 352 192c-123.52 0-224 101.184-224 225.6 0 52.256 18.144 103.2 52.928 145.536l285.952 293.984a62.528 62.528 0 0 0 90.208 0l287.808-296.032A227.136 227.136 0 0 0 896 417.6C896 293.184 795.52 192 672 192"
+                                            fill="#969697" p-id="3159"></path>
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="per_novel_box_content_tag">
+                                <div class="per_novel_box_content_tag_content">
+                                    <span class="per_novel_box_content_tag_age_classifiction">R-18</span>
+                                    <span class="per_novel_box_content_tag_content_item">#114514</span>
+                                    <span class="per_novel_box_content_tag_content_item">#981120</span>
+                                    <span class="per_novel_box_content_tag_content_item">#所答</span>
+                                    <span class="per_novel_box_content_tag_content_item">你是一个一个一个</span>
+                                </div>
+                            </div>
+                            <div class="per_novel_box_content_author_say">
+                                <div class="per_novel_box_content_author_say_text">
+                                    作者的感言
+                                </div>
+                                <div class="per_novel_box_content_love_box">
+                                <div class="per_novel_box_content_love_svg">
+                                    <svg t="1713083415377" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10166" width="200"
+                                        height="200" class="icon">
+                                        <path
+                                            d="M512 901.746939c-13.583673 0-26.122449-4.179592-37.093878-13.061225-8.881633-7.314286-225.697959-175.020408-312.424489-311.379592C133.746939 532.37551 94.040816 471.24898 94.040816 384.522449c0-144.718367 108.146939-262.269388 240.326531-262.269388 67.395918 0 131.657143 30.82449 177.632653 84.636735 45.453061-54.334694 109.191837-84.636735 177.110204-84.636735 132.702041 0 240.326531 117.55102 240.326531 262.269388 0 85.159184-37.093878 143.673469-67.395919 191.216327l-1.044898 1.567346c-86.726531 136.359184-303.542857 304.587755-312.424489 311.379592-10.44898 8.359184-22.987755 13.061224-36.571429 13.061225z"
+                                            fill="#E5404F" p-id="10167"></path>
+                                    </svg>
+                                </div>
+                                <div class="per_novel_box_content_love_svg">
+                                    <svg t="1713085520923" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="12188" width="200"
+                                        height="200" class="icon">
+                                        <path
+                                            d="M667.786667 117.333333C832.864 117.333333 938.666667 249.706667 938.666667 427.861333c0 138.250667-125.098667 290.506667-371.573334 461.589334a96.768 96.768 0 0 1-110.186666 0C210.432 718.368 85.333333 566.112 85.333333 427.861333 85.333333 249.706667 191.136 117.333333 356.213333 117.333333c59.616 0 100.053333 20.832 155.786667 68.096C567.744 138.176 608.170667 117.333333 667.786667 117.333333z m0 63.146667c-41.44 0-70.261333 15.189333-116.96 55.04-2.165333 1.845333-14.4 12.373333-17.941334 15.381333a32.32 32.32 0 0 1-41.770666 0c-3.541333-3.018667-15.776-13.536-17.941334-15.381333-46.698667-39.850667-75.52-55.04-116.96-55.04C230.186667 180.48 149.333333 281.258667 149.333333 426.698667 149.333333 537.6 262.858667 675.242667 493.632 834.826667a32.352 32.352 0 0 0 36.736 0C761.141333 675.253333 874.666667 537.6 874.666667 426.698667c0-145.44-80.853333-246.218667-206.88-246.218667z"
+                                            fill="#000000" p-id="12189"></path>
+                                    </svg>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
+                    <per_novel_box v-for="n in 10" :key="n">
+
+                    </per_novel_box>
                 </div>
             </div>
         </div>
