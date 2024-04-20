@@ -10,6 +10,7 @@
 .hv:hover{
     cursor: pointer;
 }
+
 /*正文*/
 .main{
     display: flex;
@@ -34,4 +35,110 @@
     flex-grow: 1;
     height: auto;
     flex-direction: column;
+}
+.novel_content_info{
+    display: flex;
+    border:1px solid red;
+    width: 100%;
+    padding: 5px;
+    border-bottom: 1px solid rgba(199,199,199,1);
+}
+.novel_content_info_cover{
+    display: flex;
+    width: 20%;
+    height: 200px;
+    overflow: hidden;
+}
+.novel_content_info_cover img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.novel_tag_text{
+    cursor: pointer;
+    color:rgba(0,150,250,1);
+}
+.novel_data{
+    display: flex;
+    width: 50%;
+    border:1px solid red;
+    align-items: center;
+    padding:5px;
+}
+.novel_data_show,.novel_data_love{
+    display: flex;
+    width: 30%;
+    margin-right: 5px;
+}
+.novel_data_show_svg,.novel_data_love_svg{
+    width: 20px;
+    height: 20px;
+    overflow: hidden;
+}
+.novel_data_show_svg svg{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.novel_data_love_svg svg{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.novel_createtime{
+    display: flex;
+    flex-grow: 1;
+    color: rgba(199,199,199,1);
+    font-size: 12px;
+    padding:5px;
+}
+.novel_author_content{
+    display: flex;
+    flex-direction:column;
+    width: 20%;
+    height: 100%;
+    padding: 5px;
+    min-height: 200px;
+    border:1px solid red;
+    margin-left:10px;
+    position: relative;
+    margin-right:auto;
+    background-color: rgb(233, 233, 233);
+}
+.novel_author_avatar{
+    display: flex;
+    width: 100%;
+    align-items: center;
+}
+.novel_author_avatar_img{
+    display: flex;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+.novel_author_avatar_img img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.novel_author_follow{
+    display: flex;
+    width: 100%;
+    padding: 5px;
+    margin-top:5px;
+}
+.novel_author_follow_btn{
+    display: flex;
+    width: 90%;
+    height: 35px;
+    border-radius: 15px;
+    background-color: rgba(199,199,199,1);
+    justify-content: center;
+    align-items: center;
+}
+.novel_author_follow_btn:hover{
+    cursor: pointer;
+    background-color: rgb(184, 184, 184);
+    transition: 0.2s;
 }
