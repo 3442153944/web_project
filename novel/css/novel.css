@@ -14,10 +14,7 @@
 /*正文*/
 .main{
     display: flex;
-    width: 80%;
-    align-items: center;
-    align-self: center;
-    justify-content: center;
+    width: 85%;
     border:1px solid red;
     height: auto;
     min-height: 100px;
@@ -104,6 +101,7 @@
     position: relative;
     margin-right:auto;
     background-color: rgb(233, 233, 233);
+    align-items: center;
 }
 .novel_author_avatar{
     display: flex;
@@ -141,4 +139,113 @@
     cursor: pointer;
     background-color: rgb(184, 184, 184);
     transition: 0.2s;
+}
+.other_novel_list{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 200px;
+    overflow-y: auto;
+    margin-top:5px;
+    padding:5px;
+}
+.other_novel_list_title{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.other_novel_list_content{
+    display: flex;
+    flex-direction:column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow: hidden;
+}
+.other_novel_list_item{
+    display: flex;
+    margin-top: 5px;
+    font-size: 12px;
+}
+.other_novel_list_item:hover{
+    cursor: pointer;
+    background-color: rgb(211, 211, 211);
+    transition:0.2s;
+}
+.novel_author_work_series{
+    display: flex;
+    flex-direction: column;
+    margin-top:5px;
+    padding:5px;
+    background-color: rgb(233, 233, 233);
+    border:1px solid red;
+    width: 97%;
+    height: 150px;
+}
+.novel_author_work_series_title{
+    display: flex;
+    width: 100%;
+    margin-top:5px;
+}
+.novel_author_work_series_content{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+}
+.novel_author_work_series_item{
+    margin-top:5px;
+    font-size: 12px;
+}
+.novel_author_work_series_item:hover{
+    cursor: pointer;
+    background-color: rgb(211, 211, 211);
+    transition:0.2s;
+}
+.novel_author_tag_count{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 150px;
+    margin-top:5px;
+    padding:5px;
+}
+.novel_author_tag_count_title{
+    display: flex;
+    margin-top:5px;
+    width: 100%;
+}
+.novel_author_tag_count_content{
+    display: flex;
+    flex-direction:column;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow-y: auto;
+}
+.novel_author_tag_count_item{
+    display: flex;
+    margin-top:5px;
+    justify-content: space-between;
+    padding-left: 5px;
+    padding-right: 5px;
+    position: relative;
+    font-size: 12px;
+}
+.novel_author_tag_count_item:hover{
+    cursor: pointer;
+    background-color: rgb(211, 211, 211);
+    transition:0.2s;
+    z-index: 2;
+}
+.novel_author_tag_count_num{
+    display:flex;
+    width: 20%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgb(184, 184, 184);
+    border-radius: 15px;
+    color:rgba(255,255,255,1);
 }
