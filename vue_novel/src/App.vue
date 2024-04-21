@@ -8,6 +8,7 @@
 <script  lang="ts">
 // @ts-ignore
 import head_title from './components/head_title.vue'
+// @ts-ignore
 import novel_content from './components/novel_content.vue'
 export default{
     name:'App',
