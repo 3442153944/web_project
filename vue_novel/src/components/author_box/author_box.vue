@@ -142,10 +142,9 @@ function follow_btn(){
   .list_title{
     display: flex;
     width:100%;
-    height: 25px;
+    height: auto;
     justify-content: space-between;
-    position: fixed;
-    overflow: hidden;
+
   }
   .list_content{
     margin-top:20px;

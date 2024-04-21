@@ -89,6 +89,7 @@ function jump_usercenter(){
     overflow-y:auto ;
     padding:5px;
     border-radius: 15px;
+    z-index:3;
 }
 .header_box_back{
     width:100%;
