@@ -67,7 +67,7 @@
                 </svg>
             </div>
         </div>
-        <div class="useravatar ml mr">
+        <div class="useravatar ml mr" @click="useravatar_show_btn">
             <div class="useravatar_img">
                 <img :src="avatar_img_src">
             </div>
@@ -80,7 +80,7 @@
                 </svg>
             </div>
         </div>
-        <header_box></header_box>
+        <header_box v-show="header_box_show"></header_box><!--这是头像，不是标题栏-->
     </div>
 </template>
 
@@ -104,6 +104,24 @@ let join_vip_text = ref('加入ILLWeb高级会员')
 let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
 let submission_work_box_show = ref(false)
+let header_box_show=ref(true)
+
+function useravatar_show_btn(){
+    console.log('test')
+    var mainpage=document.querySelector('.useravatar');
+    document.addEventListener('click', function (event) {
+        if (!mainpage.contains(event.target)) {
+            header_box_show.value=false;
+        }
+    });
+    if(header_box_show.value==true)
+    {
+        header_box_show.value=false;
+    }
+    else{
+        header_box_show.value=true;
+    }
+}
 
 function submission_work_box_show_btn() {
     var mainpage = document.querySelector('.submission');
@@ -227,7 +245,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     width: 200px;
     min-height: 150px;
     height: auto;
-    border: 1px solid red;
+    
     position: absolute;
     top: 50px;
     overflow: hidden;
@@ -244,7 +262,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 .sidebar {
     width: 210px;
     height: 100%;
-    border: 1px solid red;
+    
     position: fixed;
     top: 60px;
     z-index: 2;
@@ -267,7 +285,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 /*用户头像样式*/
 .useravatar {
     display: flex;
-    border: 1px solid red;
+    
     width: 80px;
     height: 95%;
     align-self: center;
@@ -280,7 +298,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 .useravatar_img {
     width: 46px;
     height: 46px;
-    border: 1px solid red;
+    
     overflow: hidden;
     border-radius: 50%;
 }
@@ -347,7 +365,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     width: 99%;
     height: 50px;
     background-color: rgba(255, 255, 255, 1);
-    border: 1px solid red;
+    
     position: relative;
     padding: 5px;
     margin-top: auto;
