@@ -104,7 +104,7 @@ let join_vip_text = ref('加入ILLWeb高级会员')
 let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
 let submission_work_box_show = ref(false)
-let header_box_show=ref(true)
+let header_box_show=ref(false)
 
 function useravatar_show_btn(){
     console.log('test')
