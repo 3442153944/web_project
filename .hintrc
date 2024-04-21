@@ -24,6 +24,8 @@
       {
         "html-has-lang": "off"
       }
-    ]
+    ],
+    "typescript-config/strict": "off",
+    "typescript-config/is-valid": "off"
   }
 }
