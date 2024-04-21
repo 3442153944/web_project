@@ -1,8 +1,8 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="title">
-        <div class="show_more" @click="switch_show_sidebar">
-            <div class="show_more_icon">
+        <div class="show_more" >
+            <div class="show_more_icon" @click="switch_show_sidebar">
                 <svg t="1713665000311" class="icon" viewBox="0 0 1024 1024" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" p-id="6457" width="200" height="200">
                     <path
@@ -10,7 +10,7 @@
                         p-id="6458"></path>
                 </svg>
             </div>
-            <div class="sidebar" v-show="show_sidebar">
+            <div class="sidebar" id="sidebar" v-show="show_sidebar" :style="action_left">
                 <sidebar></sidebar>
             </div>
         </div>
@@ -73,17 +73,73 @@ let submission_text=ref('投稿作品')
 let avatar_img_src=ref('../../image/87328997_p0.jpg')
 let join_vip_text=ref('加入ILLWeb高级会员')
 let show_sidebar=ref(false)
+let action_left=ref('left:0px;')
 
 function switch_show_sidebar(){
+    var step_len=250/60;//步长
+    var step=60;//步数
+    var mainpage=document.getElementById("sidebar");//包含元素的框
+    var show_btn=document.querySelector(".show_more");
+    document.addEventListener('click',function(event){
+        if(!mainpage.contains(event.target)&&!show_btn.contains(event.target)){
+            animation_sidebar(0,-250,step_len,step,do_time);
+        }
+    });
+    var do_time=100;
     console.log('test');
     if(show_sidebar.value==false){
-        show_sidebar.value=true
+        animation_sidebar(-250,0,step_len,step,do_time);
+        
         console.log('true');
     }else{
-        show_sidebar.value=false
+        animation_sidebar(0,-250,step_len,step,do_time);
+        
         console.log('false');
     }
 }
+
+function animation_sidebar(startlo, endlo, step_len, step, do_time) {
+    if (startlo >= endlo) {
+        var count = 0;
+        var interval = do_time / step; // 计算每步的时间间隔
+
+        // eslint-disable-next-line no-inner-declarations
+        function animate1() {
+            if (count >= step) {
+                action_left.value = 'left:' + (-250) + 'px;';
+                
+                show_sidebar.value = false;
+                return;
+            }
+            action_left.value = 'left:' + (startlo - step_len * count) + 'px;';
+           
+            count++;
+            setTimeout(animate1, interval);
+        }
+        animate1();
+    }
+   if(startlo<=endlo)
+   {
+    var count_1=0;
+    var interval_1=do_time/step;
+    // eslint-disable-next-line no-inner-declarations
+    function animate2(){
+        if(count_1>=step){
+            action_left.value='left:'+(0)+'px;';
+     show_sidebar.value=true;
+     return;
+        }
+        show_sidebar.value  = true;
+        action_left.value='left:'+(startlo+step_len*count_1)+'px;';
+        count_1++;
+        setTimeout(animate2,interval_1);
+    }
+     animate2();
+   }
+   
+}
+
+
 
 </script>
 
@@ -99,15 +155,17 @@ function switch_show_sidebar(){
 .pb{padding-bottom:5px;}
 
 /*侧边栏样式*/
-.sidebar{
-    width:210px;
+.sidebar {
+    width: 210px;
     height: 100%;
     border: 1px solid red;
-    position:fixed;
-    top:60px;
-    left: 0px;
+    position: fixed;
+    top: 60px;
     z-index: 2;
+    transition: left 0.2s ease; /* 添加过渡效果 */
+    transition:right 0.2s ease;
 }
+
 
 /*加入会员文字样式*/
 .join_vip{
