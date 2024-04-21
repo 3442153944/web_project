@@ -1,19 +1,25 @@
+<!-- eslint-disable vue/no-unused-components -->
 <template>
-    <div class="classtest">
-        <h1>classtest</h1>
-        <Person></Person>
-    </div>
+    
+        <head_title></head_title>
+    
 </template>
 <script  lang="ts">
-import Person from './components/Person.vue'
+// @ts-ignore
+import head_title from './components/head_title.vue'
 export default{
     name:'App',
     components:{
-        Person
+        // eslint-disable-next-line vue/no-unused-components
+        head_title
     }
 }
 
 </script>
 <style>
+body{
+    padding:0;
+    margin:0;
 
+}
 </style>
