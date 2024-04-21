@@ -69,7 +69,7 @@ let update_time=ref('2024年4月21日20:55:27');
   .box_content{
     display: flex;
     width:100%;
-    height: 100%;
+    height:220px;
     position: relative;
     border-bottom:1px solid rgb(230, 230, 230);
   }
