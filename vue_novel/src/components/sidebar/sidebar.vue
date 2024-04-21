@@ -13,6 +13,10 @@
                 <div class="sidebar_content_item_text"><span>插画</span></div>
             </div>
             <div class="sidebar_content_item">
+                <div class="sidebar_content_item_icon"><svg t="1713690598752" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="36083" width="200" height="200"><path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m170.7 464.9c-2.6 4.2-6.1 7.7-10.2 10.2l-197 122.2c-15 9.3-34.7 4.7-44.1-10.3-3.1-5-4.7-10.7-4.8-16.5v-245c0.2-17.7 14.6-31.9 32.3-31.7 5.8 0.1 11.6 1.7 16.5 4.8L672 485.1c14.9 9.2 19.7 28.7 10.7 43.8z" fill="#4C4C4C" p-id="36084"></path></svg></div>
+                <div class="sidebar_content_item_text">动图</div>
+            </div>
+            <div class="sidebar_content_item">
                 <div class="sidebar_content_item_icon">
                     <svg t="1713671802104" class="icon" viewBox="0 0 1024 1024" version="1.1"
                         xmlns="http://www.w3.org/2000/svg" p-id="12786" width="200" height="200">

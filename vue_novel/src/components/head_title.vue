@@ -1,7 +1,8 @@
+<!-- eslint-disable vue/no-unused-components -->
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="title">
-        <div class="show_more" >
+        <div class="show_more">
             <div class="show_more_icon" @click="switch_show_sidebar">
                 <svg t="1713665000311" class="icon" viewBox="0 0 1024 1024" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" p-id="6457" width="200" height="200">
@@ -29,22 +30,41 @@
             </div>
         </div>
         <div class="join_vip ml mr">
-            <span>{{join_vip_text}}</span>
+            <span>{{ join_vip_text }}</span>
         </div>
-        <div class="submission ml mr">
+        <div class="submission ml mr" @click="submission_work_box_show_btn">
             <div class="submission_icon mr">
-                <svg t="1713667310491" class="icon" viewBox="0 0 1664 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8530" width="200" height="200"><path d="M790.656 946.688c2.048 1.024 3.84 2.816 5.76 3.584a94.848 94.848 0 0 0 110.592-19.2l666.88-705.28a95.872 95.872 0 0 0-139.264-131.84L836.096 727.04 228.864 96.512A95.744 95.744 0 0 0 90.88 229.12l673.28 698.88c1.28 1.152 3.328 1.664 4.608 3.2 1.024 0.896 1.664 1.92 2.688 3.2 5.76 5.76 12.8 8.448 19.2 12.16z" fill="#666666" p-id="8531"></path></svg>
+                <svg t="1713667310491" class="icon" viewBox="0 0 1664 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="8530" width="200" height="200">
+                    <path
+                        d="M790.656 946.688c2.048 1.024 3.84 2.816 5.76 3.584a94.848 94.848 0 0 0 110.592-19.2l666.88-705.28a95.872 95.872 0 0 0-139.264-131.84L836.096 727.04 228.864 96.512A95.744 95.744 0 0 0 90.88 229.12l673.28 698.88c1.28 1.152 3.328 1.664 4.608 3.2 1.024 0.896 1.664 1.92 2.688 3.2 5.76 5.76 12.8 8.448 19.2 12.16z"
+                        fill="#666666" p-id="8531"></path>
+                </svg>
             </div>
-            <div class="submission_text"><span>{{submission_text}}</span></div>
+            <div class="submission_text"><span>{{ submission_text }}</span></div>
+            <div class="submission_work_box" v-show="submission_work_box_show">
+                <submission_work_box></submission_work_box>
+            </div>
+
         </div>
         <div class="message ml mr">
             <div class="message_icon">
-                <svg t="1713667475510" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="9553" width="200" height="200"><path d="M56.888889 823.46666633v-568.888889l429.511111 315.733334c5.688889 5.688889 17.066667 11.377778 25.6 11.377778 8.533333 0 19.911111-2.844444 25.6-11.377778L967.111111 254.57777733v568.888889H56.888889z m455.111111-312.888889L85.333333 197.68888933h853.333334l-426.666667 312.888888z m-455.111111 369.777778h910.222222c17.066667 0 56.888889-5.688889 56.888889-56.888889v-625.777777c0-17.066667-14.222222-56.888889-56.888889-56.888889H56.888889c-51.2 0-56.888889 36.977778-56.888889 56.888889v625.777777c0 39.822222 14.222222 56.888889 56.888889 56.888889z" fill="#545E68" p-id="9554"></path></svg>
+                <svg t="1713667475510" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="9553" width="200" height="200">
+                    <path
+                        d="M56.888889 823.46666633v-568.888889l429.511111 315.733334c5.688889 5.688889 17.066667 11.377778 25.6 11.377778 8.533333 0 19.911111-2.844444 25.6-11.377778L967.111111 254.57777733v568.888889H56.888889z m455.111111-312.888889L85.333333 197.68888933h853.333334l-426.666667 312.888888z m-455.111111 369.777778h910.222222c17.066667 0 56.888889-5.688889 56.888889-56.888889v-625.777777c0-17.066667-14.222222-56.888889-56.888889-56.888889H56.888889c-51.2 0-56.888889 36.977778-56.888889 56.888889v625.777777c0 39.822222 14.222222 56.888889 56.888889 56.888889z"
+                        fill="#545E68" p-id="9554"></path>
+                </svg>
             </div>
         </div>
         <div class="notice ml mr">
             <div class="notice_icon">
-                <svg t="1713667792090" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="10588" width="200" height="200"><path d="M832 725.33333334V469.33333334a320 320 0 0 0-192-294.4 128 128 0 1 0-256 0A320 320 0 0 0 192 469.33333334v256l-64 128h768zM448 149.33333334a64 64 0 0 1 128 0 59.52 59.52 0 0 1 0 6.4 314.24 314.24 0 0 0-128 0A59.52 59.52 0 0 1 448 149.33333334zM231.68 789.33333334l17.92-35.2 6.4-13.44V469.33333334a256 256 0 0 1 512 0v271.36l7.04 13.44 17.92 35.2zM320 917.33333334h384v64H320z" p-id="10589"></path></svg>
+                <svg t="1713667792090" class="icon" viewBox="0 0 1024 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="10588" width="200" height="200">
+                    <path
+                        d="M832 725.33333334V469.33333334a320 320 0 0 0-192-294.4 128 128 0 1 0-256 0A320 320 0 0 0 192 469.33333334v256l-64 128h768zM448 149.33333334a64 64 0 0 1 128 0 59.52 59.52 0 0 1 0 6.4 314.24 314.24 0 0 0-128 0A59.52 59.52 0 0 1 448 149.33333334zM231.68 789.33333334l17.92-35.2 6.4-13.44V469.33333334a256 256 0 0 1 512 0v271.36l7.04 13.44 17.92 35.2zM320 917.33333334h384v64H320z"
+                        p-id="10589"></path>
+                </svg>
             </div>
         </div>
         <div class="useravatar ml mr">
@@ -52,48 +72,73 @@
                 <img :src="avatar_img_src">
             </div>
             <div class="useravatar_icon ml">
-                <svg t="1713667310491" class="icon" viewBox="0 0 1664 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="8530" width="200" height="200"><path d="M790.656 946.688c2.048 1.024 3.84 2.816 5.76 3.584a94.848 94.848 0 0 0 110.592-19.2l666.88-705.28a95.872 95.872 0 0 0-139.264-131.84L836.096 727.04 228.864 96.512A95.744 95.744 0 0 0 90.88 229.12l673.28 698.88c1.28 1.152 3.328 1.664 4.608 3.2 1.024 0.896 1.664 1.92 2.688 3.2 5.76 5.76 12.8 8.448 19.2 12.16z" fill="#666666" p-id="8531"></path></svg>
+                <svg t="1713667310491" class="icon" viewBox="0 0 1664 1024" version="1.1"
+                    xmlns="http://www.w3.org/2000/svg" p-id="8530" width="200" height="200">
+                    <path
+                        d="M790.656 946.688c2.048 1.024 3.84 2.816 5.76 3.584a94.848 94.848 0 0 0 110.592-19.2l666.88-705.28a95.872 95.872 0 0 0-139.264-131.84L836.096 727.04 228.864 96.512A95.744 95.744 0 0 0 90.88 229.12l673.28 698.88c1.28 1.152 3.328 1.664 4.608 3.2 1.024 0.896 1.664 1.92 2.688 3.2 5.76 5.76 12.8 8.448 19.2 12.16z"
+                        fill="#666666" p-id="8531"></path>
+                </svg>
             </div>
         </div>
+        <header_box></header_box>
     </div>
 </template>
 
 <script>
 import { ref } from 'vue'
 import sidebar from './sidebar/sidebar.vue'
+import submission_work_box from './submission_work_box/submission_work_box.vue'
+import header_box from './header_box/header_box.vue'
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'head_title',
-    components:{sidebar}
+    // eslint-disable-next-line vue/no-unused-components
+    components: { sidebar, submission_work_box, header_box,}
 }
 </script>
 <script setup>
-let index_jump_img_src=ref('../../image/主页.png')
-let submission_text=ref('投稿作品')
-let avatar_img_src=ref('../../image/87328997_p0.jpg')
-let join_vip_text=ref('加入ILLWeb高级会员')
-let show_sidebar=ref(false)
-let action_left=ref('left:0px;')
+let index_jump_img_src = ref('../../image/主页.png')
+let submission_text = ref('投稿作品')
+let avatar_img_src = ref('../../image/87328997_p0.jpg')
+let join_vip_text = ref('加入ILLWeb高级会员')
+let show_sidebar = ref(false)
+let action_left = ref('left:0px;')
+let submission_work_box_show = ref(false)
 
-function switch_show_sidebar(){
-    var step_len=250/60;//步长
-    var step=60;//步数
-    var mainpage=document.getElementById("sidebar");//包含元素的框
-    var show_btn=document.querySelector(".show_more");
-    document.addEventListener('click',function(event){
-        if(!mainpage.contains(event.target)&&!show_btn.contains(event.target)){
-            animation_sidebar(0,-250,step_len,step,do_time);
+function submission_work_box_show_btn() {
+    var mainpage = document.querySelector('.submission');
+    document.addEventListener('click', function (event) {
+        if (!mainpage.contains(event.target)) {
+            submission_work_box_show.value = false;
         }
     });
-    var do_time=100;
+    if (submission_work_box_show.value == false) {
+        submission_work_box_show.value = true;
+    }
+    else {
+        submission_work_box_show.value = false;
+    }
+}
+
+function switch_show_sidebar() {
+    var step_len = 250 / 60;//步长
+    var step = 60;//步数
+    var mainpage = document.getElementById("sidebar");//包含元素的框
+    var show_btn = document.querySelector(".show_more");
+    document.addEventListener('click', function (event) {
+        if (!mainpage.contains(event.target) && !show_btn.contains(event.target)) {
+            animation_sidebar(0, -250, step_len, step, do_time);
+        }
+    });
+    var do_time = 100;
     console.log('test');
-    if(show_sidebar.value==false){
-        animation_sidebar(-250,0,step_len,step,do_time);
-        
+    if (show_sidebar.value == false) {
+        animation_sidebar(-250, 0, step_len, step, do_time);
+
         console.log('true');
-    }else{
-        animation_sidebar(0,-250,step_len,step,do_time);
-        
+    } else {
+        animation_sidebar(0, -250, step_len, step, do_time);
+
         console.log('false');
     }
 }
@@ -107,36 +152,35 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
         function animate1() {
             if (count >= step) {
                 action_left.value = 'left:' + (-250) + 'px;';
-                
+
                 show_sidebar.value = false;
                 return;
             }
             action_left.value = 'left:' + (startlo - step_len * count) + 'px;';
-           
+
             count++;
             setTimeout(animate1, interval);
         }
         animate1();
     }
-   if(startlo<=endlo)
-   {
-    var count_1=0;
-    var interval_1=do_time/step;
-    // eslint-disable-next-line no-inner-declarations
-    function animate2(){
-        if(count_1>=step){
-            action_left.value='left:'+(0)+'px;';
-     show_sidebar.value=true;
-     return;
+    if (startlo <= endlo) {
+        var count_1 = 0;
+        var interval_1 = do_time / step;
+        // eslint-disable-next-line no-inner-declarations
+        function animate2() {
+            if (count_1 >= step) {
+                action_left.value = 'left:' + (0) + 'px;';
+                show_sidebar.value = true;
+                return;
+            }
+            show_sidebar.value = true;
+            action_left.value = 'left:' + (startlo + step_len * count_1) + 'px;';
+            count_1++;
+            setTimeout(animate2, interval_1);
         }
-        show_sidebar.value  = true;
-        action_left.value='left:'+(startlo+step_len*count_1)+'px;';
-        count_1++;
-        setTimeout(animate2,interval_1);
+        animate2();
     }
-     animate2();
-   }
-   
+
 }
 
 
@@ -145,14 +189,56 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 
 <style scoped>
 /*通用样式*/
-.mt{margin-top:5px;}
-.ml{margin-left:5px;}
-.mr{margin-right:5px;}
-.mb{margin-bottom:5px;}
-.pt{padding-top:5px;}
-.pl{padding-left:5px;}
-.pr{padding-right:5px;}
-.pb{padding-bottom:5px;}
+.mt {
+    margin-top: 5px;
+}
+
+.ml {
+    margin-left: 5px;
+}
+
+.mr {
+    margin-right: 5px;
+}
+
+.mb {
+    margin-bottom: 5px;
+}
+
+.pt {
+    padding-top: 5px;
+}
+
+.pl {
+    padding-left: 5px;
+}
+
+.pr {
+    padding-right: 5px;
+}
+
+.pb {
+    padding-bottom: 5px;
+}
+
+/*作品上传框*/
+.submission_work_box {
+    display: flex;
+    width: 200px;
+    min-height: 150px;
+    height: auto;
+    border: 1px solid red;
+    position: absolute;
+    top: 50px;
+    overflow: hidden;
+    background-color: rgba(211, 211, 211, 1);
+    border-radius: 15px;
+    z-index: 10;
+}
+
+.submission_work_box:hover {
+    cursor: auto !important;
+}
 
 /*侧边栏样式*/
 .sidebar {
@@ -162,15 +248,16 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     position: fixed;
     top: 60px;
     z-index: 2;
-    transition: left 0.2s ease; /* 添加过渡效果 */
-    transition:right 0.2s ease;
+    transition: left 0.2s ease;
+    /* 添加过渡效果 */
+    transition: right 0.2s ease;
 }
 
 
 /*加入会员文字样式*/
-.join_vip{
+.join_vip {
     font-size: 16px;
-    color:rgb(253,158,22);
+    color: rgb(253, 158, 22);
     align-self: center;
     justify-content: center;
     font-weight: bold;
@@ -178,45 +265,51 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 }
 
 /*用户头像样式*/
-.useravatar{
+.useravatar {
     display: flex;
-    border:1px solid red;
-    width:80px;
+    border: 1px solid red;
+    width: 80px;
     height: 95%;
     align-self: center;
 }
-.useravatar:hover{
+
+.useravatar:hover {
     cursor: pointer;
 }
-.useravatar_img{
+
+.useravatar_img {
     width: 46px;
     height: 46px;
-    border:1px solid red;
+    border: 1px solid red;
     overflow: hidden;
     border-radius: 50%;
 }
-.useravatar_img img{
-    width:100%;
+
+.useravatar_img img {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.useravatar_icon{
-    width:20px;
+
+.useravatar_icon {
+    width: 20px;
     height: 20px;
     overflow: hidden;
     justify-content: center;
     align-items: center;
     align-self: center;
 }
-.useravatar_icon svg{
-    width:100%;
+
+.useravatar_icon svg {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
 
 /*通知样式*/
 /*消息样式*/
-.message,.notice{
+.message,
+.notice {
     display: flex;
     width: 35px;
     height: 35px;
@@ -225,19 +318,25 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     justify-content: center;
     align-self: center;
 }
-.message:hover,.notice:hover{
-    background-color: rgba(211,211,211,1);
+
+.message:hover,
+.notice:hover {
+    background-color: rgba(211, 211, 211, 1);
     border-radius: 50%;
     transition: 0.2s;
     cursor: pointer;
 }
-.message_icon,.notice_icon{
-    width:80%;
+
+.message_icon,
+.notice_icon {
+    width: 80%;
     height: 80%;
     overflow: hidden;
 }
-.message_icon svg,.notice_icon svg{
-    width:100%;
+
+.message_icon svg,
+.notice_icon svg {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
@@ -247,110 +346,124 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     display: flex;
     width: 99%;
     height: 50px;
-    background-color: rgba(255,255,255,1);
-    border:1px solid red;
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid red;
     position: relative;
     padding: 5px;
-    margin-top:auto;
+    margin-top: auto;
     margin-bottom: auto;
     margin-left: auto;
     margin-right: auto;
 }
+
 .show_more {
     display: flex;
-    width:45px;
+    width: 45px;
     height: 45px;
     align-items: center;
     align-self: center;
 }
+
 .show_more_icon {
-    width:80%;
+    width: 80%;
     height: 80%;
     overflow: hidden;
 }
-.show_more_icon:hover{
-    background-color: rgba(211,211,211,1);
+
+.show_more_icon:hover {
+    background-color: rgba(211, 211, 211, 1);
     border-radius: 10px;
     transition: 0.2s;
     cursor: pointer;
 }
-.show_more_icon svg{
-    width:100%;
+
+.show_more_icon svg {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
+
 /*主页按钮图片*/
-.index_jump_img{
-    width:150px;
+.index_jump_img {
+    width: 150px;
     height: 100%;
     overflow: hidden;
     cursor: pointer;
 }
-.index_jump_img img{
-    width:100%;
+
+.index_jump_img img {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
+
 /*搜索框*/
-.input_box{
+.input_box {
     display: flex;
     position: relative;
-    width:50%;
+    width: 50%;
     height: 90%;
-    background-color: rgba(211,211,211,1);
-    border:1px solid rgba(211,211,211,1);
+    background-color: rgba(211, 211, 211, 1);
+    border: 1px solid rgba(211, 211, 211, 1);
     border-radius: 15px;
     margin-left: auto;
     margin-right: 20px;
     align-items: center;
     align-self: center;
 }
-.input_box input{
+
+.input_box input {
     display: flex;
-    width:90%;
+    width: 90%;
     height: 100%;
-    border:none;
-    background:transparent;
+    border: none;
+    background: transparent;
     align-items: center;
 }
-.search_icon{
-    width:5%;
+
+.search_icon {
+    width: 5%;
     height: 100%;
     overflow: hidden;
     position: absolute;
-    right:5px;
+    right: 5px;
     align-items: center;
     align-self: center;
     cursor: pointer;
 }
-.search_icon svg{
-    width:100%;
+
+.search_icon svg {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
-.submission{
+
+.submission {
     display: flex;
-    width:100px;
+    width: 100px;
     height: 80%;
-    background-color:rgba(211,211,211,1);
+    background-color: rgba(211, 211, 211, 1);
     align-items: center;
     align-self: center;
     border-radius: 15px;
     justify-content: center;
     position: relative;
 }
-.submission:hover{
-    background-color: rgba(185,185,185,1);
+
+.submission:hover {
+    background-color: rgba(185, 185, 185, 1);
     cursor: pointer;
     transition: 0.2s;
 }
-.submission_icon{
-    width:15%;
+
+.submission_icon {
+    width: 15%;
     height: 100%;
     overflow: hidden;
 }
-.submission_icon svg{
-    width:100%;
+
+.submission_icon svg {
+    width: 100%;
     height: 100%;
     object-fit: cover;
 }
