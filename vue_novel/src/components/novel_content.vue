@@ -12,6 +12,7 @@
   <div class="series_box">
     <seriex_box></seriex_box>
   </div>
+  <div class="interactive"><interactive_box></interactive_box></div>
 </template>
 
 <script>
@@ -22,10 +23,11 @@ import novel_content_box from './novel_content_box/novel_content_box.vue';
 import author_box from './author_box/author_box.vue';
 import word_content from './word_content/word_content.vue';
 import seriex_box from './series_box/series_box.vue';
+import interactive_box from './interactive_box/interactive_box.vue';
 
 export default {
   name: 'novel_content',
-  components:{novel_content_box,author_box,word_content,seriex_box},
+  components:{novel_content_box,author_box,word_content,seriex_box,interactive_box,},
 }
 </script>
 
