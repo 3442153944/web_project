@@ -12,7 +12,7 @@
   <div class="series_box">
     <seriex_box></seriex_box>
   </div>
-  <div class="interactive"><interactive_box></interactive_box></div>
+  <div class="interactive" style="margin-top:20px;"><interactive_box></interactive_box></div>
 </template>
 
 <script>
