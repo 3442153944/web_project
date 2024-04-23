@@ -13,6 +13,7 @@
     <seriex_box></seriex_box>
   </div>
   <div class="interactive" style="margin-top:20px;"><interactive_box></interactive_box></div>
+  <test></test>
 </template>
 
 <script>
@@ -24,10 +25,11 @@ import author_box from './author_box/author_box.vue';
 import word_content from './word_content/word_content.vue';
 import seriex_box from './series_box/series_box.vue';
 import interactive_box from './interactive_box/interactive_box.vue';
+import test from './test/test.vue';
 
 export default {
   name: 'novel_content',
-  components:{novel_content_box,author_box,word_content,seriex_box,interactive_box,},
+  components:{novel_content_box,author_box,word_content,seriex_box,interactive_box,test,},
 }
 </script>
 
