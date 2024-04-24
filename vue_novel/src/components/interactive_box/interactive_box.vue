@@ -1,5 +1,5 @@
 <template>
-    <div class="interactive_box">
+    <div class="interactive_box" @mousewheel="isEleview">
         <div class="setting_novel_page">
             <div class="setting_font">
                 <div class="icon1" @click="setting_font_action"><svg t="1713746811598" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -100,9 +100,14 @@ export default {
         isEleview(){
             var main_page=document.querySelector('.interactive_box');
             console.log(main_page.getBoundingClientRect());
+            //获取主窗口高度
+            var root_hight=window.innerHeight;
+            var sub_hight=main_page?.getBoundingClientRect().top;
+            console.log(root_hight-sub_hight);
         },
     },
    mounted(){
+    
     this.isEleview();
    },
 }
@@ -110,7 +115,7 @@ export default {
 
 
 <script setup lang="ts">
-import func from 'vue-editor-bridge';
+
 //一些动画效果的实现
 let setting_font_action_add=ref(-100);
 let action_opacity=ref(0);
