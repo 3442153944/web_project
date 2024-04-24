@@ -225,13 +225,13 @@ function user_collection_action(){
 }
 .interactive_box {
     width: 85%;
-    border: 1px solid red;
-    height: 80px;
+    height: 60px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     align-self: center;
     margin: 0 auto;
+    background-color: rgb(245, 245, 245);
 }
 
 .setting_novel_page {

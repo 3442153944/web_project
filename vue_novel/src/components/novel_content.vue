@@ -50,6 +50,7 @@ function do_action() {
   // 确定滚动方向  
   if (currentScrollPosition > lastScrollPosition.value) {
     act1.value = false;
+    ad_y.value=0;
     const intervalId = setInterval(() => {
       ad_y.value += 1;
       if (ad_y.value >= 100) {
@@ -58,11 +59,15 @@ function do_action() {
     }, 50);
   } else if (currentScrollPosition < lastScrollPosition.value) {
     act1.value = true;
-    ad_y.value=0;
+    ad_y.value=100;
+    bot.value=-60;
     const intervalId = setInterval(() => {
-      ad_y.value -= 0.5;
-      if (ad_y.value <= -50) {
+      ad_y.value -= 2;
+      bot.value+=1;
+      if (ad_y.value <= 0||bot.value>=0) {
         clearInterval(intervalId);
+        bot.value=0;
+        ad_y.value=0;
       }
     }, 50);
   }
@@ -89,7 +94,6 @@ onMounted(() => {
     width:85%;
     height: auto;
     min-height: 200px;
-    border:1px solid red;
     position: relative;
     background-color: rgba(240,240,240,1);
     padding:5px;
@@ -100,7 +104,6 @@ onMounted(() => {
     flex-direction: column;
     width:70%;
     min-height: 200px;
-    border:1px solid red;
     padding:5px;
   }
   .author_box{
@@ -108,7 +111,6 @@ onMounted(() => {
    
     width:30%;
     min-height: 200px;
-    border:1px solid red;
     padding:5px;
 }
 .series_box{
@@ -117,7 +119,6 @@ onMounted(() => {
     width:60%;
     height: auto;
     min-height: 100px;
-    border:1px solid red;
     align-content: center;
     align-self: center;
     margin-left: auto;
