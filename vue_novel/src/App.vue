@@ -31,12 +31,14 @@ onMounted(()=>{
     //获取鼠标坐标
     document.onmousemove=(e)=>{
         cursor_top.value=e.clientY;
-        cursor_left.value=e.clientX;
+        cursor_left.value=e.clientX+20;
         cursor_apactiy.value=1;
         cursor_add.value=0;
     }
     //鼠标点击事件
     document.onmousedown=(e)=>{
+        cursor_apactiy.value=1;
+        cursor_add.value=0;
        const intervalId=setInterval(()=>{
            cursor_apactiy.value-=0.05;
            cursor_add.value-=2;
