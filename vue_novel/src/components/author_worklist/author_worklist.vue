@@ -99,7 +99,7 @@ function switch_follow(){
     width:100%;
     height: 100%;
     position: relative;
-    overflow-y: none;
+    overflow-y: hidden;
   }
   .author_worklist_item{
     display: flex;
