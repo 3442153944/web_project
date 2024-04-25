@@ -14,7 +14,9 @@
     </div>
     <div class="author_worklist_box">
         <div class="left_btn"></div>
-        <div class="author_worklist_item" v-for="index in 10" :key="index"></div>
+        <div class="author_worklist_item" v-for="index in 10" :key="index">
+          <img :src="item_src">
+        </div>
         <div class="right_btn"></div>
     </div>
   </div>
@@ -32,6 +34,7 @@ export default {
 let username=ref('用户名');
 let follow_btn_text=ref('关注');
 let follow_btn_color=ref('');
+let item_src=ref('../../../image/97165605_p0.jpg');
 function switch_follow(){
     if(follow_btn_text.value=='关注'){
         follow_btn_text.value='已关注';
@@ -111,5 +114,11 @@ function switch_follow(){
     margin-left: 10px;
     margin-right: 10px;
     border:1px solid red;
+    overflow: hidden;
+  }
+  .author_worklist_item img{
+    width:100%;
+    height: 100%;
+    object-fit: cover;
   }
 </style>
