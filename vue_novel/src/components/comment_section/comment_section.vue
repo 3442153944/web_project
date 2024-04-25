@@ -5,14 +5,14 @@
         <div class="section_content">
             <div class="user_avatar"><img :src="user_avatar_img"></div>
             <div class="user_input_box">
-                <div class="user_input"><textarea placeholder="请友善的评论哦"></textarea></div>
+                <div class="user_input"><textarea placeholder="请友善的评论哦" id="input_box_1" :style="{height:auto_height+'px'}"></textarea></div>
                 <div class="user_input_btn">发送</div>
             </div>
         </div>
     </div>
 </template>
 <script lang="ts">
-import { ref } from 'vue'
+import { ref,onMounted,onUnmounted } from 'vue'
 export default {
     name: 'comment_section',
     data(){
@@ -24,6 +24,19 @@ export default {
 </script>
 <script setup lang="ts">
 let user_avatar_img=ref('../../../image/87328997_p0.jpg');
+let auto_height=ref('auto');
+let textarea_height=document.getElementById('input_box_1');
+function auto_textarea_height(){
+    auto_height.value='auto';
+    auto_height.value=Number( textarea_height.scrollHeight);
+    console.log(textarea_height.scrollHeight);
+}
+onMounted(()=>{
+    textarea_height.addEventListener('input',auto_textarea_height);
+})
+onUnmounted(()=>{
+    textarea_height.removeEventListener('input',auto_textarea_height);
+})
 </script>
 <style  scoped>
 .comment_section{
@@ -58,7 +71,9 @@ let user_avatar_img=ref('../../../image/87328997_p0.jpg');
 .section_content{
     display: flex;
     width:100%;
-    height: 50px;
+    min-height: 50px;
+    height: auto;
+    align-items: center;
     margin-top:5px;
     padding:5px;
     position: relative;
@@ -76,19 +91,22 @@ let user_avatar_img=ref('../../../image/87328997_p0.jpg');
 .user_input{
     display: flex;
     width:100%;
-    height: 100%;
+    height:auto;
+    min-height: 40px;
     background-color: rgba(211,211,211,1);
     border-radius: 15px;
     overflow: hidden;
 }
 .user_input textarea{
     width:100%;
-    height: 90%;
+    height: auto;
     border:none;
     margin-top:auto;
     margin-bottom:auto;
     outline: none;
     resize: none;
+    background:transparent;
+    font-size: 18px;
 }
 .user_input_btn{
     display: flex;
