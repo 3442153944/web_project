@@ -68,6 +68,7 @@ body{
     padding:0;
     margin:0;
     position: relative;
+    font-family: 'Microsoft YaHei', sans-serif;
 }
 .cursor_action{
     position: fixed;

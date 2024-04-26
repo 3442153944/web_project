@@ -5,7 +5,7 @@
         <div class="section_content">
             <div class="user_avatar"><img :src="user_avatar_img"></div>
             <div class="user_input_box">
-                <div class="user_input"><textarea placeholder="请友善的评论哦" id="input_box_1" :style="{height:auto_height+'px'}"></textarea></div>
+                <div class="user_input" ref="user_input"><textarea placeholder="请友善的评论哦" ref="input_box_1" id="input_box_1" :style="{height:auto_height+'px','min-height':min_height+'px'}"></textarea></div>
                 <div class="user_input_btn">发送</div>
             </div>
         </div>
@@ -25,18 +25,49 @@ export default {
 <script setup lang="ts">
 let user_avatar_img=ref('../../../image/87328997_p0.jpg');
 let auto_height=ref('auto');
-let textarea_height=document.getElementById('input_box_1');
-function auto_textarea_height(){
-    auto_height.value='auto';
-    auto_height.value=Number( textarea_height.scrollHeight);
-    console.log(textarea_height.scrollHeight);
+let user_input=ref<HTMLTextAreaElement|null>(null);
+let input_box_1=ref<HTMLTextAreaElement|null>(null);
+let min_height=ref(50);
+function auto_text_h(){
+    if(user_input.value){
+        var width=user_input.value.offsetWidth;
+        var heigth=user_input.value.offsetHeight;
+        var content_text=input_box_1.value?.value;
+        var line_height=18*1.5;
+        let text_len=content_text?.length;
+        let font_width=get_fontwidth(content_text);
+        let max_line=Math.floor(width/font_width);
+       if(text_len>=max_line){
+        auto_height.value='auto';
+        min_height.value=line_height*Math.ceil(text_len/max_line)-18.5;
+       }
+      
+    }
 }
+function get_fontwidth(text){
+    var font_width;
+    const span=document.createElement('span');
+    span.style.fontFamily='Microsoft YaHei';
+    span.style.fontSize='18px';
+    span.textContent=text;
+    span.style.visibility='hidden';
+    span.style.position='absolute';
+    span.style.whiteSpace='nowrap';
+    document.body.appendChild(span);
+    font_width=span.getBoundingClientRect().width;
+    document.body.removeChild(span);
+    return font_width/text.length;
+}
+//计算方差
+
+
 onMounted(()=>{
-    textarea_height.addEventListener('input',auto_textarea_height);
+    auto_text_h();
+    input_box_1.value?.addEventListener('input',()=>{
+        auto_text_h();
+    });
 })
-onUnmounted(()=>{
-    textarea_height.removeEventListener('input',auto_textarea_height);
-})
+
 </script>
 <style  scoped>
 .comment_section{
@@ -107,6 +138,8 @@ onUnmounted(()=>{
     resize: none;
     background:transparent;
     font-size: 18px;
+    line-height: 1.5;
+    overflow-y: hidden;
 }
 .user_input_btn{
     display: flex;
