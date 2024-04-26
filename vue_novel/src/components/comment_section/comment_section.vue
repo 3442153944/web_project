@@ -16,6 +16,7 @@
     </div>
 </template>
 <script lang="ts">
+// eslint-disable-next-line no-unused-vars
 import { ref,onMounted,onUnmounted } from 'vue';
 import comment_box from './comment_box/comment_box.vue'
 export default {
@@ -51,7 +52,8 @@ function auto_text_h(){
         auto_height.value='auto';
         min_height.value=line_height*Math.ceil(text_len/max_line)-18.5;
        }
-      
+       else if(text_len<=max_line)
+      min_height.value=40;
     }
 }
 function get_fontwidth(text){
@@ -74,6 +76,9 @@ function get_fontwidth(text){
 onMounted(()=>{
     auto_text_h();
     input_box_1.value?.addEventListener('input',()=>{
+        auto_text_h();
+    });
+    window.addEventListener('resize',()=>{
         auto_text_h();
     });
 })
@@ -182,7 +187,7 @@ onMounted(()=>{
 }
 .sub_comment_box{
     display: flex;
-    margin-left: 20px;
+    margin-left: 50px;
     height: auto;
 }
 </style>
