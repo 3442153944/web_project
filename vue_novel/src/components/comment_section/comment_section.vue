@@ -141,6 +141,13 @@ onMounted(()=>{
     line-height: 1.5;
     overflow-y: hidden;
 }
+#input_box_1::placeholder{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    margin-top:auto;
+    margin-bottom:auto;
+}
 .user_input_btn{
     display: flex;
     width:100px;
