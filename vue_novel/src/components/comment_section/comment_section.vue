@@ -9,12 +9,20 @@
                 <div class="user_input_btn">发送</div>
             </div>
         </div>
+        <div class="root_comment_box"><comment_box :message="get_message"></comment_box>
+            <div class="sub_comment_box"><comment_box :message="get_message"></comment_box></div>
+        </div>
+        
     </div>
 </template>
 <script lang="ts">
-import { ref,onMounted,onUnmounted } from 'vue'
+import { ref,onMounted,onUnmounted } from 'vue';
+import comment_box from './comment_box/comment_box.vue'
 export default {
     name: 'comment_section',
+    components:{
+        comment_box
+    },
     data(){
         return {
            
@@ -28,11 +36,13 @@ let auto_height=ref('auto');
 let user_input=ref<HTMLTextAreaElement|null>(null);
 let input_box_1=ref<HTMLTextAreaElement|null>(null);
 let min_height=ref(50);
+let get_message=ref('');
 function auto_text_h(){
     if(user_input.value){
         var width=user_input.value.offsetWidth;
         var heigth=user_input.value.offsetHeight;
         var content_text=input_box_1.value?.value;
+        get_message.value=content_text;
         var line_height=18*1.5;
         let text_len=content_text?.length;
         let font_width=get_fontwidth(content_text);
@@ -162,5 +172,17 @@ onMounted(()=>{
 .user_input_btn:hover{
     cursor: pointer;
     background-color: rgba(0,150,250,0.8);
+}
+.root_comment_box{
+    display: flex;
+    margin-top: 10px;
+    width:90%;
+    flex-direction: column;
+    height: auto;
+}
+.sub_comment_box{
+    display: flex;
+    margin-left: 20px;
+    height: auto;
 }
 </style>
