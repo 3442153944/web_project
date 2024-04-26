@@ -5,12 +5,15 @@
         <div class="section_content">
             <div class="user_avatar"><img :src="user_avatar_img"></div>
             <div class="user_input_box">
-                <div class="user_input" ref="user_input"><textarea placeholder="请友善的评论哦" ref="input_box_1" id="input_box_1" :style="{height:auto_height+'px','min-height':min_height+'px'}"></textarea></div>
-                <div class="user_input_btn">发送</div>
+                <div class="user_input" ref="user_input"><textarea placeholder="请友善的评论哦"
+                    v-model="message"
+                     ref="input_box_1" id="input_box_1" :style="{height:auto_height+'px','min-height':min_height+'px'}"></textarea></div>
+                <div class="user_input_btn" @click="send_msg">发送</div>
             </div>
         </div>
-        <div class="root_comment_box"><comment_box :message="get_message"></comment_box>
-            <div class="sub_comment_box"><comment_box :message="get_message"></comment_box></div>
+        <div class="root_comment_box" v-for="(main_item,main_index) in main_msgarr" :key="main_index"><comment_box :message="get_message" :main_msgarr="main_item"></comment_box>
+            <div class="sub_comment_box"><comment_box :message="get_message" :main_msgarr="sub_message" @update:messages="update_msg"></comment_box></div>
+           
         </div>
         
     </div>
@@ -19,10 +22,11 @@
 // eslint-disable-next-line no-unused-vars
 import { ref,onMounted,onUnmounted } from 'vue';
 import comment_box from './comment_box/comment_box.vue'
+
 export default {
     name: 'comment_section',
     components:{
-        comment_box
+        comment_box,
     },
     data(){
         return {
@@ -32,6 +36,7 @@ export default {
 }
 </script>
 <script setup lang="ts">
+//自动拓宽逻辑
 let user_avatar_img=ref('../../../image/87328997_p0.jpg');
 let auto_height=ref('auto');
 let user_input=ref<HTMLTextAreaElement|null>(null);
@@ -83,6 +88,21 @@ onMounted(()=>{
     });
 })
 
+//评论发送逻辑
+let main_msgarr=ref(['消息1']);
+let sub_msgarr=ref(['消息2']);
+let message=ref('');
+//主评论发送逻辑
+function send_msg(){
+    main_msgarr.value.push(get_message.value);
+    message.value='';
+    console.log(main_msgarr.value);
+}
+//子评论发送逻辑
+let sub_message=ref('');
+function update_msg(msg_text){
+    sub_message.value=msg_text;
+}
 </script>
 <style  scoped>
 .comment_section{

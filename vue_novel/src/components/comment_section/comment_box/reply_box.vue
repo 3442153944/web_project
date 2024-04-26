@@ -3,16 +3,19 @@
     <div class="user_avatar">
         <img :src="avatar_src">
     </div>
-    <div class="input" ref="input" :style="{height:input_height+'px'}"><textarea placeholder="请注意友善哦" ref="textarea"></textarea></div>
-    <div class="send_button"><span>发送</span></div>
+    <div class="input" ref="input" :style="{height:input_height+'px'}"><textarea placeholder="请注意友善哦" v-model="message" ref="textarea"></textarea></div>
+    <div class="send_button" @click="send_message"><span>发送</span></div>
   </div>
 </template>
 
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import { emit } from 'process';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,defineEmits} from 'vue';
+import comment_box from './comment_box.vue';
 export default {
   name: 'reply_box',
+  
 }
 </script>
 
@@ -21,6 +24,7 @@ let avatar_src=ref('../../../../image/104705167_p0.jpg');
 let input=ref<HTMLTextAreaElement|null>(null);
 let textarea=ref<HTMLTextAreaElement|null>(null);
 let input_height=ref(30);
+let message=ref('');
 function auto_height(){
     let content=textarea.value.value;
     let main_width=input.value.clientWidth;
@@ -54,6 +58,17 @@ onMounted(()=>{
     textarea.value.addEventListener('input',auto_height);
     window.addEventListener('resize',auto_height);
 })
+let msg_arr=ref(['']);
+let emit_msg=defineEmits(['update:messages']);
+function send_message(){
+  
+    if(message.value.length>0)
+    {
+        msg_arr.value.push(message.value);
+        message.value='';
+        emit_msg('update:messages',msg_arr.value);
+    }
+}
 </script>
 
 <style scoped>

@@ -1,17 +1,17 @@
 <!-- eslint-disable no-undef -->
 <template>
-  <div class="comment_box">
+  <div class="comment_box" :style="sub_reply_style">
     <div class="user_avatar">
         <img :src="avatar_src">
     </div>
     <div class="cotent_box">
         <div class="username mt"><span>{{username}}</span></div>
-        <div class="content mt"><span>{{text}}</span></div>
+        <div class="content mt"><span v-for="(item,index) in main_msgarr" :key="index">{{item}}</span></div>
         <div class="time mt">
             <span>{{time}}</span>
-            <span class="reply" @click="reply_show=!reply_show">回复</span>
+            <span class="reply" @click="s_reply_show">{{repley_text}}</span>
         </div>
-        <reply_box class="mt" v-show="reply_show"></reply_box>
+        <reply_box class="mt" v-show="reply_show" @update:messages="update_msg"></reply_box>
     </div>
     
   </div>
@@ -19,10 +19,10 @@
 
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted, type ,DefineProps,defineEmits } from 'vue';
 import reply_box from './reply_box.vue'
 export default {
-    props1:['message'],
+    props:['message','main_msgarr','sub_msgarr'],
     components:{reply_box},
   name: 'comment_box',
 }
@@ -30,15 +30,37 @@ export default {
 
 <script setup lang="ts">
 // eslint-disable-next-line no-unused-vars, no-undef
-const props=defineProps(['message']);
-const text=ref(props.message);
-watch(()=>props.message ,(newvalue)=>{text.value=newvalue})
+/*const props1=defineProps(['message']);
+const text=ref(props1.message);
+watch(()=>props1.message ,(newvalue)=>{text.value=newvalue})*/
 
 let avatar_src=ref('../../../../image/104705167_p0.jpg');
 let username=ref('用户名');
 let time=ref('2024年4月26日');
-
+let repley_text=ref('回复');
 let reply_show=ref(false);
+let messages=ref([]);
+let is_sub=ref(0);
+let sub_reply_style=ref({});
+let emit_msg1=defineEmits(['update:messages']);
+function update_msg(msg_text){
+    messages.value=msg_text;
+    console.log(messages.value);
+    is_sub.value=1;
+    emit_msg1('update:messages',messages.value);
+}
+function s_reply_show(){
+    if(reply_show.value==false)
+    {
+        reply_show.value=true;
+        repley_text.value='收起';
+    }
+    else{
+        reply_show.value=false;
+        repley_text.value='回复';
+    }
+}
+
 
 </script>
 
