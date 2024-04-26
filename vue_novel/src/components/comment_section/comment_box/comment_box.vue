@@ -9,9 +9,9 @@
         <div class="content mt"><span>{{text}}</span></div>
         <div class="time mt">
             <span>{{time}}</span>
-            <span class="reply">回复</span>
+            <span class="reply" @click="reply_show=!reply_show">回复</span>
         </div>
-        <reply_box class="mt"></reply_box>
+        <reply_box class="mt" v-show="reply_show"></reply_box>
     </div>
     
   </div>
@@ -37,6 +37,9 @@ watch(()=>props.message ,(newvalue)=>{text.value=newvalue})
 let avatar_src=ref('../../../../image/104705167_p0.jpg');
 let username=ref('用户名');
 let time=ref('2024年4月26日');
+
+let reply_show=ref(false);
+
 </script>
 
 <style scoped>
