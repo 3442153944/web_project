@@ -20,6 +20,7 @@ export default {
 </script>
 
 <script setup lang="ts">
+import {defineComponent} from 'vue';
 let avatar_src=ref('../../../../image/104705167_p0.jpg');
 let input=ref<HTMLTextAreaElement|null>(null);
 let textarea=ref<HTMLTextAreaElement|null>(null);
@@ -58,15 +59,16 @@ onMounted(()=>{
     textarea.value.addEventListener('input',auto_height);
     window.addEventListener('resize',auto_height);
 })
-let msg_arr=ref(['']);
-let emit_msg=defineEmits(['update:messages']);
+let msg_arr=ref();
+let emit_msg=defineEmits(['messages']);
 function send_message(){
   
     if(message.value.length>0)
     {
-        msg_arr.value.push(message.value);
+        msg_arr.value=(message.value);
         message.value='';
-        emit_msg('update:messages',msg_arr.value);
+        console.log('sub2',msg_arr.value);
+        emit_msg('messages',msg_arr.value);
     }
 }
 </script>

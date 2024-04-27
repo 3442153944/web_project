@@ -12,7 +12,8 @@
             </div>
         </div>
         <div class="root_comment_box" v-for="(main_item,main_index) in main_msgarr" :key="main_index"><comment_box :message="get_message" :main_msgarr="main_item"></comment_box>
-            <div class="sub_comment_box"><comment_box :message="get_message" :main_msgarr="sub_message" @update:messages="update_msg"></comment_box></div>
+            <div class="sub_comment_box" @click="update_msg"><comment_box :message="get_message" :main_msgarr="item" @messages="update_msg" 
+                v-for="(item,index) in sub_msgarr" :key="index"></comment_box></div>
            
         </div>
         
@@ -90,7 +91,7 @@ onMounted(()=>{
 
 //评论发送逻辑
 let main_msgarr=ref(['消息1']);
-let sub_msgarr=ref(['消息2']);
+let sub_msgarr=ref(['消息2','消息3']);
 let message=ref('');
 //主评论发送逻辑
 function send_msg(){
@@ -99,10 +100,16 @@ function send_msg(){
     console.log(main_msgarr.value);
 }
 //子评论发送逻辑
-let sub_message=ref('');
+let sub_message=ref([]);
 function update_msg(msg_text){
-    sub_message.value=msg_text;
+    sub_msgarr.value.push(msg_text);
+    console.log('消息传入'+msg_text);
+    console.log('main'+sub_msgarr.value);
 }
+onMounted(()=>{
+    update_msg();
+    console.log('test');
+})
 </script>
 <style  scoped>
 .comment_section{
@@ -209,5 +216,6 @@ function update_msg(msg_text){
     display: flex;
     margin-left: 50px;
     height: auto;
+    flex-direction: column;
 }
 </style>
