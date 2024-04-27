@@ -11,7 +11,7 @@
             <span>{{time}}</span>
             <span class="reply" @click="s_reply_show">{{repley_text}}</span>
         </div>
-        <reply_box class="mt" v-show="reply_show" @messages="update_msg"></reply_box>
+        <reply_box class="mt" v-show="reply_show" @messages="update_msg" @click-message="update_msg_click"></reply_box>
     </div>
     
   </div>
@@ -42,12 +42,16 @@ let reply_show=ref(false);
 let messages=ref();
 let is_sub=ref(0);
 let sub_reply_style=ref({});
-let emit_msg1=defineEmits(['messages']);
+let emit_msg1=defineEmits(['messages','click_message']);
 function update_msg(msg_text){
     messages.value=msg_text;
     console.log('sub1'+messages.value)
     is_sub.value=1;
     emit_msg1('messages',messages.value);
+}
+function update_msg_click(click_message){
+    emit_msg1('click_message',click_message);
+    console.log('来自sub1传递sub2的点击消息');
 }
 function s_reply_show(){
     if(reply_show.value==false)

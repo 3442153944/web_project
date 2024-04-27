@@ -60,7 +60,8 @@ onMounted(()=>{
     window.addEventListener('resize',auto_height);
 })
 let msg_arr=ref();
-let emit_msg=defineEmits(['messages']);
+let emit_msg=defineEmits(['messages','click-message']);
+
 function send_message(){
   
     if(message.value.length>0)
@@ -69,6 +70,7 @@ function send_message(){
         message.value='';
         console.log('sub2',msg_arr.value);
         emit_msg('messages',msg_arr.value);
+        emit_msg('click-message','来自sub2的消息');
     }
 }
 </script>

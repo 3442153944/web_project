@@ -12,7 +12,7 @@
             </div>
         </div>
         <div class="root_comment_box" v-for="(main_item,main_index) in main_msgarr" :key="main_index"><comment_box :message="get_message" :main_msgarr="main_item"></comment_box>
-            <div class="sub_comment_box" @click="update_msg"><comment_box :message="get_message" :main_msgarr="item" @messages="update_msg" 
+            <div class="sub_comment_box" ><comment_box :message="get_message" :main_msgarr="item" @messages="update_msg" @click_message="update_msg"
                 v-for="(item,index) in sub_msgarr" :key="index"></comment_box></div>
            
         </div>
