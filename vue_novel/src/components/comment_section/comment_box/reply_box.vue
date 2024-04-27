@@ -70,7 +70,7 @@ function send_message(){
         message.value='';
         console.log('sub2',msg_arr.value);
         emit_msg('messages',msg_arr.value);
-        emit_msg('click-message','来自sub2的消息');
+        emit_msg('click-message');
     }
 }
 </script>
