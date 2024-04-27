@@ -121,6 +121,7 @@ function send_msg() {
     var msg_test=main_message.value.filter(msg => msg !== null && msg !== undefined);
     console.log(msg_test[0].main);
     console.log(msg_test[0].sub[0])
+   // update_msg('main',main_msgarr.value);
 }
 //子评论发送逻辑
 let sub_message = ref([]);
@@ -130,6 +131,17 @@ function update_msg(msg_text) {
     sub_msgarr.value.push(msg_text);
     console.log('消息传入' + msg_text);
     console.log('main' + sub_msgarr.value);
+    //console.log('这是要传递到哪儿的值',page);
+    /*
+    if(page=='main'){
+        set_data(main_msgarr.value.length,msg_text,sub_msgarr.value);
+    }
+    else if(page=='sub')
+    {
+        set_update_data(msg_text,sub_msgarr.value,main_msgarr.value.length,'sub',sub_msgarr.value.length-1);
+    }
+    console.log(main_message.value);*/
+    
 }
 onMounted(() => {
     update_msg();
