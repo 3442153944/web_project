@@ -11,12 +11,12 @@
                 <div class="user_input_btn" @click="send_msg">发送</div>
             </div>
         </div>
-        <div class="root_comment_box" v-for="(main_item, main_index) in main_msgarr" :key="main_index">
+        <div class="root_comment_box" v-for="(main_item, main_index) in main_temp" :key="main_index">
             <comment_box :message="get_message" :main_msgarr="main_item" @messages="update_msg"
-                @click_message="update_msg"></comment_box>
+                @click_message="update_msg" @click="test(main_index,main_index,'main')"></comment_box>
             <div class="sub_comment_box">
                 <comment_box :message="get_message" :main_msgarr="item" @messages="update_msg"
-                    @click_message="update_msg" v-for="(item, index) in sub_msgarr" :key="index"></comment_box>
+                    @click_message="update_msg" v-for="(item, index) in main_temp[main_index].sub" :key="index" @click="test(index,main_index,'sub')"></comment_box>
             </div>
 
         </div>
@@ -66,8 +66,8 @@ function auto_text_h() {
             min_height.value = 40;
     }
 }
-function get_fontwidth(text) {
-    var font_width;
+function get_fontwidth(text: string|any[]) {
+    var font_width: number;
     const span = document.createElement('span');
     span.style.fontFamily = 'Microsoft YaHei';
     span.style.fontSize = '18px';
@@ -80,9 +80,6 @@ function get_fontwidth(text) {
     document.body.removeChild(span);
     return font_width / text.length;
 }
-//计算方差
-
-
 onMounted(() => {
     auto_text_h();
     input_box_1.value?.addEventListener('input', () => {
@@ -94,19 +91,20 @@ onMounted(() => {
 })
 
 //评论发送逻辑
-let main_message = ref([{ 'index': '0', 'main': '消息1', 'sub': ['消息1', '消息2'] }, { 'index': '1', 'main': '消息2', 'sub': ['消息1', '消息2'] }]);
-
+let main_message = ref([{ 'index': '0', 'main': '消息1', 'sub': ['sub消息1', 'sub消息2'] }, { 'index': '1', 'main': '消息2', 'sub': ['sub2消息1', 'sub消息2'] }]);
+const main_temp=main_message.value;
+const temp_message=ref();
 let main_msgarr = ref(['消息1']);
 let sub_msgarr = ref(['消息2', '消息3']);
 let message = ref('');
 //操控主评论数据结构函数
-function set_data(index,content,sub_content){
+function set_data(index: number,content: any,sub_content: any){
     var temp=main_message.value
     index=temp.length;
     temp.push({'index':index,'main':content,'sub':sub_content});
     main_message.value=temp;
 }
-function set_update_data(content,sub_content,arr_list_index,dist_name,dist_arr_index){
+function set_update_data(content: string,sub_content: string,arr_list_index: string|number,dist_name: any,dist_arr_index: string|number){
        var temp=main_message.value;
        temp[arr_list_index].main=content;
        temp[arr_list_index].sub[dist_arr_index]=sub_content;
@@ -125,12 +123,13 @@ function send_msg() {
 }
 //子评论发送逻辑
 let sub_message = ref([]);
-function update_msg(msg_text) {
+function update_msg(msg_text: string) {
     //删除所有为空的数组
     sub_msgarr.value = sub_msgarr.value.filter(msg => msg !== null && msg !== undefined && msg !== '');
     sub_msgarr.value.push(msg_text);
     console.log('消息传入' + msg_text);
     console.log('main' + sub_msgarr.value);
+    
     //console.log('这是要传递到哪儿的值',page);
     /*
     if(page=='main'){
@@ -143,10 +142,30 @@ function update_msg(msg_text) {
     console.log(main_message.value);*/
     
 }
-onMounted(() => {
-    update_msg();
-    console.log('test');
-})
+function test(index:number,main_index:any,item: string){
+    console.log(index+' '+item);
+    console.log('main_index ' +main_index);
+    let temp=main_message.value;
+    if(item=='main')
+    {
+        temp_message.value=(temp[main_index].main);
+        console.log(temp[main_index].main);
+        console.log(temp_message.value+'test');
+        for (let value of temp)
+        {
+            console.log(value);
+        }
+    }
+    else if(item=='sub')
+    {
+        console.log(temp[main_index].sub[index]);
+        for (let value of temp[main_index].sub)
+        {
+            console.log(value);
+        }
+    }
+}
+
 </script>
 <style scoped>
 .comment_section {
@@ -267,4 +286,4 @@ onMounted(() => {
     height: auto;
     flex-direction: column;
 }
-</style>
+</style>: string | any[] | null | undefined: number: any: any: string: string: string | number: any: string | number: string: string: string(: any)
