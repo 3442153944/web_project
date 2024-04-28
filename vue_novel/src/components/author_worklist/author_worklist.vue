@@ -3,7 +3,7 @@
     <div class="author_info_box">
       <div class="author_avatar">
         <div class="author_avatar_img">
-          <img src="../../../image/87328997_p0.jpg">
+          <img :src="user_avatar">
         </div>
         <div class="author_name ml mr"><span>{{ username }}</span></div>
         <div class="follow_btn ml mr" @click="switch_follow" :style="{ 'background-color': follow_btn_color }">
@@ -43,6 +43,7 @@ let username = ref('用户名');
 let follow_btn_text = ref('关注');
 let follow_btn_color = ref('');
 let item_src = ref('../../../image/104705167_p0.jpg');
+let user_avatar=ref('../../../image/87328997_p0.jpg');
 function switch_follow() {
   if (follow_btn_text.value == '关注') {
     follow_btn_text.value = '已关注';
