@@ -13,10 +13,11 @@
         </div>
         <div class="root_comment_box" v-for="(main_item, main_index) in main_temp" :key="main_index">
             <comment_box :message="get_message" :main_msgarr="main_item" @messages="update_msg"
-                @click_message="update_msg" @click="test(main_index,main_index,'main')"></comment_box>
+                @click_message="update_msg" @click="test(main_index, main_index, 'main')"></comment_box>
             <div class="sub_comment_box">
                 <comment_box :message="get_message" :main_msgarr="item" @messages="update_msg"
-                    @click_message="update_msg" v-for="(item, index) in main_temp[main_index].sub" :key="index" @click="test(index,main_index,'sub')"></comment_box>
+                    @click_message="update_msg" v-for="(item, index) in main_temp[main_index].sub" :key="index"
+                    @click="test(index, main_index, 'sub')"></comment_box>
             </div>
 
         </div>
@@ -66,7 +67,7 @@ function auto_text_h() {
             min_height.value = 40;
     }
 }
-function get_fontwidth(text: string|any[]) {
+function get_fontwidth(text: string | any[]) {
     var font_width: number;
     const span = document.createElement('span');
     span.style.fontFamily = 'Microsoft YaHei';
@@ -92,23 +93,23 @@ onMounted(() => {
 
 //评论发送逻辑
 let main_message = ref([{ 'index': '0', 'main': '消息1', 'sub': ['sub消息1', 'sub消息2'] }, { 'index': '1', 'main': '消息2', 'sub': ['sub2消息1', 'sub消息2'] }]);
-const main_temp=main_message.value;
-const temp_message=ref();
+const main_temp = main_message.value;
+const temp_message = ref();
 let main_msgarr = ref(['消息1']);
 let sub_msgarr = ref(['消息2', '消息3']);
 let message = ref('');
 //操控主评论数据结构函数
-function set_data(index: number,content: any,sub_content: any){
-    var temp=main_message.value
-    index=temp.length;
-    temp.push({'index':index,'main':content,'sub':sub_content});
-    main_message.value=temp;
+function set_data(index: number, content: any, sub_content: any) {
+    var temp = main_message.value
+    index = temp.length;
+    temp.push({ 'index': index, 'main': content, 'sub': sub_content });
+    main_message.value = temp;
 }
-function set_update_data(content: string,sub_content: string,arr_list_index: string|number,dist_name: any,dist_arr_index: string|number){
-       var temp=main_message.value;
-       temp[arr_list_index].main=content;
-       temp[arr_list_index].sub[dist_arr_index]=sub_content;
-        main_message.value=temp;
+function set_update_data(content: string, sub_content: string, arr_list_index: string | number, dist_name: any, dist_arr_index: string | number) {
+    var temp = main_message.value;
+    temp[arr_list_index].main = content;
+    temp[arr_list_index].sub[dist_arr_index] = sub_content;
+    main_message.value = temp;
 }
 
 //主评论发送逻辑
@@ -116,10 +117,10 @@ function send_msg() {
     main_msgarr.value.push(get_message.value);
     message.value = '';
     console.log(main_msgarr.value);
-    var msg_test=main_message.value.filter(msg => msg !== null && msg !== undefined);
+    var msg_test = main_message.value.filter(msg => msg !== null && msg !== undefined);
     console.log(msg_test[0].main);
     console.log(msg_test[0].sub[0])
-   // update_msg('main',main_msgarr.value);
+    // update_msg('main',main_msgarr.value);
 }
 //子评论发送逻辑
 let sub_message = ref([]);
@@ -129,7 +130,7 @@ function update_msg(msg_text: string) {
     sub_msgarr.value.push(msg_text);
     console.log('消息传入' + msg_text);
     console.log('main' + sub_msgarr.value);
-    
+
     //console.log('这是要传递到哪儿的值',page);
     /*
     if(page=='main'){
@@ -140,43 +141,41 @@ function update_msg(msg_text: string) {
         set_update_data(msg_text,sub_msgarr.value,main_msgarr.value.length,'sub',sub_msgarr.value.length-1);
     }
     console.log(main_message.value);*/
-    
+
 }
-function test(index:number,main_index:any,item: string){
-    console.log(index+' '+item);
-    console.log('main_index ' +main_index);
-    let temp=main_message.value;
-    if(item=='main')
-    {
-        temp_message.value=(temp[main_index].main);
+function test(index: number, main_index: any, item: string) {
+    console.log(index + ' ' + item);
+    console.log('main_index ' + main_index);
+    let temp = main_message.value;
+    if (item == 'main') {
+        temp_message.value = (temp[main_index].main);
         console.log(temp[main_index].main);
-        console.log(temp_message.value+'test');
-        for (let value of temp)
-        {
+        console.log(temp_message.value + 'test');
+        for (let value of temp) {
             console.log(value);
         }
     }
-    else if(item=='sub')
-    {
+    else if (item == 'sub') {
         console.log(temp[main_index].sub[index]);
-        for (let value of temp[main_index].sub)
-        {
+        for (let value of temp[main_index].sub) {
             console.log(value);
         }
     }
 }
-onMounted(()=>{
-    fetch('http://127.0.0.1:11451/listen',{
-        method:'post',
-        headers:{
-            'Content-Type':'application/json'
+onMounted(() => {
+    fetch('/api/listen', { // 使用代理的路径
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
         },
-        body:JSON.stringify({key:'test'})
+        body: JSON.stringify({ key: 'test' }),
     })
-    .then(response => response.json())  
-    .then(data => console.log(data))
-    .catch(error => console.log(error))
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error(error))
 })
+
+
 
 </script>
 <style scoped>
@@ -298,4 +297,5 @@ onMounted(()=>{
     height: auto;
     flex-direction: column;
 }
-</style>: string | any[] | null | undefined: number: any: any: string: string: string | number: any: string | number: string: string: string(: any)
+</style>: string | any[] | null | undefined: number: any: any: string: string: string | number: any: string | number:
+string: string: string(: any)

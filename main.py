@@ -10,8 +10,6 @@ from model.sub_page import *
 from model.listen import *
 
 # WebSocket 处理器
-
-#允许跨域
 class CORSMixin(object):
     def set_default_headers(self):
         self.set_header("Access-Control-Allow-Origin", "*")
@@ -205,14 +203,14 @@ def make_app():
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center",user_center),
-        (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork"}),
-        (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork/artwork_js"}),
-        (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork/artwork_css"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork/image"}),
-        (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/css"}),
-        (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/js"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/image"}),
-        (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/user_uploadavatar"}),
+        (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
+        (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_js"}),
+        (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_css"}),
+        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/image"}),
+        (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/css"}),
+        (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
+        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
+        (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
     ])
 
 
