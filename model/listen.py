@@ -3,8 +3,13 @@ import os
 import tornado.ioloop
 import tornado.web
 import json
-
+from model.connect_sqlsever import *
 from tornado.httpclient import AsyncHTTPClient
+
+db_ip = '127.0.0.1'
+db_name = 'admin'
+db_pw = '123456'
+db_username = 'admin'
 
 
 class CORSMixin(object):
@@ -44,7 +49,7 @@ class listen(tornado.web.RequestHandler, CORSMixin):
 
         self.set_header("Access-Control-Allow-Origin", "http://localhost:5173")
         self.set_header("Access-Control-Allow-Credentials", "true")
-        self.write(json.dumps({"message": "ok"}))
+        self.write(json.dumps({"message": "ok123"}))
 
     def get(self):
         # 尝试从查询参数中获取名为 'data' 的参数
@@ -79,3 +84,50 @@ class listen(tornado.web.RequestHandler, CORSMixin):
         self.set_status(200)
         print("options")
         self.finish()
+
+
+class getMessage(tornado.web.RequestHandler, CORSMixin):
+    message = ''
+
+    def post(self):
+        self.set_status(200)
+        body = self.request.body.decode('utf-8')
+        data = json.loads(body)
+        self.message = data['message']
+        self.write(json.dumps({"root_msg": self.message}))
+        print(self.message)
+
+
+class getUserInfo(tornado.web.RequestHandler, CORSMixin):
+    username = ''
+    userAvatar = ''
+    result = ''
+
+    def get_userinfo(self):
+        db_conn = connMysql
+        sql = "SELECT username FROM users"
+        result = db_conn.connect(self)
+        print('连接成功')
+        cursor = result.cursor()
+        cursor.execute(sql)
+        # 获取查询结果
+        rows = cursor.fetchall()
+        self.result = [row[0] for row in rows]  # 提取用户名
+
+    def post(self):
+        self.set_status(200)
+        body = self.request.body.decode('utf-8')
+        try:
+            if body.strip():  # 检查请求体是否为空
+                data = json.loads(body)
+            else:
+                data = 'none'  # 如果为空，则设置 data 为 None
+            self.get_userinfo()
+            if self.result:
+                self.write(json.dumps({"username": self.result}))
+                print(self.result)
+            else:
+                self.write(json.dumps({"error": "No user found"}))
+        except Exception as e:
+            self.write(json.dumps({"error": "Invalid request", "details": str(e)}))
+            print("Invalid request:", str(e))

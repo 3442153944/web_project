@@ -5,9 +5,9 @@ class connMysql:
     def __init__(self):
         print("数据库连接初始化")
 
-    def connect(self, db_ipaddress, db_name, username, password):
+    def connect(self):
         try:
-            conn = pymysql.connect(host=db_ipaddress, user=username, passwd=password, database=db_name)
+            conn = pymysql.connect(host='127.0.0.1', user='admin', passwd='123456', database='admin')
             print("数据库连接成功")
             return conn
         except pymysql.Error as e:

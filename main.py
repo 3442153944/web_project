@@ -197,6 +197,8 @@ def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
         (r"/listen",listen),
+        (r"/getMessage",getMessage),
+        (r"/get_userinfo",getUserInfo),
         (r"/websocket", WSHandler),
         (r"/login_page", LoginHandler),
         (r"/sub_page", subpageHandler),

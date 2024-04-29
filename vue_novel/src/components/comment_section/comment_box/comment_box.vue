@@ -43,6 +43,22 @@ let messages=ref();
 let is_sub=ref(0);
 let sub_reply_style=ref({});
 let emit_msg1=defineEmits(['messages','click_message']);
+//获取用户名
+function get_username(){
+    fetch('/api/get_userinfo',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        username.value=data.username.toString();
+       
+    })
+}
+onMounted(()=>{get_username();})
+
 function update_msg(msg_text){
     messages.value=msg_text;
     console.log('sub1'+messages.value)

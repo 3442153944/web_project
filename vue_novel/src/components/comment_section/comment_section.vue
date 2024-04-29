@@ -92,7 +92,8 @@ onMounted(() => {
 })
 
 //评论发送逻辑
-let main_message = ref([{ 'index': '0', 'main': '消息1', 'sub': ['sub消息1', 'sub消息2'] }, { 'index': '1', 'main': '消息2', 'sub': ['sub2消息1', 'sub消息2'] }]);
+let root_msg = ref('');
+let main_message = ref([{ 'index': '0', 'main': root_msg, 'sub': ['sub消息1', 'sub消息2'] }, { 'index': '1', 'main': '消息2', 'sub': ['sub2消息1', 'sub消息2'] }]);
 const main_temp = main_message.value;
 const temp_message = ref();
 let main_msgarr = ref(['消息1']);
@@ -130,18 +131,22 @@ function update_msg(msg_text: string) {
     sub_msgarr.value.push(msg_text);
     console.log('消息传入' + msg_text);
     console.log('main' + sub_msgarr.value);
-
-    //console.log('这是要传递到哪儿的值',page);
-    /*
-    if(page=='main'){
-        set_data(main_msgarr.value.length,msg_text,sub_msgarr.value);
-    }
-    else if(page=='sub')
-    {
-        set_update_data(msg_text,sub_msgarr.value,main_msgarr.value.length,'sub',sub_msgarr.value.length-1);
-    }
-    console.log(main_message.value);*/
-
+    fetch('/api/getMessage',
+        {
+            method:'post',
+            headers:{
+                'Content-Type':'application/json',
+            },
+            body:JSON.stringify({'key':'消息完成完成连接','message':sub_msgarr.value}),
+        }  
+    )
+    .then(res=>res.json())
+    .then(data=>{
+        root_msg.value=data.message;
+    })
+    .catch(error=>{
+        console.log(error);
+    })
 }
 function test(index: number, main_index: any, item: string) {
     console.log(index + ' ' + item);
@@ -170,12 +175,14 @@ onMounted(() => {
         },
         body: JSON.stringify({ key: 'test' }),
     })
-        .then(response => response.json())
+        .then(async response=>{
+            const data = await response.json();
+            root_msg.value = data.message;
+            console.log(data);
+        })
         .then(data => console.log(data))
         .catch(error => console.error(error))
 })
-
-
 
 </script>
 <style scoped>
