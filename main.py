@@ -7,8 +7,22 @@ from model.connect_sqlsever import connMysql
 from model.login import do_select_query
 import json
 from model.sub_page import *
+from model.listen import *
 
 # WebSocket 处理器
+
+#允许跨域
+class CORSMixin(object):
+    def set_default_headers(self):
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
+        self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+
+    def options(self):
+        # 对于 OPTIONS 请求，返回 204 No Content 响应
+        self.set_status(204)
+        self.finish()
+
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         print("WebSocket 连接已建立")
@@ -184,26 +198,27 @@ class resetpasswordHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
+        (r"/listen",listen),
         (r"/websocket", WSHandler),
         (r"/login_page", LoginHandler),
         (r"/sub_page", subpageHandler),
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center",user_center),
-        (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
-        (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_js"}),
-        (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_css"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/image"}),
-        (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/css"}),
-        (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
-        (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
+        (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork"}),
+        (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork/artwork_js"}),
+        (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork/artwork_css"}),
+        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/artwork/image"}),
+        (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/css"}),
+        (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/js"}),
+        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/image"}),
+        (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "E:/web_preject/user_uploadavatar"}),
     ])
 
 
 if __name__ == "__main__":
 
     app = make_app()
-    app.listen(8888)
-    print("服务器启动成功，请访问 http://localhost:8888")
+    app.listen(11451)
+    print("服务器启动成功，请访问 http://localhost:11451")
     tornado.ioloop.IOLoop.current().start()

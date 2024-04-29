@@ -165,6 +165,18 @@ function test(index:number,main_index:any,item: string){
         }
     }
 }
+onMounted(()=>{
+    fetch('http://127.0.0.1:11451/listen',{
+        method:'post',
+        headers:{
+            'Content-Type':'application/json'
+        },
+        body:JSON.stringify({key:'test'})
+    })
+    .then(response => response.json())  
+    .then(data => console.log(data))
+    .catch(error => console.log(error))
+})
 
 </script>
 <style scoped>
