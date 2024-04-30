@@ -5,37 +5,12 @@ import tornado.web
 import json
 from model.connect_sqlsever import *
 from tornado.httpclient import AsyncHTTPClient
+from model.CORSMixin import *
 
 db_ip = '127.0.0.1'
 db_name = 'admin'
 db_pw = '123456'
 db_username = 'admin'
-
-
-class CORSMixin(object):
-    def set_default_headers(self):
-        origin_url = self.request.headers.get('Origin')
-        self.set_header("Access-Control-Allow-Origin", 'http://localhost/')
-        self.set_header("Access-Control-Allow-Credentials", "true")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with,token")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header("Access-Control-Max-Age", 1000)
-        self.set_header("Content-type", "application/json")
-
-
-# 请求转发代理服务器
-class proxy(tornado.web.RequestHandler, CORSMixin):
-    async def post(self):
-        target_url = "http://127.0.0.1:11451"  # Tornado 服务器的地址
-        body = self.request.body
-        try:
-            # 发送 POST 请求到目标服务器
-            http_client = AsyncHTTPClient()
-            response = await http_client.fetch(target_url, method="POST", body=body)
-            self.write(response.body)
-        except Exception as e:
-            self.set_status(500)
-            self.write(f"Error: {e}")
 
 
 class listen(tornado.web.RequestHandler, CORSMixin):
