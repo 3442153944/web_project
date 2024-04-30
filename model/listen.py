@@ -132,6 +132,7 @@ class getUserInfo(tornado.web.RequestHandler, CORSMixin):
             self.write(json.dumps({"error": "Invalid request", "details": str(e)}))
             print("Invalid request:", str(e))
 
-class vue_page_login(tornado.web.RequestHandler,CORSMixin):
+
+class vue_page_login(tornado.web.RequestHandler, CORSMixin):
     def post(self):
         self.set_status(200)
