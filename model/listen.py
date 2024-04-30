@@ -15,7 +15,7 @@ db_username = 'admin'
 class CORSMixin(object):
     def set_default_headers(self):
         origin_url = self.request.headers.get('Origin')
-        self.set_header("Access-Control-Allow-Origin", 'http://localhost:5173/')
+        self.set_header("Access-Control-Allow-Origin", 'http://localhost/')
         self.set_header("Access-Control-Allow-Credentials", "true")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with,token")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
@@ -47,7 +47,7 @@ class listen(tornado.web.RequestHandler, CORSMixin):
         print('post')
         print(data)
 
-        self.set_header("Access-Control-Allow-Origin", "http://localhost:5173")
+        self.set_header("Access-Control-Allow-Origin", "http://localhost")
         self.set_header("Access-Control-Allow-Credentials", "true")
         self.write(json.dumps({"message": "ok123"}))
 
@@ -74,7 +74,7 @@ class listen(tornado.web.RequestHandler, CORSMixin):
         self.write("ok")
 
     def options(self):
-        self.set_header("Access-Control-Allow-Origin", 'http://localhost:5173')
+        self.set_header("Access-Control-Allow-Origin", 'http://localhost')
         self.set_header("Access-Control-Allow-Credentials", "true")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with,token")
         self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')

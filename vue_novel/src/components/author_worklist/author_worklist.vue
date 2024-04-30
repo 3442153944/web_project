@@ -64,6 +64,21 @@ let tags=ref({
   '4':'裤袜',
   '5':'白裤袜',
 });
+
+function get_username(){
+    fetch('/api/get_userinfo',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        username.value=data.username.toString();
+       
+    })
+}
+onMounted(()=>{get_username();})
 </script>
 
 <style scoped>

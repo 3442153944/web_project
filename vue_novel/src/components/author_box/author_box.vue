@@ -86,6 +86,21 @@ function follow_btn(){
         follow_backcolor.value='background-color:rgba(188,188,188,1);';
     }
 }
+
+function get_username(){
+    fetch('/api/get_userinfo',{
+        method:'POST',
+        headers:{
+            'Content-Type':'application/json'
+        },
+    })
+    .then(res=>res.json())
+    .then(data=>{
+        username.value=data.username.toString();
+       
+    })
+}
+onMounted(()=>{get_username();})
 </script>
 
 <style scoped>
