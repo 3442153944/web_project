@@ -211,7 +211,7 @@ def make_app():
         (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
         (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_js"}),
         (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_css"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/image"}),
+        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
         (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/css"}),
         (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
         (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),

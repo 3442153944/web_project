@@ -107,7 +107,6 @@ let submission_work_box_show = ref(false)
 let header_box_show=ref(false)
 
 function useravatar_show_btn(){
-    console.log('test')
     var mainpage=document.querySelector('.useravatar');
     document.addEventListener('click', function (event) {
         if (!mainpage.contains(event.target)) {

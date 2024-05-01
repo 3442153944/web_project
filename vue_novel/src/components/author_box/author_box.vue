@@ -45,7 +45,7 @@ export default {
 </script>
 
 <script setup>
-let avatar_src='../../../image/87328997_p0.jpg';
+let avatar_src=ref('../../../image/87328997_p0.jpg');
 let username=ref('用户名');
 let follow_text=ref('已关注');
 let follow_backcolor=ref('background-color:rgba(188,188,188,1);');
@@ -86,8 +86,12 @@ function follow_btn(){
         follow_backcolor.value='background-color:rgba(188,188,188,1);';
     }
 }
-
-function get_username(){
+function set_userinfo(){
+username.value=getCookie('username');
+avatar_src.value="http://127.0.0.1:11451/image/"+getCookie('user_avatar');
+}
+onMounted(()=>{set_userinfo();})
+/*function get_username(){
     fetch('/api/get_userinfo',{
         method:'POST',
         headers:{
@@ -100,7 +104,20 @@ function get_username(){
        
     })
 }
-onMounted(()=>{get_username();})
+onMounted(()=>{get_username();})*/
+
+function getCookie(name) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // 判断是否为目标 cookie
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1); // 返回 cookie 的值（去掉名称部分）
+        }
+    }
+    return ''; // 如果找不到目标 cookie，则返回空字符串
+}
 </script>
 
 <style scoped>

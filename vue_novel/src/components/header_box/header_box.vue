@@ -32,7 +32,7 @@
     <div class="title mt"><span>Language</span></div>
     <div class="setting mt hv"><span>设置</span></div>
     <div class="send_backword mt hv"><span>发送反馈</span></div>
-    <div class="logout mt hv"><span>退出登录</span></div>
+    <div class="logout mt hv" @click="logout"><span>退出登录</span></div>
   </div>
 </template>
 
@@ -45,17 +45,59 @@ export default {
 </script>
 
 <script setup>
-let header_box_background_src=ref("../../../image/97165605_p0.jpg")
+let header_box_background_src=ref("http://localhost:11451/image/97165605_p0.jpg")
 let header_box_avatar_src=ref("../../../image/87328997_p0.jpg")
 let username=ref("孙源玲")
 let userid=ref('@'+"userid")
 let follow_num=ref(100)
 let fans_num=ref(100)
 
+function setUserinfo(){
+    username.value=getCookie("username")
+    userid.value='@'+getCookie("userid")
+    console.log(getCookie('user_following'))
+    follow_num.value=getCookie('user_following')
+    fans_num.value=getCookie('user_fans')
+    header_box_avatar_src.value="http://127.0.0.1:11451/image/"+getCookie("user_avatar")
+    header_box_background_src.value="http://127.0.0.1:11451/image/"+getCookie("user_back_img")
+}
+function getCookie(name) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // 判断是否为目标 cookie
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1); // 返回 cookie 的值（去掉名称部分）
+        }
+    }
+    return ''; // 如果找不到目标 cookie，则返回空字符串
+}
+onMounted(()=>{
+    setUserinfo();
+})
+
 function jump_usercenter(){
     console.log("用户中心跳转");
     //window.location.href="http://localhost:8888/usercenter";
 }
+//退出登录
+function logout(){
+    console.log("退出登录");
+    clearAllCookies();
+    window.location.href="http://localhost:3000";
+
+}
+//清空cookies
+function clearAllCookies() {
+    const cookies = document.cookie.split(';');
+
+    cookies.forEach(cookie => {
+        const [name, _] = cookie.split('=');
+        document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    });
+}
+
 </script>
 
 <style scoped>
@@ -71,9 +113,10 @@ function jump_usercenter(){
 .pr{padding-right:5px;}
 .hv:hover{
     cursor: pointer;
-    background-color:rgba(211, 211, 211, 0.5);
+    background-color:rgba(236, 236, 236, 1);
     transition:0.2s;
     border-radius: 5px;
+    opacity: 0.8;
 }
 
 .header_box{

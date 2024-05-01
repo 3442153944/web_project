@@ -77,18 +77,30 @@ function setUserCookie(){
         let username=temp[1]
         let userid=temp[2]
         let user_avatar=temp[3]
-        let user_sex=temp[4]
-        let user_email=temp[5]
-        let user_phone=temp[6]
-        let user_following=temp[7]
-        let user_fans=temp[8]
+        let user_back_img=temp[4]
+        let user_sex=temp[5]
+        let user_email=temp[6]
+        let user_phone=temp[7]
+        let user_following=temp[8]
+        let user_fans=temp[9]
        setCookie('username',username,7);
        setCookie('userid',userid,7);
        setCookie('user_avatar',user_avatar,7);
+       setCookie('user_back_img',user_back_img,7);
        setCookie('user_sex',user_sex,7);
        setCookie('user_email',user_email,7);
        setCookie('user_phone',user_phone,7);
+       //根据逗号分隔字符串并拼接数组
+       let temp1=[];
+       if (user_following) {
+           temp1=user_following.split(',');
+           user_following=temp1.length;
+       }
        setCookie('user_following',user_following,7);
+       if (user_fans) {
+           temp1=user_fans.split(',');
+           user_fans=temp1.length;
+       }
        setCookie('user_fans',user_fans,7);
     } else {
         console.error("用户信息数组为空或长度不足");
