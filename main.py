@@ -204,6 +204,7 @@ def make_app():
         (r"/websocket", WSHandler),
         (r"/login_page", LoginHandler),
         (r"/login", vue_page_login),
+        (r"/is_follow", is_follow),
         (r"/sub_page", subpageHandler),
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),

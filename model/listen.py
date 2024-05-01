@@ -141,3 +141,36 @@ class vue_page_login(tornado.web.RequestHandler, CORSMixin):
             print(e)
             # 返回错误消息给客户端
             self.write(json.dumps({"message": "failure", "error": str(e)}))
+
+class is_follow(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+
+    def post(self):
+        self.set_status(200)
+        body = self.request.body.decode('utf-8')
+        data = json.loads(body)
+        username = data['username']
+        userid = data['userid']
+        connection = self.conn.connect()
+        cursor = connection.cursor()  # 获取游标
+        sql = "SELECT user_following FROM users WHERE userid=%s AND username=%s"
+        cursor.execute(sql, (userid, username))
+        rows = cursor.fetchall()
+
+        if rows:
+            following = rows[0][0].split(',')  # 将字符串按逗号分隔为数组
+            print(f"Following users: {following}")
+            # 检查是否有与 username 相同的关注用户
+            is_following = False
+            for user in following:
+                if user == username:
+                    is_following = True
+                    break
+            print(f"Is following: {is_following}")
+            self.write(json.dumps({"is_follow": "true"}))
+        else:
+            print("No following users found for the given user.")
+            self.write(json.dumps({"is_follow": "false"}))
+
+
+

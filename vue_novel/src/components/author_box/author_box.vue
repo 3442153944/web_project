@@ -91,6 +91,35 @@ username.value=getCookie('username');
 avatar_src.value="http://127.0.0.1:11451/image/"+getCookie('user_avatar');
 }
 onMounted(()=>{set_userinfo();})
+
+//是否已经关注/是否在关注列表中
+async function is_follow(){
+  try{
+    const res=await fetch('/api/is_follow',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        username:getCookie('username'),
+        userid:getCookie('userid')
+      })
+    })
+    const data=await res.json()
+    console.log(data.is_follow);
+      if(data.is_follow=='True'){
+          follow_text.value='已关注';
+          follow_backcolor.value='background-color:rgba(188,188,188,1);';
+      }else{
+          follow_text.value='关注';
+          follow_backcolor.value='background-color:rgba(0,150,250,1);';
+      }
+  }
+  catch(err){
+    console.log(err);
+  }
+}
+onMounted(()=>{is_follow();})
 /*function get_username(){
     fetch('/api/get_userinfo',{
         method:'POST',
