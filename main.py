@@ -9,6 +9,7 @@ import json
 from model.sub_page import *
 from model.listen import *
 
+
 # WebSocket 处理器
 class CORSMixin(object):
     def set_default_headers(self):
@@ -20,6 +21,7 @@ class CORSMixin(object):
         # 对于 OPTIONS 请求，返回 204 No Content 响应
         self.set_status(204)
         self.finish()
+
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -196,15 +198,16 @@ class resetpasswordHandler(tornado.web.RequestHandler):
 def make_app():
     return tornado.web.Application([
         (r"/", MainHandler),
-        (r"/listen",listen),
-        (r"/getMessage",getMessage),
-        (r"/get_userinfo",getUserInfo),
+        (r"/listen", listen),
+        (r"/getMessage", getMessage),
+        (r"/get_userinfo", getUserInfo),
         (r"/websocket", WSHandler),
         (r"/login_page", LoginHandler),
+        (r"/login", vue_page_login),
         (r"/sub_page", subpageHandler),
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
-        (r"/user_center",user_center),
+        (r"/user_center", user_center),
         (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
         (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_js"}),
         (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_css"}),
@@ -217,7 +220,6 @@ def make_app():
 
 
 if __name__ == "__main__":
-
     app = make_app()
     app.listen(11451)
     print("服务器启动成功，请访问 http://localhost:11451")

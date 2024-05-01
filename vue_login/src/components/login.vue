@@ -1,19 +1,21 @@
+<!-- eslint-disable no-useless-catch -->
 <template>
     <div class="back">
         
         <div class="login_page">
             <h1>登录</h1>
             <div class="username_input">
-                <input placeholder="用户名" type="text" v-model="username_in" ref="username"></input>
+                <input placeholder="用户名/用户ID/邮箱/手机号" type="text" v-model="username_in" ref="username">
             </div>
             <div class="user_password">
-                <input placeholder="密码" type="password" v-model="password_in" ref="password"></input>
+                <input placeholder="密码" type="password" v-model="password_in" ref="password">
             </div>
             <div class="login_btn" @click="login"><span>登录</span></div>
         </div>
     </div>
 </template>
 <script lang="ts">
+ // eslint-disable-next-line no-unused-vars
  import {ref,onMounted,onUnmounted} from 'vue';
 export default{
     name:'login',
@@ -23,6 +25,8 @@ export default{
   
 let username_in = ref('');  
 let password_in = ref('');  
+let get_message = ref('');
+let userinfo=ref([]);
   
 function login() {  
     if (username_in.value === '') {  
@@ -37,7 +41,13 @@ function login() {
     connServer()  
         .then(data => {  
             if (data.message === 'success') {  
-                window.location.href = '/';  
+                let cookies = document.cookie;
+               window.location.href='http://localhost:3001'+'?cookies='+encodeURIComponent(cookies); 
+                userinfo.value=data.userinfo;
+                setUserCookie();
+                let temp=getCookie('username');
+                console.log(temp);
+                return;
             } else {  
                 // 登录失败的处理逻辑  
                 alert('登录失败: ' + data.message);  
@@ -50,8 +60,57 @@ function login() {
         });  
 }  
   
+//拆分用户信息存储到cookies
+function setCookie(name:any,value:any,days:any){
+    let expires = '';  
+    if (days) {  
+        let date = new Date();  
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));  
+        expires = '; expires=' + date.toUTCString();  
+    }  
+    document.cookie = name + '=' + (value || '') + expires + '; path=/';  
+}
+function setUserCookie(){
+    let temp=userinfo.value;
+    console.log(userinfo.value);
+    if (temp && temp.length >= 9) { // 检查 temp 是否为空并且长度是否足够
+        let username=temp[1]
+        let userid=temp[2]
+        let user_avatar=temp[3]
+        let user_sex=temp[4]
+        let user_email=temp[5]
+        let user_phone=temp[6]
+        let user_following=temp[7]
+        let user_fans=temp[8]
+       setCookie('username',username,7);
+       setCookie('userid',userid,7);
+       setCookie('user_avatar',user_avatar,7);
+       setCookie('user_sex',user_sex,7);
+       setCookie('user_email',user_email,7);
+       setCookie('user_phone',user_phone,7);
+       setCookie('user_following',user_following,7);
+       setCookie('user_fans',user_fans,7);
+    } else {
+        console.error("用户信息数组为空或长度不足");
+    }
+}
+
+//获取cookies
+function getCookie(name:any) {
+    const cookieString = document.cookie;
+    const cookies = cookieString.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        // 判断是否为目标 cookie
+        if (cookie.startsWith(name + '=')) {
+            return cookie.substring(name.length + 1); // 返回 cookie 的值（去掉名称部分）
+        }
+    }
+    return ''; // 如果找不到目标 cookie，则返回空字符串
+}
 // 连接服务器  
 async function connServer() {  
+    // eslint-disable-next-line no-useless-catch
     try {  
         const response = await fetch('/api/login', {  
             method: 'POST',  
@@ -62,18 +121,22 @@ async function connServer() {
                 username: username_in.value,  
                 password: password_in.value  
             })  
-        });  
+        });
   
         if (!response.ok) {  
             throw new Error('请求失败: ' + response.status);  
         }  
-  
-        return response.json();  
+
+        const data = await response.json(); // 将响应数据解析为 JSON 格式
+        get_message.value = data; // 存储响应数据
+
+        return data; // 返回解析后的数据
     } catch (error) {  
         // 这里可以抛出错误或返回某种失败状态  
         throw error;  
     }  
-}  
+} 
+
 </script>
 
 <style  scoped>

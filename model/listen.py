@@ -108,6 +108,36 @@ class getUserInfo(tornado.web.RequestHandler, CORSMixin):
             print("Invalid request:", str(e))
 
 
+
+
 class vue_page_login(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
     def post(self):
         self.set_status(200)
+        body = self.request.body.decode('utf-8')
+        data = json.loads(body)
+        print(data)
+        username = data["username"]
+        password = data["password"]
+        try:
+            result = self.conn.connect()
+            cursor = result.cursor()
+            # 使用参数化查询来防止 SQL 注入攻击
+            sql = "SELECT * FROM users WHERE username=%s OR userid=%s OR email=%s OR phone=%s AND password=%s"
+            cursor.execute(sql, (username, username, username, username, password))
+            rows = cursor.fetchall()
+            if rows:
+                # 提取第一行数据
+                row = rows[0]
+                # 将其转换为列表
+                userinfo = list(row)
+                # 将查询结果转换为JSON格式并返回
+                self.write(json.dumps({"message": "success", "userinfo": userinfo}))
+                print(userinfo[1])
+            else:
+                self.write(json.dumps({"message": "failure", "error": "Invalid username or password"}))
+        except Exception as e:
+            print(e)
+            # 返回错误消息给客户端
+            self.write(json.dumps({"message": "failure", "error": str(e)}))
