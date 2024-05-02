@@ -24,6 +24,7 @@
   <div class="recomm_box">
     <recomm v-for="index in 10" :key="index"></recomm>
   </div>
+  <work_title_list class="title_list_box"></work_title_list>
 </template>
 
 <script lang="ts">
@@ -38,10 +39,13 @@ import interactive_box from './interactive_box/interactive_box.vue';
 import recomm from './recomm/recomm.vue';
 import author_worklist from './author_worklist/author_worklist.vue';
 import comment_section from './comment_section/comment_section.vue';
+import work_title_list from './work_title_list/work_title_list.vue'
 
 export default {
   name: 'novel_content',
-  components: { novel_content_box, author_box, word_content, seriex_box, interactive_box, author_worklist,recomm,comment_section },
+  components: { novel_content_box, author_box, word_content, seriex_box, interactive_box, author_worklist,recomm,comment_section ,
+    work_title_list,
+  },
 }
 </script>
 
@@ -163,5 +167,14 @@ onMounted(() => {
   align-self: center;
   margin-left: auto;
   margin-right: auto;
+}
+.title_list_box{
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top:80px;
+  left:20px;
+  width:auto;
+  height: auto;
 }
 </style>

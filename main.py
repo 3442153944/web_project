@@ -8,6 +8,7 @@ from model.login import do_select_query
 import json
 from model.sub_page import *
 from model.listen import *
+from model.novel_work import *
 
 
 # WebSocket 处理器
@@ -205,6 +206,8 @@ def make_app():
         (r"/login_page", LoginHandler),
         (r"/login", vue_page_login),
         (r"/is_follow", is_follow),
+        (r"/get_novel_work", get_novel_work),
+        (r"/get_novel_content", get_novel_content),
         (r"/sub_page", subpageHandler),
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),

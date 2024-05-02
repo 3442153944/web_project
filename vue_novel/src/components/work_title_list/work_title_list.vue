@@ -5,7 +5,7 @@
         </div>
         <transition name="fade">
             <div class="title_list" v-show="show_list">
-                <div class="title_item" v-for="(item, index) in title_list" :key="index">
+                <div class="title_item" v-for="(item, index) in title_list" :key="index" @click="get_page_title(item)">
                     <span>{{ item }}</span>
                 </div>
             </div>
@@ -21,7 +21,7 @@ export default {
 </script>
 
 <script setup>
-let show_list = ref('true');
+let show_list = ref(false);
 let title_list = ref([
     '第一章',
     '第二章',
@@ -62,9 +62,47 @@ let title_list = ref([
     '第三十七章',
     '第三十八章',
 ]);
-
+let work_id = ref('0000000001');
 function show_list_btn() {
+    var main_page=document.querySelector('.title_list');
     show_list.value = !show_list.value;
+}
+document.addEventListener('click', function(event) {
+    var main_page = document.querySelector('.work_title_list');
+    var target = event.target;
+
+    // 检查点击位置是否在 main_page 及其子元素之外
+    if (!main_page.contains(target)) {
+        // 点击位置不在 main_page 及其子元素中，执行收起列表的函数
+        show_list.value = false;
+    }
+});
+
+//获取作品列表及其其他信息
+async function get_work_info(){
+    const res=await fetch('/api/get_novel_work',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            work_id: work_id.value
+        })
+    })
+    const data=await res.json();
+    title_list.value=data.work_list;
+    console.log(data)
+    
+}
+onMounted(()=>{
+    get_work_info();
+});
+
+//获取页面标题，设置正文内容
+async function get_page_title(title_text)
+{
+    
+    console.log(title_text)
 }
 </script>
 
@@ -126,7 +164,8 @@ function show_list_btn() {
 .title_item {
     display: flex;
     width: 45%;
-    height: 30px;
+    height: 50px;
+    max-height: 50px;
     border: 1px solid red;
     border-bottom: 1px solid rgba(255, 255, 255, 1);
     background-color: rgb(233, 233, 233);
@@ -135,6 +174,7 @@ function show_list_btn() {
     text-align: center;
     margin-left: 10px;
     margin-top: 5px;
+    overflow: hidden;
 }
 
 .title_item:hover {
