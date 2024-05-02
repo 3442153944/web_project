@@ -93,5 +93,61 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
 
 
 class get_novel_content(tornado.web.RequestHandler, CORSMixin):
-    def get_content(self):
+    conn = connMysql()
+    work_name = ''
+    work_content = ''
+
+    def post(self):
         self.set_status(200)
+        self.set_header('Content-Type', 'application/json')
+        data = json.loads(self.request.body.decode('utf-8'))
+        try:
+            print(data)
+            print(data["work_name"])
+            title = data["work_title"]
+            print(title)
+            self.work_name = data["work_name"]
+            self.get_work_content(title)  # 调用获取工作内容的方法，并传递标题作为参数
+            print(self.work_content+'test')
+            self.write(json.dumps({"work_content": self.work_content}))
+        except Exception as e:
+            print(e)
+            print('发送正文内容失败')
+
+    def get_work_content(self, title):
+        work_file = 'H:/web_preject/novel_work/' + self.work_name + '.docx'
+        title_list = []
+        found_title = False  # 初始化found_title为False
+        try:
+            if title is None:  # 如果标题为空，则默认返回第一章的内容
+                title = "第一章"
+
+            doc = Document(work_file)
+            self.work_content = ""  # 清空正文内容
+            found_titles = 0
+            for para in doc.paragraphs:
+                temp_text = para.text
+
+                # 如果找到了指定的标题，则开始收集正文内容
+                if found_titles >= 2:
+                    break  # 如果标题数量大于等于2，则停止收集正文内容
+                if temp_text.startswith("第") and "章" in temp_text:
+                    if found_titles == 1:
+                        title_list.pop()  # 如果是第二个标题，则删除前一个标题
+                    title_list.append(para.text)  # 将找到的标题添加到标题列表中
+                    found_titles += 1
+                # 如果找到了指定的标题，则设置found_title为True
+                elif temp_text == title:
+                    found_titles += 1
+
+                # 如果已经找到了足够数量的标题，则开始收集正文内容
+                if found_titles >= 1:
+                    found_title = True
+
+                if found_title:
+                    self.work_content += para.text + "<br>"  # 将段落文本添加到工作内容中，并加上换行符
+                    # print(para.text+'test')
+
+
+        except Exception as e:
+            print(e)

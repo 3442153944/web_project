@@ -54,6 +54,40 @@ let like_num=ref('100');
 let love_num=ref('100');
 let look_num=ref('100');
 let update_time=ref('2024年4月21日20:55:27');
+
+function set_workinfo(){
+  try{
+    novel_cover_src.value="http://127.0.0.1:11451/image/"+get_cookie('work_cover');
+    author_say.value=get_cookie('author_say');
+    work_title.value=get_cookie('work_title');
+    age_classification.value="R"+get_cookie('age_tag');
+    console.log(get_cookie('work_tag'));
+    //逗号分隔数组
+
+    work_tag.value=(get_cookie('work_tag').split(","));
+    like_num.value=get_cookie('like_num');
+    love_num.value=get_cookie('collection_num');
+    look_num.value=get_cookie('view_num');
+    update_time.value=get_cookie('create_time');
+  }catch(e){
+    console.log(e);
+  }
+}
+onMounted(()=>{
+  set_workinfo();
+})
+
+//获取cookies
+function get_cookie(name) {
+  let cookies = document.cookie.split('; ')
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].split('=');
+    if (cookie[0] === name) {
+      return cookie[1];
+    }
+  }
+  return null; // Cookie not found
+}
 </script>
 
 <style scoped>
