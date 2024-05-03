@@ -1,4 +1,5 @@
 import os
+import re
 
 import tornado.ioloop
 import tornado.web
@@ -33,7 +34,8 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
                     else:
                         result_dict[i] = result[i]
                 work_name = result_dict[6]
-                work_list = self.get_work_list(work_name)
+                work_list = self.get_file_name_list(work_name)
+                print(work_list)
                 self.write(json.dumps({"work_info": result_dict, "work_list": work_list}))
                 print(result_dict)
             else:
@@ -42,6 +44,25 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             conn.close()
         except Exception as e:
             print(e)
+
+    def get(self):
+        self.set_status(200)
+        work_id=self.get_argument('work_id')
+        work_title=self.get_argument('title_text')
+        work_name=self.get_argument('work_name')
+        content=self.get_word_content(work_name,work_title)
+        self.write(json.dumps({"work_content": content}))
+
+    def get_word_content(self,name,work_title):
+        file_src='H:/web_preject/novel_work/'+name+"/"+work_title+".docx"
+        doc = Document(file_src)
+        content = ""
+        for para in doc.paragraphs:
+            content += para.text + "<br>"
+            # print(para.text)
+        return content
+
+
 
     def is_title(self, paragraph):
         if paragraph.text.startswith("第") and "章" in paragraph.text:
@@ -91,6 +112,33 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
         title_content = ''
         return title_content
 
+    import os
+
+    def get_file_name_list(self, name):
+        work_file = "H:/web_preject/novel_work/" + name
+        file_list = []
+        try:
+            for file_name in os.listdir(work_file):
+                if os.path.isfile(os.path.join(work_file, file_name)):
+                    # 分割文件名和后缀名
+                    file_name_no_extension, _ = os.path.splitext(file_name)
+                    file_list.append(file_name_no_extension)  # 将文件名添加到列表中
+
+        except Exception as e:
+            print(e)
+
+        # 对文件名进行排序
+        file_list.sort(key=self.sort_by_number)
+        return file_list
+
+    def sort_by_number(self, filename):
+        # 从文件名中提取数字部分
+        num_str = filename.split('-')[-1].split('.')[0]
+        # 转换为整数
+        num = int(num_str)
+        # 返回提取的数字
+        return num
+
 
 class get_novel_content(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
@@ -101,53 +149,66 @@ class get_novel_content(tornado.web.RequestHandler, CORSMixin):
         self.set_status(200)
         self.set_header('Content-Type', 'application/json')
         data = json.loads(self.request.body.decode('utf-8'))
+
         try:
             print(data)
             print(data["work_name"])
             title = data["work_title"]
             print(title)
             self.work_name = data["work_name"]
-            self.get_work_content(title)  # 调用获取工作内容的方法，并传递标题作为参数
-            print(self.work_content+'test')
-            self.write(json.dumps({"work_content": self.work_content}))
+            # self.get_work_content(title)  # 调用获取工作内容的方法，并传递标题作为参数
+            # print(self.work_content + 'test')
+            self.write(json.dumps({"work_content": 'test'}))
         except Exception as e:
             print(e)
             print('发送正文内容失败')
 
     def get_work_content(self, title):
         work_file = 'H:/web_preject/novel_work/' + self.work_name + '.docx'
-        title_list = []
-        found_title = False  # 初始化found_title为False
+
+        # 清理并标准化传入的标题
+        title = re.sub(r'.*?(第[\u4e00-\u9fa5]+章).*', r'\1', title)
+        title = title.strip()
+
         try:
-            if title is None:  # 如果标题为空，则默认返回第一章的内容
+            if not title:  # 如果标题为空，则默认返回第一章的内容
                 title = "第一章"
 
             doc = Document(work_file)
+
             self.work_content = ""  # 清空正文内容
-            found_titles = 0
-            for para in doc.paragraphs:
+
+            collecting_content = False  # 标记是否开始收集正文内容
+
+            for i, para in enumerate(doc.paragraphs):
                 temp_text = para.text
-
-                # 如果找到了指定的标题，则开始收集正文内容
-                if found_titles >= 2:
-                    break  # 如果标题数量大于等于2，则停止收集正文内容
+                print(temp_text)
+                # 检查当前段落是否为章节标题
                 if temp_text.startswith("第") and "章" in temp_text:
-                    if found_titles == 1:
-                        title_list.pop()  # 如果是第二个标题，则删除前一个标题
-                    title_list.append(para.text)  # 将找到的标题添加到标题列表中
-                    found_titles += 1
-                # 如果找到了指定的标题，则设置found_title为True
-                elif temp_text == title:
-                    found_titles += 1
+                    chapter_title = re.sub(r'.*?(第[\u4e00-\u9fa5]+章).*', r'\1', temp_text)
+                    chapter_title = chapter_title.strip()
 
-                # 如果已经找到了足够数量的标题，则开始收集正文内容
-                if found_titles >= 1:
-                    found_title = True
+                    # 如果找到了匹配的章节标题，则开始收集正文内容
+                    if chapter_title == title:
+                        collecting_content = True
+                    else:
+                        # 如果不是匹配的章节标题，则停止收集正文内容
+                        collecting_content = False
 
-                if found_title:
-                    self.work_content += para.text + "<br>"  # 将段落文本添加到工作内容中，并加上换行符
-                    # print(para.text+'test')
+                # 如果正在收集正文内容，则将当前段落添加到内容中
+                if collecting_content:
+                    self.work_content += para.text + "<br>"
 
+                # 检查是否已经到达了列表的末尾
+                if i < len(doc.paragraphs) - 1:
+                    next_para = doc.paragraphs[i + 1]
+                    if next_para.text.startswith("第") and "章" in next_para.text:
+                        break  # 如果是新章节的开始，则停止收集
 
         except Exception as e:
             print(e)
+
+        return self.work_content
+
+
+

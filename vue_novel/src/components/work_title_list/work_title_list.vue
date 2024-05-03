@@ -122,13 +122,24 @@ onMounted(()=>{
 });
 
 //获取页面标题，设置正文内容
-async function get_page_title(title_text)
-{
+async function get_page_title(title_text) {
+    const url = `/api/get_novel_work?work_id=${work_id.value}&title_text=${title_text}&work_name=${get_cookie('work_name')}`;
+    const res = await fetch(url, {
+        method: 'get',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    const data = await res.json();
+    let word_content = data.work_content;
+    localStorage.setItem('word_content', word_content);
     //通过cookies设置小说标题
     set_cookie('work_title', title_text);
-    console.log(title_text)
-    console.log(get_cookie('work_title'))
+    setTimeout(()=>{
+        location.reload();
+    },200)
 }
+
 async function set_cookie(key, value) {
     expireCookie(key);
     // 获取当前时间
