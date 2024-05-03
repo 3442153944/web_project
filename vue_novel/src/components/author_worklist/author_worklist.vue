@@ -65,8 +65,8 @@ let tags=ref({
   '5':'白裤袜',
 });
 
-function get_username(){
-    fetch('/api/get_userinfo',{
+async function get_username(){
+    await fetch('/api/get_userinfo',{
         method:'POST',
         headers:{
             'Content-Type':'application/json'
@@ -75,10 +75,24 @@ function get_username(){
     .then(res=>res.json())
     .then(data=>{
         username.value=data.username.toString();
-       
     })
 }
 onMounted(()=>{get_username();})
+
+//作品信息
+async function get_workinfo(){
+  const res=await fetch('/api/get_workInfo',{
+    method:'POST',
+    headers:{
+      'Content-Type':'application/json'
+    },
+    body:JSON.stringify(
+      {
+        
+      }
+    )
+  })
+}
 </script>
 
 <style scoped>

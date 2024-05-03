@@ -9,6 +9,7 @@ import json
 from model.sub_page import *
 from model.listen import *
 from model.novel_work import *
+from model.get_workinfo import *
 
 
 # WebSocket 处理器
@@ -208,6 +209,7 @@ def make_app():
         (r"/is_follow", is_follow),
         (r"/get_novel_work", get_novel_work),
         (r"/get_novel_content", get_novel_content),
+        (r"/get_workInfo", get_workInfo),
         (r"/sub_page", subpageHandler),
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
