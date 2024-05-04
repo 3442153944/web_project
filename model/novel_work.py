@@ -35,9 +35,9 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
                         result_dict[i] = result[i]
                 work_name = result_dict[6]
                 work_list = self.get_file_name_list(work_name)
-                print(work_list)
+                # print(work_list)
                 self.write(json.dumps({"work_info": result_dict, "work_list": work_list}))
-                print(result_dict)
+                # print(result_dict)
             else:
                 # 如果未找到结果，则返回空字典
                 self.write(json.dumps({}))
@@ -96,8 +96,8 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             # 如果没有找到标题，则通知
             if not title_list:
                 print("未找到任何标题")
-            print(count)
-            print("标题列表:", title_list)
+            # print(count)
+            # print("标题列表:", title_list)
             return title_list
 
         except FileNotFoundError:

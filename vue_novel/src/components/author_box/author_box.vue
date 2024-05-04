@@ -13,7 +13,9 @@
             <span>查看作品目录</span>
         </div>
         <div class="list_content">
-            <span class="hv" style="margin-top:5px;margin-left:5px;" v-for="(name,index) in work_name" :key="index">{{name}}</span>
+            <span class="hv" style="margin-top:5px;margin-left:5px;" :style="isChoose(name)" v-for="(name,index) in work_name" :key="index">
+              {{name}}
+            </span>
         </div>
     </div>
   <div class="work_list mt">
@@ -49,34 +51,21 @@ let avatar_src=ref('../../../image/87328997_p0.jpg');
 let username=ref('用户名');
 let follow_text=ref('已关注');
 let follow_backcolor=ref('background-color:rgba(188,188,188,1);');
-let work_name=ref({
-    1:'《三体》',
-    2:'露出少女育成计划',
-});
-let series_name=ref({
-    1:'系列一',
-    2:"系列二",
-    3:"系列三",
-    4:"系列四",
-    5:"系列五",
-    6:"系列六",
-    7:"系列七",
-    8:"系列八",
-    9:"系列九",
-    10:"系列十",
-});
-let tag_name=ref({
-    1:'R-18',
-    2:'百合',
-    3:'少女',
-    4:'露出',
-    5:'扶她',
-    6:'裤袜',
-    7:'连裤袜',
-    8:'黑丝',
-    9:'黑丝袜',
-    10:'白裤袜',
-});
+let work_name=ref([]);
+let series_name=ref([]);
+let tag_name=ref([]);
+let list_content_ischoose=ref('');
+
+function isChoose(text){
+  let work_name=getCookie('work_name');
+  if(text==work_name){
+  list_content_ischoose='background-color:rgba(188,188,188,1);border-radius:5px;'
+  }
+  else{
+    list_content_ischoose='';
+  }
+  return list_content_ischoose;
+}
 function follow_btn(){
     if(follow_text.value=='已关注'){
         follow_text.value='关注';
@@ -89,6 +78,14 @@ function follow_btn(){
 function set_userinfo(){
 username.value=getCookie('username');
 avatar_src.value="http://127.0.0.1:11451/image/"+getCookie('user_avatar');
+try{
+   work_name.value=getCookie('work_list').split(',');
+   series_name.value=getCookie('series_list').split(',');
+   tag_name.value=getCookie('tag_list').split(',');
+}
+catch(err){
+    console.log(err);
+}
 }
 onMounted(()=>{set_userinfo();})
 
@@ -120,20 +117,7 @@ async function is_follow(){
   }
 }
 onMounted(()=>{is_follow();})
-/*function get_username(){
-    fetch('/api/get_userinfo',{
-        method:'POST',
-        headers:{
-            'Content-Type':'application/json'
-        },
-    })
-    .then(res=>res.json())
-    .then(data=>{
-        username.value=data.username.toString();
-       
-    })
-}
-onMounted(()=>{get_username();})*/
+
 
 function getCookie(name) {
     const cookieString = document.cookie;
@@ -147,6 +131,73 @@ function getCookie(name) {
     }
     return ''; // 如果找不到目标 cookie，则返回空字符串
 }
+
+//获取作者作品系列信息
+async function get_author_workinfo(){
+  try{
+    let work_id=getCookie('work_id')
+    let work_name=getCookie('work_name')
+    console.log(work_id+' '+work_name);
+    const res=await fetch('/api/get_workInfo',
+      {
+        method:'post',
+        headers:{
+          'Content-Type':'application/json'
+        }
+        ,body:JSON.stringify({
+          work_id:work_id,
+          work_name:work_name
+        })
+      }
+    )
+    const data=await res.json()
+    console.log(data);
+    let work_list=data.work_list;
+    set_cookie('work_list',work_list);
+    let series_list=data.series_list;
+    set_cookie('series_list',series_list);
+    let tag_list=data.tag_list;
+    set_cookie('tag_list',tag_list);
+  }
+  catch(err){
+    console.log(err);
+  }
+}
+onMounted(()=>{get_author_workinfo();})
+
+async function set_cookie(key, value) {
+  expireCookie(key);
+  // Get current time
+  let now = new Date();
+
+  // Set expiration time to 7 days later
+  now.setTime(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  let expires = "expires=" + now.toUTCString();
+
+  // Concatenate new cookie
+  let newCookie = key + '=' + value + '; ' + expires;
+
+  // Get current cookies
+  let cookies = document.cookie;
+
+  // If the same key already exists, delete the old cookie first
+  if (cookies.includes(key + '=')) {
+    let cookieArray = cookies.split('; ');
+    for (let i = 0; i < cookieArray.length; i++) {
+      if (cookieArray[i].startsWith(key + '=')) {
+        cookieArray[i] = newCookie;
+      }
+    }
+    document.cookie = cookieArray.join('; ');
+  } else {
+    // Otherwise, directly set the new cookie
+    document.cookie = newCookie;
+  }
+}
+function expireCookie(name) {
+    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+}
+
 </script>
 
 <style scoped>
