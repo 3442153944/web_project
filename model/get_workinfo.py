@@ -63,6 +63,7 @@ class get_workInfo(tornado.web.RequestHandler, CORSMixin):
             # 返回成功的响应
             self.write(
                 json.dumps({'status': 'ok', 'work_list': work_list, 'series_list': series_list, 'tag_list': tag_list}))
+
         except Exception as e:
             print(e)
 
@@ -129,6 +130,7 @@ class get_authorNovelList(tornado.web.RequestHandler, CORSMixin):
                             "work_name_list": work_name_list, "work_id_list": work_id_list, "author_list": author_list,
                             "age_classification_list": age_classification_list, "work_tags_list": work_tags_list,
                             "author_say_list": author_say_list}))
+
         except Exception as e:
             print("An error occurred:", e)
             self.set_status(500)

@@ -89,6 +89,7 @@ class getUserInfo(tornado.web.RequestHandler, CORSMixin):
         rows = cursor.fetchall()
         self.result = [row[0] for row in rows]  # 提取用户名
 
+
     def post(self):
         self.set_status(200)
         body = self.request.body.decode('utf-8')
@@ -137,6 +138,7 @@ class vue_page_login(tornado.web.RequestHandler, CORSMixin):
                 print(userinfo[1])
             else:
                 self.write(json.dumps({"message": "failure", "error": "Invalid username or password"}))
+
         except Exception as e:
             print(e)
             # 返回错误消息给客户端
@@ -168,9 +170,11 @@ class is_follow(tornado.web.RequestHandler,CORSMixin):
                     break
             print(f"Is following: {is_following}")
             self.write(json.dumps({"is_follow": "true"}))
+
         else:
             print("No following users found for the given user.")
             self.write(json.dumps({"is_follow": "false"}))
+
 
 
 

@@ -118,6 +118,8 @@ body {
     margin: 0;
     position: relative;
     font-family: 'Microsoft YaHei', sans-serif;
+    text-rendering: optimizeLegibility;
+    image-rendering: auto;/* 或者 crisp-edges */
 }
 
 .cursor_action {

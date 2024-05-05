@@ -10,6 +10,7 @@ from model.sub_page import *
 from model.listen import *
 from model.novel_work import *
 from model.get_workinfo import *
+from model.comment_section import *
 
 
 # WebSocket 处理器
@@ -212,6 +213,9 @@ def make_app():
         (r"/get_workInfo", get_workInfo),
         (r"/sub_page", subpageHandler),
         (r"/get_authorNovelList", get_authorNovelList),  # 作者作品列表横屏信息获取api
+        (r"/get_comment_section", get_comment_section),  # 获取评论列表
+        (r"/add_comment_section", add_comment_section),  # 添加评论
+        (r"/delete_comment_section", delete_comment_section),  # 删除评论
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center", user_center),

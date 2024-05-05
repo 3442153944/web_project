@@ -20,7 +20,8 @@
     <interactive_box></interactive_box>
   </div>
   <author_worklist></author_worklist>
-  <comment_section></comment_section><!--评论区-->
+  <!--<comment_section></comment_section>评论区-->
+  <comment_section_box></comment_section_box>
   <div class="recomm_box">
     <recomm v-for="index in 10" :key="index"></recomm>
   </div>
@@ -39,12 +40,13 @@ import interactive_box from './interactive_box/interactive_box.vue';
 import recomm from './recomm/recomm.vue';
 import author_worklist from './author_worklist/author_worklist.vue';
 import comment_section from './comment_section/comment_section.vue';
-import work_title_list from './work_title_list/work_title_list.vue'
+import work_title_list from './work_title_list/work_title_list.vue';
+import comment_section_box from './comment_section_box/comment_section_box.vue';
 
 export default {
   name: 'novel_content',
   components: { novel_content_box, author_box, word_content, seriex_box, interactive_box, author_worklist,recomm,comment_section ,
-    work_title_list,
+    work_title_list,comment_section_box,
   },
 }
 </script>
