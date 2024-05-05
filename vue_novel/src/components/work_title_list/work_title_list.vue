@@ -91,7 +91,6 @@ async function get_work_info(){
     })
     const data=await res.json();
     title_list.value=data.work_list;
-    console.log(data)
     let author_say=data.work_info[9]
     let age_tag=data.work_info[7]
     let like_num=data.work_info[11]

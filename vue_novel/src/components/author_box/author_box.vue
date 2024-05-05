@@ -103,7 +103,6 @@ async function is_follow(){
       })
     })
     const data=await res.json()
-    console.log(data.is_follow);
       if(data.is_follow=='True'){
           follow_text.value='已关注';
           follow_backcolor.value='background-color:rgba(188,188,188,1);';
@@ -137,7 +136,6 @@ async function get_author_workinfo(){
   try{
     let work_id=getCookie('work_id')
     let work_name=getCookie('work_name')
-    console.log(work_id+' '+work_name);
     const res=await fetch('/api/get_workInfo',
       {
         method:'post',
@@ -151,7 +149,6 @@ async function get_author_workinfo(){
       }
     )
     const data=await res.json()
-    console.log(data);
     let work_list=data.work_list;
     set_cookie('work_list',work_list);
     let series_list=data.series_list;

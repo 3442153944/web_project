@@ -15,13 +15,13 @@
     </div>
     <div class="author_worklist_box">
       <div class="left_btn"></div>
-      <div class="author_worklist_item" v-for="index in 10" :key="index">
-        <div class="author_worklist_item_img"><img :src="item_src"></div>
+      <div class="author_worklist_item" v-for="(item,index) in work_name_list" :key="index">
+        <div class="author_worklist_item_img"><img :src="image_src+work_cover_list[index]"></div>
         <div class="author_worklist_info_box">
-          <div class="info_authorsay mt" >{{ authorsay1 }}</div>
-          <div class="info_title mt">{{ title_text }}</div>
-          <div class="info_username mt">{{ username }}</div>
-          <div class="info_tag mt"><span class="age_tag">{{ age_tag_text }}</span><span class="tags" v-for="(item ,index) in tags" :key="index">#{{ item }}</span></div>
+          <div class="info_authorsay mt" >{{ author_say_list[index] }}</div>
+          <div class="info_title mt">{{ work_name_list[index] }}</div>
+          <div class="info_username mt">{{ author_list[index]}}</div>
+          <div class="info_tag mt"><span class="age_tag">R{{ age_classification_list[index] }}</span><span class="tags" v-for="(item ,index) in work_tags_list[index].split(',')" :key="index">#{{ item }}</span></div>
           <div class="info_authorsay mt">{{ authorsay2 }}</div>
         </div>
       </div>
@@ -44,6 +44,8 @@ let follow_btn_text = ref('关注');
 let follow_btn_color = ref('');
 let item_src = ref('../../../image/104705167_p0.jpg');
 let user_avatar=ref('../../../image/87328997_p0.jpg');
+//图片资源路径
+let image_src="http://127.0.0.1/image/"
 function switch_follow() {
   if (follow_btn_text.value == '关注') {
     follow_btn_text.value = '已关注';
@@ -65,33 +67,57 @@ let tags=ref({
   '5':'白裤袜',
 });
 
-async function get_username(){
-    await fetch('/api/get_userinfo',{
-        method:'POST',
-        headers:{
-            'Content-Type':'application/json'
-        },
-    })
-    .then(res=>res.json())
-    .then(data=>{
-        username.value=data.username.toString();
-    })
-}
-onMounted(()=>{get_username();})
-
+let work_name_list;
+let work_cover_list;
+let author_list;
+let age_classification_list;
+let work_tags_list;
+let author_say_list;
 //作品信息
 async function get_workinfo(){
-  const res=await fetch('/api/get_workInfo',{
-    method:'POST',
-    headers:{
-      'Content-Type':'application/json'
-    },
-    body:JSON.stringify(
-      {
-        
-      }
-    )
-  })
+  let author_username=ref('');
+  try{
+    const res=await fetch('/api/get_authorNovelList',{
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(
+        {
+          author_username:get_cookie('work_author_username'),
+          username:get_cookie('username'),
+          userid:get_cookie('userid')
+        }
+      )
+    })
+    const data=await res.json();
+    follow_btn_text.value=data.is_follow;
+    switch_follow();
+    user_avatar.value=image_src+data.author_avatar;
+     work_name_list=data.work_name_list;
+     work_cover_list=data.work_cover_list;
+     author_list=data.author_list;
+     age_classification_list=data.age_classification_list;
+     work_tags_list=data.work_tags_list;
+     author_say_list=data.author_say_list;
+  }catch(error){
+    console.log(error);
+  }
+}
+
+onMounted(()=>{
+  username.value=get_cookie('work_author_username'),
+  get_workinfo();
+});
+function get_cookie(name) {
+  let cookies = document.cookie.split('; ')
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].split('=');
+    if (cookie[0] === name) {
+      return cookie[1];
+    }
+  }
+  return null; // Cookie not found
 }
 </script>
 

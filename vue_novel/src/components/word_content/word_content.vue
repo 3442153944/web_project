@@ -18,8 +18,7 @@ let word = ref(`最近发生了不少事情，也让我对某些事情有了一�
 
 
  function set_word(){
-   console.log(get_cookie('word_content')+'test');
-   console.log(get_cookie('work_title')+'test2');
+   
    word.value= localStorage.getItem('word_content');
 }
 

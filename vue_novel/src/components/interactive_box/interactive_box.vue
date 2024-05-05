@@ -99,11 +99,11 @@ export default {
         },
         isEleview(){
             var main_page=document.querySelector('.interactive_box');
-            console.log(main_page.getBoundingClientRect());
+           
             //获取主窗口高度
             var root_hight=window.innerHeight;
             var sub_hight=main_page?.getBoundingClientRect().top;
-            console.log(root_hight-sub_hight);
+           
         },
     },
    mounted(){
@@ -145,7 +145,7 @@ function collection_novel_action(){
     else{
         coll_text.value='感谢达令的收藏呢~';
     }
-    console.log(coll_text.value);
+   
     const intervalId = setInterval(() => {
         setting_font_action_add1.value-=2;
         action_opacity1.value-=0.05;

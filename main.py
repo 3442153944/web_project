@@ -211,6 +211,7 @@ def make_app():
         (r"/get_novel_content", get_novel_content),
         (r"/get_workInfo", get_workInfo),
         (r"/sub_page", subpageHandler),
+        (r"/get_authorNovelList", get_authorNovelList),  # 作者作品列表横屏信息获取api
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center", user_center),

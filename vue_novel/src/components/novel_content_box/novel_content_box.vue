@@ -61,9 +61,6 @@ function set_workinfo(){
     author_say.value=get_cookie('author_say');
     work_title.value=get_cookie('work_title');
     age_classification.value="R"+get_cookie('age_tag');
-    console.log(get_cookie('work_tag'));
-    //逗号分隔数组
-
     work_tag.value=(get_cookie('work_tag').split(","));
     like_num.value=get_cookie('like_num');
     love_num.value=get_cookie('collection_num');

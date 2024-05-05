@@ -94,7 +94,7 @@ onMounted(() => {
         }
     }
     setCookiesFromUrlParams();
-    console.log( getCookie('username')+'username');
+    
 })
 //获取cookies中的值
 function getCookie(name:any) {
