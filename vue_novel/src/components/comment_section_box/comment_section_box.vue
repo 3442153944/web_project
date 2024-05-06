@@ -7,10 +7,10 @@
             <div class="reply_useravatar">
                 <img :src="senduser_avatar">
             </div>
-            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }">
-                <textarea id="main_reply_input" placeholder="请友善的评论哦" v-model="reply_content"></textarea>
+            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }" ref="root_replybox">
+                <textarea id="main_reply_input" placeholder="请友善的评论哦"  ref="root_replytextarea" v-model="root_content"></textarea>
             </div>
-            <div class="reply_button" @click="send_msg">
+            <div class="reply_button" @click="send_msg" >
                 <span>发送</span>
             </div>
         </div>
@@ -27,6 +27,18 @@
                         </div>
                         <div class="comment_time">
                             <span>{{ main_reply_message[index].send_time }}</span>
+                            <span style="color:royalblue;cursor:pointer;">{{repley_text}}</span>
+                        </div>
+                        <div class="reply_box">
+                            <div class="reply_useravatar">
+                                <img :src="senduser_avatar">
+                            </div>
+                            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px'}" ref="sub_replybox">
+                                <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea" v-model="sub_content"></textarea>
+                            </div>
+                            <div class="reply_button" @click="send_msg">
+                                <span>发送</span>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -43,6 +55,18 @@
                             </div>
                             <div class="comment_time">
                                 <span>{{sub_reply_message[index1].send_time}}</span>
+                                <span style="color:royalblue;cursor:pointer;">{{repley_text}}</span>
+                            </div>
+                            <div class="reply_box">
+                                <div class="reply_useravatar">
+                                    <img :src="senduser_avatar">
+                                </div>
+                                <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px'}" ref="sub_replybox">
+                                    <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea" v-model="sub_content"></textarea>
+                                </div>
+                                <div class="reply_button" @click="send_msg">
+                                    <span>发送</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -58,49 +82,83 @@ import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 export default {
     name: 'comment_section_box',
 }
+
 </script>
 
 <script setup>
 let image_src = 'http://127.0.0.1:11451/image/'
 let senduser_avatar = ref('');
-let reply_content = ref('');
 let reply_input_hight = ref('0');
 let main_reply_message = ref([]);
 let sub_reply_message = ref([]);
+let repley_text = ref('回复');
+
+//回复框ref和v-model绑定
+let root_replybox = ref(null);
+let root_replytextarea= ref(null);
+let root_content=ref('');
+
+//动态渲染回复框元素
+let sub_replybox=ref(null);
+let sub_replytextarea=ref(null);
+let sub_content=ref('');
+
 function set_senduser_avatar() {
     senduser_avatar.value = image_src + get_cookie('user_avatar')
     console.log(senduser_avatar.value)
     return senduser_avatar;
 }
 function send_msg() {
-    console.log(reply_content.value)
+    console.log(root_content.value)
 }
 onMounted(() => {
     set_senduser_avatar()
 })
 //自动调整输入框高度
 function auto_resize() {
-    let textarea = document.getElementById('main_reply_input');
+    let textarea = root_replytextarea.value;
     let textarea_width = textarea.clientWidth;
-    let window_height = document.querySelector('.reply_input_box').clientHeight;
+    let window_height = root_replybox.value.clientHeight;
     let font_height = 16; // 假设字体高度为16px
     let line_spacing = 1.5 * font_height; // 假设行距为字体高度的1.5倍
-    let max_text_length_per_line = Math.floor(textarea_width / get_text_width(reply_content.value)); // 假设输入框每行能容纳的最大字符数，此处以字母"a"的宽度来计算
-
-    let lines = Math.ceil(reply_content.value.length / max_text_length_per_line); // 计算输入文字所占的行数
+    let max_text_length_per_line = Math.floor(textarea_width / get_text_width(root_content.value)); //计算平均字符宽度
+    let lines = Math.ceil(root_content.value.length / max_text_length_per_line); // 计算输入文字所占的行数
     let new_height = lines * (font_height + line_spacing) * 0.8; // 计算新的输入框高度，假设输入框高度为包括它元素的80%
-
     if (new_height > window_height) {
         textarea.style.height = new_height + 'px'; // 设置输入框的新高度
     }
     else if (new_height < window_height) {
         textarea.style.height = new_height + 'px';
     }
-
 }
-watch(reply_content, () => {
-    console.log(reply_content.value)
+
+watch(root_content, () => {
+    console.log(root_content.value)
     auto_resize()
+})
+
+function sub_auto_resize(){
+    let textarea = sub_replytextarea.value;
+    let textarea_width = textarea[0].clientWidth;
+    console.log(textarea)
+    let window_height = sub_replybox.value[0].clientHeight;
+    console.log(window_height)
+    let font_height = 16;
+    let line_spacing = 1.5 * font_height;
+    let max_text_length_per_line = Math.floor(textarea_width / get_text_width(sub_content.value));
+    let lines = Math.ceil(sub_content.value.length / max_text_length_per_line);
+    let new_height = lines * (font_height + line_spacing) * 0.8;
+    if (new_height > window_height) {
+        textarea[0].style.height = new_height + 'px';
+    }
+    else if (new_height < window_height) {
+        textarea[0].style.height = new_height + 'px';
+    }
+    console.log(new_height)
+}
+watch(sub_content, () => {
+    console.log(sub_content.value)
+    sub_auto_resize()
 })
 //获取输入文字平均宽度
 function get_text_width(text) {
@@ -225,11 +283,12 @@ function expireCookie(name) {
     margin-top: 5px;
     width: auto;
     min-width: 100px;
-    max-width: 200px;
+    max-width: 250px;
     height: auto;
     min-height: 20px;
     margin-bottom: 5px;
     border: 1px solid red;
+    justify-content: space-between;
 }
 
 .comment_content {
