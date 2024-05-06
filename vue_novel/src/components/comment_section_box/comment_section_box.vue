@@ -8,14 +8,15 @@
                 <img :src="senduser_avatar">
             </div>
             <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }" ref="root_replybox">
-                <textarea id="main_reply_input" placeholder="请友善的评论哦"  ref="root_replytextarea" v-model="root_content"></textarea>
+                <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="root_replytextarea"
+                    v-model="root_content"></textarea>
             </div>
-            <div class="reply_button" @click="send_msg" >
+            <div class="reply_button" @click="send_msg">
                 <span>发送</span>
             </div>
         </div>
         <div class="content_box">
-            <div class="main_comment" v-for="(item, index) in main_reply_message" :key="index">
+            <div class="main_comment" v-for="(item, index) in main_reply_message" :key="index" ref="main_comment" >
                 <div class="main_comment_box">
                     <div class="user_avatar"></div>
                     <div class="user_comment">
@@ -27,14 +28,16 @@
                         </div>
                         <div class="comment_time">
                             <span>{{ main_reply_message[index].send_time }}</span>
-                            <span style="color:royalblue;cursor:pointer;">{{repley_text}}</span>
+                            <span style="color:royalblue;cursor:pointer;"
+                                @click="show_root_replybox(index)">{{ repley_text }}</span>
                         </div>
-                        <div class="reply_box">
+                        <div class="reply_box" v-if="root_replybox_show[index]">
                             <div class="reply_useravatar">
                                 <img :src="senduser_avatar">
                             </div>
-                            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px'}" ref="sub_replybox">
-                                <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea" v-model="sub_content"></textarea>
+                            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }" ref="sub_replybox">
+                                <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
+                                    v-model="sub_content"></textarea>
                             </div>
                             <div class="reply_button" @click="send_msg">
                                 <span>发送</span>
@@ -43,26 +46,30 @@
                     </div>
                 </div>
                 <div class="sub_reply_box" v-for="(item, index1) in sub_reply_message" :key="index1">
-                    <div class="sub_comment_box" v-if="add_sub_comment(main_reply_message[index].send_username,sub_reply_message[index1].send_username,
-                    sub_reply_message[index1].main_comment_id,main_reply_message[index].comment_id)">
+                    <div class="sub_comment_box" v-if="add_sub_comment(main_reply_message[index].send_username, sub_reply_message[index1].send_username,
+                        sub_reply_message[index1].main_comment_id, main_reply_message[index].comment_id)"
+                        ref="sub_comment_box">
                         <div class="user_avatar"></div>
                         <div class="user_comment">
                             <div class="username">
-                                <span>{{sub_reply_message[index1].send_username}}</span>
+                                <span>{{ sub_reply_message[index1].send_username }}</span>
                             </div>
                             <div class="comment_content">
-                                <span>{{sub_reply_message[index1].content}}</span>
+                                <span>{{ sub_reply_message[index1].content }}</span>
                             </div>
                             <div class="comment_time">
-                                <span>{{sub_reply_message[index1].send_time}}</span>
-                                <span style="color:royalblue;cursor:pointer;">{{repley_text}}</span>
+                                <span>{{ sub_reply_message[index1].send_time }}</span>
+                                <span style="color:royalblue;cursor:pointer;"
+                                    @click="show_sub_replybox(index, index1)">{{ repley_text }}</span>
                             </div>
-                            <div class="reply_box">
+                            <div class="reply_box" v-if="sub_replybox_show[index][index1]">
                                 <div class="reply_useravatar">
                                     <img :src="senduser_avatar">
                                 </div>
-                                <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px'}" ref="sub_replybox">
-                                    <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea" v-model="sub_content"></textarea>
+                                <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }"
+                                    ref="sub_replybox">
+                                    <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
+                                        v-model="sub_content"></textarea>
                                 </div>
                                 <div class="reply_button" @click="send_msg">
                                     <span>发送</span>
@@ -95,13 +102,13 @@ let repley_text = ref('回复');
 
 //回复框ref和v-model绑定
 let root_replybox = ref(null);
-let root_replytextarea= ref(null);
-let root_content=ref('');
+let root_replytextarea = ref(null);
+let root_content = ref('');
 
 //动态渲染回复框元素
-let sub_replybox=ref(null);
-let sub_replytextarea=ref(null);
-let sub_content=ref('');
+let sub_replybox = ref(null);
+let sub_replytextarea = ref(null);
+let sub_content = ref('');
 
 function set_senduser_avatar() {
     senduser_avatar.value = image_src + get_cookie('user_avatar')
@@ -137,7 +144,7 @@ watch(root_content, () => {
     auto_resize()
 })
 
-function sub_auto_resize(){
+function sub_auto_resize() {
     let textarea = sub_replytextarea.value;
     let textarea_width = textarea[0].clientWidth;
     console.log(textarea)
@@ -160,6 +167,100 @@ watch(sub_content, () => {
     console.log(sub_content.value)
     sub_auto_resize()
 })
+
+let root_replybox_show = ref([]);
+//主回复框显示
+
+//根据主评论长度填充数组为false
+function add_root_replybox() {
+    var main_boxarr = document.querySelectorAll('.main_comment');
+    for (var i = 0; i < main_boxarr.length; i++) {
+        root_replybox_show.value.push(false);
+    }
+}
+onMounted(() => {
+    add_root_replybox()
+})
+
+function show_root_replybox(index) {
+    // 将所有位置都设置为 false
+    for (let i = 0; i < root_replybox_show.value.length; i++) {
+        if (i !== index) {
+            root_replybox_show.value[i] = false;
+        }
+    }
+    // 切换对应索引处的状态
+    root_replybox_show.value[index] = !root_replybox_show.value[index];
+}
+
+//设置子回复框的显示状态
+
+//事先声明一个足够长度的数组先让所有的评论都能够显示出来，并且隐藏所有的回复框
+
+let sub_replybox_show =ref( []);
+function set_temparr() {
+    for (let i = 0; i < 100; i++) {
+        // 初始化临时数组
+        let temp_sub_replybox = [];
+        for (let j = 0; j < 100; j++) {
+            temp_sub_replybox.push(false);
+        }
+        // 将临时数组添加到子回复框显示状态数组中
+        sub_replybox_show.value.push(temp_sub_replybox);
+    }
+}
+onMounted(() => {
+    set_temparr();
+})
+
+
+let main_comment = ref(null);
+let sub_comment_box = ref(null);
+
+function add_subreply_arr() {
+
+    var main_reply = document.querySelectorAll('.main_comment');
+    console.log(main_reply.length);
+    console.log(main_reply);
+    for (var i = 0; i < main_reply.length; i++) {
+        var sub_reply = document.querySelectorAll('.main_comment')[i].querySelectorAll('.sub_comment_box');
+        let temp_sub_replybox = [];
+
+        for (var j = 0; j < sub_reply.length; j++) {
+            temp_sub_replybox.push(false);
+            sub_replybox_show.value[i] = temp_sub_replybox;
+            console.log(sub_reply)
+            console.log('111')
+        }
+
+    }
+
+    console.log(sub_replybox_show.value + '111'); // 通过 console.log 输出整个二维数组
+}
+
+onMounted(() => {
+    setTimeout(() => {
+        add_subreply_arr();
+    }, 1000);
+
+
+});
+
+
+function show_sub_replybox(index, index1) {
+    // 将所有位置设置为 false
+    for (let i = 0; i < sub_replybox_show.value.length; i++) {
+        for (let j = 0; j < sub_replybox_show.value[i].length; j++) {
+            sub_replybox_show.value[i][j] = false;
+        }
+    }
+    
+    // 切换指定位置的布尔值
+    sub_replybox_show.value[index][index1] = !sub_replybox_show.value[index][index1];
+}
+
+
+
 //获取输入文字平均宽度
 function get_text_width(text) {
     var font_width = 0;
@@ -225,12 +326,13 @@ onMounted(() => {
     get_comment_list()
 })
 
-function add_sub_comment(main_username,sub_username,main_comment_id,comment_id) {
-    if(main_username == sub_username && main_comment_id == comment_id){
-    return true
+function add_sub_comment(main_username, sub_username, main_comment_id, comment_id) {
+    if (main_username == sub_username && main_comment_id == comment_id) {
+        return true
     }
-    else{
-    return false}
+    else {
+        return false
+    }
 }
 function get_cookie(name) {
     let cookies = document.cookie.split('; ')
@@ -349,7 +451,8 @@ function expireCookie(name) {
     border-radius: 15px;
     justify-content: space-between;
 }
-.sub_reply_box{
+
+.sub_reply_box {
     display: flex;
     flex-direction: column;
 }
