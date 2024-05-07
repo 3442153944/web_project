@@ -291,6 +291,7 @@ async function get_comment_list() {
             })
         })
         const data = await res.json();
+        console.log(data+'111')
         let comment_id_list = data.comment_id_list;
         let is_root_comment_list = data.is_root_comment_list;
         for (let i = 0; i < comment_id_list.length; i++) {

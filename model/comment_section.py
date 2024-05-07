@@ -21,11 +21,13 @@ class get_comment_section(tornado.web.RequestHandler, CORSMixin):
         try:
             data = json.loads(self.request.body.decode('utf-8'))
             work_id = data['work_id']
+            print(work_id)
             conn = self.conn.connect(self)
             cursor = conn.cursor()
             sql = "select * from comment where work_id=%s"
             cursor.execute(sql, work_id)
             data = cursor.fetchall()
+            print(data)
             comment_id_list = []
             is_root_comment_list = []
             send_username_list = []
@@ -63,6 +65,7 @@ class get_comment_section(tornado.web.RequestHandler, CORSMixin):
 
         except Exception as e:
             print(e)
+            print('获取评论列表失败')
 
 
 class add_comment_section(tornado.web.RequestHandler, CORSMixin):
