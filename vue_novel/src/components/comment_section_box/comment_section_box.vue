@@ -279,13 +279,13 @@ function get_username_list() {
 onMounted(() => {
     setTimeout(() => {
         set_comment_avatar();
-    }, 1000);
+    }, 1100);
 })
 //根据服务器返回的头像列表设置评论区头像
 async function set_comment_avatar() {
     let username_list_arr = get_username_list();
     try {
-        const res = fetch('/api/get_comment_userAvatar',
+        let res = fetch('/api/get_comment_userAvatar',
             {
                 method: 'post',
                 headers: {
