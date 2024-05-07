@@ -11,7 +11,7 @@
                 <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="root_replytextarea"
                     v-model="root_content"></textarea>
             </div>
-            <div class="reply_button" @click="send_msg">
+            <div class="reply_button" @click="main_send_msg">
                 <span>发送</span>
             </div>
         </div>
@@ -25,6 +25,7 @@
                         <div class="username">
                             <span>{{ main_reply_message[index].send_username }}</span>
                         </div>
+                        <span id="comment_id">{{main_reply_message[index].comment_id}}</span>
                         <div class="comment_content">
                             <span>{{ main_reply_message[index].content }}</span>
                         </div>
@@ -42,7 +43,7 @@
                                 <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                     v-model="sub_content"></textarea>
                             </div>
-                            <div class="reply_button" @click="send_msg">
+                            <div class="reply_button" @click="sub_send_msg">
                                 <span>发送</span>
                             </div>
                         </div>
@@ -59,6 +60,7 @@
                             <div class="username">
                                 <span>{{ sub_reply_message[index1].send_username }}</span>
                             </div>
+                            <span id="comment_id">{{sub_reply_message[index1].comment_id}}</span>
                             <div class="comment_content">
                                 <span>{{ sub_reply_message[index1].content }}</span>
                             </div>
@@ -76,7 +78,7 @@
                                     <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                         v-model="sub_content"></textarea>
                                 </div>
-                                <div class="reply_button" @click="send_msg">
+                                <div class="reply_button" @click="sub_send_msg">
                                     <span>发送</span>
                                 </div>
                             </div>
@@ -120,8 +122,11 @@ function set_senduser_avatar() {
     console.log(senduser_avatar.value)
     return senduser_avatar;
 }
-function send_msg() {
+function main_send_msg() {
     console.log(root_content.value)
+}
+function sub_send_msg() {
+    console.log(sub_content.value)
 }
 onMounted(() => {
     set_senduser_avatar()
@@ -180,14 +185,16 @@ let root_replybox_show = ref([]);
 function add_root_replybox() {
     var main_boxarr = document.querySelectorAll('.main_comment');
     for (var i = 0; i < main_boxarr.length; i++) {
-        root_replybox_show.value.push(false);
+        root_replybox_show.value[i]=false;
     }
+    console.log('主评论显示列表初始化');
 }
 onMounted(() => {
     add_root_replybox()
 })
 
 function show_root_replybox(index) {
+    set_temparr();
     // 将所有位置都设置为 false
     for (let i = 0; i < root_replybox_show.value.length; i++) {
         if (i !== index) {
@@ -208,11 +215,12 @@ function set_temparr() {
         // 初始化临时数组
         let temp_sub_replybox = [];
         for (let j = 0; j < 100; j++) {
-            temp_sub_replybox.push(false);
+            temp_sub_replybox[j]=false;
         }
         // 将临时数组添加到子回复框显示状态数组中
-        sub_replybox_show.value.push(temp_sub_replybox);
+        sub_replybox_show.value[i]=temp_sub_replybox;
     }
+    console.log('子评论显示列表初始化');
 }
 onMounted(() => {
     set_temparr();
@@ -223,7 +231,7 @@ let main_comment = ref(null);
 let sub_comment_box = ref(null);
 
 function add_subreply_arr() {
-
+    
     var main_reply = document.querySelectorAll('.main_comment');
     console.log(main_reply.length);
     console.log(main_reply);
@@ -237,10 +245,8 @@ function add_subreply_arr() {
             console.log(sub_reply)
             console.log('111')
         }
-
     }
-
-    console.log(sub_replybox_show.value + '111'); // 通过 console.log 输出整个二维数组
+    add_root_replybox();
 }
 
 onMounted(() => {
@@ -264,7 +270,7 @@ function show_sub_replybox(index, index1) {
 
         }
     }
-
+    add_root_replybox();
 }
 //获取评论用户名列表
 function get_username_list() {
@@ -273,19 +279,18 @@ function get_username_list() {
     for (var i = 0; i < username_list.length; i++) {
         username_list_arr.push(username_list[i].textContent);
     }
-    console.log(username_list_arr);
     return username_list_arr;
 }
 onMounted(() => {
     setTimeout(() => {
         set_comment_avatar();
-    }, 1100);
+    }, 1500);
 })
 //根据服务器返回的头像列表设置评论区头像
 async function set_comment_avatar() {
     let username_list_arr = get_username_list();
     try {
-        let res = fetch('/api/get_comment_userAvatar',
+        let resp =await fetch('/api/get_comment_userAvatar',
             {
                 method: 'post',
                 headers: {
@@ -296,12 +301,12 @@ async function set_comment_avatar() {
                 })
             }
         )
-        const data = await res.json();
+        const data = await resp.json();
         const user_avatar_list = data.avatar_list;
         console.log(data)
         var avatar_list = document.querySelectorAll('.user_avatar_img');
         for (let i = 0; i < avatar_list.length; i++) {
-            avatar_list[i].src = user_avatar_list[i];
+            avatar_list[i].src ="http://127.0.0.1:11451/image/"+ user_avatar_list[i];
         }
     }
     catch (err) {
@@ -339,7 +344,6 @@ async function get_comment_list() {
             })
         })
         const data = await res.json();
-        console.log(data + '111')
         let comment_id_list = data.comment_id_list;
         let is_root_comment_list = data.is_root_comment_list;
         for (let i = 0; i < comment_id_list.length; i++) {
@@ -363,9 +367,6 @@ async function get_comment_list() {
                 })
             }
         }
-        console.log(data)
-        console.log(main_reply_message.value)
-        console.log(sub_reply_message.value)
     }
     catch (e) {
         console.log(e)
