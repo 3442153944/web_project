@@ -43,7 +43,7 @@
                                 <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                     v-model="sub_content"></textarea>
                             </div>
-                            <div class="reply_button" @click="sub_send_msg(main_reply_message[index].comment_id)">
+                            <div class="reply_button" @click="sub_send_msg(main_reply_message[index].comment_id,main_reply_message[index].comment_id)">
                                 <span>发送</span>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                                     <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                         v-model="sub_content"></textarea>
                                 </div>
-                                <div class="reply_button" @click="sub_send_msg(index+1,index,sub_reply_message[index1].comment_id)">
+                                <div class="reply_button" @click="sub_send_msg(main_reply_message[index].comment_id,sub_reply_message[index1].comment_id)">
                                     <span>发送</span>
                                 </div>
                             </div>
