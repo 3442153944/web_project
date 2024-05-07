@@ -76,10 +76,47 @@ class add_comment_section(tornado.web.RequestHandler, CORSMixin):
         self.set_header('Content-Type', 'application/json')
         try:
             data = json.loads(self.request.body.decode('utf-8'))
-
+            work_id = ''
+            is_root_comment = ''
+            send_username = ''
+            send_userid = ''
+            content = ''
+            current_time = datetime.now()
+            date = current_time.strftime('%Y-%m-%d %H:%M:%S')
+            main_username = ''
+            main_comment_index = ''
+            main_comment_id = ''
+            reply_comment_id = ''
+            main_userid = ''
             conn = self.conn.connect(self)
             cursor = conn.cursor()
+            send_username = data["send_username"]
+            # 获取用户ID
+            sql = "select userid from users where username=%s"
+            cursor.execute(sql, (send_username,))
+            send_userid = cursor.fetchone()[0]
+            # 获取传入评论信息
+            work_id = data["work_id"]
+            is_root_comment = data["is_root_comment"]
 
+            send_userid = send_userid
+            content = data["content"]
+            send_time = date
+            main_username = data["main_username"]
+            main_comment_index = data["main_comment_index"]
+            main_comment_id = data["main_comment_id"]
+            reply_comment_id = data["reply_comment_id"]
+            main_userid = data["main_userid"]
+            # 插入评论
+            sql_insert_comment = ("INSERT INTO comment "
+                                  "(work_id, is_root_comment, send_username, send_userid, content, date, "
+                                  "main_username, main_comment_index, main_comment_id, reply_comment_id, main_userid) "
+                                  "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
+            cursor.execute(sql_insert_comment, (work_id, is_root_comment, send_username, send_userid, content,
+                                                send_time, main_username, main_comment_index, main_comment_id,
+                                                reply_comment_id, main_userid))
+            conn.commit()
+            self.write(json.dumps({"message": "success"}))
         except Exception as e:
             print(e)
 
