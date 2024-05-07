@@ -98,3 +98,28 @@ class delete_comment_section(tornado.web.RequestHandler, CORSMixin):
 
         except Exception as e:
             print(e)
+
+
+class get_comment_userAvatar(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
+    def post(self):
+        self.set_status(200)
+        self.set_header('Content-Type', 'application/json')
+        try:
+            data = json.loads(self.request.body.decode('utf-8'))
+            username_arr = data["username_list_arr"]
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            avatar_list = []
+            sql = "select user_avatar from users where username=%s"
+            for username in username_arr:
+                cursor.execute(sql, (username,))
+
+                avatar_list.append(cursor.fetchone()[0])
+
+            self.write(json.dumps({"avatar_list": avatar_list}))
+            print(avatar_list)
+
+        except Exception as e:
+            print(e)

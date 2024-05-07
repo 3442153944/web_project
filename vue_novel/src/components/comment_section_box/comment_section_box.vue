@@ -16,9 +16,11 @@
             </div>
         </div>
         <div class="content_box">
-            <div class="main_comment" v-for="(item, index) in main_reply_message" :key="index" ref="main_comment" >
+            <div class="main_comment" v-for="(item, index) in main_reply_message" :key="index" ref="main_comment">
                 <div class="main_comment_box">
-                    <div class="user_avatar"></div>
+                    <div class="user_avatar">
+                        <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
+                    </div>
                     <div class="user_comment">
                         <div class="username">
                             <span>{{ main_reply_message[index].send_username }}</span>
@@ -28,14 +30,15 @@
                         </div>
                         <div class="comment_time">
                             <span>{{ main_reply_message[index].send_time }}</span>
-                            <span style="color:royalblue;cursor:pointer;"
-                                @click="show_root_replybox(index)">{{ repley_text }}</span>
+                            <span style="color:royalblue;cursor:pointer;" @click="show_root_replybox(index)">{{
+                                repley_text }}</span>
                         </div>
                         <div class="reply_box" v-if="root_replybox_show[index]">
                             <div class="reply_useravatar">
                                 <img :src="senduser_avatar">
                             </div>
-                            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }" ref="sub_replybox">
+                            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }"
+                                ref="sub_replybox">
                                 <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                     v-model="sub_content"></textarea>
                             </div>
@@ -49,7 +52,9 @@
                     <div class="sub_comment_box" v-if="add_sub_comment(main_reply_message[index].send_username, sub_reply_message[index1].send_username,
                         sub_reply_message[index1].main_comment_id, main_reply_message[index].comment_id)"
                         ref="sub_comment_box">
-                        <div class="user_avatar"></div>
+                        <div class="user_avatar">
+                            <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
+                        </div>
                         <div class="user_comment">
                             <div class="username">
                                 <span>{{ sub_reply_message[index1].send_username }}</span>
@@ -197,7 +202,7 @@ function show_root_replybox(index) {
 
 //事先声明一个足够长度的数组先让所有的评论都能够显示出来，并且隐藏所有的回复框
 
-let sub_replybox_show =ref( []);
+let sub_replybox_show = ref([]);
 function set_temparr() {
     for (let i = 0; i < 100; i++) {
         // 初始化临时数组
@@ -248,18 +253,61 @@ onMounted(() => {
 
 
 function show_sub_replybox(index, index1) {
+    // 切换指定位置的布尔值
+    sub_replybox_show.value[index][index1] = !sub_replybox_show.value[index][index1];
     // 将所有位置设置为 false
     for (let i = 0; i < sub_replybox_show.value.length; i++) {
         for (let j = 0; j < sub_replybox_show.value[i].length; j++) {
-            sub_replybox_show.value[i][j] = false;
+            if (i !== index || j !== index1) {
+                sub_replybox_show.value[i][j] = false;
+            }
+
         }
     }
-    
-    // 切换指定位置的布尔值
-    sub_replybox_show.value[index][index1] = !sub_replybox_show.value[index][index1];
+
 }
-
-
+//获取评论用户名列表
+function get_username_list() {
+    var username_list = document.querySelectorAll('.username');
+    var username_list_arr = [];
+    for (var i = 0; i < username_list.length; i++) {
+        username_list_arr.push(username_list[i].textContent);
+    }
+    console.log(username_list_arr);
+    return username_list_arr;
+}
+onMounted(() => {
+    setTimeout(() => {
+        set_comment_avatar();
+    }, 1000);
+})
+//根据服务器返回的头像列表设置评论区头像
+async function set_comment_avatar() {
+    let username_list_arr = get_username_list();
+    try {
+        const res = fetch('/api/get_comment_userAvatar',
+            {
+                method: 'post',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username_list_arr: username_list_arr
+                })
+            }
+        )
+        const data = await res.json();
+        const user_avatar_list = data.avatar_list;
+        console.log(data)
+        var avatar_list = document.querySelectorAll('.user_avatar_img');
+        for (let i = 0; i < avatar_list.length; i++) {
+            avatar_list[i].src = user_avatar_list[i];
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
 
 //获取输入文字平均宽度
 function get_text_width(text) {
@@ -291,7 +339,7 @@ async function get_comment_list() {
             })
         })
         const data = await res.json();
-        console.log(data+'111')
+        console.log(data + '111')
         let comment_id_list = data.comment_id_list;
         let is_root_comment_list = data.is_root_comment_list;
         for (let i = 0; i < comment_id_list.length; i++) {
@@ -432,6 +480,18 @@ function expireCookie(name) {
     display: flex;
     border-radius: 50%;
     border: 1px solid red;
+}
+
+.user_avatar_img {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.user_avatar_img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
 }
 
 .user_avatar img {

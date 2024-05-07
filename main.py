@@ -216,6 +216,7 @@ def make_app():
         (r"/get_comment_section", get_comment_section),  # 获取评论列表
         (r"/add_comment_section", add_comment_section),  # 添加评论
         (r"/delete_comment_section", delete_comment_section),  # 删除评论
+        (r"/get_comment_userAvatar", get_comment_userAvatar),# 获取评论用户头像
         (r"/register", FileUploadHandler),
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center", user_center),
