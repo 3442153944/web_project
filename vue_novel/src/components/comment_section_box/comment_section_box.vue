@@ -43,7 +43,7 @@
                                 <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                     v-model="sub_content"></textarea>
                             </div>
-                            <div class="reply_button" @click="sub_send_msg">
+                            <div class="reply_button" @click="sub_send_msg(main_reply_message[index].comment_id)">
                                 <span>发送</span>
                             </div>
                         </div>
@@ -78,7 +78,7 @@
                                     <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
                                         v-model="sub_content"></textarea>
                                 </div>
-                                <div class="reply_button" @click="sub_send_msg">
+                                <div class="reply_button" @click="sub_send_msg(index+1,index,sub_reply_message[index1].comment_id)">
                                     <span>发送</span>
                                 </div>
                             </div>
@@ -124,9 +124,60 @@ function set_senduser_avatar() {
 }
 function main_send_msg() {
     console.log(root_content.value)
+    let all_comment_len=main_reply_message.value.length+sub_reply_message.value.length;
+    let username=get_cookie('username');
+    let is_root_comment='是';
+    let comment_content=root_content.value;
+    //获取当前系统时间
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let send_time=year+'-'+month+'-'+day+' '+hours+':'+minutes+':'+seconds;
+    if(comment_content==''&&comment_content==null){
+        return
+    }
+    main_reply_message.value.push({
+        comment_id:all_comment_len+1,
+        send_username:username,
+        content:comment_content,
+        send_time:send_time,
+        is_root_comment_list:'是'
+    })
 }
-function sub_send_msg() {
+function sub_send_msg(root,id) {
     console.log(sub_content.value)
+    if(sub_content.value==''&&sub_content.value==null){
+        return
+    }
+    let is_root_comment_list='否';
+    let comment_id=id;
+    let username=get_cookie('username');
+    let content=sub_content.value;
+    let reply_comment_id=id;
+    //获取当前系统时间
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth() + 1;
+    let day = date.getDate();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let send_time=year+'-'+month+'-'+day+' '+hours+':'+minutes+':'+seconds;
+    sub_reply_message.value.push({
+        comment_id:comment_id,
+        send_username:username,
+        content:content,
+        send_time:send_time,
+        is_root_comment_list:is_root_comment_list,
+        reply_comment_id:reply_comment_id,
+        main_comment_id:root
+    })
+    console.log(comment_id)
+    console.log(sub_reply_message.value)
 }
 onMounted(() => {
     set_senduser_avatar()
@@ -187,6 +238,7 @@ function add_root_replybox() {
     for (var i = 0; i < main_boxarr.length; i++) {
         root_replybox_show.value[i]=false;
     }
+    sub_content.value = '';
     console.log('主评论显示列表初始化');
 }
 onMounted(() => {
@@ -267,9 +319,9 @@ function show_sub_replybox(index, index1) {
             if (i !== index || j !== index1) {
                 sub_replybox_show.value[i][j] = false;
             }
-
         }
     }
+    sub_content.value = '';
     add_root_replybox();
 }
 //获取评论用户名列表
