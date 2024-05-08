@@ -227,7 +227,8 @@ function get_cookie(name) {
   margin-bottom: 5px;
   margin-left: 10px;
   margin-right: 10px;
-  border: 1px solid red;
+  background-color: rgba(231,231,231,1);
+  border-radius: 15px;
   overflow: hidden;
   padding: 5px;
 }
@@ -249,7 +250,7 @@ function get_cookie(name) {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  border: 1px solid red;
+  
   position: relative;
   margin-left: 5px;
   margin-top: 5px;

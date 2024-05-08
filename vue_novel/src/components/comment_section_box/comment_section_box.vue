@@ -551,7 +551,7 @@ function expireCookie(name) {
     height: auto;
     min-height: 20px;
     margin-bottom: 5px;
-    border: 1px solid red;
+    
     justify-content: space-between;
 }
 
@@ -561,7 +561,7 @@ function expireCookie(name) {
     width: auto;
     height: auto;
     min-height: 20px;
-    border: 1px solid red;
+    
 }
 
 .username {
@@ -573,7 +573,7 @@ function expireCookie(name) {
     max-width: 150px;
     height: auto;
     min-height: 20px;
-    border: 1px solid red;
+    
 }
 
 .user_comment {
@@ -583,7 +583,7 @@ function expireCookie(name) {
     margin: 0 auto;
     height: auto;
     min-height: 50px;
-    border: 1px solid red;
+    
 }
 
 .user_avatar {
@@ -592,7 +592,7 @@ function expireCookie(name) {
     overflow: hidden;
     display: flex;
     border-radius: 50%;
-    border: 1px solid red;
+    
 }
 
 .user_avatar_img {
@@ -620,7 +620,8 @@ function expireCookie(name) {
     min-height: 50px;
     margin-top: 10px;
     margin-left: 80px;
-    border: 1px solid red;
+    background-color: rgba(240,240,240,1);
+    margin-bottom: 5px;
     padding: 5px;
     border-radius: 15px;
     justify-content: space-between;
@@ -638,19 +639,24 @@ function expireCookie(name) {
     min-height: 50px;
     margin-top: 10px;
     border-radius: 10px;
-    border: 1px solid red;
+    background-color: rgba(231,231,231,1);
+    margin-left:5px;
     padding: 5px;
     justify-content: space-between;
     margin-right: auto;
+    margin-bottom: 5px;
 }
 
 .main_comment {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 95%;
     height: 100%;
-    border: 1px solid red;
+    background-color: rgba(250, 250, 250, 1);
     margin-top: 10px;
+    margin-left:auto;
+    margin-right: auto;
+    border-radius: 15px;
 }
 
 .content_box {
@@ -658,7 +664,7 @@ function expireCookie(name) {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    border: 1px solid red;
+    
     margin-top: 20px;
     padding: 5px;
 }
@@ -666,7 +672,7 @@ function expireCookie(name) {
 .comment_section {
     width: 85%;
     min-height: 200px;
-    border: 1px solid red;
+    
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -683,7 +689,7 @@ function expireCookie(name) {
     width: 100%;
     min-height: 80px;
     height: auto;
-    border: 1px solid red;
+    
     margin-top: 10px;
     justify-content: space-between;
 }
@@ -712,7 +718,7 @@ function expireCookie(name) {
     width: 70%;
     min-height: 70%;
     height: auto;
-    border: 1px solid red;
+    
     margin-left: auto;
     margin-right: auto;
     align-items: center;
