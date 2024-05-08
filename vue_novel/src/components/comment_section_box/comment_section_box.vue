@@ -17,60 +17,25 @@
         </div>
         <div class="content_box">
             <div class="main_comment" v-for="(item, index) in main_reply_message" :key="index" ref="main_comment">
-                <div class="main_comment_box">
-                    <div class="user_avatar">
-                        <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
-                    </div>
-                    <div class="user_comment">
-                        <div class="username">
-                            <span>{{ main_reply_message[index].send_username }}</span>
-                        </div>
-                        <span id="comment_id">{{ main_reply_message[index].comment_id }}</span>
-                        <div class="comment_content">
-                            <span>{{ main_reply_message[index].content }}</span>
-                        </div>
-                        <div class="comment_time">
-                            <span>{{ main_reply_message[index].send_time }}</span>
-                            <span style="color:royalblue;cursor:pointer;" @click="show_root_replybox(index)">{{
-                                repley_text }}</span>
-                        </div>
-                        <div class="reply_box" v-if="root_replybox_show[index]">
-                            <div class="reply_useravatar">
-                                <img :src="senduser_avatar">
-                            </div>
-                            <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }"
-                                ref="sub_replybox">
-                                <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
-                                    v-model="sub_content"></textarea>
-                            </div>
-                            <div class="reply_button"
-                                @click="sub_send_msg(main_reply_message[index].comment_id, main_reply_message[index].comment_id)">
-                                <span>发送</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="sub_reply_box" v-for="(item, index1) in sub_reply_message" :key="index1">
-                    <div class="sub_comment_box" v-if="add_sub_comment(main_reply_message[index].send_username, sub_reply_message[index1].send_username,
-                        sub_reply_message[index1].main_comment_id, main_reply_message[index].comment_id)"
-                        ref="sub_comment_box">
+                <div v-if="show_main_reply(index)" >
+                    <div class="main_comment_box">
                         <div class="user_avatar">
                             <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
                         </div>
                         <div class="user_comment">
                             <div class="username">
-                                <span>{{ sub_reply_message[index1].send_username }}</span>
+                                <span>{{ main_reply_message[index].send_username }}</span>
                             </div>
-                            <span id="comment_id">{{ sub_reply_message[index1].comment_id }}</span>
+                            <span id="comment_id">{{ main_reply_message[index].comment_id }}</span>
                             <div class="comment_content">
-                                <span>{{ sub_reply_message[index1].content }}</span>
+                                <span>{{ main_reply_message[index].content }}</span>
                             </div>
                             <div class="comment_time">
-                                <span>{{ sub_reply_message[index1].send_time }}</span>
-                                <span style="color:royalblue;cursor:pointer;"
-                                    @click="show_sub_replybox(index, index1)">{{ repley_text }}</span>
+                                <span>{{ main_reply_message[index].send_time }}</span>
+                                <span style="color:royalblue;cursor:pointer;" @click="show_root_replybox(index)">{{
+                                    repley_text }}</span>
                             </div>
-                            <div class="reply_box" v-if="sub_replybox_show[index][index1]">
+                            <div class="reply_box" v-if="root_replybox_show[index]">
                                 <div class="reply_useravatar">
                                     <img :src="senduser_avatar">
                                 </div>
@@ -80,10 +45,58 @@
                                         v-model="sub_content"></textarea>
                                 </div>
                                 <div class="reply_button"
-                                    @click="sub_send_msg(main_reply_message[index].comment_id, sub_reply_message[index1].comment_id)">
+                                    @click="sub_send_msg(main_reply_message[index].comment_id, main_reply_message[index].comment_id)">
                                     <span>发送</span>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div class="sub_reply_box" v-for="(item, index1) in sub_reply_message" :key="index1">
+                        <div class="sub_comment_box" v-if="add_sub_comment(main_reply_message[index].send_username, sub_reply_message[index1].send_username,
+                            sub_reply_message[index1].main_comment_id, main_reply_message[index].comment_id)"
+                            ref="sub_comment_box">
+                            <div class="user_avatar">
+                                <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
+                            </div>
+                            <div class="user_comment">
+                                <div class="username">
+                                    <span>{{ sub_reply_message[index1].send_username }}</span>
+                                </div>
+                                <span id="comment_id">{{ sub_reply_message[index1].comment_id }}</span>
+                                <div class="comment_content">
+                                    <span>{{ sub_reply_message[index1].content }}</span>
+                                </div>
+                                <div class="comment_time">
+                                    <span>{{ sub_reply_message[index1].send_time }}</span>
+                                    <span style="color:royalblue;cursor:pointer;"
+                                        @click="show_sub_replybox(index, index1)">{{ repley_text }}</span>
+                                </div>
+                                <div class="reply_box" v-if="sub_replybox_show[index][index1]">
+                                    <div class="reply_useravatar">
+                                        <img :src="senduser_avatar">
+                                    </div>
+                                    <div class="reply_input_box" :style="{ hight: reply_input_hight + 'px' }"
+                                        ref="sub_replybox">
+                                        <textarea id="main_reply_input" placeholder="请友善的评论哦" ref="sub_replytextarea"
+                                            v-model="sub_content"></textarea>
+                                    </div>
+                                    <div class="reply_button"
+                                        @click="sub_send_msg(main_reply_message[index].comment_id, sub_reply_message[index1].comment_id)">
+                                        <span>发送</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="more_sub_reply">
+                                <div class="more_sub_reply_btn">
+                                    <span>查看更多回复</span>
+                                </div>
+                            </div>
+                        </div>
+                       
+                    </div>
+                    <div class="more_main_reply" v-if="show_more_main_reply_btn(index)">
+                        <div class="show_more_reply_btn" @click="show_more_main_reply">
+                            <span>查看更多回复</span>
                         </div>
                     </div>
                 </div>
@@ -118,6 +131,32 @@ let root_content = ref('');
 let sub_replybox = ref(null);
 let sub_replytextarea = ref(null);
 let sub_content = ref('');
+
+//显示更多主评论按钮功能实现
+let show_more_count = ref(2);
+function show_more_main_reply() {
+    show_more_count.value += 3;
+}
+function show_more_main_reply_btn(index) {
+    if (index >= show_more_count.value) {
+        return true;
+    } else {
+        return false;
+    }
+}
+function show_main_reply(index){
+    if(index <= show_more_count.value){
+        return true;
+    }else{
+        return false;
+    }
+}
+
+//子评论框显示隐藏功能实现
+let show_more_subcount=ref(1);
+function show_more_sub_btn(index){
+
+}
 
 function set_senduser_avatar() {
     senduser_avatar.value = image_src + get_cookie('user_avatar')
@@ -159,20 +198,20 @@ async function main_send_msg() {
             },
             body: JSON.stringify({
                 work_id: work_id,
-                is_root_comment:'是',
-                send_username:username,
-                send_userid:null,
-                content:comment_content,
-                data:send_time,
-                main_username:null,
-                main_comment_index:null,
-                main_comment_id:null,
-                main_userid:null,
-                reply_comment_id:null
+                is_root_comment: '是',
+                send_username: username,
+                send_userid: null,
+                content: comment_content,
+                data: send_time,
+                main_username: null,
+                main_comment_index: null,
+                main_comment_id: null,
+                main_userid: null,
+                reply_comment_id: null
             }
             )
         })
-        const data=await res.json();
+        const data = await res.json();
         console.log(data.message)
     }
     catch (e) {
@@ -218,21 +257,21 @@ async function sub_send_msg(root, id) {
             },
             body: JSON.stringify(
                 {
-                    work_id:work_id,
-                    is_root_comment:'否',
-                    send_username:username,
-                    send_userid:null,
-                    content:content,
-                    date:send_time,
-                    main_comment_index:null,
-                    main_comment_id:root,
-                    main_username:null,
-                    reply_comment_id:reply_comment_id,
-                    main_userid:null
+                    work_id: work_id,
+                    is_root_comment: '否',
+                    send_username: username,
+                    send_userid: null,
+                    content: content,
+                    date: send_time,
+                    main_comment_index: null,
+                    main_comment_id: root,
+                    main_username: null,
+                    reply_comment_id: reply_comment_id,
+                    main_userid: null
                 }
             )
         })
-        const data=await res.json();
+        const data = await res.json();
         console.log(data.message)
     }
     catch (e) {
@@ -542,6 +581,57 @@ function expireCookie(name) {
 </script>
 
 <style scoped>
+.more_sub_reply{
+    display: flex;
+    margin-top: 5px;
+    margin-right: 5px;
+    position: absolute;
+    right: 15px;
+    bottom: 5px;
+}
+.more_sub_reply_btn{
+    display: flex;
+    background-color: rgba(188, 188, 188, 1);
+    padding: 5px;
+    border-radius: 15px;
+    opacity: 0.8;
+}
+.more_sub_reply_btn:hover{
+    opacity: 1;
+    cursor: pointer;
+    transition: 0.2s;
+}
+.more_sub_reply span{
+    font-size: 12px;
+}
+.more_main_reply {
+    display: flex;
+    margin-top: 5px;
+    margin-left: 20px;
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 130px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+
+}
+
+.show_more_reply_btn {
+    display: flex;
+    background-color: rgba(188, 188, 188, 1);
+    padding: 5px;
+    border-radius: 15px;
+    opacity: 0.8;
+}
+
+.show_more_reply_btn:hover {
+    opacity: 1;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
 .comment_time {
     display: flex;
     margin-top: 5px;
@@ -551,7 +641,7 @@ function expireCookie(name) {
     height: auto;
     min-height: 20px;
     margin-bottom: 5px;
-    
+
     justify-content: space-between;
 }
 
@@ -561,7 +651,7 @@ function expireCookie(name) {
     width: auto;
     height: auto;
     min-height: 20px;
-    
+
 }
 
 .username {
@@ -573,7 +663,7 @@ function expireCookie(name) {
     max-width: 150px;
     height: auto;
     min-height: 20px;
-    
+
 }
 
 .user_comment {
@@ -583,7 +673,7 @@ function expireCookie(name) {
     margin: 0 auto;
     height: auto;
     min-height: 50px;
-    
+
 }
 
 .user_avatar {
@@ -592,7 +682,7 @@ function expireCookie(name) {
     overflow: hidden;
     display: flex;
     border-radius: 50%;
-    
+
 }
 
 .user_avatar_img {
@@ -620,11 +710,12 @@ function expireCookie(name) {
     min-height: 50px;
     margin-top: 10px;
     margin-left: 80px;
-    background-color: rgba(240,240,240,1);
+    background-color: rgba(240, 240, 240, 1);
     margin-bottom: 5px;
     padding: 5px;
     border-radius: 15px;
     justify-content: space-between;
+    position: relative;
 }
 
 .sub_reply_box {
@@ -639,8 +730,8 @@ function expireCookie(name) {
     min-height: 50px;
     margin-top: 10px;
     border-radius: 10px;
-    background-color: rgba(231,231,231,1);
-    margin-left:5px;
+    background-color: rgba(231, 231, 231, 1);
+    margin-left: 5px;
     padding: 5px;
     justify-content: space-between;
     margin-right: auto;
@@ -654,7 +745,7 @@ function expireCookie(name) {
     height: 100%;
     background-color: rgba(250, 250, 250, 1);
     margin-top: 10px;
-    margin-left:auto;
+    margin-left: auto;
     margin-right: auto;
     border-radius: 15px;
 }
@@ -664,7 +755,7 @@ function expireCookie(name) {
     flex-direction: column;
     width: 100%;
     height: 100%;
-    
+
     margin-top: 20px;
     padding: 5px;
 }
@@ -672,7 +763,7 @@ function expireCookie(name) {
 .comment_section {
     width: 85%;
     min-height: 200px;
-    
+
     margin-top: 20px;
     display: flex;
     flex-direction: column;
@@ -689,7 +780,7 @@ function expireCookie(name) {
     width: 100%;
     min-height: 80px;
     height: auto;
-    
+
     margin-top: 10px;
     justify-content: space-between;
 }
@@ -718,7 +809,7 @@ function expireCookie(name) {
     width: 70%;
     min-height: 70%;
     height: auto;
-    
+
     margin-left: auto;
     margin-right: auto;
     align-items: center;
