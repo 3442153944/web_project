@@ -17,7 +17,7 @@
         </div>
         <div class="content_box">
             <div class="main_comment" v-for="(item, index) in main_reply_message" :key="index" ref="main_comment">
-                <div v-if="show_main_reply(index)" >
+                <div v-if="show_main_reply(index)" class="main_reply_box">
                     <div class="main_comment_box">
                         <div class="user_avatar">
                             <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
@@ -86,9 +86,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="more_sub_reply">
+                            <div class="more_sub_reply" v-if="show_reply_show_btn(index)">
                                 <div class="more_sub_reply_btn">
-                                    <span>查看更多回复</span>
+                                    <span>查看更多回复{{index1}}index的值{{ index }}</span>
                                 </div>
                             </div>
                         </div>
@@ -153,10 +153,18 @@ function show_main_reply(index){
 }
 
 //子评论框显示隐藏功能实现
-let show_more_subcount=ref(1);
-function show_more_sub_btn(index){
-
+let sub_replybox_show_btn=ref(1)
+function show_reply_show_btn(index)
+{
+    var main_value=document.querySelectorAll('.main_reply_box')
+   // var sub_value=main_value[index].querySelectorAll('.sub_comment_box')
+    //console.log(sub_value.length)
+    return true;
 }
+onMounted(()=>{
+    show_reply_show_btn();
+})
+
 
 function set_senduser_avatar() {
     senduser_avatar.value = image_src + get_cookie('user_avatar')
