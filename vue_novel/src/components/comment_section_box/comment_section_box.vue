@@ -154,6 +154,11 @@ function show_main_reply(index){
 
 //子评论框显示隐藏功能实现
 let sub_replybox_show_btn=ref(1)
+let sub_reply_show_count=ref([{
+    index:0,
+    count:1,
+}])
+let sub_count=ref()
 function show_reply_show_btn(index)
 {
     var main_value=document.querySelectorAll('.main_reply_box')
@@ -163,6 +168,12 @@ function show_reply_show_btn(index)
 }
 onMounted(()=>{
     show_reply_show_btn();
+    setTimeout(() => {
+        var main_value=document.querySelectorAll('.main_reply_box')
+    var sub_value=main_value[0].querySelectorAll('.sub_comment_box')
+    
+    console.log(sub_value+'子评论长度')
+    }, 1000);
 })
 
 
