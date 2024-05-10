@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="@localhost" uuid="eb732ca0-0ba3-4259-be22-b9c6bb6f113d">
+    <data-source source="LOCAL" name="@localhost" read-only="true" uuid="eb732ca0-0ba3-4259-be22-b9c6bb6f113d">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <remarks>插画网站数据库</remarks>
