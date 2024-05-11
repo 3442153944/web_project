@@ -55,7 +55,7 @@
                         <div class="sub_comment_box" v-if="add_sub_comment(main_reply_message[index].send_username, sub_reply_message[index1].send_username,
                             sub_reply_message[index1].main_comment_id, main_reply_message[index].comment_id)"
                             ref="sub_comment_box" v-show="show_sub_replybox_list(index, index1)">
-                            
+
                             <div class="user_avatar">
                                 <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
                             </div>
@@ -87,12 +87,13 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="more_sub_reply" v-if="show_reply_show_btn(index)">
+                            <div class="more_sub_reply" v-if="show_reply_show_btn(index)"
+                                @click="show_more_reply_comment(index)">
                                 <div class="more_sub_reply_btn">
                                     <span>查看更多回复{{ index1 }}index的值{{ index }}</span>
                                 </div>
                             </div>
-                            
+
                         </div>
 
                     </div>
@@ -155,33 +156,61 @@ function show_main_reply(index) {
 }
 
 //子评论框显示隐藏功能实现
-let sub_reply_show1= ref([]);
+let sub_reply_show1 = ref([]);
 //初始化显示数组，并且返回显示的值
 function show_sub_replybox_list(index, index1) {
-    // 确保 sub_reply_show1.value[index] 存在
     if (!sub_reply_show1.value[index]) {
         sub_reply_show1.value[index] = [];
     }
 
-    // 确保 sub_reply_show1.value[index][index1] 存在
     if (!sub_reply_show1.value[index][index1]) {
         sub_reply_show1.value[index][index1] = { show: true };
     }
 
-    // 隐藏前一个子回复框
     if (index1 >= 1) {
         sub_reply_show1.value[index][index1].show = false;
     }
 
-    // 返回显示状态
     return !!sub_reply_show1.value[index][index1].show;
 }
 
 console.log(sub_reply_show1.value)
 
+//显示更多子评论函数
+function show_more_reply_comment(index) {
+    let subComments = sub_reply_show1.value[index];
+   
+    if (subComments) {
+        for (let i = 0; i < subComments.length; i++) {
+            if (subComments[i]) {
+                if (subComments[i].show==false) {
+                    // 找到隐藏的子评论，初始化计数器
+                    let count=0;
+                    // 显示当前子评论及其后的三个子评论显示状态
+                    for (let j = 0; j <= subComments.length;j++) {
+                        if (subComments[j]) {
+                            sub_reply_show1.value[index][j]=null;
+                            sub_reply_show1.value[index][j]={show: true};
+                            console.log(sub_reply_show1.value[index][j].show)
+                            count+=1;
+                            if(count>=3)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                    // 结束循环
+                    break;
+                }
+            }
+        }
+    }
+    console.log(sub_reply_show1.value[index])
+}
+
 //显示更多子评论按钮显示状态函数
 function show_reply_show_btn(index) {
-return true;
+    return true;
 }
 
 
@@ -741,22 +770,23 @@ function expireCookie(name) {
     position: relative;
     padding: 5px;
     background-color: rgba(240, 240, 240, 1);
-    margin-top:5px;
+    margin-top: 5px;
     margin-bottom: 5px;
     border-radius: 15px;
 }
 
-.sub_show_control{
+.sub_show_control {
     display: flex;
-    width:100%;
+    width: 100%;
     height: auto;
     min-height: 50px;
     padding: 5px;
     background-color: rgba(240, 240, 240, 1);
-    margin-top:5px;
+    margin-top: 5px;
     margin-bottom: 5px;
     border-radius: 15px;
 }
+
 .sub_reply_box {
     display: flex;
     flex-direction: column;
