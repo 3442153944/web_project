@@ -136,7 +136,7 @@ let sub_replytextarea = ref(null);
 let sub_content = ref('');
 
 //显示更多主评论按钮功能实现
-let show_more_count = ref(2);
+let show_more_count = ref(5);
 function show_more_main_reply() {
     show_more_count.value += 3;
 }
@@ -168,13 +168,11 @@ function show_sub_replybox_list(index, index1) {
     }
 
     if (index1 >= 1) {
-        sub_reply_show1.value[index][index1].show = false;
+        sub_reply_show1.value[index][index1].show = true;
     }
 
     return !!sub_reply_show1.value[index][index1].show;
 }
-
-console.log(sub_reply_show1.value)
 
 //显示更多子评论函数
 function show_more_reply_comment(index) {
@@ -186,12 +184,14 @@ function show_more_reply_comment(index) {
                 if (subComments[i].show==false) {
                     // 找到隐藏的子评论，初始化计数器
                     let count=0;
+                    let temp_arr=[]
                     // 显示当前子评论及其后的三个子评论显示状态
                     for (let j = 0; j <= subComments.length;j++) {
                         if (subComments[j]) {
                             sub_reply_show1.value[index][j]=null;
+                            console.log(sub_reply_show1.value[index][j])
                             sub_reply_show1.value[index][j]={show: true};
-                            console.log(sub_reply_show1.value[index][j].show)
+                            console.log('更改后的值'+sub_reply_show1.value[index][j].show)
                             count+=1;
                             if(count>=3)
                             {
@@ -200,12 +200,13 @@ function show_more_reply_comment(index) {
                         }
                     }
                     // 结束循环
+                    console.log(sub_reply_show1.value[index])
                     break;
                 }
             }
         }
     }
-    console.log(sub_reply_show1.value[index])
+    
 }
 
 //显示更多子评论按钮显示状态函数
@@ -213,7 +214,17 @@ function show_reply_show_btn(index) {
     return true;
 }
 
-
+onMounted(()=>{
+    setTimeout(()=>{
+    var main_page=document.querySelectorAll('.main_reply_box');
+    var sub_page=main_page[0].querySelectorAll('.sub_comment_box');
+    var sub_btn=main_page[0].querySelectorAll('.more_sub_reply');
+    sub_btn[1].style.display='none';
+    console.log(sub_page.length)
+    console.log(sub_page);
+    sub_page[0].style.display='none';
+    },1000)
+})
 
 function set_senduser_avatar() {
     senduser_avatar.value = image_src + get_cookie('user_avatar')
