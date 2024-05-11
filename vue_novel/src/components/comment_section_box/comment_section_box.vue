@@ -175,6 +175,7 @@ function show_sub_replybox_list(index, index1) {
 }
 
 //显示更多子评论函数
+/*
 function show_more_reply_comment(index) {
     let subComments = sub_reply_show1.value[index];
    
@@ -207,6 +208,12 @@ function show_more_reply_comment(index) {
         }
     }
     
+}*/
+function show_more_reply_comment(index){
+    var main_page=document.querySelectorAll('.main_reply_box');
+    var sub_page=main_page[index].querySelectorAll('.sub_comment_box');
+    sub_page[0].style.display='none';
+    sub_page[1].style.display='none';
 }
 
 //显示更多子评论按钮显示状态函数
@@ -219,7 +226,7 @@ onMounted(()=>{
     var main_page=document.querySelectorAll('.main_reply_box');
     var sub_page=main_page[0].querySelectorAll('.sub_comment_box');
     var sub_btn=main_page[0].querySelectorAll('.more_sub_reply');
-    sub_btn[1].style.display='none';
+    sub_btn[1].style.display='none';0
     console.log(sub_page.length)
     console.log(sub_page);
     sub_page[0].style.display='none';
