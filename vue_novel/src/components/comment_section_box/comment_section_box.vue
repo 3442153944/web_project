@@ -209,11 +209,38 @@ function show_more_reply_comment(index) {
     }
     
 }*/
-function show_more_reply_comment(index){
+//子评论一维列表
+let sub_reply_list = ref([])
+function init_sub_reply_list() {
+    var main_page = document.querySelectorAll('.main_reply_box');
+    sub_reply_list.value=Array.from(main_page).map(()=>1)
+}
+//子评论初始化隐藏和展开按钮隐藏
+function init_sub_reply_hidden(){
     var main_page=document.querySelectorAll('.main_reply_box');
-    var sub_page=main_page[index].querySelectorAll('.sub_comment_box');
-    sub_page[0].style.display='none';
-    sub_page[1].style.display='none';
+    for(var i=0;i<main_page.length;i++)
+    {
+        var sub_page=main_page[i].querySelectorAll('.sub_comment_box')
+        var sub_show_more_btn=main_page[i].querySelectorAll('.more_sub_reply')
+        if(sub_page&&sub_page.length>0)
+        {
+            for(var j=sub_reply_list.value[i];j<sub_page.length;j++)
+            {
+                sub_page[j].style.display='none'
+            }
+        }
+        if(sub_show_more_btn&&sub_page.length>1)
+        {
+            sub_show_more_btn[0].style.display='';
+        }
+    }
+}
+
+function show_more_reply_comment(index) {
+    var main_page = document.querySelectorAll('.main_reply_box');
+    var sub_page = main_page[index].querySelectorAll('.sub_comment_box');
+    sub_page[0].style.display = 'none';
+    sub_page[1].style.display = 'none';
 }
 
 //显示更多子评论按钮显示状态函数
@@ -221,16 +248,12 @@ function show_reply_show_btn(index) {
     return true;
 }
 
-onMounted(()=>{
-    setTimeout(()=>{
-    var main_page=document.querySelectorAll('.main_reply_box');
-    var sub_page=main_page[0].querySelectorAll('.sub_comment_box');
-    var sub_btn=main_page[0].querySelectorAll('.more_sub_reply');
-    sub_btn[1].style.display='none';0
-    console.log(sub_page.length)
-    console.log(sub_page);
-    sub_page[0].style.display='none';
-    },1000)
+onMounted(() => {
+    setTimeout(() => {
+        init_sub_reply_list();
+        init_sub_reply_hidden();
+        console.log(sub_reply_list.value);
+    }, 1000)
 })
 
 function set_senduser_avatar() {
