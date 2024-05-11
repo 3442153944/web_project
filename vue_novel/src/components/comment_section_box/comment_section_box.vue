@@ -88,11 +88,11 @@
                             </div>
                             <div class="more_sub_reply" v-if="show_reply_show_btn(index)">
                                 <div class="more_sub_reply_btn">
-                                    <span>查看更多回复{{index1}}index的值{{ index }}</span>
+                                    <span>查看更多回复{{ index1 }}index的值{{ index }}</span>
                                 </div>
                             </div>
                         </div>
-                       
+
                     </div>
                     <div class="more_main_reply" v-if="show_more_main_reply_btn(index)">
                         <div class="show_more_reply_btn" @click="show_more_main_reply">
@@ -144,35 +144,44 @@ function show_more_main_reply_btn(index) {
         return false;
     }
 }
-function show_main_reply(index){
-    if(index <= show_more_count.value){
+function show_main_reply(index) {
+    if (index <= show_more_count.value) {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
 
 //子评论框显示隐藏功能实现
-let sub_replybox_show_btn=ref(1)
-let sub_reply_show_count=ref([{
-    index:0,
-    count:1,
+let sub_replybox_show_btn = ref(1)
+let sub_reply_show_count = ref([{
+    index: 0,
+    count: 0,
 }])
-let sub_count=ref()
-function show_reply_show_btn(index)
-{
-    var main_value=document.querySelectorAll('.main_reply_box')
-   // var sub_value=main_value[index].querySelectorAll('.sub_comment_box')
-    //console.log(sub_value.length)
-    return true;
+let sub_test = ref([[{ show: true }, { show: false }, { show: false }, { show: false }], [{ show: true }, { show: false }], [{ show: true }, { show: false }]])
+let sub_count = ref()
+function show_reply_show_btn(index) {
+
+    sub_reply_show_count.value.push({
+        index: index + 1,
+        count: 0
+    })
+    if (sub_reply_show_count.value[0].count == 1) {
+
+        return false;
+    }
+    else {
+        sub_reply_show_count.value[0].count += 1;
+        return true;
+    }
 }
-onMounted(()=>{
+onMounted(() => {
     show_reply_show_btn();
     setTimeout(() => {
-        var main_value=document.querySelectorAll('.main_reply_box')
-    var sub_value=main_value[0].querySelectorAll('.sub_comment_box')
-    
-    console.log(sub_value+'子评论长度')
+        var main_value = document.querySelectorAll('.main_reply_box')
+        var sub_value = main_value[1].querySelectorAll('.sub_comment_box')
+        console.log(sub_test.value[0][1].show)
+        console.log(sub_value + '子评论长度')
     }, 1000);
 })
 
@@ -403,8 +412,6 @@ let sub_comment_box = ref(null);
 function add_subreply_arr() {
 
     var main_reply = document.querySelectorAll('.main_comment');
-    console.log(main_reply.length);
-    console.log(main_reply);
     for (var i = 0; i < main_reply.length; i++) {
         var sub_reply = document.querySelectorAll('.main_comment')[i].querySelectorAll('.sub_comment_box');
         let temp_sub_replybox = [];
@@ -412,8 +419,6 @@ function add_subreply_arr() {
         for (var j = 0; j < sub_reply.length; j++) {
             temp_sub_replybox.push(false);
             sub_replybox_show.value[i] = temp_sub_replybox;
-            console.log(sub_reply)
-            console.log('111')
         }
     }
     add_root_replybox();
@@ -600,7 +605,7 @@ function expireCookie(name) {
 </script>
 
 <style scoped>
-.more_sub_reply{
+.more_sub_reply {
     display: flex;
     margin-top: 5px;
     margin-right: 5px;
@@ -608,21 +613,25 @@ function expireCookie(name) {
     right: 15px;
     bottom: 5px;
 }
-.more_sub_reply_btn{
+
+.more_sub_reply_btn {
     display: flex;
     background-color: rgba(188, 188, 188, 1);
     padding: 5px;
     border-radius: 15px;
     opacity: 0.8;
 }
-.more_sub_reply_btn:hover{
+
+.more_sub_reply_btn:hover {
     opacity: 1;
     cursor: pointer;
     transition: 0.2s;
 }
-.more_sub_reply span{
+
+.more_sub_reply span {
     font-size: 12px;
 }
+
 .more_main_reply {
     display: flex;
     margin-top: 5px;
