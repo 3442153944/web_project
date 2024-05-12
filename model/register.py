@@ -12,6 +12,11 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
 
     async def post(self):
         files = self.request.files.get('file')
+        self.set_header("Access-Control-Allow-Origin", '*')
+        self.set_header("Access-Control-Allow-Credentials", "true")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with,token,content-type")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header("Access-Control-Max-Age", 1000)
         try:
             if files:
                 for file in files:
@@ -25,6 +30,7 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
                         with open(file_path, 'wb') as f:
                             f.write(file_body)
                         self.write('文件上传成功')
+                        print('文件上传成功')
                     else:
                         self.write('不支持的文件类型')
             else:
@@ -36,8 +42,13 @@ class Register(tornado.web.RequestHandler,CORSMixin):
     conn=connMysql
     async def post(self):
         self.set_status(200)
+        self.set_header("Access-Control-Allow-Origin", '*')
+        self.set_header("Access-Control-Allow-Credentials", "true")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with,token")
+        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+        self.set_header("Access-Control-Max-Age", 1000)
         try:
-            conn=self.conn.connect()
+            conn=self.conn.connect(self)
             cursor=conn.cursor()
             self.set_header('Content-Type', 'application/json')
             data=self.request.body.decode('utf-8')
@@ -45,3 +56,4 @@ class Register(tornado.web.RequestHandler,CORSMixin):
             print(data)
         except Exception as e:
             print(e)
+

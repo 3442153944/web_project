@@ -83,12 +83,12 @@
     </div>
 </body>
 <script>
-    var websocket = new WebSocket("ws://localhost:8888/websocket");
+    var websocket = new WebSocket("ws://localhost:11451/websocket");
 
     document.addEventListener('DOMContentLoaded',function(event){
     var back_rootpage=document.querySelector('.back_rootpage');
     back_rootpage.addEventListener('click',function(event){
-        window.location.href = "http://127.0.0.1:8888";
+        window.location.href = "http://127.0.0.1:11451";
     });
 });
 

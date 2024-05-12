@@ -81,7 +81,7 @@ class FileUploadHandler(tornado.web.RequestHandler):
     UPLOAD_DIR = "user_uploadavatar"
 
     def get(self):
-        self.render("register.html")
+        self.render("register_page/register.html")
 
     def post(self):
         # 检查是否有文件上传
@@ -218,7 +218,7 @@ def make_app():
         (r"/add_comment_section", add_comment_section),  # 添加评论
         (r"/delete_comment_section", delete_comment_section),  # 删除评论
         (r"/get_comment_userAvatar", get_comment_userAvatar),  # 获取评论用户头像
-        # (r"/register", FileUploadHandler),#传统网页的注册接口暂时停用
+         (r"/register", FileUploadHandler),#传统网页的注册接口暂时停用
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center", user_center),
         (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
