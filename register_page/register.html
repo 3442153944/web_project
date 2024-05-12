@@ -168,9 +168,7 @@
             const res = await fetch('http://127.0.0.1:11451/UploadFile', {
                 method: 'post',
                 body: avatar_file,
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                
             })
         }
         async function set_userinfo() {
@@ -182,7 +180,7 @@
                 sex: document.querySelector('.sex select').value,
                 filename: document.getElementById('avatarInput').files[0].name
             }
-            const res = await fetch('http://127.0.0.1:11451/Register', {
+            const res = await fetch('http://127.0.0.1:11451/register', {
                 method: 'post',
                 body: JSON.stringify(userinfo),
                 headers: {

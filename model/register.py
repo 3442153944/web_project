@@ -7,12 +7,12 @@ import json
 
 
 class UploadFile(tornado.web.RequestHandler, CORSMixin):
-    file_path = 'H:/web_preject/user_uploadavatar/'
+    file_path = 'H:/web_preject/image'
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']  # 添加更多类型如有需要
 
     async def post(self):
         files = self.request.files.get('avatar')
-        print('被调用')
+        
         try:
             if files:
                 for file in files:
@@ -39,7 +39,7 @@ class Register(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql
 
     def get(self):
-        self.render("register_page/register.html")
+        self.render("../register_page/register.html")
 
     async def post(self):
         self.set_status(200)
