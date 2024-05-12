@@ -11,7 +11,7 @@ from model.listen import *
 from model.novel_work import *
 from model.get_workinfo import *
 from model.comment_section import *
-from model.uploadFile import *
+from model.register import *
 
 
 # WebSocket 处理器
@@ -218,7 +218,7 @@ def make_app():
         (r"/add_comment_section", add_comment_section),  # 添加评论
         (r"/delete_comment_section", delete_comment_section),  # 删除评论
         (r"/get_comment_userAvatar", get_comment_userAvatar),  # 获取评论用户头像
-        (r"/register", FileUploadHandler),
+        # (r"/register", FileUploadHandler),#传统网页的注册接口暂时停用
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center", user_center),
         (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
@@ -229,7 +229,8 @@ def make_app():
         (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
         (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
         (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
-        (r"/uploadFile", uploadFile),#上传文件
+        (r"/Register", Register),  # 注册表单提交
+        (r"/UploadFile", UploadFile),  # 注册头像提交
     ])
 
 
