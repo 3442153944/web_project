@@ -3,7 +3,7 @@ from model.CORSMixin import CORSMixin
 import tornado
 import tornado.web
 from model.connect_sqlsever import *
-import  json
+import json
 
 
 class UploadFile(tornado.web.RequestHandler, CORSMixin):
@@ -11,12 +11,8 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']  # 添加更多类型如有需要
 
     async def post(self):
-        files = self.request.files.get('file')
-        self.set_header("Access-Control-Allow-Origin", '*')
-        self.set_header("Access-Control-Allow-Credentials", "true")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with,token,content-type")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header("Access-Control-Max-Age", 1000)
+        files = self.request.files.get('avatar')
+        print('被调用')
         try:
             if files:
                 for file in files:
@@ -38,22 +34,21 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
         except Exception as e:
             print(e)
 
-class Register(tornado.web.RequestHandler,CORSMixin):
-    conn=connMysql
+
+class Register(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql
+
+    def get(self):
+        self.render("register_page/register.html")
+
     async def post(self):
         self.set_status(200)
-        self.set_header("Access-Control-Allow-Origin", '*')
-        self.set_header("Access-Control-Allow-Credentials", "true")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with,token")
-        self.set_header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
-        self.set_header("Access-Control-Max-Age", 1000)
         try:
-            conn=self.conn.connect(self)
-            cursor=conn.cursor()
+            conn = self.conn.connect(self)
+            cursor = conn.cursor()
             self.set_header('Content-Type', 'application/json')
-            data=self.request.body.decode('utf-8')
-            data=json.loads(data)
+            data = self.request.body.decode('utf-8')
+            data = json.loads(data)
             print(data)
         except Exception as e:
             print(e)
-

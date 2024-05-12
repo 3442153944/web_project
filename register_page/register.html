@@ -168,7 +168,9 @@
             const res = await fetch('http://127.0.0.1:11451/UploadFile', {
                 method: 'post',
                 body: avatar_file,
-                
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
             })
         }
         async function set_userinfo() {
