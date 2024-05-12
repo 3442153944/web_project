@@ -1,4 +1,6 @@
 import os
+import uuid
+
 from model.CORSMixin import CORSMixin
 import tornado
 import tornado.web
@@ -12,7 +14,7 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
 
     async def post(self):
         files = self.request.files.get('avatar')
-        
+
         try:
             if files:
                 for file in files:
@@ -50,5 +52,20 @@ class Register(tornado.web.RequestHandler, CORSMixin):
             data = self.request.body.decode('utf-8')
             data = json.loads(data)
             print(data)
+            username=data["username"]
+            userid=str(uuid.uuid4())
+            user_avatar=data["filename"]
+            sex=data["sex"]
+            email=data["email"]
+            phone=data["phone"]
+            password=data["password"]
+            sql='insert into users (username,userid,user_avatar,sex,email,phone,password) values(%s,%s,%s,%s,%s,%s,%s)'
+
+            cursor.execute(sql,(username,userid,user_avatar,sex,email,phone,password))
+
+            conn.commit()
+            print("注册成功")
+            self.write({'status': 'success', 'message': '注册成功'})
+
         except Exception as e:
             print(e)

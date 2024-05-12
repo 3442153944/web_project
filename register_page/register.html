@@ -141,8 +141,8 @@
             </div>
             <div class="sex  mt mb">
                 <select>
-                    <option value="male">男</option>
-                    <option value="female">女</option>
+                    <option value="男">男</option>
+                    <option value="女">女</option>
                 </select>
             </div>
             <input type="submit" value="注册" class="submit_btn mt" onclick="register()">
@@ -180,13 +180,25 @@
                 sex: document.querySelector('.sex select').value,
                 filename: document.getElementById('avatarInput').files[0].name
             }
-            const res = await fetch('http://127.0.0.1:11451/register', {
-                method: 'post',
-                body: JSON.stringify(userinfo),
-                headers: {
-                    'Content-Type': 'application/json'
+            try{
+                const res = await fetch('http://127.0.0.1:11451/register', {
+                    method: 'post',
+                    body: JSON.stringify(userinfo),
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                const data=await res.json();
+                if(data.status=="success"){
+                    alert("注册成功");
+                    window.location.href = "http://localhost:3000/";
+                }else{
+                    alert("注册失败");
                 }
-            })
+            }catch(e){
+                alert("注册失败");
+                console.error(e);
+            }
         }
         function register() {
             set_userinfo();
