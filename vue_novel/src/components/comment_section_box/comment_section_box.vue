@@ -136,9 +136,15 @@ let sub_replytextarea = ref(null);
 let sub_content = ref('');
 
 //显示更多主评论按钮功能实现
-let show_more_count = ref(5);
+let show_more_count = ref(2);
 function show_more_main_reply() {
     show_more_count.value += 3;
+    //重新初始化子评论显示
+    setTimeout(()=>{
+        init_sub_reply_list();
+        init_sub_reply_hidden();
+    },100)
+    
 }
 function show_more_main_reply_btn(index) {
     if (index >= show_more_count.value) {
@@ -175,72 +181,59 @@ function show_sub_replybox_list(index, index1) {
 }
 
 //显示更多子评论函数
-/*
-function show_more_reply_comment(index) {
-    let subComments = sub_reply_show1.value[index];
-   
-    if (subComments) {
-        for (let i = 0; i < subComments.length; i++) {
-            if (subComments[i]) {
-                if (subComments[i].show==false) {
-                    // 找到隐藏的子评论，初始化计数器
-                    let count=0;
-                    let temp_arr=[]
-                    // 显示当前子评论及其后的三个子评论显示状态
-                    for (let j = 0; j <= subComments.length;j++) {
-                        if (subComments[j]) {
-                            sub_reply_show1.value[index][j]=null;
-                            console.log(sub_reply_show1.value[index][j])
-                            sub_reply_show1.value[index][j]={show: true};
-                            console.log('更改后的值'+sub_reply_show1.value[index][j].show)
-                            count+=1;
-                            if(count>=3)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                    // 结束循环
-                    console.log(sub_reply_show1.value[index])
-                    break;
-                }
-            }
-        }
-    }
-    
-}*/
+
 //子评论一维列表
 let sub_reply_list = ref([])
 function init_sub_reply_list() {
     var main_page = document.querySelectorAll('.main_reply_box');
-    sub_reply_list.value=Array.from(main_page).map(()=>1)
+    sub_reply_list.value = Array.from(main_page).map(() => 1)
 }
 //子评论初始化隐藏和展开按钮隐藏
-function init_sub_reply_hidden(){
-    var main_page=document.querySelectorAll('.main_reply_box');
-    for(var i=0;i<main_page.length;i++)
-    {
-        var sub_page=main_page[i].querySelectorAll('.sub_comment_box')
-        var sub_show_more_btn=main_page[i].querySelectorAll('.more_sub_reply')
-        if(sub_page&&sub_page.length>0)
-        {
-            for(var j=sub_reply_list.value[i];j<sub_page.length;j++)
-            {
-                sub_page[j].style.display='none'
+function init_sub_reply_hidden() {
+    var main_page = document.querySelectorAll('.main_reply_box');
+    for (var i = 0; i < main_page.length; i++) {
+        var sub_page = main_page[i].querySelectorAll('.sub_comment_box')
+        
+        if (sub_page && sub_page.length > 0) {
+            for (var j = sub_reply_list.value[i]; j < sub_page.length; j++) {
+                sub_page[j].style.display = 'none'
             }
         }
-        if(sub_show_more_btn&&sub_page.length>1)
-        {
-            sub_show_more_btn[0].style.display='';
+        var sub_show_more_btn = main_page[i].querySelectorAll('.more_sub_reply')
+        if (sub_show_more_btn.length > 0 && sub_show_more_btn[0] !== 'undefined'&&sub_page.length <= 1) {
+                for(var a=0;a<sub_show_more_btn.length;a++)
+                {
+                    sub_show_more_btn[0].style.display = 'none';
+                }
+        }
+        else{
+            continue;
         }
     }
+    console.log('子评论显示列表初始化')
 }
 
 function show_more_reply_comment(index) {
+    let temp = sub_reply_list.value[index];
+    sub_reply_list.value[index] += 2;
     var main_page = document.querySelectorAll('.main_reply_box');
-    var sub_page = main_page[index].querySelectorAll('.sub_comment_box');
-    sub_page[0].style.display = 'none';
-    sub_page[1].style.display = 'none';
+    var sub_page = main_page[index].querySelectorAll('.sub_comment_box')
+    for (var i = temp; i < sub_page.length && i < sub_reply_list.value[index]; i++) {
+        //排除为空的情况
+        if (sub_page[i] !== 'undefined') {
+            sub_page[i].style.display = ''
+        }
+        else {
+            console.log('空子评论')
+            continue;
+        }
+    }
+    //隐藏多余展开按钮
+    var sub_show_more_btn = main_page[index].querySelectorAll('.more_sub_reply')
+    for(var j=0;j<sub_reply_list.value[index]-1&&j<sub_show_more_btn.length;j++)
+    {
+        sub_show_more_btn[j].style.display = 'none';
+    }
 }
 
 //显示更多子评论按钮显示状态函数
@@ -253,7 +246,7 @@ onMounted(() => {
         init_sub_reply_list();
         init_sub_reply_hidden();
         console.log(sub_reply_list.value);
-    }, 1000)
+    }, 300)
 })
 
 function set_senduser_avatar() {
