@@ -56,192 +56,74 @@
         .mb {
             margin-bottom: 5px;
         }
-
-        .content {
+        .content{
             display: flex;
             flex-direction: column;
-            width: 98%;
-            height: 100%;
-            justify-content: center;
-        }
-
-        input {
-            width: 100%;
-            height: 100%;
-            border-radius: 5px;
             margin-left: auto;
             margin-right: auto;
-            align-self: center;
-            border: 1px solid rgba(0, 0, 0, 0.2);
+            width:100%;
         }
-
-        .username,
-        .password,
-        .email,
-        .phone {
-            display: flex;
+        .w{
             width: 100%;
+        }
+        input{
+            width:100%;
+            border:1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
             height: 30px;
-            justify-content: center;
+        }
+        .submit{
+            width:80%;
             margin-left: auto;
             margin-right: auto;
-        }
-
-        .user_avatar {
+            height: 40px;
+            border-radius: 10px;
+            background-color: rgba(0,150,250,1);
+            opacity: 0.8;
             display: flex;
-            width: 100%;
-            height: 150px;
-            position: relative;
-        }
-
-        .preview {
-            width: 100px;
-            height: 100px;
-            overflow: hidden;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-
-        .avatar {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-            height: 100%;
-        }
-
-        .choose_avatar {
-            display: flex;
-            width: 50%;
-            height: 35px;
-            background-color: rgba(0, 150, 250, 1);
             justify-content: center;
             align-items: center;
-            border-radius: 10px;
-            opacity: 0.8;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-        }
-
-        .choose_avatar:hover {
-            opacity: 1;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .submit_btn {
-            display: flex;
-            margin-left: auto;
-            margin-right: auto;
-            height: 35px;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0, 150, 250, 1);
-            border-radius: 10px;
-            opacity: 0.8;
-            font-size: 18px;
+            color: white;
+            font-size: 20px;
             font-weight: bold;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-            ;
         }
-
-        .submit_btn:hover {
+        .submit:hover{
+            cursor:pointer;
             opacity: 1;
-            cursor: pointer;
-            transition: 0.2s;
+            transition:0.2s;
         }
     </style>
 </head>
 
 <body>
     <div class="root_page">
-        <div class="title mt mb">
-            <h1>注册账号</h1>
+        <div class="title">
+            <h1>重置密码</h1>
         </div>
-        <div class="content  mt mb">
-            <div class="username  mt mb">
-                <input type="text" placeholder="用户名">
+        <div class="content w">
+            <div class="username">
+                <input type="text" placeholder="请输入用户名" class="mt mb w">
             </div>
-            <div class="password  mt mb">
-                <input type="password" placeholder="密码">
+            <div class="password w">
+                <input type="password" placeholder="请输入密码" class="mb w">
             </div>
-            <div class="user_avatar  mt mb">
-                <div class="avatar  mt mb">
-                    <img src="" class="preview hidden">
-                    <label for="avatarInput" class="choose_avatar mt">选择头像</label>
-                    <input type="file" id="avatarInput" accept="image/*" style="display: none;">
-                </div>
+            <div class="surepassword w">
+                <input type="password" placeholder="请再次输入密码" class="mb w">
             </div>
-            <span class="tips  mt mb">头像的选择最好是一比一</span>
-            <div class="email  mt mb">
-                <input type="text" placeholder="邮箱">
+            <div class="phone w">
+                <input type="text" placeholder="请输入手机号" class="mb w">
             </div>
-            <div class="phone  mt mb">
-                <input type="text" placeholder="手机号">
+            <div class="email w">
+                <input type="text" placeholder="请输入邮箱" class="mb w">
             </div>
-            <div class="sex  mt mb">
-                <select>
-                    <option value="男">男</option>
-                    <option value="女">女</option>
-                </select>
+            <div class="submit w">
+                <span>提交</span>
             </div>
-            <input type="submit" value="注册" class="submit_btn mt" onclick="register()">
         </div>
     </div>
 
     <script>
-        document.getElementById('avatarInput').addEventListener('change', function () {
-            var file = this.files[0];
-            var reader = new FileReader();
-            reader.onload = function (e) {
-                var img = document.querySelector('.avatar .preview');
-                img.src = e.target.result;
-                console.log(e)
-                img.classList.remove('hidden');
-            }
-            reader.readAsDataURL(file);
-        });
-        async function set_user_avatar() {
 
-            var avatar_file = new FormData();
-            avatar_file.append('avatar', document.getElementById('avatarInput').files[0]);
-            const res = await fetch('http://127.0.0.1:11451/UploadFile', {
-                method: 'post',
-                body: avatar_file,
-
-            })
-        }
-        async function set_userinfo() {
-            var userinfo = {
-                username: document.querySelector('.username input').value,
-                password: document.querySelector('.password input').value,
-                email: document.querySelector('.email input').value,
-                phone: document.querySelector('.phone input').value,
-                sex: document.querySelector('.sex select').value,
-                filename: document.getElementById('avatarInput').files[0].name
-            }
-            try {
-                const res = await fetch('http://127.0.0.1:11451/register', {
-                    method: 'post',
-                    body: JSON.stringify(userinfo),
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                const data = await res.json();
-                if (data.status == "success") {
-                    alert("注册成功");
-                    window.location.href = "http://localhost:3000/";
-                } else {
-                    alert("注册失败");
-                }
-            } catch (e) {
-                alert("注册失败");
-                console.error(e);
-            }
-        }
-        function register() {
-            set_userinfo();
-            set_user_avatar();
-        }
     </script>
 </body>
 

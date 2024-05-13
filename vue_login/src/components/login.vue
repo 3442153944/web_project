@@ -10,6 +10,15 @@
             <div class="user_password">
                 <input placeholder="密码" type="password" v-model="password_in" ref="password">
             </div>
+            <div class="more_box">
+                <div class="register_btn">
+                    <span>没有账号？<span class="register_btn_text" @click="register">&nbsp;注册~</span></span>
+                    
+                </div>
+                <div class="reset_password_btn">
+                    <span class="reset_password_btn_text">忘记密码？</span>
+                </div>
+            </div>
             <div class="login_btn" @click="login"><span>登录</span></div>
         </div>
     </div>
@@ -147,11 +156,34 @@ async function connServer() {
         // 这里可以抛出错误或返回某种失败状态  
         throw error;  
     }  
+    
 } 
-
+//注册跳转
+function register(){
+        window.location.href="http://127.0.0.1:11451/register"
+    }
 </script>
 
 <style  scoped>
+.register_btn_text:hover{
+    cursor: pointer;
+    color: rgba(0,150,250,0.8);
+    transition:0.2s;
+}
+.reset_password_btn_text:hover{
+    cursor: pointer;
+    color: rgba(0,150,250,0.8);
+    transition:0.2s;
+}
+.more_box{
+    display: flex;
+    justify-content: space-between;
+    width:80%;
+    height: 30px;
+    margin-top:5px;
+    margin-bottom: 5px;
+}
+
 @keyframes gradient {  
     0% {  
         background-position: 0% 50%;  
@@ -217,7 +249,8 @@ async function connServer() {
     transition: 0.2s;
 }
 input{
-    border:none;
+    border:1px solid rgba(0,0,0,0.2);
+    border-radius: 10px;
     background: transparent;
     width:100%;
     height: 100%;

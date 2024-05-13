@@ -52,16 +52,16 @@ class Register(tornado.web.RequestHandler, CORSMixin):
             data = self.request.body.decode('utf-8')
             data = json.loads(data)
             print(data)
-            username=data["username"]
-            userid=str(uuid.uuid4())
-            user_avatar=data["filename"]
-            sex=data["sex"]
-            email=data["email"]
-            phone=data["phone"]
-            password=data["password"]
-            sql='insert into users (username,userid,user_avatar,sex,email,phone,password) values(%s,%s,%s,%s,%s,%s,%s)'
+            username = data["username"]
+            userid = str(uuid.uuid4())
+            user_avatar = data["filename"]
+            sex = data["sex"]
+            email = data["email"]
+            phone = data["phone"]
+            password = data["password"]
+            sql = 'insert into users (username,userid,user_avatar,sex,email,phone,password) values(%s,%s,%s,%s,%s,%s,%s)'
 
-            cursor.execute(sql,(username,userid,user_avatar,sex,email,phone,password))
+            cursor.execute(sql, (username, userid, user_avatar, sex, email, phone, password))
 
             conn.commit()
             print("注册成功")
@@ -69,3 +69,15 @@ class Register(tornado.web.RequestHandler, CORSMixin):
 
         except Exception as e:
             print(e)
+
+
+class ResetPassword(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql
+
+    def get(self):
+        self.render('../reset_password/resetpassword.html')
+
+    def post(self):
+        self.set_status(200)
+        conn=self.conn.connect(self)
+        cursor=conn.cursor()
