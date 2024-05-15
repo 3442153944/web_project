@@ -75,9 +75,30 @@ class ResetPassword(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql
 
     def get(self):
-        self.render('../reset_password/resetpassword.html')
+        try:
+            self.render(os.path.join(os.path.dirname(__file__), '../reset_password/resetpasword.html'))
+        except Exception as e:
+            print(e)
 
     def post(self):
         self.set_status(200)
-        conn=self.conn.connect(self)
-        cursor=conn.cursor()
+        try:
+            conn = self.conn.connect(self)
+            cursor = conn.cursor()
+            data = self.request.body.decode('utf-8')
+            data = json.loads(data)
+            print(data)
+            username = data["username"]
+            password = data["password"]
+            phone = data["phone"]
+            email = data["email"]
+            sql = 'update users set password=%s where username=%s and phone=%s and email=%s'
+            cursor.execute(sql, (password, username, phone, email))
+            conn.commit()
+            if cursor.rowcount > 0:
+                self.write(json.dumps({"msg": "success"}))
+            else:
+                self.write(json.dumps({"msg": "fail"}))
+
+        except Exception as e:
+            print(e)

@@ -56,29 +56,33 @@
         .mb {
             margin-bottom: 5px;
         }
-        .content{
+
+        .content {
             display: flex;
             flex-direction: column;
             margin-left: auto;
             margin-right: auto;
-            width:100%;
-        }
-        .w{
             width: 100%;
         }
-        input{
-            width:100%;
-            border:1px solid rgba(0, 0, 0, 0.2);
+
+        .w {
+            width: 100%;
+        }
+
+        input {
+            width: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.2);
             border-radius: 10px;
             height: 30px;
         }
-        .submit{
-            width:80%;
+
+        .submit {
+            width: 80%;
             margin-left: auto;
             margin-right: auto;
             height: 40px;
             border-radius: 10px;
-            background-color: rgba(0,150,250,1);
+            background-color: rgba(0, 150, 250, 1);
             opacity: 0.8;
             display: flex;
             justify-content: center;
@@ -87,10 +91,11 @@
             font-size: 20px;
             font-weight: bold;
         }
-        .submit:hover{
-            cursor:pointer;
+
+        .submit:hover {
+            cursor: pointer;
             opacity: 1;
-            transition:0.2s;
+            transition: 0.2s;
         }
     </style>
 </head>
@@ -101,28 +106,87 @@
             <h1>重置密码</h1>
         </div>
         <div class="content w">
-            <div class="username">
-                <input type="text" placeholder="请输入用户名" class="mt mb w">
-            </div>
-            <div class="password w">
-                <input type="password" placeholder="请输入密码" class="mb w">
-            </div>
-            <div class="surepassword w">
-                <input type="password" placeholder="请再次输入密码" class="mb w">
-            </div>
-            <div class="phone w">
-                <input type="text" placeholder="请输入手机号" class="mb w">
-            </div>
-            <div class="email w">
-                <input type="text" placeholder="请输入邮箱" class="mb w">
-            </div>
-            <div class="submit w">
-                <span>提交</span>
-            </div>
+            <form id="form">
+                <div class="username">
+                    <input type="text" id="username" placeholder="请输入用户名" class="mt mb w">
+                </div>
+                <div class="password w">
+                    <input type="password" id="password" placeholder="请输入密码" class="mb w">
+                </div>
+                <div class="surepassword w">
+                    <input type="password" id="again_password" placeholder="请再次输入密码" class="mb w">
+                </div>
+                <div class="phone w">
+                    <input type="text" id="phone" placeholder="请输入手机号" class="mb w">
+                </div>
+                <div class="email w">
+                    <input type="text" id="email" placeholder="请输入邮箱" class="mb w">
+                </div>
+                <div class="submit w">
+                    <span>提交</span>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            var form = document.getElementById('form');
+            var submit = document.querySelector('.submit');
+            submit.addEventListener('click', () => {
+                var username = document.getElementById('username').value;
+                var password = document.getElementById('password').value;
+                var again_password = document.getElementById('again_password').value;
+                var phone = document.getElementById('phone').value;
+                var email = document.getElementById('email').value;
+                if (password !== again_password) {
+                    alert('两次密码不一致');
+                    return;
+                }
+                else if (username == '' || password == '' || again_password == '' || phone == '' || email == '') {
+                    alert('请输入完整信息');
+                    console.log(username, password, again_password, phone, email);
+                    return;
+                }
+                else {
+                    reset_passwrd(username, password, phone, email);
+                }
+            })
+
+        }
+        )
+        //连接服务器重置密码
+        async function reset_passwrd(username, password, phone, email) {
+            try {
+                const res = await fetch('http://127.0.0.1:11451/resetpassword',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            username: username,
+                            password: password,
+                            phone: phone,
+                            email: email
+                        })
+                    }
+                )
+                const data = await res.json();
+                console.log(data);
+                    if (data.msg == 'success') {
+                        alert('修改成功');
+                        window.location.href = "http://localhost:3000";
+                    }
+
+                    else {
+                        alert('用户信息错误，请更正后重试')
+                    }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
 
     </script>
 </body>

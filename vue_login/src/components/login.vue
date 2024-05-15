@@ -51,7 +51,7 @@ function login() {
         .then(data => {  
             if (data.message === 'success') {  
                 let cookies = document.cookie;
-               window.location.href='http://localhost:3001'+'?cookies='+encodeURIComponent(cookies); 
+               window.location.href='http://localhost:3002'+'?cookies='+encodeURIComponent(cookies); 
                 userinfo.value=data.userinfo;
                 setUserCookie();
                 let temp=getCookie('username');
