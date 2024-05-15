@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import sidebar from './sidebar/sidebar.vue'
 import submission_work_box from './submission_work_box/submission_work_box.vue'
 import header_box from './header_box/header_box.vue'
@@ -97,7 +97,7 @@ export default {
 }
 </script>
 <script setup>
-let index_jump_img_src = ref('../../image/主页.png')
+let index_jump_img_src = ref('http://127.0.0.1:11451/image/主页.png')
 let submission_text = ref('投稿作品')
 let avatar_img_src = ref('../../image/87328997_p0.jpg')
 let join_vip_text = ref('加入ILLWeb高级会员')
@@ -200,7 +200,30 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 
 }
 
+//获取cookies
+function get_cookie(name) {
+    let cookies = document.cookie.split('; ')
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].split('=');
+        if (cookie[0] === name) {
+            return cookie[1];
+        }
+    }
+    return null; // Cookie not found
+}
 
+//设置登录用户头像
+onMounted(() => {
+    let user_avatar=get_cookie('user_avatar');
+
+    //为空设置默认头像
+    if(user_avatar==null){
+        avatar_img_src.value='http://127.0.0.1:11451/image/86604591_p0.png'
+    }
+    else{
+        avatar_img_src.value="http://127.0.0.1:11451/image/"+user_avatar;
+    }
+})
 
 </script>
 
