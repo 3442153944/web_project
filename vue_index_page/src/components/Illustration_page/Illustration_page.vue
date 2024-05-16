@@ -50,13 +50,16 @@
         </svg>
       </div>
     </div>
+    <recommendation></recommendation>
   </div>
 </template>
 
 <script>
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import recommendation from './recommendation.vue';
 export default {
   name: 'illustration_page',
+  components:{recommendation,},
 }
 </script>
 
