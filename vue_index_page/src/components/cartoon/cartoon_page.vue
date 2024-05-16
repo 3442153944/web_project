@@ -1,6 +1,6 @@
 <template>
   <div class="cartoon_page">
-    <h1>已关注用户作品</h1>
+    <h3>已关注用户作品</h3>
     <div class="cartoon_list">
         <div class="cartoon_item">
             <div class="cartoon_img">

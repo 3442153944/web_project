@@ -229,6 +229,7 @@ def make_app():
         (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
         (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
         (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
+        (r"/music/(.*)",tornado.web.StaticFileHandler,{"path":"H:/web_preject/music"}),#音乐文件路径
         (r"/register", Register),  # 注册表单提交
         (r"/UploadFile", UploadFile),  # 注册头像提交
         (r"/resetpassword", ResetPassword)  # 重置密码
