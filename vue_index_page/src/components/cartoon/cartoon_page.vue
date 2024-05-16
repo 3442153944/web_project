@@ -1,6 +1,22 @@
 <template>
   <div class="cartoon_page">
-    漫画
+    <h1>已关注用户作品</h1>
+    <div class="cartoon_list">
+        <div class="cartoon_item">
+            <div class="cartoon_img">
+                <div class="age_tag"></div>
+                <div class="page_count"></div>
+                <img>
+            </div>
+            <div class="cartoon_title">
+
+            </div>
+            <div class="user_info">
+                <div class="user_avatar"></div>
+                <div class="username"></div>
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -16,5 +32,12 @@ export default {
 </script>
 
 <style scoped>
-  
+  .cartoon_page{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: auto;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
 </style>

@@ -16,5 +16,12 @@ export default {
 </script>
 
 <style scoped>
-  
+  .novel_page {
+  display: flex;
+  flex-direction: column;
+  width: 80%;
+  height: auto;
+  margin:0 auto;
+  margin-top: 20px;
+  }
 </style>
