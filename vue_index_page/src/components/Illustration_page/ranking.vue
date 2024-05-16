@@ -111,6 +111,7 @@ let username=ref('用户名');
     display: flex;
     flex-direction: column;
     margin-right: 20px;
+    min-width: 200px;
 }
 .item{
     display: flex;
