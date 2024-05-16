@@ -51,15 +51,17 @@
       </div>
     </div>
     <recommendation></recommendation>
+    <ranking></ranking>
   </div>
 </template>
 
 <script>
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 import recommendation from './recommendation.vue';
+import ranking from './ranking.vue';
 export default {
   name: 'illustration_page',
-  components:{recommendation,},
+  components:{recommendation,ranking},
 }
 </script>
 
