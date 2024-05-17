@@ -209,9 +209,10 @@ function scrollTabs(scrollAmount) {
   justify-content: flex-start;
   align-items: center;
   width: 100px;
-  height: 100%;
+  height:315px;
   position: absolute;
   left: 0;
+  top:60px;
   background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   opacity: 0;
 
@@ -228,9 +229,10 @@ function scrollTabs(scrollAmount) {
   justify-content:flex-end;
   align-items: center;
   width: 100px;
-  height: 100%;
+  height: 315px;
   position: absolute;
   right: 0;
+  top:60px;
   background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
   opacity: 0;
 }
