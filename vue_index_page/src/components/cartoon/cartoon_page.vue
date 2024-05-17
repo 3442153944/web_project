@@ -44,17 +44,18 @@
           d="M425.28 310.72a32 32 0 0 1 45.44-45.44l224 224a32 32 0 0 1 0 45.44l-224 224a32 32 0 0 1-45.44-45.44L626.88 512z"
           p-id="6059"></path>
       </svg></div>
+      <recommendation_cartoon></recommendation_cartoon>
   </div>
-  <recommendation></recommendation>
+
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
-import recommendation from './recommendation.vue';
+import recommendation_cartoon from './recommendation_cartoon.vue';
 export default {
   name: 'cartoon_page',
-  components:{recommendation,},
+  components:{recommendation_cartoon,},
 }
 </script>
 <script setup>
