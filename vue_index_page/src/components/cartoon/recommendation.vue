@@ -4,7 +4,7 @@
     </div>
 </template>
 <script>
-import {ref,onMounted,onUnmounted,watch} from 'vue'
+import {ref,onMounted,onUnmounted,watch} from 'vue';
 export default{
     name:'recommendation',
 }
