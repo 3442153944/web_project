@@ -20,6 +20,5 @@ export default{
     width:80%;
     height: auto;
     position: relative;
-    margin:40px auto;
 }
 </style>
