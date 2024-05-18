@@ -7,9 +7,9 @@
   <span class="active" @click="choose_page(1)">漫画</span>
   <span class="active" @click="choose_page(2)">小说</span>
  </div>
- <illustration_page v-show="ill_show"></illustration_page>
- <cartoon_page v-show="cartoon_show"></cartoon_page>
- <novel_page v-show="novel_show"></novel_page>
+ <illustration_page v-if="ill_show"></illustration_page>
+ <cartoon_page v-if="cartoon_show"></cartoon_page>
+ <novel_page v-if="novel_show"></novel_page>
 </template>
 
 <script>
