@@ -45,6 +45,7 @@
           p-id="6059"></path>
       </svg></div>
       <recommendation_cartoon></recommendation_cartoon>
+      <ranking></ranking>
   </div>
 
 </template>
@@ -53,9 +54,10 @@
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 import recommendation_cartoon from './recommendation_cartoon.vue';
+import ranking from './ranking.vue';
 export default {
   name: 'cartoon_page',
-  components:{recommendation_cartoon,},
+  components:{recommendation_cartoon,ranking,},
 }
 </script>
 <script setup>
