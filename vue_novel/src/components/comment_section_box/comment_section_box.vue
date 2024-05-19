@@ -20,7 +20,7 @@
                 <div v-if="show_main_reply(index)" class="main_reply_box">
                     <div class="main_comment_box">
                         <div class="user_avatar">
-                            <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
+                            <img class="user_avatar_img" src="https://127.0.0.1:443/image/87328997_p0.jpg">
                         </div>
                         <div class="user_comment">
                             <div class="username">
@@ -57,7 +57,7 @@
                             ref="sub_comment_box" v-show="show_sub_replybox_list(index, index1)">
 
                             <div class="user_avatar">
-                                <img class="user_avatar_img" src="http://127.0.0.1:11451/image/87328997_p0.jpg">
+                                <img class="user_avatar_img" src="https://127.0.0.1:443/image/87328997_p0.jpg">
                             </div>
                             <div class="user_comment">
                                 <div class="username">
@@ -118,7 +118,7 @@ export default {
 </script>
 
 <script setup>
-let image_src = 'http://127.0.0.1:11451/image/'
+let image_src = 'https://127.0.0.1:443/image/'
 let senduser_avatar = ref('');
 let reply_input_hight = ref('0');
 let main_reply_message = ref([]);
@@ -544,7 +544,7 @@ async function set_comment_avatar() {
         console.log(data)
         var avatar_list = document.querySelectorAll('.user_avatar_img');
         for (let i = 0; i < avatar_list.length; i++) {
-            avatar_list[i].src = "http://127.0.0.1:11451/image/" + user_avatar_list[i];
+            avatar_list[i].src = "https://127.0.0.1:443/image/" + user_avatar_list[i];
         }
     }
     catch (err) {

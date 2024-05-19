@@ -160,7 +160,7 @@ async function connServer() {
 } 
 //注册跳转
 function register(){
-        window.location.href="http://127.0.0.1:11451/register"
+        window.location.href="https://127.0.0.1:443/register"
     }
 </script>
 

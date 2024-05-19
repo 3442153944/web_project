@@ -58,11 +58,11 @@ onMounted(() => {
     daytime.value = datetime;
 })
 
-let item_path = ref('http://127.0.0.1:11451/image/65014220_p0.jpg');
+let item_path = ref('https://127.0.0.1:443/image/65014220_p0.jpg');
 let rank = ref(1);
 let page_count = ref(12);
 let work_title = ref('作品标题');
-let user_avatar = ref('http://127.0.0.1:11451/image/87328997_p0.jpg');
+let user_avatar = ref('https://127.0.0.1:443/image/87328997_p0.jpg');
 let username = ref('用户名');
 
 function scrollTabs(scrollAmount){

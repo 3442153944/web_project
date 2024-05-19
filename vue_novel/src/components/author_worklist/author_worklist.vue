@@ -45,7 +45,7 @@ let follow_btn_color = ref('');
 let item_src = ref('../../../image/104705167_p0.jpg');
 let user_avatar=ref('../../../image/87328997_p0.jpg');
 //图片资源路径
-let image_src="http://127.0.0.1/image/"
+let image_src="https://127.0.0.1:443/image/"
 function switch_follow() {
   if (follow_btn_text.value == '关注') {
     follow_btn_text.value = '已关注';

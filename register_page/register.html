@@ -203,7 +203,7 @@
 
             var avatar_file = new FormData();
             avatar_file.append('avatar', document.getElementById('avatarInput').files[0]);
-            const res = await fetch('http://127.0.0.1:11451/UploadFile', {
+            const res = await fetch('https://127.0.0.1:443/UploadFile', {
                 method: 'post',
                 body: avatar_file,
 
@@ -219,7 +219,7 @@
                 filename: document.getElementById('avatarInput').files[0].name
             }
             try {
-                const res = await fetch('http://127.0.0.1:11451/register', {
+                const res = await fetch('https://127.0.0.1:443/register', {
                     method: 'post',
                     body: JSON.stringify(userinfo),
                     headers: {

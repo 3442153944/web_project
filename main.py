@@ -238,6 +238,18 @@ def make_app():
 
 if __name__ == "__main__":
     app = make_app()
-    app.listen(11451)
-    print("服务器启动成功，请访问 http://localhost:11451")
+
+    # 启动 HTTP 服务器
+    http_server = tornado.httpserver.HTTPServer(app)
+    http_server.listen(11451)  # 11451 是 HTTP 端口
+    print("HTTP 服务器启动成功，请访问 http://localhost:11451")
+
+    # 启动 HTTPS 服务器
+    https_server = tornado.httpserver.HTTPServer(app, ssl_options={
+        "certfile": "H:/web_preject/key/server.crt",
+        "keyfile": "H:/web_preject/key/back_server.key",
+    })
+    https_server.listen(443)  # 443 是 HTTPS 端口
+    print("HTTPS 服务器启动成功，请访问 https://localhost:443")
+
     tornado.ioloop.IOLoop.current().start()

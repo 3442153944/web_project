@@ -58,8 +58,8 @@ function setUserinfo(){
     console.log(getCookie('user_following'))
     follow_num.value=getCookie('user_following')
     fans_num.value=getCookie('user_fans')
-    header_box_avatar_src.value="http://127.0.0.1:11451/image/"+getCookie("user_avatar")
-    header_box_background_src.value="http://127.0.0.1:11451/image/"+getCookie("user_back_img")
+    header_box_avatar_src.value="https://127.0.0.1:443/image/"+getCookie("user_avatar")
+    header_box_background_src.value="https://127.0.0.1:443/image/"+getCookie("user_back_img")
 }
 function getCookie(name) {
     const cookieString = document.cookie;

@@ -57,7 +57,7 @@ let update_time=ref('2024年4月21日20:55:27');
 
 function set_workinfo(){
   try{
-    novel_cover_src.value="http://127.0.0.1:11451/image/"+get_cookie('work_cover');
+    novel_cover_src.value="https://127.0.0.1:443/image/"+get_cookie('work_cover');
     author_say.value=get_cookie('author_say');
     work_title.value=get_cookie('work_title');
     age_classification.value="R"+get_cookie('age_tag');

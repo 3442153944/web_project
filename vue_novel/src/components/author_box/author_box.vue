@@ -77,7 +77,7 @@ function follow_btn(){
 }
 function set_userinfo(){
 username.value=getCookie('username');
-avatar_src.value="http://127.0.0.1:11451/image/"+getCookie('user_avatar');
+avatar_src.value="https://127.0.0.1:443/image/"+getCookie('user_avatar');
 try{
    work_name.value=getCookie('work_list').split(',');
    series_name.value=getCookie('series_list').split(',');
