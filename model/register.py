@@ -14,7 +14,8 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
 
     async def post(self):
         files = self.request.files.get('avatar')
-
+        self.set_status(200)
+        self.write(json.dumps({"statusCode":200}))
         try:
             if files:
                 for file in files:
