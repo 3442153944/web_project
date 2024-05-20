@@ -39,14 +39,17 @@
         </div>
       </div>
     </div>
+    <recommendation_novel></recommendation_novel>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import recommendation_novel from './recommendation_novel.vue';
 export default {
   name: 'novel_page',
+  components:{recommendation_novel},
 }
 </script>
 
