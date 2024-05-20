@@ -61,11 +61,11 @@ export default {
 }
 </script>
 <script setup>
-let img_path = ref('https://127.0.0.1:443/image/117214493_p0_master1200.jpg')
+let img_path = ref('https://127.0.0.1:4434/image/117214493_p0_master1200.jpg')
 let age_tag = ref('R-18');
 let page_count = ref(12);
 let cartoon_title = ref('作品标题');
-let user_avatar = ref('https://127.0.0.1:443/image/80662332_p0(1).png');
+let user_avatar = ref('https://127.0.0.1:4434/image/80662332_p0(1).png');
 let username = ref('用户名');
 
 //滚动函数

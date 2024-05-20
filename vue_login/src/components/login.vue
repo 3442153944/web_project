@@ -51,7 +51,7 @@ function login() {
         .then(data => {  
             if (data.message === 'success') {  
                 let cookies = document.cookie;
-               window.location.href='http://localhost:3002'+'?cookies='+encodeURIComponent(cookies); 
+               window.location.href='https://localhost:3002'+'?cookies='+encodeURIComponent(cookies); 
                 userinfo.value=data.userinfo;
                 setUserCookie();
                 let temp=getCookie('username');
@@ -160,7 +160,7 @@ async function connServer() {
 } 
 //注册跳转
 function register(){
-        window.location.href="https://127.0.0.1:443/register"
+        window.location.href="https://127.0.0.1:4434/register"
     }
 </script>
 

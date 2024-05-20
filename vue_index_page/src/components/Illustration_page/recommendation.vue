@@ -40,11 +40,11 @@ export default {
 </script>
 
 <script setup>
-let work_item_path = ref('https://127.0.0.1:443/image/105716156_p0.jpg');
+let work_item_path = ref('https://127.0.0.1:4434/image/105716156_p0.jpg');
 let work_item_age = ref('R-18');
 let work_item_page_count = ref('12');
 let work_item_title = ref('作品标题');
-let work_item_user_avatar = ref('https://127.0.0.1:443/image/87328997_p0.jpg');
+let work_item_user_avatar = ref('https://127.0.0.1:4434/image/87328997_p0.jpg');
 let work_item_user_name = ref('用户名');
 </script>
 

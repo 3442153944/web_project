@@ -45,7 +45,7 @@ export default {
 </script>
 
 <script setup>
-let header_box_background_src=ref("http://localhost:11451/image/97165605_p0.jpg")
+let header_box_background_src=ref("https://localhost:11451/image/97165605_p0.jpg")
 let header_box_avatar_src=ref("../../../image/87328997_p0.jpg")
 let username=ref("孙源玲")
 let userid=ref('@'+"userid")
@@ -58,8 +58,8 @@ function setUserinfo(){
     console.log(getCookie('user_following'))
     follow_num.value=getCookie('user_following')
     fans_num.value=getCookie('user_fans')
-    header_box_avatar_src.value="https://127.0.0.1:443/image/"+getCookie("user_avatar")
-    header_box_background_src.value="https://127.0.0.1:443/image/"+getCookie("user_back_img")
+    header_box_avatar_src.value="https://127.0.0.1:4434/image/"+getCookie("user_avatar")
+    header_box_background_src.value="https://127.0.0.1:4434/image/"+getCookie("user_back_img")
 }
 function getCookie(name) {
     const cookieString = document.cookie;
@@ -79,13 +79,13 @@ onMounted(()=>{
 
 function jump_usercenter(){
     console.log("用户中心跳转");
-    //window.location.href="http://localhost:8888/usercenter";
+    //window.location.href="https://localhost:8888/usercenter";
 }
 //退出登录
 function logout(){
     console.log("退出登录");
     clearAllCookies();
-    window.location.href="http://localhost:3000";
+    window.location.href="https://localhost:3000";
 
 }
 //清空cookies

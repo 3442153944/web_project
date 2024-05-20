@@ -97,7 +97,7 @@ export default {
 }
 </script>
 <script setup>
-let index_jump_img_src = ref('https://127.0.0.1:443/image/主页.png')
+let index_jump_img_src = ref('https://127.0.0.1:4434/image/主页.png')
 let submission_text = ref('投稿作品')
 let avatar_img_src = ref('../../image/87328997_p0.jpg')
 let join_vip_text = ref('加入ILLWeb高级会员')
@@ -218,10 +218,10 @@ onMounted(() => {
 
     //为空设置默认头像
     if(user_avatar==null){
-        avatar_img_src.value='https://127.0.0.1:443/image/86604591_p0.png'
+        avatar_img_src.value='https://127.0.0.1:4434/image/86604591_p0.png'
     }
     else{
-        avatar_img_src.value="https://127.0.0.1:443/image/"+user_avatar;
+        avatar_img_src.value="https://127.0.0.1:4434/image/"+user_avatar;
     }
 })
 

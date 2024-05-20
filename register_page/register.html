@@ -203,7 +203,7 @@
 
             var avatar_file = new FormData();
             avatar_file.append('avatar', document.getElementById('avatarInput').files[0]);
-            const res = await fetch('https://127.0.0.1:443/UploadFile', {
+            const res = await fetch('https://127.0.0.1:4434/UploadFile', {
                 method: 'post',
                 body: avatar_file,
 
@@ -219,7 +219,7 @@
                 filename: document.getElementById('avatarInput').files[0].name
             }
             try {
-                const res = await fetch('https://127.0.0.1:443/register', {
+                const res = await fetch('https://127.0.0.1:4434/register', {
                     method: 'post',
                     body: JSON.stringify(userinfo),
                     headers: {
@@ -229,7 +229,7 @@
                 const data = await res.json();
                 if (data.status == "success") {
                     alert("注册成功");
-                    window.location.href = "http://localhost:3000/";
+                    window.location.href = "https://localhost:3000/";
                 } else {
                     alert("注册失败");
                 }

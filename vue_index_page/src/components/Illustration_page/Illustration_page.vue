@@ -70,11 +70,11 @@ export default {
 </script>
 
 <script setup>
-let work_item_path = ref('https://127.0.0.1:443/image/87328997_p0.jpg');
+let work_item_path = ref('https://127.0.0.1:4434/image/87328997_p0.jpg');
 let age_tag = ref('R-18');
 let work_count = ref(12);
 let work_name = ref('作品名');
-let user_avatar = ref('https://127.0.0.1:443/image/104705167_p0.jpg');
+let user_avatar = ref('https://127.0.0.1:4434/image/104705167_p0.jpg');
 let username = ref('用户名');
 
 //喜欢状态
