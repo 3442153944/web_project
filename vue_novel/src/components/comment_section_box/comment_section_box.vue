@@ -212,6 +212,11 @@ function init_sub_reply_hidden() {
     }
     console.log('子评论显示列表初始化')
 }
+/*
+setTimeout(()=>{
+    init_sub_reply_list();
+    init_sub_reply_hidden();
+},1000)*/
 
 function show_more_reply_comment(index) {
     let temp = sub_reply_list.value[index];
@@ -246,7 +251,7 @@ onMounted(() => {
         init_sub_reply_list();
         init_sub_reply_hidden();
         console.log(sub_reply_list.value);
-    }, 300)
+    }, 600)
 })
 
 function set_senduser_avatar() {
