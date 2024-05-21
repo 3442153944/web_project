@@ -40,8 +40,8 @@
       </div>
       
     </div>
-    <div class="left_btn">1</div>
-      <div class="right_btn">1</div>
+    <div class="left_btn" @click="scrollTabs(-600)">1</div>
+      <div class="right_btn" @click="scrollTabs(600)">1</div>
   </div>
 </template>
 
@@ -74,6 +74,26 @@ let read_data=ref({
   read_time:10,
   read_num:1000
 });
+
+//滚动函数
+function scrollTabs(scrollAmount) {
+  const tags = document.querySelector('.ranking_work_list');
+  const animationDuration = 0.2 * 1000; // 0.5秒转为毫秒
+  const fps = 24; // 帧率
+  const frameDuration = animationDuration / fps; // 每帧持续时间
+  const framesCount = Math.ceil(animationDuration / frameDuration); // 总帧数
+  let count = 0;
+
+  function animateScroll() {
+    if (count < framesCount) {
+      tags.scrollLeft += scrollAmount / framesCount;
+      count++;
+      requestAnimationFrame(animateScroll);
+    }
+  }
+
+  animateScroll();
+}
 </script>
 
 <style scoped>
