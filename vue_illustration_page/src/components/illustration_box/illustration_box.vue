@@ -66,10 +66,16 @@
             <div class="work_list">
                 <div class="work_item">
                     <div class="item_img">
-                        <img>
+                        <img :src="work_path">
                     </div>
                     <div class="like_svg">
 
+                    </div>
+                    <div class="age_tag">
+                        <span>{{ work_age_list[0] }}</span>
+                    </div>
+                    <div class="page_count">
+                        <span>{{ page_count }}</span>
                     </div>
                 </div>
             </div>
@@ -108,6 +114,9 @@ let creat_time = ref(year + '年' + month + '月' + day + '日');
 let user_avatar = ref('https://127.0.0.1:4434/image/118839253_p1.jpg');
 let username = ref('用户名')
 let following_btn = ref('关注');
+let work_path=ref('https://127.0.0.1:4434/image/116883317_p0.png');
+let work_age_list=ref(['R-18','R-18G']);
+let page_count=ref('12');
 
 function show_max_image(path) {
     max_image_box_is_show.value = true;
@@ -359,6 +368,73 @@ function following_btn_click(){
     font-weight: bold;
     color: white;
     cursor: pointer;
+}
+.work_list{
+    display: flex;
+    width:100%;
+    height: auto;
+    min-height: 260px;
+    overflow-x:auto ;
+    white-space: nowrap;
+    margin-top: 20px;
+}
+.work_item{
+    display: flex;
+    min-width: 200px;
+    min-height: 260px;
+    height: 260px;
+    width: 200px;
+    margin-right: 20px;
+    position: relative;
+}
+.work_item svg{
+    width: 25px;
+    height: 25px;
+    object-fit: cover;
+}
+.item_img{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    border-radius: 15px;
+    overflow: hidden;
+    justify-content: center;
+    align-items: center;
+}
+.item_img img{
+    width:100%;
+    height: 100%;
+    object-fit: cover;
+}
+.like_svg{
+    position: absolute;
+    right: 5px;
+    bottom: 5px;
+    border-radius: 10px;
+}
+.age_tag{
+    position: absolute;
+    left:5px;
+    top:5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+    padding: 5px;
+    border-radius: 10px;
+    background-color: red;
+}
+.page_count{
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 30px;
+    background-color:rgba(133,133,133,1) ;
+    color: white;
+    border-radius: 10px;
+    right: 5px;
+    top: 5px;
 }
 
 </style>
