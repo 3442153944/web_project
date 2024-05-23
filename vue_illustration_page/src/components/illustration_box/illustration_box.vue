@@ -17,12 +17,14 @@
             </div>
         </div>
         <div class="ill_data">
-            <div class="like" style="margin-right: 20px;">喜欢</div>
-            <div class="love" style="margin-right: 20px;">收藏</div>
-            <div class="share">分享</div>
+            <div class="like" style="margin-right: 20px;"><img src="../../assets/like.svg" style="margin-right: 5px;"><span><b>赞！</b></span></div>
+            <div class="love" style="margin-right: 20px;"><img src="../../assets/love.svg"></div>
+            <div class="share"><img src="../../assets/share.svg"></div>
         </div>
         <div class="float_ill_data">
-
+            <div class="like" style="margin-right: 20px;"><img src="../../assets/like.svg" style="margin-right: 5px;"><span><b>赞！</b></span></div>
+            <div class="love" style="margin-right: 20px;"><img src="../../assets/love.svg"></div>
+            <div class="share"><img src="../../assets/share.svg"></div>
         </div>
         <div class="work_info">
             <div class="work_title mt ">
@@ -43,9 +45,12 @@
                 </span>
             </div>
             <div class="interactive mt">
-                <span class="mr">点赞人数：{{ like_count }}</span>
-                <span class="mr">收藏人数：{{ love_count }}</span>
-                <span class="mr">观看人数：{{ look_count }}</span>
+                <img src="../../assets/like.svg">
+                <span class="mr">{{ like_count }}</span>
+                <img src="../../assets/love.svg">
+                <span class="mr">{{ love_count }}</span>
+                <img src="../../assets/show.svg">
+                <span class="mr">{{ look_count }}</span>
             </div>
             <div class="creat_time mt">
                 <span>{{ creat_time }}</span>
@@ -262,6 +267,28 @@ function scrollTabs(scrollAmount) {
 .mr {
     margin-right: 5px;
 }
+.float_ill_data{
+    display: flex;
+    justify-content: flex-end;
+}
+.float_ill_data img{
+    width:25px;
+    height: 25px;
+    object-fit: cover;
+}
+.interactive{
+    display: flex;
+    align-items: center;
+}
+.interactive  img{
+    width:15px;
+    height: 15px;
+}
+.interactive span{
+    margin-right: 10px;
+    margin-left: 10px;
+}
+
 .btn_box{
     display: flex;
     justify-content: space-between;
@@ -369,6 +396,12 @@ function scrollTabs(scrollAmount) {
     align-items: center;
     width: 100%;
     height: 50px;
+}
+
+.ill_data img {
+    width: 25px;
+    height: 25px;
+    object-fit: cover;
 }
 
 .work_info {
@@ -520,6 +553,12 @@ function scrollTabs(scrollAmount) {
     bottom: 5px;
     border-radius: 10px;
 }
+.like,.love,.share{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 
 .age_tag {
     position: absolute;
