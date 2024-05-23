@@ -20,7 +20,7 @@ export default{
 .user_box{
     display: flex;
     flex-grow: 1;
-    width:20%;
+    width:100%;
     height: auto;
     flex-direction: column;
 }

@@ -309,7 +309,7 @@ function scrollTabs(scrollAmount) {
 
 .illustration_box {
     display: flex;
-    width: 80%;
+    width: 100%;
     height: auto;
     flex-direction: column;
 }

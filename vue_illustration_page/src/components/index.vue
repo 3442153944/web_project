@@ -1,16 +1,23 @@
 <template>
 <div class="index">
-    <illustration_box></illustration_box>
-    <user_box></user_box>
+    <div class="page1">
+        <illustration_box></illustration_box>
+        <correlation_box></correlation_box>
+    </div>
+    <div class="page2">
+        <user_box></user_box>
+    </div>
+    
 </div>
 </template>
 <script>
 import {ref,onMounted,onUnmounted,watch} from 'vue';
 import illustration_box from './illustration_box/illustration_box.vue'
 import user_box from './user_box/user_box.vue'
+import correlation_box from './correlation_box/correlation_box.vue'
 export default{
     name:'index',
-    components:{illustration_box,user_box},
+    components:{illustration_box,user_box,correlation_box},
 }
 </script>
 <script setup>
@@ -55,6 +62,19 @@ function expireCookie(name) {
 .index{
     display: flex;
     width:80%;
+    height: auto;
+    margin:20px auto;
+}.page1{
+    display: flex;
+    flex-direction: column;
+    width:80%;
+    height: auto;
+    margin:20px auto;
+}
+.page2{
+    display: flex;
+    flex-direction: column;
+    width:20%;
     height: auto;
     margin:20px auto;
 }
