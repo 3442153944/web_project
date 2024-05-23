@@ -74,7 +74,7 @@ function expireCookie(name) {
 .page2{
     display: flex;
     flex-direction: column;
-    width:20%;
+    width:28%;
     height: auto;
     margin:20px auto;
 }

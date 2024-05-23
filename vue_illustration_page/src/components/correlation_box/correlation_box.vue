@@ -18,6 +18,9 @@
                         <span>{{page_count}}</span>
                     </div>
                 </div>
+                <div class="work_title">
+                    <span>{{work_title}}</span>
+                </div>
                 <div class="user_info">
                     <div class="user_avatar">
                         <img :src="user_avatar">
@@ -44,6 +47,7 @@ let age_tag=ref('R-18');
 let page_count=ref(12);
 let user_avatar=ref('https://127.0.0.1:4434/image/116883317_p0.png');
 let username=ref('用户名');
+let work_title=ref('作品标题');
 </script>
 
 <style scoped>
@@ -65,7 +69,9 @@ let username=ref('用户名');
     display: flex;
     flex-direction: column;
     width: 210px;
-    height: 260px;
+    min-height: 260px;
+    height: auto;
+    max-height: 330px;
     margin:20px 10px;
 }
 .work_img{
@@ -152,6 +158,9 @@ let username=ref('用户名');
     display: flex;
     justify-content: center;
     align-items: center;
-
+}
+.work_title{
+    font-size: 16px;
+    font-weight: bold;
 }
 </style>
