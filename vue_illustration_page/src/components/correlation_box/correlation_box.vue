@@ -57,6 +57,8 @@ let work_title=ref('作品标题');
     height: auto;
     margin-top: 40px;
     flex-direction: column;
+    margin:40px auto;
+    margin-left:-5vw;
 }
 .correlation_work_list{
     display: flex;
