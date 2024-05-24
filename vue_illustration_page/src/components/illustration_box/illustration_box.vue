@@ -17,14 +17,14 @@
             </div>
         </div>
         <div class="ill_data">
-            <div class="like" style="margin-right: 20px;"><img :src="like_path" style="margin-right: 5px;"><span><b>赞！</b></span></div>
-            <div class="love" style="margin-right: 20px;"><img :src="love_path"></div>
+            <div class="like" style="margin-right: 20px;" @click="like_click"><img :src="like_path" style="margin-right: 5px;"><span><b>赞！</b></span></div>
+            <div class="love" style="margin-right: 20px;" @click="love_click"><img :src="love_path"></div>
             <div class="share"><img :src="share_path"></div>
         </div>
         <div class="float_ill_data">
-            <div class="like" style="margin-right: 20px;"><img :src="like_path" style="margin-right: 5px;"><span><b>赞！</b></span></div>
-            <div class="love" style="margin-right: 20px;"><img :src="love_path"></div>
-            <div class="share"><img :src="share_path"></div>
+            <div class="like" style="margin-right: 20px;" @click="like_click"><img :src="like_path" style="margin-right: 5px;"><span><b>赞！</b></span></div>
+            <div class="love" style="margin-right: 20px;"  @click="love_click"><img :src="love_path"></div>
+            <div class="share" @click="share_click"><img :src="share_path"></div>
         </div>
         <div class="work_info">
             <div class="work_title mt ">
@@ -247,6 +247,44 @@ let show_path=ref(server_ip+'assets/show.svg');
 let page_count_svg_path=ref(server_ip+'assets/page_count.svg');
 let work_like_svg_path=ref(server_ip+'assets/work_like.svg');
 let no_work_like_svg_path=ref(server_ip+'assets/no_work_like.svg');
+
+function like_click(){
+    let like=document.querySelectorAll('.like');
+    for(let i=0;i<like.length;i++){
+        let path=like[i].querySelector('img').src;
+        if(path==like_path.value){
+            like[i].querySelector('img').src=is_like_path.value;
+            like[i].querySelector('span').style.color='rgba(0,150,250,1)';
+        }
+        else if(path==is_like_path.value){
+            like[i].querySelector('img').src=like_path.value;
+            like[i].querySelector('span').style.color='';
+        }
+    }
+}
+
+function love_click(){
+    let love=document.querySelectorAll('.love');
+    for(let i=0;i<love.length;i++){
+        let path=love[i].querySelector('img').src;
+        if(path==love_path.value){
+            love[i].querySelector('img').src=is_love_path.value;  
+        }
+        else if(path==is_love_path.value){
+            love[i].querySelector('img').src=love_path.value;
+        }
+    }
+}
+
+
+//获取页面连接到剪贴板
+function share_click(){
+    let page_path=window.location.href;
+    navigator.clipboard.writeText(page_path);
+  alert('页面链接已复制到剪贴板');
+}
+
+
 </script>
 
 <style scoped>
@@ -547,6 +585,13 @@ let no_work_like_svg_path=ref(server_ip+'assets/no_work_like.svg');
     display: flex;
     justify-content: center;
     align-items: center;
+    overflow: hidden
+}
+.like img:hover,.love:hover,.share:hover{
+    cursor: pointer;
+    background-color: rgba(133, 133, 133, 0.5);
+    border-radius: 50%;
+    transition:all 0.3s ease-in-out;
 }
 
 
