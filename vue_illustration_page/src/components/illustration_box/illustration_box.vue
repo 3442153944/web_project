@@ -314,10 +314,8 @@ function float_ill_data(isScrollingUp) {
             //float_page.style.transform = 'translatey(80px)';
             setTimeout(() => {},500)
             float_page.style.width = fixed_width + 'px';
-            
         } else {
             float_page.style.display = 'none';
-            
         }
     }
     console.log(fixed_page_bottom_to_window_bottom, isScrollingUp);
