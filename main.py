@@ -233,7 +233,7 @@ def make_app():
         (r"/assets/(.*)",tornado.web.StaticFileHandler,{"path":"H:/web_preject/assets"}),#svg图标矢量库
         (r"/register", Register),  # 注册表单提交
         (r"/UploadFile", UploadFile),  # 注册头像提交
-        (r"/resetpassword", ResetPassword)  # 重置密码
+        (r"/resetpassword", ResetPassword),  # 重置密码
     ])
 
 
