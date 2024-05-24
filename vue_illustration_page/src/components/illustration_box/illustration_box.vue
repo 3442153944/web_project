@@ -287,50 +287,60 @@ function share_click(){
 //浮动交互栏
 let lastScrollTop = 0;
 
-function handleScroll() {
-    let st = window.pageYOffset || document.documentElement.scrollTop;
-    let isScrollingUp = st < lastScrollTop;
-    lastScrollTop = st <= 0 ? 0 : st;
-    return isScrollingUp;
-}
+    const handleScroll = () => {
+      let st = window.pageYOffset || document.documentElement.scrollTop;
+      let isScrollingUp = st < lastScrollTop;
+      lastScrollTop = st <= 0 ? 0 : st;
+      return isScrollingUp;
+    };
 
-function float_ill_data(isScrollingUp) {
-    let window_height = window.innerHeight;
-    let fixed_page = document.querySelector('.ill_data');
-    let float_page = document.querySelector('.float_ill_data');
-    let fixed_width = fixed_page.offsetWidth;
-    let fixed_page_rect = fixed_page.getBoundingClientRect();
-    let fixed_page_bottom_to_window_bottom = window_height - fixed_page_rect.bottom;
+    const float_ill_data = (isScrollingUp) => {
+      let window_height = window.innerHeight;
+      let fixed_page = document.querySelector('.ill_data');
+      let float_page = document.querySelector('.float_ill_data');
+      let fixed_width = fixed_page.offsetWidth;
+      let fixed_page_rect = fixed_page.getBoundingClientRect();
+      let fixed_page_bottom_to_window_bottom = window_height - fixed_page_rect.bottom;
 
-    if (fixed_page_bottom_to_window_bottom >= 1) {
+      if (fixed_page_bottom_to_window_bottom >= 1) {
         float_page.style.display = 'none';
-       
         fixed_page.style.display = '';
-    } else {
+      } else {
         if (isScrollingUp) {
-            //float_page.style.transform = '';
-            float_page.style.display = '';
-            fixed_page.style.display = '';
-            //float_page.style.transform = 'translatey(80px)';
-            setTimeout(() => {},500)
-            float_page.style.width = fixed_width + 'px';
+          float_page.style.width = fixed_width + 'px';
+          float_page.style.display = '';
+          float_page.style.animation = 'slideUp 0.3s forwards';
+          //延时0.3秒后移除animation属性
+          setTimeout(() => {
+            float_page.style.animation = '';
+          }, 100);
         } else {
-            float_page.style.display = 'none';
+          float_page.style.animation = 'slideDown 0.3s forwards';
+          setTimeout(() => {
+            
+            float_page.style.animation = '';
+          }, 320);
+          float_page.style.display = 'none';
         }
-    }
-    console.log(fixed_page_bottom_to_window_bottom, isScrollingUp);
-}
+      }
+      console.log(fixed_page_bottom_to_window_bottom, isScrollingUp);
+    };
 
-function onScroll() {
-    const isScrollingUp = handleScroll();
-    float_ill_data(isScrollingUp);
-}
+    const onScroll = () => {
+      const isScrollingUp = handleScroll();
+      float_ill_data(isScrollingUp);
+    };
 
-window.addEventListener('scroll', onScroll);
-window.addEventListener('resize', float_ill_data);
-onMounted(() => {
-    float_ill_data();
-});
+    onMounted(() => {
+      float_ill_data(handleScroll()); // Initial check on mount
+      window.addEventListener('scroll', onScroll);
+      window.addEventListener('resize', () => float_ill_data(handleScroll()));
+    });
+
+    onUnmounted(() => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', () => float_ill_data(handleScroll()));
+    });
 
 </script>
 
@@ -352,6 +362,24 @@ onMounted(() => {
     background:linear-gradient(to top,rgba(255,255,255,1),rgba(255,255,255,0));
     height: 80px;
     align-items: center;
+    transition: transform 0.5s ease-in-out;
+}
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        transform: translateY(0);
+    }
+    to {
+        transform: translateY(100%);
+    }
 }
 .float_ill_data img{
     width:25px;
