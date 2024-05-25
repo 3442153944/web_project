@@ -6,7 +6,7 @@
             <div class="edit_btn" @click="show_edit_box">
                 <img :src="edit_path" class="icon">
             </div>
-            <div class="del_btn">
+            <div class="del_btn" @click="delete_user_back_img">
                 <img :src="delete_path" class="icon">
             </div>
         </div>
@@ -81,6 +81,7 @@ let edit_path=ref(server_ip.value+'assets/edit.svg');
 let delete_path=ref(server_ip.value+'assets/delete.svg');
 let user_avatar=ref(server_ip.value+'image/94552901_p0 (1).jpg');
 let username=ref('用户名');
+let userid=ref('123456');
 let follow_num=ref('114514');
 let location_path=ref(server_ip.value+'assets/location.svg');
 let address=ref('北京市海淀区');
@@ -134,6 +135,33 @@ function show_edit_box() {
 function close_box_msg(status){
     is_edit_box_show.value=status.value;
     console.log(status.value);
+}
+
+//删除用户背景
+async function delete_user_back_img() {
+    //弹窗提示用户是否删除
+    if (!confirm("您确定要删除用户背景图片吗？")) {
+        return;
+    }
+    //发送请求
+    const res= await fetch('api/delete_back_image',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            user_name:username.value,
+            user_id:userid.value,
+        }),
+    })
+    const data= await res.json();
+    if(data.status!='success')
+    {
+        alert(data.message)
+    }
+    else{
+        alert("删除成功");
+    }
 }
 </script>
 

@@ -4,7 +4,7 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.template
 from model.connect_sqlsever import connMysql
-from model.file_upload import default_upload_Handler,  EditBackImgHandler
+from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image
 from model.login import do_select_query
 import json
 from model.sub_page import *
@@ -237,6 +237,7 @@ def make_app():
         (r"/resetpassword", ResetPassword),  # 重置密码
         (r"/default_upload_Handler",default_upload_Handler),#默认上传文件连接
         (r"/edit_back_img",EditBackImgHandler),#编辑背景图片
+        (r"/delete_back_image",delete_back_image),#删除背景图片
     ])
 
 

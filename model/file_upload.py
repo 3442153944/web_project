@@ -47,22 +47,23 @@ class default_upload_Handler(tornado.web.RequestHandler, CORSMixin):
                                    'upload_user_id)'
                                    'VALUES (%s, %s, %s, %s, %s)')
                             data = (
-                            file_name, file_extension, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '用户名', '111')
+                                file_name, file_extension, datetime.now().strftime('%Y-%m-%d %H:%M:%S'), '用户名',
+                                '111')
                             cursor.execute(sql, data)
                             conn.commit()
                             cursor.close()
                             conn.close()
 
-                            self.write(json.dumps({"status":"success","message":"文件上传成功"}))
+                            self.write(json.dumps({"status": "success", "message": "文件上传成功"}))
                         else:
                             print(f'文件 {file_name} 类型不支持')
-                            self.write(json.dumps({"status":"error","message":"文件类型不支持"}))
+                            self.write(json.dumps({"status": "error", "message": "文件类型不支持"}))
             else:
-               self.write(json.dumps({"status":"error"}))
-               print('未上传文件')
+                self.write(json.dumps({"status": "error"}))
+                print('未上传文件')
         except Exception as e:
             self.set_status(500)
-            self.write(json.dumps({"status":'error',"message":"服务器内部错误"}))
+            self.write(json.dumps({"status": 'error', "message": "服务器内部错误"}))
             print(f"上传文件时发生错误: {e}")
 
 
@@ -108,14 +109,48 @@ class EditBackImgHandler(tornado.web.RequestHandler, CORSMixin):
                         cursor.close()
                         conn.close()
                     else:
-                        self.write(json.dumps({"status":"error","message":"文件类型不支持"}))
+                        self.write(json.dumps({"status": "error", "message": "文件类型不支持"}))
                         print(f'文件 {file_name} 类型不支持')
 
             self.set_status(200)
-            self.write(json.dumps({"status":"success","message":"文件上传成功"}))
+            self.write(json.dumps({"status": "success", "message": "文件上传成功"}))
 
         except Exception as e:
 
             self.set_status(500)
-            self.write(json.dumps({"status":'error',"message":"服务器内部错误"}))
+            self.write(json.dumps({"status": 'error', "message": "服务器内部错误"}))
             print(f"上传文件时发生错误: {e}")
+
+
+class delete_back_image(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql
+    upload_path = "H:/web_preject/image"
+
+    def post(self):
+        self.set_status(200)
+        try:
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            user_id = self.get_body_argument('user_id')
+            username = self.get_body_argument('user_name')
+            get_filename_sql = "select user_back_img from users where userid=%s and username=%s"
+            cursor.execute(get_filename_sql, (user_id, username))
+            filename = cursor.fetchone()[0]
+
+            if filename:
+                file_path = os.path.join(self.upload_path, filename)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+                    print(f'文件 {filename} 删除成功')
+                else:
+                    print(f'文件 {filename} 不存在')
+                    self.write(json.dumps({"status": "error", "message": "文件不存在"}))
+            # 更新数据库
+            sql = "update users set user_back_img='' where userid=%s and username=%s"
+            cursor.execute(sql, (user_id, username))
+            conn.commit()
+            self.write(json.dumps({"status": "success", "message": "文件删除成功"}))
+
+        except Exception as e:
+            print(e)
+            self.write(json.dumps({"status": 'error', "message": "服务器内部错误"}))
