@@ -123,7 +123,7 @@ class EditBackImgHandler(tornado.web.RequestHandler, CORSMixin):
 
 
 class delete_back_image(tornado.web.RequestHandler, CORSMixin):
-    conn = connMysql
+    conn = connMysql()
     upload_path = "H:/web_preject/image"
 
     def post(self):
