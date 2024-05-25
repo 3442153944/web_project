@@ -289,13 +289,13 @@ function close_box_msg(status){
 .float_user_info_box{
     display: flex;
     position: fixed;
-    bottom: 0;
+    bottom: -3px;
+    left: -5px;
     width: 100%;
     margin: 0 auto;
     z-index: 6;
     background-color: #fff;
-    height: 130px;
-    margin-bottom: 10px;
+    height: 150px;
 }
 .info_box_float{
     display: flex;
