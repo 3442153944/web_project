@@ -5,6 +5,7 @@ import tornado.ioloop
 import tornado.template
 from model.connect_sqlsever import connMysql
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image
+from model.get_all_userinfo import get_all_userinfo
 from model.login import do_select_query
 import json
 from model.sub_page import *
@@ -238,6 +239,7 @@ def make_app():
         (r"/default_upload_Handler",default_upload_Handler),#默认上传文件连接
         (r"/edit_back_img",EditBackImgHandler),#编辑背景图片
         (r"/delete_back_image",delete_back_image),#删除背景图片
+        (r"/get_all_userinfo",get_all_userinfo),#获取所有用户信息
     ])
 
 

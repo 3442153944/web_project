@@ -21,7 +21,7 @@
                 <div class="name">
                     <span>{{username}}</span>
                 </div>
-                <div class="edit_person_info">
+                <div class="edit_person_info" @click="show_edit_box_self_info">
                     <span >编辑个人资料</span>
                 </div>
             </div>
@@ -49,7 +49,7 @@
                     <div class="name">
                         <span>{{username}}</span>
                     </div>
-                    <div class="edit_person_info">
+                    <div class="edit_person_info" @click="show_edit_box_self_info">
                         <span >编辑个人资料</span>
                     </div>
                 </div>
@@ -61,6 +61,7 @@
     </div>
     <edit_box v-if="is_edit_box_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;" id="is_edit_box_show" 
     @close_box="close_box_msg"></edit_box>
+    <edit_self_info v-if="is_edit_self_info_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;"></edit_self_info>
   </div>
 </template>
 
@@ -68,9 +69,10 @@
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,defineEmits} from 'vue';
 import edit_box from './edit_box.vue';
+import edit_self_info from './edit_self_info.vue'
 export default {
   name: 'back_img_box',
-  components:{edit_box,}
+  components:{edit_box,edit_self_info,}
 }
 </script>
 
@@ -162,6 +164,12 @@ async function delete_user_back_img() {
     else{
         alert("删除成功");
     }
+}
+
+//编辑个人信息盒子显示与隐藏
+let is_edit_self_info_show = ref(false);
+function show_edit_box_self_info(){
+    is_edit_self_info_show.value=true;
 }
 </script>
 
