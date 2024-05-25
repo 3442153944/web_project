@@ -3,7 +3,7 @@
     <div class="img_box">
         <img :src="back_img_path">
         <div class="edit_box">
-            <div class="edit_btn">
+            <div class="edit_btn" @click="show_edit_box">
                 <img :src="edit_path" class="icon">
             </div>
             <div class="del_btn">
@@ -39,16 +39,38 @@
         </div>
         
     </div>
-    <div class="float_user_info_box">
-        
+    <div class="float_user_info_box" style="display:none;">
+        <div class="user_info">
+            <div class="user_avatar">
+                <img :src="user_avatar">
+            </div>
+            <div class="info_box_float">
+                <div class="username">
+                    <div class="name">
+                        <span>{{username}}</span>
+                    </div>
+                    <div class="edit_person_info">
+                        <span >编辑个人资料</span>
+                    </div>
+                </div>
+                <div class="follow_num">
+                    <span>{{follow_num}}&nbsp;已关注</span>
+                </div>
+            </div>
+        </div>
     </div>
+    <edit_box v-if="is_edit_box_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;" id="is_edit_box_show" 
+    @close_box="close_box_msg"></edit_box>
   </div>
 </template>
 
 <script>
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+// eslint-disable-next-line no-unused-vars
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,defineEmits} from 'vue';
+import edit_box from './edit_box.vue';
 export default {
   name: 'back_img_box',
+  components:{edit_box,}
 }
 </script>
 
@@ -63,6 +85,56 @@ let follow_num=ref('114514');
 let location_path=ref(server_ip.value+'assets/location.svg');
 let address=ref('北京市海淀区');
 
+//用户信息栏的浮动
+
+function float_user_info_box() {
+    let window_height = window.innerHeight;
+    let user_info_box = document.querySelectorAll('.user_info')[0];
+    let address_box = document.querySelector('.address');
+    let float_user_info_box = document.querySelector('.float_user_info_box');
+
+    const handleScrollResize = () => {
+        let user_info_rect = user_info_box.getBoundingClientRect();
+        let address_box_rect = address_box.getBoundingClientRect();
+        
+        let address_box_bottom_to_window_bottom = window_height - address_box_rect.bottom;
+        
+        let user_info_box_bottom_to_window_top = user_info_rect.bottom;
+
+        if (address_box_bottom_to_window_bottom >= 1 || user_info_box_bottom_to_window_top <= 0) {
+            float_user_info_box.style.display = 'none';
+        } else {
+            float_user_info_box.style.display = ''; 
+        }
+    };
+
+    window.addEventListener('scroll', handleScrollResize);
+    window.addEventListener('resize', () => {
+        window_height = window.innerHeight;
+        handleScrollResize();
+    });
+
+    handleScrollResize(); // Initial check on load
+}
+onMounted(() => {
+    float_user_info_box();
+})
+
+//编辑框的显示与隐藏
+let is_edit_box_show = ref(false);
+function show_edit_box() {
+    if (is_edit_box_show.value) {
+        is_edit_box_show.value = false;
+    } else {
+        is_edit_box_show.value = true;
+    }
+}
+
+//接收子组件消息
+function close_box_msg(status){
+    is_edit_box_show.value=status.value;
+    console.log(status.value);
+}
 </script>
 
 <style scoped>
@@ -214,4 +286,24 @@ let address=ref('北京市海淀区');
     transition: all 0.3s ease-in-out;
 
     }
+.float_user_info_box{
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    margin: 0 auto;
+    z-index: 6;
+    background-color: #fff;
+    height: 130px;
+    margin-bottom: 10px;
+}
+.info_box_float{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    margin-left: 20px;
+    flex-grow: 1;
+    flex: 1;
+    margin-top: 10px;
+}
 </style>
