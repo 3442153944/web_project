@@ -61,7 +61,8 @@
     </div>
     <edit_box v-if="is_edit_box_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;" id="is_edit_box_show" 
     @close_box="close_box_msg"></edit_box>
-    <edit_self_info v-if="is_edit_self_info_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;"></edit_self_info>
+    <edit_self_info v-if="is_edit_self_info_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;" 
+    @close_edit_self_info="close_edit_self_info_msg"></edit_self_info>
   </div>
 </template>
 
@@ -170,6 +171,11 @@ async function delete_user_back_img() {
 let is_edit_self_info_show = ref(false);
 function show_edit_box_self_info(){
     is_edit_self_info_show.value=true;
+}
+//接收子组件消息
+function close_edit_self_info_msg(status){
+    is_edit_self_info_show.value=status.value;
+    console.log(status.value);
 }
 </script>
 
