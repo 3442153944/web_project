@@ -106,8 +106,8 @@ class EditBackImgHandler(tornado.web.RequestHandler, CORSMixin):
                         sql = "UPDATE users SET user_back_img = %s WHERE userid = %s AND username = %s"
                         cursor.execute(sql, (saved_file_name, user_id, username))
                         conn.commit()
-                        cursor.close()
                         conn.close()
+                        cursor.close()
                     else:
                         self.write(json.dumps({"status": "error", "message": "文件类型不支持"}))
                         print(f'文件 {file_name} 类型不支持')
@@ -155,14 +155,53 @@ class delete_back_image(tornado.web.RequestHandler, CORSMixin):
             print(e)
             self.write(json.dumps({"status": 'error', "message": "服务器内部错误"}))
 
-class update_user_avatar(tornado.web.RequestHandler,CORSMixin):
-    conn=connMysql
+
+class update_user_avatar(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+    upload_path = "H:/web_preject/image"
+    allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+
     def post(self):
         self.set_status(200)
-        self.set_header('Content-Type', 'application/json')
         try:
-            conn=self.conn.connect()
-            cursor=conn.cursor()
-            body=json.loads(self.request.body)
+            if not os.path.exists(self.upload_path):
+                os.makedirs(self.upload_path)
+            files = self.request.files.get('file')
+            username = self.get_body_argument('user_name')
+            user_id = self.get_body_argument('user_id')
+            if files:
+                for file in files:
+                    file_body = file['body']
+                    file_name = file['filename']
+                    _, file_extension = os.path.splitext(file_name)
+                    if file_extension.lower() in self.allowed_extensions:
+                        # 避免文件重名冲突
+                        unique_name = f"{datetime.now().strftime('%Y%m%d%H%M%S')}_{uuid.uuid4().hex}{file_extension}"
+                        file_path = os.path.join(self.upload_path, unique_name)
+                        with open(file_path, 'wb') as f:
+                            f.write(file_body)
+                        print(f'文件 {file_name} 上传成功，保存为 {unique_name}')
+
+                        # 文件拓展名
+                        file_extension = file_extension.replace('.', '')
+                        saved_file_name = unique_name
+                        # 更新数据库
+                        conn = self.conn.connect()
+                        cursor = conn.cursor()
+                        sql = "UPDATE users SET user_avatar = %s WHERE userid = %s AND username = %s"
+                        cursor.execute(sql, (saved_file_name, user_id, username))
+                        conn.commit()
+                        conn.close()
+                        cursor.close()
+                    else:
+                        self.write(json.dumps({"status": "error", "message": "文件类型不支持"}))
+                        print(f'文件 {file_name} 类型不支持')
+
+                    self.set_status(200)
+                    self.write(json.dumps({"status": "success", "message": "文件上传成功"}))
+
+
         except Exception as e:
-            print(e)
+            self.set_status(500)
+            self.write(json.dumps({"status": 'error', "message": "服务器内部错误"}))
+            print(f"上传文件时发生错误: {e}")

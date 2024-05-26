@@ -4,7 +4,7 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.template
 from model.connect_sqlsever import connMysql
-from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image
+from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
 from model.get_all_userinfo import get_all_userinfo, update_user_info
 from model.login import do_select_query
 import json
@@ -241,6 +241,7 @@ def make_app():
         (r"/delete_back_image",delete_back_image),#删除背景图片
         (r"/get_all_userinfo",get_all_userinfo),#获取所有用户信息
         (r"/update_user_info",update_user_info),#更新用户信息
+        (r"/update_user_avatar",update_user_avatar)#更新用户头像
     ])
 
 

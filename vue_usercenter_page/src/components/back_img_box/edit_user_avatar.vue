@@ -38,7 +38,7 @@
                 <span>请不要上传R-18或使用规则中禁止投稿的作品。如果您上传了相关图片，设置可能会被清除。</span>
             </div>
             <div class="btn_box">
-                <div class="sure_btn">确定</div>
+                <div class="sure_btn" @click="update_avatar">确定</div>
                 <div class="cancel_btn" @click="close_edit_useravatar()">取消</div>
             </div>
         </div>
@@ -126,6 +126,36 @@ function choose_img() {
 watch(file_path, () => {
     user_avatar.value = file_path.value;
 })
+async function update_avatar() {
+    let file=new FormData();
+    file.append('file',choose_avatar_img.value);
+    file.append('user_name',user_name.value);
+    file.append('user_id',user_id.value);
+    if(choose_avatar_img.value){
+        try{
+            const res=await fetch('api/update_user_avatar',{
+                method:'post',
+                headers:{},
+                body:file
+            })
+            const data=await res.json()
+            if(data.status=='success'){
+                console.log(data.message)
+                get_user_avatar();
+                close_edit_useravatar();
+            }
+            else{
+                console.log(data.message)
+            }
+        }
+        catch (err) {
+            console.log(err)
+        }
+    }
+    else{
+        console.log('图片未更改或未选择图片')
+    }
+}
 </script>
 
 <style scoped>
