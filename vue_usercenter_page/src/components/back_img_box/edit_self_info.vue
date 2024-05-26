@@ -11,6 +11,9 @@
                 <span class="box_title mt">个人头像</span>
                 <div class="img_box">
                     <img :src="get_user_avatar_path()">
+                    <div class="edit_svg_img" @click="edit_avatar_click">
+                        <img :src="edit_img">
+                    </div>
                 </div>
             </div>
             <div class="user_name_box">
@@ -68,14 +71,23 @@
                 <div class="cancel_btn mt" @click="close_edit_self_info"><span>取消</span></div>
             </div>
         </div>
+        <edit_user_avatar
+        v-if="is_edit_avatar"
+        style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;background-color:rgba(0,0,0,0.5);z-index:10;"
+        @close_edit_useravatar_msg="close_edit_avatar"
+        >
+
+        </edit_user_avatar>
     </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,defineEmits} from 'vue';
+import edit_user_avatar from './edit_user_avatar.vue'
 export default {
     name: 'edit_self_info',
+    components:{edit_user_avatar,},
 }
 </script>
 
@@ -85,7 +97,8 @@ let close_btn_path = ref(server_ip.value + 'assets/close.svg');
 let user_name = ref('admin')
 let user_id=ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
 let user_info = ref({})
-let emit=defineEmits(['close_edit_self_info'])
+let emit=defineEmits(['close_edit_self_info']);
+let edit_img=ref(server_ip.value+'assets/edit.svg');
 
 //向父组件传递关闭消息
 function close_edit_self_info() {
@@ -278,6 +291,15 @@ async function  sava_click() {
         console.log(err)
     }
 }
+
+//头像编辑盒子状态及实现函数
+let is_edit_avatar=ref(false);
+function edit_avatar_click(){
+    is_edit_avatar.value=true;
+}
+function close_edit_avatar(msg){
+    is_edit_avatar.value=msg.value;
+}
 </script>
 
 <style scoped>
@@ -453,6 +475,32 @@ async function  sava_click() {
     border-radius: 50%;
     overflow: hidden;
     margin-top: 10px;
+    position: relative;
+}
+.edit_svg_img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    bottom: 5px;
+    right: 10px;
+    width:35px;
+    height: 35px;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 1;
+    background-color: rgba(233,233,233,0.8);
+}
+.edit_svg_img:hover{
+    opacity: 0.8;
+    transition: all 0.3s ease-in-out;
+    background-color: rgba(233,233,233,0.6);
+}
+.edit_svg_img img{
+    width: 80%;
+    height: 80%;
+    object-fit: cover;
 }
 
 .img_box img {
