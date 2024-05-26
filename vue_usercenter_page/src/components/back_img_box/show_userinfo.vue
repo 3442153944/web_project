@@ -52,6 +52,7 @@ function close_userinfo(){
 //获取用户的所有信息
 let user_info = ref({})
 let user_name = ref('admin')
+// eslint-disable-next-line no-unused-vars
 let user_id=ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
 async function get_user_info() {
     try {
@@ -94,8 +95,6 @@ function set_userdata(){
   sex.value=user_info.value.sex;
   let date=new Date();
   let year=date.getFullYear();
-  console.log(year)
-  console.log(user_info.value.birthday.slice(0,4))
    age.value=year-user_info.value.birthday.slice(0,4);
    birthday.value=user_info.value.birthday.slice(5,11);
 }

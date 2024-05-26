@@ -267,6 +267,7 @@ function close_show_userinfo_msg(status){
     height: 30vh;
     margin: 0 auto;
     z-index: 2;
+    max-height: 200px;
 }
 .user_avatar{
     display: flex;
