@@ -156,6 +156,20 @@ async function update_avatar() {
         console.log('图片未更改或未选择图片')
     }
 }
+//当用户未选择图片或进行更改是禁止点击确定按钮
+function disable_btn() {
+    var btn=document.querySelector('.sure_btn');
+    if(choose_avatar_img.value){
+        btn.disabled=false;
+        btn.style.backgroundColor='rgba(0,155,250,0.6)';
+        
+    }
+    else{
+        btn.disabled=true;
+    }
+}
+watch(choose_avatar_img,disable_btn);
+onMounted(disable_btn);
 </script>
 
 <style scoped>

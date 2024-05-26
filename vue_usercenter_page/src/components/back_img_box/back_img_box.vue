@@ -32,7 +32,7 @@
                 <img :src="location_path">
                 <span>&nbsp;{{address}}</span>
             </div>
-            <div class="show_person_info">
+            <div class="show_person_info" @click="show_userinfo_box">
                 <span style="color:rgb(133,133,133)">查看个人信息</span>
             </div>
            
@@ -63,6 +63,8 @@
     @close_box="close_box_msg"></edit_box>
     <edit_self_info v-if="is_edit_self_info_show" style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;" 
     @close_edit_self_info="close_edit_self_info_msg"></edit_self_info>
+    <show_userinfo style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;" v-if="is_show_userinfo_show" 
+    @close_show_userinfo="close_show_userinfo_msg"></show_userinfo>
   </div>
 </template>
 
@@ -71,9 +73,10 @@
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,defineEmits} from 'vue';
 import edit_box from './edit_box.vue';
 import edit_self_info from './edit_self_info.vue'
+import show_userinfo from './show_userinfo.vue'
 export default {
   name: 'back_img_box',
-  components:{edit_box,edit_self_info,}
+  components:{edit_box,edit_self_info,show_userinfo}
 }
 </script>
 
@@ -177,6 +180,15 @@ function close_edit_self_info_msg(status){
     is_edit_self_info_show.value=status.value;
     console.log(status.value);
 }
+//查看个人信息盒子
+let is_show_userinfo_show=ref(false);
+function show_userinfo_box(){
+    is_show_userinfo_show.value=true;
+}
+//接收子组件消息
+function close_show_userinfo_msg(status){
+    is_show_userinfo_show.value=status.value;
+    }
 </script>
 
 <style scoped>
@@ -299,6 +311,11 @@ function close_edit_self_info_msg(status){
     align-items: center;
     color: rgba(133,133,133,1);
     opacity: 1;
+    width:auto;
+    height: auto;
+    max-width: 100px;
+    padding-left:10px;
+    padding-right: 10px;
 }
 .show_person_info:hover{
     opacity: 0.8;
