@@ -75,3 +75,5 @@ class update_user_info(tornado.web.RequestHandler, CORSMixin):
         except Exception as e:
             print(e)
             self.write(json.dumps({"status": "error", "message": "服务器内部错误"}))
+
+

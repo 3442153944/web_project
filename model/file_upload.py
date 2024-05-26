@@ -154,3 +154,15 @@ class delete_back_image(tornado.web.RequestHandler, CORSMixin):
         except Exception as e:
             print(e)
             self.write(json.dumps({"status": 'error', "message": "服务器内部错误"}))
+
+class update_user_avatar(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql
+    def post(self):
+        self.set_status(200)
+        self.set_header('Content-Type', 'application/json')
+        try:
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            body=json.loads(self.request.body)
+        except Exception as e:
+            print(e)
