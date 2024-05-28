@@ -135,3 +135,68 @@ class get_authorNovelList(tornado.web.RequestHandler, CORSMixin):
             print("An error occurred:", e)
             self.set_status(500)
             self.write(json.dumps({"error": "An error occurred while processing the request."}))
+
+
+class get_novelwork_list(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
+    def POST(self):
+        try:
+            self.set_status(200)
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            body = self.request.body.decode('utf-8')
+            data = json.loads(body)
+            sql = 'select * from novel_work'
+            cursor.execute(sql)
+            result = cursor.fetchall()
+            self.write(json.dumps(result))
+            print(result)
+        except Exception as e:
+            print(e)
+
+
+class get_user_followNovelWork_list(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
+    def post(self):
+        try:
+            self.set_status(200)
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            body = self.request.body.decode('utf-8')
+            data = json.loads(body)
+            username = data['username']
+            user_id = data['user_id']
+            #获取用户关注的小说作品列表
+            get_user_list = ('select collected_novel_works_id,like_novel_works_id, watch_novel_list_id from users '
+                             'where username="%s" and userid="%s"')
+            cursor.execute(get_user_list, (username, user_id))
+            user_following = cursor.fetchone()
+            #根据作品ID获取作品信息
+            #获取用户收藏的小说作品信息
+            collected_novel_list=[]
+            get_collectedNovel_info_sql= "select * from novel_work where work_id=%s"
+            for collected_novel_id in user_following[0].split(','):
+                cursor.execute(get_collectedNovel_info_sql, (collected_novel_id,))
+                collected_novel_list.append(cursor.fetchone())
+
+            #获取用户点赞的小说作品信息
+            like_novel_list=[]
+            get_likeNovel_info_sql= "select * from novel_work where work_id=%s"
+
+            for like_novel_id in user_following[1].split(','):
+                cursor.execute(get_likeNovel_info_sql, (like_novel_id,))
+                like_novel_list.append(cursor.fetchone())
+
+            #获取用户观看的小说作品信息
+            watch_novel_list=[]
+            get_watchNovel_info_sql= "select * from novel_work where work_id=%s"
+            for watch_novel_id in user_following[2].split(','):
+                cursor.execute(get_watchNovel_info_sql, (watch_novel_id,))
+                watch_novel_list.append(cursor.fetchone())
+            self.write(json.dumps({"collected_novel_list": collected_novel_list, "like_novel_list": like_novel_list,
+                                   "watch_novel_list": watch_novel_list}))
+
+        except Exception as e:
+            print(e)
