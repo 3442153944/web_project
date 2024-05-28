@@ -13,7 +13,7 @@ from docx.shared import Pt
 
 
 #点赞，收藏，观看动作处理和统计
-class CountWorkData(tornado.web.RequestHandler, CORSMixin):
+class CountNovelWorkData(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
 
     def post(self):
@@ -84,5 +84,16 @@ class CountWorkData(tornado.web.RequestHandler, CORSMixin):
             else:
                 self.write(json.dumps({"warning":"操作非法","status":"error"}))
 
+        except Exception as e:
+            print(e)
+
+class CountIllustrationData(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def post(self):
+        conn=self.conn.connect()
+        cursor=conn.cursor()
+        try:
+            self.set_status(200)
+            body=json.loads(self.request.body.decode('utf-8'))
         except Exception as e:
             print(e)

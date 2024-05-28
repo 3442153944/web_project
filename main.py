@@ -4,6 +4,7 @@ import tornado.websocket
 import tornado.ioloop
 import tornado.template
 from model.connect_sqlsever import connMysql
+from model.count_work_data import CountNovelWorkData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
 from model.get_all_userinfo import get_all_userinfo, update_user_info
 from model.login import do_select_query
@@ -244,6 +245,8 @@ def make_app():
         (r"/update_user_avatar",update_user_avatar),#更新用户头像
         ("r/get_novelwork_list",get_novelwork_list),#获取所有小说作品列表
         ("r/get_user_followNovelWork_list",get_user_followNovelWork_list),#获取用户关注的小说作品列表的信息
+        ("r/CountNovelWorkData",CountNovelWorkData),#统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+
     ])
 
 
