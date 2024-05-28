@@ -1,8 +1,23 @@
 <template>
   <div class="user_index_page">
     <h2>精选</h2>
-    <div class="content">
-      
+    <div class="content_list">
+      <div class="item">
+        <div class="item_title">
+          <span>{{user_select_work.work_type}}</span>
+        </div>
+        <div class="content_box">
+          <div class="img_box">
+            <img class="work_img" :src="server_ip +'image/'+user_select_work.work_cover_img">
+          </div>
+          <div class="content_info">
+            <span>{{user_select_work.work_title}}</span>
+            <span>{{user_select_work.work_chapter}}</span>
+            <span>{{user_select_work.work_brief_introduction}}</span>
+            <span>{{user_select_work.work_word_count}}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -16,8 +31,79 @@ export default {
 </script>
 
 <script setup>
+let user_select_work=ref({
+  work_id:0,
+  work_title:'作品名称',
+  work_type:'作品类型',
+  work_chapter:'作品章节',
+  work_word_count:'作品字数',
+  work_brief_introduction:'作品简介',
+  work_cover_img:'65014220_p0.jpg',
+})
+let server_ip='https://127.0.0.1:4434/'
 </script>
 
 <style scoped>
-  
+  .user_index_page {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: auto;
+    margin:10px auto;
+  }
+  .content_list{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-top: 20px;
+    overflow-x:auto;
+  }
+  .item{
+    display: flex;
+    flex-direction: column;
+    width: calc(100% / 3 - 40px);
+    margin: 5px 20px;
+    height: 350px;
+    min-height: 300px;
+    min-width: 450px;
+  }
+  .item_title{
+    display: flex;
+    align-items: center;
+    width:100%;
+    padding:5px;
+  }
+  .content_box{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    border-radius: 15px;
+    overflow: hidden;
+    width:100%;
+    height: calc(100% - 50px);
+    flex: 1;
+  }
+  .img_box{
+    width:40%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    overflow: hidden;
+  }
+  .work_img{
+    width:100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .content_info{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .content_info span{
+    margin:10px auto;
+    font-size: 16px;
+  }
 </style>
