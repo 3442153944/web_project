@@ -21,8 +21,32 @@
             <div class="work_type">
               <span>{{ item.type }}</span>
             </div>
+<<<<<<< HEAD
             <div class="work_name">
               <span>{{ item.name }}</span>
+=======
+        </div>
+        <div class="little_title">
+            <span><b>项目</b></span>
+            <span>{{item_count}}/{{all_item}}</span>
+        </div>
+        <div class="item_list">
+            <div class="item" v-for="(item,index) in work_info_list" :key="index">
+              <div class="work_cover">
+                <img class="work_img" :src="item.cover_path">
+              </div>
+              <div class="work_info">
+                <div class="work_type">
+                  <span>{{item.type}}</span>
+                </div>
+                <div class="work_name">
+                  <span>{{item.name}}</span>
+                </div>
+              </div>
+              <div class="delete_work_btn" @click="delete_work(index)">
+                <img class="icon" :src="close_btn_path">
+              </div>
+>>>>>>> 840b1f06e0a13ff6152db1705f7118ebaab45605
             </div>
           </div>
           <div class="delete_work_btn">
@@ -73,6 +97,13 @@ let work_info_list = ref([{
   "type": "作品类型",
   "name": "作品名称"
 }])
+item_count.value=work_info_list.value.length;
+
+//删除列表中指定作品
+function delete_work(index){
+  work_info_list.value.splice(index,1);
+  item_count.value=work_info_list.value.length;
+}
 </script>
 
 <style scoped>
