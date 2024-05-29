@@ -1,6 +1,11 @@
 <template>
   <div class="user_index_page">
-    <h2>精选</h2>
+    <div class="set_selected">
+      <h2>精选</h2>
+      <div class="set_btn" @click="set_select_show">
+        <span>设置精选</span>
+      </div>
+    </div>
     <div class="content_list">
       <div class="item">
         <div class="item_title">
@@ -12,21 +17,26 @@
           </div>
           <div class="content_info">
             <span>{{user_select_work.work_title}}</span>
-            <span>{{user_select_work.work_chapter}}</span>
+            <span style="font-size:18px;font-weight:bold;">{{user_select_work.work_chapter}}</span>
             <span>{{user_select_work.work_brief_introduction}}</span>
             <span>{{user_select_work.work_word_count}}</span>
           </div>
         </div>
       </div>
     </div>
+    <set_select @close_set_select="set_select_close_handle" v-if="set_select_close_show"></set_select>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import set_select from './set_select.vue'
 export default {
   name: 'user_index_page',
+  components:{
+    set_select,
+  }
 }
 </script>
 
@@ -41,6 +51,18 @@ let user_select_work=ref({
   work_cover_img:'65014220_p0.jpg',
 })
 let server_ip='https://127.0.0.1:4434/'
+
+//接收精选框关闭消息
+let set_select_close_show=ref(false)
+
+//显示精选框
+function set_select_show(){
+  set_select_close_show.value=true;
+}
+function set_select_close_handle(tag){
+  set_select_close_show.value=tag.value;
+}
+
 </script>
 
 <style scoped>
@@ -73,6 +95,29 @@ let server_ip='https://127.0.0.1:4434/'
     width:100%;
     padding:5px;
   }
+  .set_selected{
+    display: flex;
+    width: 100%;
+    height: auto;
+    margin-top:10px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+  }
+  .set_btn{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:auto;
+    height: auto;
+    height: 40px;
+    width:100px;
+  }
+  .set_btn:hover{
+    background-color: rgba(133,133,133,0.6);
+    cursor: pointer;
+    border-radius: 15px;
+    transition: all 0.3s ease-in-out;
+  }
   .content_box{
     display: flex;
     justify-content: space-between;
@@ -101,9 +146,13 @@ let server_ip='https://127.0.0.1:4434/'
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    align-items: flex-start;
+    width:auto;
+    flex: 1;
   }
   .content_info span{
-    margin:10px auto;
+    margin:20px;
     font-size: 16px;
+
   }
 </style>
