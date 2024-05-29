@@ -13,13 +13,21 @@
             <span>{{item_count}}/{{all_item}}</span>
         </div>
         <div class="item_list">
-            <div class="item">
-              <div class="work_cover"></div>
-              <div class="work_info">
-                <div class="work_type"></div>
-                <div class="work_name"></div>
+            <div class="item" v-for="(item,index) in work_info_list" :key="index">
+              <div class="work_cover">
+                <img class="work_img" :src="item.cover_path">
               </div>
-              <div class="delete_work_btn"></div>
+              <div class="work_info">
+                <div class="work_type">
+                  <span>{{item.type}}</span>
+                </div>
+                <div class="work_name">
+                  <span>{{item.name}}</span>
+                </div>
+              </div>
+              <div class="delete_work_btn">
+                <img class="icon" :src="close_btn_path">
+              </div>
             </div>
         </div>
         <div class="add_btn"></div>
@@ -49,6 +57,22 @@ function close_set_select(){
 }
 let all_item=ref(3);
 let item_count=ref(1);
+
+let work_info_list=ref([{
+  "cover_path":"https://127.0.0.1:4434/image/65014220_p0.jpg",
+  "type":"作品类型",
+  "name":"作品名称"
+},
+{
+  "cover_path":"https://127.0.0.1:4434/image/82181448_p0(1).jpg",
+  "type":"作品类型",
+  "name":"作品名称"
+},
+{
+  "cover_path":"https://127.0.0.1:4434/image/87328997_p0.jpg",
+  "type":"作品类型",
+  "name":"作品名称"
+}])
 </script>
 
 <style scoped>
@@ -118,7 +142,44 @@ let item_count=ref(1);
     width:100%;
     height: auto;
     margin:10px auto;
+    min-height: 100px;
+    max-height: 200px;
+    justify-content: space-between;
   }
+.work_cover{
+  display: flex;
+  width:20%;
+  height: 100%;
+}
+.work_img{
+  width:100%;
+  height: 100%;
+  object-fit: cover;
+}
+.work_info{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width:60%;
+  height: 100%;
+  margin-left: 10px;
+}
+.delete_work_btn{
+  display: flex;
+  width:35px;
+  height: 35px;
+  justify-content: center;
+  align-items: center;
+  margin-top:auto;
+  margin-bottom: auto;
+  margin-right: 10px;
+}
+.delete_work_btn:hover{
+  cursor: pointer;
+  background-color: rgba(133,133,133,0.6);
+  border-radius: 50%;
+  transition:all 0.3 ease-in-out;
+}
   .btn_box{
     display: flex;
     width:90%;
