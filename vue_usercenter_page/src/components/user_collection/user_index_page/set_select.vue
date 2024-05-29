@@ -25,7 +25,7 @@
                   <span>{{item.name}}</span>
                 </div>
               </div>
-              <div class="delete_work_btn">
+              <div class="delete_work_btn" @click="delete_work(index)">
                 <img class="icon" :src="close_btn_path">
               </div>
             </div>
@@ -73,6 +73,13 @@ let work_info_list=ref([{
   "type":"作品类型",
   "name":"作品名称"
 }])
+item_count.value=work_info_list.value.length;
+
+//删除列表中指定作品
+function delete_work(index){
+  work_info_list.value.splice(index,1);
+  item_count.value=work_info_list.value.length;
+}
 </script>
 
 <style scoped>

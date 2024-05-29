@@ -23,8 +23,15 @@
           </div>
         </div>
       </div>
+      <div class="add_box_item" @click="show_chose_set_select">
+        <div class="add_img">
+          <img :src="add_img">
+        </div>
+        <div class="add_title">新增精选</div>
+      </div>
     </div>
     <set_select @close_set_select="set_select_close_handle" v-if="set_select_close_show"></set_select>
+    <chose_project @chose_close_btn_click="chose_show_show_handle" v-if="chose_set_select_show"></chose_project>
   </div>
 </template>
 
@@ -32,10 +39,11 @@
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 import set_select from './set_select.vue'
+import chose_project from './chose_project.vue'
 export default {
   name: 'user_index_page',
   components:{
-    set_select,
+    set_select,chose_project,
   }
 }
 </script>
@@ -51,6 +59,7 @@ let user_select_work=ref({
   work_cover_img:'65014220_p0.jpg',
 })
 let server_ip='https://127.0.0.1:4434/'
+let add_img=ref(server_ip+'assets/add.svg');
 
 //接收精选框关闭消息
 let set_select_close_show=ref(false)
@@ -63,6 +72,15 @@ function set_select_close_handle(tag){
   set_select_close_show.value=tag.value;
 }
 
+//选择精选项目组件显示控制
+let chose_set_select_show=ref(false);
+function show_chose_set_select(){
+  chose_set_select_show.value=true;
+}
+//接收子组件关闭消息
+function chose_show_show_handle(tag){
+  chose_set_select_show.value=tag.value;
+}
 </script>
 
 <style scoped>
@@ -79,6 +97,7 @@ function set_select_close_handle(tag){
     justify-content: space-between;
     margin-top: 20px;
     overflow-x:auto;
+    overflow: auto;
   }
   .item{
     display: flex;
@@ -154,5 +173,31 @@ function set_select_close_handle(tag){
     margin:20px;
     font-size: 16px;
 
+  }
+  .add_box_item{
+    width:300px;
+    margin-left: 10px;
+    margin-right: 10px;
+    height: 300px;
+    max-height: 350px;
+    max-width: 350px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    border-radius: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(133,133,133,0.6);
+    flex-direction: column;
+    margin:auto;
+  }
+  .add_box_item:hover{
+    cursor: pointer;
+    background-color: rgba(133,133,133,0.8);
+    transition: all 0.3s ease-in-out;
+  }
+  .add_box_item img{
+    width:150px;
+    height: 150px;
+    object-fit: cover;
   }
 </style>
