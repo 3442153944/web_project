@@ -231,11 +231,11 @@ def make_app():
         (r"/get_all_userinfo", get_all_userinfo),  #获取所有用户信息
         (r"/update_user_info", update_user_info),  #更新用户信息
         (r"/update_user_avatar", update_user_avatar),  #更新用户头像
-        ("r/get_novelwork_list", get_novelwork_list),  #获取所有小说作品列表
-        ("r/get_user_followNovelWork_list", get_user_followNovelWork_list),  #获取用户关注的小说作品列表的信息
-        ("r/CountNovelWorkData", CountNovelWorkData),  #统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-        ("r/CountIllustrationData", CountIllustrationData),  #统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-        ("r/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
+        (r"/get_novelwork_list", get_novelwork_list),  #获取所有小说作品列表
+        (r"/get_user_followNovelWork_list", get_user_followNovelWork_list),  #获取用户关注的小说作品列表的信息
+        (r"/CountNovelWorkData", CountNovelWorkData),  #统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+        (r"/CountIllustrationData", CountIllustrationData),  #统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+        (r"/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
     ])
 
 
