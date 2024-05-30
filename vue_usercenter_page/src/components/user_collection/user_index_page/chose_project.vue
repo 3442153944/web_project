@@ -16,27 +16,41 @@
           <div class="ill_page">
               <div class="item_img">
                   <img :src="ill_image_path">
+                  <div class="select_ill_btn">
+                    <img>
+                  </div>
               </div>
           </div>
           <div class="novel_page">
               <div class="series_box">
                   <h3>系列</h3>
                   <div class="series_list">
-                      <div class="series_item">
+                      <div class="series_item" v-for="(item,index) in series_list" :key="index">
                           <div class="series_title">
-                              <span></span>
-                              <span>作品</span>
-                              <div class="select_btn"></div>
+                              <span style="font-size:18px;font-weight:bold">{{item}}</span>
+                              <div class="select_btn" @click="swich_correct_status(index)">
+                                <img class="icon" :src="correct_svg_path">
+                              </div>
                           </div>
                       </div>
                   </div>
+                  <div class="series_list_count">
+                    <span>共{{series_list.length}}个系列作品</span>
+                  </div>
               </div>
-              <div class="work">
-                  <h3>作品</h3>
-                  <div class="work_item">
-                      <div class="work_cover"></div>
-                      <div class="work_name"></div>
-                      <div class="select_btn"></div>
+              <h3>作品</h3>
+              <div class="work_list">
+                  
+                  <div class="work_item" v-for="(item,index) in work_cover_list" :key="index">
+                      <div class="work_cover">
+                        <img class="cover_img" :src="item" alt="">
+                      </div>
+                      <div class="work_name">
+                        <span>{{work_name_list[index]}}</span>
+                      </div>
+                      <div class="select_btn_work" @click="switch_work_correct_status(index)">
+                        <img class="icon" :src="correct_svg_path" >
+                      </div>
                   </div>
               </div>
           </div>
@@ -68,6 +82,32 @@
   let user_id=ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
   let user_name=ref('admin');
   let work_info=ref([])
+  let correct_svg_path=ref(server_ip+'assets/correct.svg');
+  let select_correct_svg_path=ref(server_ip+"assets/select_correct.svg")
+
+  //点击切换选中状态
+  function swich_correct_status(index){
+    let temp=document.querySelectorAll('.select_btn img');
+    let path=temp[index].src;
+    if(path==correct_svg_path.value){
+        temp[index].src=select_correct_svg_path.value;
+    }
+    else{
+        temp[index].src=correct_svg_path.value;
+    }
+  }
+
+  function switch_work_correct_status(index)
+  {
+    let temp=document.querySelectorAll('.select_btn_work img');
+    let path=temp[index].src;
+    if(path==correct_svg_path.value){
+        temp[index].src=select_correct_svg_path.value;
+    }
+    else{
+        temp[index].src=correct_svg_path.value;
+    }
+  }
   
   //获取小说作品的信息
   async function get_novel_info(){
@@ -142,16 +182,75 @@
   onMounted(() => {
       switch_page(0);
   });
+
+  //获取系列列表
+let series_list=ref([]);
+function set_series_list(){
+    let temp=work_info.value;
+    for(let i=0;i<temp.length;i++)
+    {
+        series_list.value.push(temp[i].work_series)
+    }
+}
+//获取作品封面地址列表
+let work_cover_list=ref([]);
+let work_name_list=ref([]);
+function set_work_cover_list(){
+    let temp=work_info.value;
+    for(let i=0;i<temp.length;i++)
+    {
+        work_cover_list.value.push(server_ip+"image/"+temp[i].work_cover)
+        work_name_list.value.push(temp[i].work_name)
+    }
+}
+onMounted(()=>{
+    setTimeout(()=>{
+    set_series_list();
+    set_work_cover_list();
+    },100)
+})
+
   </script>
   
   <style scoped>
+  .icon{
+    width:25px;
+    height: 25px;
+    object-fit: cover;
+  }
+  .select_btn,.select_btn_work{
+    width:35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(133,133,133,0.6);
+    margin-left: auto;
+    margin-right: 10px;
+  }
+  .select_btn:hover,.select_btn_work:hover{
+    cursor: pointer;
+    background-color: rgba(133,133,133,0.8);
+    transition: all 0.3s ease-in-out;
+  }
+ 
   /*开始倒序编辑*/
+  .series_title{
+    display: flex;
+    width:100%;
+    height: auto;
+    padding: 5px;
+    justify-content: space-between
+  }
   .ill_page{
       width:90%;
       height: auto;
       margin:5px auto;
       display: flex;
       flex-direction: column;
+      overflow: auto;
+      max-height: 200px;
   }
   .novel_page{
       width:90%;
@@ -214,19 +313,75 @@
       margin-top: 10px;
   }
   .item_img{
-      width:150px;
+      width:100%;
       height: 200px;
       display: flex;
       justify-content: center;
       align-items: center;
       border-radius: 10px;
       overflow: hidden;
+      margin-top:5px;
+      justify-content: space-between;
   }
   .item_img img{
-      width:100%;
+      width:150px;
       height: 100%;
       object-fit: cover; 
   }
+.series_list{
+    display: flex;
+    width:90%;
+    height: auto;
+    padding:5px;
+    flex-direction: column;
+    max-height: 200px;
+    overflow: auto;
+}
+.series_item{
+    display: flex;
+    width:100%;
+    height: 50px;
+    margin:5px auto;
+    align-items: center;
+}
+.work_list{
+    display: flex;
+    width:90%;
+    height: auto;
+    padding:5px;
+    margin:5px auto;
+    flex-direction: column;
+    max-height: 200px;
+    overflow: auto;
+}
+.work_item{
+    display: flex;
+    width:100%;
+    height: 100px;
+    margin:5px auto;
+    align-items: center;
+    position: relative;
+}
+.work_cover{
+    width:80px;
+    height:100px ;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.cover_img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.work_name{
+    display: flex;
+    width:auto;
+    height: auto;
+    margin-left: 10px;
+}
   /*结束*/
   .chose_project {
       display: flex;
