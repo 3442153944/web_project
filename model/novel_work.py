@@ -47,22 +47,20 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
 
     def get(self):
         self.set_status(200)
-        work_id=self.get_argument('work_id')
-        work_title=self.get_argument('title_text')
-        work_name=self.get_argument('work_name')
-        content=self.get_word_content(work_name,work_title)
+        work_id = self.get_argument('work_id')
+        work_title = self.get_argument('title_text')
+        work_name = self.get_argument('work_name')
+        content = self.get_word_content(work_name, work_title)
         self.write(json.dumps({"work_content": content}))
 
-    def get_word_content(self,name,work_title):
-        file_src='H:/web_preject/novel_work/'+name+"/"+work_title+".docx"
+    def get_word_content(self, name, work_title):
+        file_src = 'H:/web_preject/novel_work/' + name + "/" + work_title + ".docx"
         doc = Document(file_src)
         content = ""
         for para in doc.paragraphs:
             content += para.text + "<br>"
             # print(para.text)
         return content
-
-
 
     def is_title(self, paragraph):
         if paragraph.text.startswith("第") and "章" in paragraph.text:
@@ -210,24 +208,5 @@ class get_novel_content(tornado.web.RequestHandler, CORSMixin):
 
         return self.work_content
 
-class get_novel_work_info(tornado.web.RequestHandler,CORSMixin):
-    conn=connMysql()
-    def POST(self):
-        try:
-            self.set_status(200)
-            self.set_header('Content-Type', 'application/json')
-            conn=self.conn.connect()
-            data=json.loads(self.request.body.decode('utf-8'))
-            cursor=conn.cursor()
-            user_id=data['user_id']
-            user_name=data['user_name']
-            sql="select * from novel_work where belong_to_username=%s and belong_to_userid=%s"
-            cursor.execute(sql,(user_name,user_id))
-            result=cursor.fetchone()
-            self.write(json.dumps({"status":"success","data":result}))
-
-        except Exception as e:
-            self.write(json.dumps({"status":"error"}))
-            print(e)
 
 

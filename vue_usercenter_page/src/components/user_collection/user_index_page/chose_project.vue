@@ -67,7 +67,39 @@ let ill_image_path=ref(server_ip+'image/65014220_p0.jpg')
 let work_id=ref('1')
 let user_id=ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
 let user_name=ref('admin');
+let work_info=ref([{}])
 
+//获取小说作品的信息
+async function get_novel_info(){
+    try{
+        let res=await fetch('api/get_work_info',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                user_id:user_id.value,
+                user_name:user_name.value,
+            })
+        })
+        const data=await res.json()
+        if(data.status=="success")
+        {
+            work_info.value=data.data;
+        }
+        else{
+            console.log('error')
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+onMounted(()=>{
+    get_novel_info();
+    console.log(work_info.value)
+})
 //传递关闭消息
 function chose_close_btn_click(){
     emit('chose_close_btn_click',false);

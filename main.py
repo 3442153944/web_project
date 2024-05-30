@@ -7,6 +7,7 @@ from model.connect_sqlsever import connMysql
 from model.count_work_data import CountNovelWorkData, CountIllustrationData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
 from model.get_all_userinfo import get_all_userinfo, update_user_info
+from model.get_work_info import get_work_info
 from model.login import do_select_query
 import json
 from model.sub_page import *
@@ -15,19 +16,7 @@ from model.novel_work import *
 from model.get_workinfo import *
 from model.comment_section import *
 from model.register import *
-
-
-# WebSocket 处理器
-class CORSMixin(object):
-    def set_default_headers(self):
-        self.set_header("Access-Control-Allow-Origin", "*")
-        self.set_header("Access-Control-Allow-Headers", "x-requested-with")
-        self.set_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
-
-    def options(self):
-        # 对于 OPTIONS 请求，返回 204 No Content 响应
-        self.set_status(204)
-        self.finish()
+from model.CORSMixin import *
 
 
 class WSHandler(tornado.websocket.WebSocketHandler):
@@ -212,8 +201,8 @@ def make_app():
         (r"/login_page", LoginHandler),
         (r"/login", vue_page_login),
         (r"/is_follow", is_follow),
-        (r"/get_novel_work", get_novel_work),#获取小说作品列表
-        (r"/get_novel_content", get_novel_content),#获取指定小说的内容
+        (r"/get_novel_work", get_novel_work),  #获取小说作品列表
+        (r"/get_novel_content", get_novel_content),  #获取指定小说的内容
         (r"/get_workInfo", get_workInfo),
         (r"/sub_page", subpageHandler),
         (r"/get_authorNovelList", get_authorNovelList),  # 作者作品列表横屏信息获取api
@@ -230,24 +219,23 @@ def make_app():
         (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
         (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/css"}),
         (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
         (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
-        (r"/music/(.*)",tornado.web.StaticFileHandler,{"path":"H:/web_preject/music"}),#音乐文件路径
-        (r"/assets/(.*)",tornado.web.StaticFileHandler,{"path":"H:/web_preject/assets"}),#svg图标矢量库
+        (r"/music/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/music"}),  #音乐文件路径
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/assets"}),  #svg图标矢量库
         (r"/register", Register),  # 注册表单提交
         (r"/UploadFile", UploadFile),  # 注册头像提交
         (r"/resetpassword", ResetPassword),  # 重置密码
-        (r"/default_upload_Handler",default_upload_Handler),#默认上传文件连接
-        (r"/edit_back_img",EditBackImgHandler),#编辑背景图片
-        (r"/delete_back_image",delete_back_image),#删除背景图片
-        (r"/get_all_userinfo",get_all_userinfo),#获取所有用户信息
-        (r"/update_user_info",update_user_info),#更新用户信息
-        (r"/update_user_avatar",update_user_avatar),#更新用户头像
-        ("r/get_novelwork_list",get_novelwork_list),#获取所有小说作品列表
-        ("r/get_user_followNovelWork_list",get_user_followNovelWork_list),#获取用户关注的小说作品列表的信息
-        ("r/CountNovelWorkData",CountNovelWorkData),#统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-        ("r/CountIllustrationData",CountIllustrationData),#统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-        ("r/get_novel_work_info",get_novel_work_info),#根据用户信息获取小说作品列表的信息
+        (r"/default_upload_Handler", default_upload_Handler),  #默认上传文件连接
+        (r"/edit_back_img", EditBackImgHandler),  #编辑背景图片
+        (r"/delete_back_image", delete_back_image),  #删除背景图片
+        (r"/get_all_userinfo", get_all_userinfo),  #获取所有用户信息
+        (r"/update_user_info", update_user_info),  #更新用户信息
+        (r"/update_user_avatar", update_user_avatar),  #更新用户头像
+        ("r/get_novelwork_list", get_novelwork_list),  #获取所有小说作品列表
+        ("r/get_user_followNovelWork_list", get_user_followNovelWork_list),  #获取用户关注的小说作品列表的信息
+        ("r/CountNovelWorkData", CountNovelWorkData),  #统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+        ("r/CountIllustrationData", CountIllustrationData),  #统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+        ("r/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
     ])
 
 
