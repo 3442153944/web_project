@@ -210,5 +210,24 @@ class get_novel_content(tornado.web.RequestHandler, CORSMixin):
 
         return self.work_content
 
+class get_novel_work_info(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def POST(self):
+        try:
+            self.set_status(200)
+            self.set_header('Content-Type', 'application/json')
+            conn=self.conn.connect()
+            data=json.loads(self.request.body.decode('utf-8'))
+            cursor=conn.cursor()
+            user_id=data['user_id']
+            user_name=data['user_name']
+            sql="select * from novel_work where belong_to_username=%s and belong_to_userid=%s"
+            cursor.execute(sql,(user_name,user_id))
+            result=cursor.fetchone()
+            self.write(json.dumps({"status":"success","data":result}))
+
+        except Exception as e:
+            self.write(json.dumps({"status":"error"}))
+            print(e)
 
 

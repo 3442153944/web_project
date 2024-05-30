@@ -19,7 +19,26 @@
             </div>
         </div>
         <div class="novel_page">
-            小说作品
+            <div class="series_box">
+                <h3>系列</h3>
+                <div class="series_list">
+                    <div class="series_item">
+                        <div class="series_title">
+                            <span></span>
+                            <span>作品</span>
+                            <div class="select_btn"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="work">
+                <h3>作品</h3>
+                <div class="work_item">
+                    <div class="work_cover"></div>
+                    <div class="work_name"></div>
+                    <div class="select_btn"></div>
+                </div>
+            </div>
         </div>
         <div class="invited_draft">
             约稿作品
@@ -45,6 +64,9 @@ let emit=defineEmits(['chose_close_btn_click']);
 let server_ip='https://127.0.0.1:4434/'
 let close_btn_path=ref(server_ip+'assets/close.svg');
 let ill_image_path=ref(server_ip+'image/65014220_p0.jpg')
+let work_id=ref('1')
+let user_id=ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
+let user_name=ref('admin');
 
 //传递关闭消息
 function chose_close_btn_click(){
@@ -118,6 +140,8 @@ onMounted(() => {
     margin:5px auto;
     justify-content: flex-end;
     align-items: center;
+    margin-top:15px;
+    border-top:1px solid #9e9d9d;
 }
 .save_btn{
     display: flex;
@@ -133,6 +157,7 @@ onMounted(() => {
     color: #fff;
     font-size: 16px;
     font-weight: bold;
+    margin-top:10px;
 }
 .save_btn:hover,.cancel_btn:hover{
     opacity: 0.6;
@@ -153,6 +178,7 @@ onMounted(() => {
     color: #fff;
     font-size: 16px;
     font-weight: bold;
+    margin-top: 10px;
 }
 .item_img{
     width:150px;

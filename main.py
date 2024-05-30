@@ -212,8 +212,8 @@ def make_app():
         (r"/login_page", LoginHandler),
         (r"/login", vue_page_login),
         (r"/is_follow", is_follow),
-        (r"/get_novel_work", get_novel_work),
-        (r"/get_novel_content", get_novel_content),
+        (r"/get_novel_work", get_novel_work),#获取小说作品列表
+        (r"/get_novel_content", get_novel_content),#获取指定小说的内容
         (r"/get_workInfo", get_workInfo),
         (r"/sub_page", subpageHandler),
         (r"/get_authorNovelList", get_authorNovelList),  # 作者作品列表横屏信息获取api
@@ -247,7 +247,7 @@ def make_app():
         ("r/get_user_followNovelWork_list",get_user_followNovelWork_list),#获取用户关注的小说作品列表的信息
         ("r/CountNovelWorkData",CountNovelWorkData),#统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
         ("r/CountIllustrationData",CountIllustrationData),#统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-
+        ("r/get_novel_work_info",get_novel_work_info),#根据用户信息获取小说作品列表的信息
     ])
 
 
