@@ -86,6 +86,7 @@ async function get_novel_info(){
         if(data.status=="success")
         {
             work_info.value=data.data;
+            console.log(data.data)
         }
         else{
             console.log('error')
@@ -98,7 +99,7 @@ async function get_novel_info(){
 
 onMounted(()=>{
     get_novel_info();
-    console.log(work_info.value)
+    console.log(work_info.value.work_name)
 })
 //传递关闭消息
 function chose_close_btn_click(){

@@ -21,7 +21,15 @@ class get_work_info(tornado.web.RequestHandler, CORSMixin):
             sql = "select * from novel_work where belong_to_username=%s and belong_to_userid=%s"
             cursor.execute(sql, (user_name, user_id))
             result = cursor.fetchone()
-            self.write(json.dumps({"status": "success", "data": result}))
+
+            if result:
+                column_names = [desc[0] for desc in cursor.description]
+                result_dict = dict(zip(column_names, result))
+            else:
+                result_dict = None
+
+            self.write(json.dumps({"status": "success", "data": result_dict}))
+            print(result_dict)
 
         except Exception as e:
             self.write(json.dumps({"status": "error"}))
