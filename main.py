@@ -3,6 +3,8 @@ import tornado.web
 import tornado.websocket
 import tornado.ioloop
 import tornado.template
+
+from model.WeChat import Wechat
 from model.connect_sqlsever import connMysql
 from model.count_work_data import CountNovelWorkData, CountIllustrationData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
@@ -236,6 +238,7 @@ def make_app():
         (r"/CountNovelWorkData", CountNovelWorkData),  #统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
         (r"/CountIllustrationData", CountIllustrationData),  #统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
         (r"/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
+        (r"/Wechat",Wechat),#微信小程序后台
     ])
 
 
