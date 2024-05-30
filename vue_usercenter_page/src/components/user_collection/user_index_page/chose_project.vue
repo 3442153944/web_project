@@ -58,7 +58,7 @@
                 约稿作品
             </div>
             <div class="btn_box">
-                <div class="save_btn"><span>保存</span></div>
+                <div class="save_btn" @click="save_operation()"><span>保存</span></div>
                 <div class="cancel_btn" @click="chose_close_btn_click()"><span>取消</span></div>
             </div>
         </div>
@@ -140,7 +140,6 @@ async function get_novel_info() {
 
 onMounted(() => {
     get_novel_info();
-    console.log(work_info.value.work_name)
 })
 //传递关闭消息
 function chose_close_btn_click() {
@@ -208,6 +207,15 @@ onMounted(() => {
         set_work_cover_list();
     }, 100)
 })
+
+//保存操作
+function save_operation() {
+    console.log('save')
+    //向服务器通信，保存选中的信息
+
+    //关闭弹窗
+    chose_close_btn_click();
+}
 
 </script>
 

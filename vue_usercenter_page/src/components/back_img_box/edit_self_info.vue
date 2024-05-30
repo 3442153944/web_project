@@ -71,11 +71,9 @@
                 <div class="cancel_btn mt" @click="close_edit_self_info"><span>取消</span></div>
             </div>
         </div>
-        <edit_user_avatar
-        v-if="is_edit_avatar"
-        style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;background-color:rgba(0,0,0,0.5);z-index:10;"
-        @close_edit_useravatar_msg="close_edit_avatar"
-        >
+        <edit_user_avatar v-if="is_edit_avatar"
+            style="position:fixed;top:0px;left:0px;width:100vw;height:100vh;background-color:rgba(0,0,0,0.5);z-index:10;"
+            @close_edit_useravatar_msg="close_edit_avatar">
 
         </edit_user_avatar>
     </div>
@@ -83,11 +81,11 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,defineEmits} from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineEmits } from 'vue';
 import edit_user_avatar from './edit_user_avatar.vue'
 export default {
     name: 'edit_self_info',
-    components:{edit_user_avatar,},
+    components: { edit_user_avatar, },
 }
 </script>
 
@@ -95,14 +93,14 @@ export default {
 let server_ip = ref('https://127.0.0.1:4434/');
 let close_btn_path = ref(server_ip.value + 'assets/close.svg');
 let user_name = ref('admin')
-let user_id=ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
+let user_id = ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
 let user_info = ref({})
-let emit=defineEmits(['close_edit_self_info']);
-let edit_img=ref(server_ip.value+'assets/edit.svg');
+let emit = defineEmits(['close_edit_self_info']);
+let edit_img = ref(server_ip.value + 'assets/edit.svg');
 
 //向父组件传递关闭消息
 function close_edit_self_info() {
-    emit('close_edit_self_info',false);
+    emit('close_edit_self_info', false);
 }
 
 async function get_user_info() {
@@ -132,7 +130,9 @@ async function get_user_info() {
 }
 
 onMounted(() => {
-    get_user_info();
+    setTimeout(() => {
+        get_user_info();
+    }, 10)
     setTimeout(() => {
         set_username();
         set_self_introduce();
@@ -142,8 +142,23 @@ onMounted(() => {
         set_year_list();
         set_birthday();
         set_occupation();
-    }, 100)
+    }, 200)
 
+})
+//销毁所有onMounted和监听函数，确保重写加载时不会出问题
+onUnmounted(() => {
+    console.log('组件销毁')
+    user_name.value = '';
+    user_id.value = '';
+    user_info.value = {};
+    years.value = [];
+    day_list.value = [];
+    v_years.value = '';
+    v_months.value = '';
+    v_days.value = '';
+    is_edit_avatar.value = false;
+    edit_img.value = server_ip.value + 'assets/edit.svg';
+    close_btn_path.value = server_ip.value + 'assets/close.svg';
 })
 function get_user_avatar_path() {
     return server_ip.value + 'image/' + user_info.value.user_avatar;
@@ -246,59 +261,59 @@ function set_occupation() {
     }
 }
 //保存修改
-async function  sava_click() {
-    let username=document.getElementById('uses_name').value;
-    let self_introduce=document.getElementById('self_introduce').value;
-    let sex=document.querySelector('input[name="sex"]:checked').value;
-    let address=document.getElementById('address').value;
-    let person_website=document.getElementById('person_website').value;
-    let year=document.getElementById('year').value;
-    let month=document.getElementById('month').value;
-    let day=document.getElementById('day').value;
-    let occupation=document.getElementById('occupation').value;
-    if(username==''||username==null){
+async function sava_click() {
+    let username = document.getElementById('uses_name').value;
+    let self_introduce = document.getElementById('self_introduce').value;
+    let sex = document.querySelector('input[name="sex"]:checked').value;
+    let address = document.getElementById('address').value;
+    let person_website = document.getElementById('person_website').value;
+    let year = document.getElementById('year').value;
+    let month = document.getElementById('month').value;
+    let day = document.getElementById('day').value;
+    let occupation = document.getElementById('occupation').value;
+    if (username == '' || username == null) {
         alert('昵称不能为空')
         return;
     }
-    try{
-        const res=await fetch('api/update_user_info',{
-            method:'post',
-            headers:{
-                'Content-Type':'application/json'
+    try {
+        const res = await fetch('api/update_user_info', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
             },
-            body:JSON.stringify({
-                user_id:user_id.value,
-                user_name:username,
-                user_self_introduction:self_introduce,
-                sex:sex,
-                user_address:address,
-                user_self_website:person_website,
-                birthday:year+month+day,
-                occupation:occupation
+            body: JSON.stringify({
+                user_id: user_id.value,
+                user_name: username,
+                user_self_introduction: self_introduce,
+                sex: sex,
+                user_address: address,
+                user_self_website: person_website,
+                birthday: year + month + day,
+                occupation: occupation
             })
         })
-        const data=await res.json()
-        if(data.status!='success'){
+        const data = await res.json()
+        if (data.status != 'success') {
             alert(data.message)
         }
-        else{
+        else {
             alert('修改成功')
             close_edit_self_info();
         }
     }
 
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 }
 
 //头像编辑盒子状态及实现函数
-let is_edit_avatar=ref(false);
-function edit_avatar_click(){
-    is_edit_avatar.value=true;
+let is_edit_avatar = ref(false);
+function edit_avatar_click() {
+    is_edit_avatar.value = true;
 }
-function close_edit_avatar(msg){
-    is_edit_avatar.value=msg.value;
+function close_edit_avatar(msg) {
+    is_edit_avatar.value = msg.value;
 }
 </script>
 
@@ -477,27 +492,30 @@ function close_edit_avatar(msg){
     margin-top: 10px;
     position: relative;
 }
-.edit_svg_img{
+
+.edit_svg_img {
     display: flex;
     justify-content: center;
     align-items: center;
     position: absolute;
     bottom: 5px;
     right: 10px;
-    width:35px;
+    width: 35px;
     height: 35px;
     border-radius: 50%;
     overflow: hidden;
     cursor: pointer;
     opacity: 1;
-    background-color: rgba(233,233,233,0.8);
+    background-color: rgba(233, 233, 233, 0.8);
 }
-.edit_svg_img:hover{
+
+.edit_svg_img:hover {
     opacity: 0.8;
     transition: all 0.3s ease-in-out;
-    background-color: rgba(233,233,233,0.6);
+    background-color: rgba(233, 233, 233, 0.6);
 }
-.edit_svg_img img{
+
+.edit_svg_img img {
     width: 80%;
     height: 80%;
     object-fit: cover;
