@@ -1,0 +1,77 @@
+2024-05-31 23:45:22,661 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:45:22,664 - INFO - 作者请求
+2024-05-31 23:45:22,664 - ERROR - Object of type Decimal is not JSON serializable
+Traceback (most recent call last):
+  File "H:\web_preject\model\get_Invited_draft.py", line 42, in post
+    self.write(json.dumps({"status": "success", "data": result}))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type Decimal is not JSON serializable
+2024-05-31 23:47:23,556 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:47:23,558 - INFO - 作者请求
+2024-05-31 23:47:23,559 - ERROR - Object of type Decimal is not JSON serializable
+Traceback (most recent call last):
+  File "H:\web_preject\model\get_Invited_draft.py", line 42, in post
+    self.write(json.dumps({"status": "success", "data": result}))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\__init__.py", line 231, in dumps
+    return _default_encoder.encode(obj)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\encoder.py", line 200, in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\encoder.py", line 258, in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+  File "C:\Python\Lib\json\encoder.py", line 180, in default
+    raise TypeError(f'Object of type {o.__class__.__name__} '
+TypeError: Object of type Decimal is not JSON serializable
+2024-05-31 23:48:55,577 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:48:55,598 - INFO - 作者请求
+2024-05-31 23:48:55,598 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:49:56,361 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:49:56,381 - INFO - 作者请求
+2024-05-31 23:49:56,382 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:49:56,417 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:49:56,419 - INFO - 作者请求
+2024-05-31 23:49:56,419 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:50:01,259 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:50:01,261 - INFO - 作者请求
+2024-05-31 23:50:01,261 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:50:27,144 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:50:27,158 - INFO - 作者请求
+2024-05-31 23:50:27,158 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:50:43,966 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:50:43,969 - INFO - 作者请求
+2024-05-31 23:50:43,969 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:51:29,241 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:51:29,244 - INFO - 作者请求
+2024-05-31 23:51:29,244 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-05-31 23:57:09,430 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"}
+2024-05-31 23:57:09,456 - INFO - 作者请求
+2024-05-31 23:57:09,457 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}]
+2024-06-01 00:01:58,720 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"} - 2024-06-01 00:01:58
+2024-06-01 00:01:58,723 - INFO - 作者请求 - 2024-06-01 00:01:58
+2024-06-01 00:01:58,724 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}, {'invited_draft_id': 2, 'launch_user': 'user2', 'launch_user_id': 'e661401c-bdda-46c0-b98c-eb4e019abf1c', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是第二个测试', 'work_title': '这是第二个约稿作品测试', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '94955658_p0.jpg,93997782_p0.jpg', 'launch_time': '2024年6月1日00:01:37', 'receive_time': '2024年6月1日00:01:41', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('1000.0000')}] - 2024-06-01 00:01:58
+2024-06-01 00:03:21,598 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"} - 2024-06-01 00:03:21
+2024-06-01 00:03:21,610 - INFO - 作者请求 - 2024-06-01 00:03:21
+2024-06-01 00:03:21,611 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}, {'invited_draft_id': 2, 'launch_user': 'user2', 'launch_user_id': 'e661401c-bdda-46c0-b98c-eb4e019abf1c', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是第二个测试', 'work_title': '这是第二个约稿作品测试', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '94955658_p0.jpg,93997782_p0.jpg', 'launch_time': '2024年6月1日00:01:37', 'receive_time': '2024年6月1日00:01:41', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('1000.0000')}] - 2024-06-01 00:03:21
+2024-06-01 00:04:07,876 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"} - 2024-06-01 00:04:07
+2024-06-01 00:04:07,878 - INFO - 作者请求 - 2024-06-01 00:04:07
+2024-06-01 00:04:07,878 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}, {'invited_draft_id': 2, 'launch_user': 'user2', 'launch_user_id': 'e661401c-bdda-46c0-b98c-eb4e019abf1c', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是第二个测试', 'work_title': '这是第二个约稿作品测试', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '94955658_p0.jpg,93997782_p0.jpg', 'launch_time': '2024年6月1日00:01:37', 'receive_time': '2024年6月1日00:01:41', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('1000.0000')}] - 2024-06-01 00:04:07
+2024-06-01 00:08:40,218 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"} - 2024-06-01 00:08:40
+2024-06-01 00:08:40,220 - INFO - 作者请求 - 2024-06-01 00:08:40
+2024-06-01 00:08:40,220 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}, {'invited_draft_id': 2, 'launch_user': 'user2', 'launch_user_id': 'e661401c-bdda-46c0-b98c-eb4e019abf1c', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是第二个测试', 'work_title': '这是第二个约稿作品测试', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '94955658_p0.jpg,93997782_p0.jpg', 'launch_time': '2024年6月1日00:01:37', 'receive_time': '2024年6月1日00:01:41', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('1000.0000')}] - 2024-06-01 00:08:40
+2024-06-01 00:09:57,174 - INFO - {"request_user":"author","username":"admin","user_id":"f575b4d3-0683-11ef-adf4-00ffc6b98bdb"} - 2024-06-01 00:09:57
+2024-06-01 00:09:57,177 - INFO - 作者请求 - 2024-06-01 00:09:57
+2024-06-01 00:09:57,177 - INFO - [{'invited_draft_id': 1, 'launch_user': 'user1', 'launch_user_id': 'ec6866d3-128c-4281-8fef-76beb6b29508', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是一个用于测试的作品', 'work_title': '这是约稿作品的标题', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '65014220_p0.jpg,94296327_p0.jpg,94552901_p0 (1).jpg', 'launch_time': '2024年5月31日22:30:03', 'receive_time': '2024年5月31日22:30:08', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('10000.0000')}, {'invited_draft_id': 2, 'launch_user': 'user2', 'launch_user_id': 'e661401c-bdda-46c0-b98c-eb4e019abf1c', 'receive_user': 'admin', 'receive_user_id': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'launch_user_explain': '这是第二个测试', 'work_title': '这是第二个约稿作品测试', 'work_brief_introduction': '我是作者，对于这个作品有以下的简介和说明', 'work_type': '插画', 'work_file_list': '94955658_p0.jpg,93997782_p0.jpg', 'launch_time': '2024年6月1日00:01:37', 'receive_time': '2024年6月1日00:01:41', 'working_condition': '已完成', 'launch_user_open': '公开', 'price': Decimal('1000.0000')}] - 2024-06-01 00:09:57

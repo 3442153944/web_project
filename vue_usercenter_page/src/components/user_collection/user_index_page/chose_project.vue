@@ -56,14 +56,15 @@
             </div>
             <div class="invited_draft">
                 <div class="invited_draft_list">
-                    <div class="invited_draft_item">
+                    <div class="invited_draft_item" v-for="(item,index) in invited_draft_list" :key="index">
                         <div class="invited_draft_info">
-                            <span>发起人：</span>
-                            <span>标题：</span>
-                            <span>简介：</span>
+                            <span>发起人：{{item.launch_user}}</span>
+                            <span>标题：{{item.work_title}}</span>
+                            <span>状态：{{item.working_condition}}</span>
+                            <span>简介：{{item.work_brief_introduction}}</span>
                         </div>
                         <div class="invited_draft_cover">
-                            <img class="invited_draft_cover_img">
+                            <img class="invited_draft_cover_img" :src="invited_draft_cover_list[index]">
                         </div>
                     </div>
                 </div>
@@ -148,7 +149,6 @@ async function get_novel_info() {
         const data = await res.json()
         if (data.status == "success") {
             work_info.value = data.data;
-            console.log(data.data)
         }
         else {
             console.log('error')
@@ -227,9 +227,11 @@ onMounted(() => {
         set_series_list();
         set_work_cover_list();
         get_ill_list();
+        get_invited_draft_list();
     }, 100)
     setTimeout(() => {
         set_ill_list();
+       
     }, 200);
 })
 
@@ -253,7 +255,6 @@ async function get_ill_list() {
             {
                 ill_info_list.value=data.data;
                 set_storage('ill_info_list',JSON.stringify(data.data));
-                console.log(data.data)
             }
     }
     catch(err){
@@ -267,7 +268,6 @@ function set_ill_list(){
     let file_list=[];
     if(temp!=null){
         temp2=JSON.parse(temp);
-        console.log(temp2[0].content_file_list)
     }
     for(let i=0;i<temp2.length;i++){
        let temp3=temp2[i].content_file_list.split(',');
@@ -276,7 +276,6 @@ function set_ill_list(){
         }
     }
     ill_list.value=file_list;
-    console.log(ill_list.value)
 }
 
 //保存操作
@@ -287,8 +286,47 @@ function save_operation() {
     //关闭弹窗
     chose_close_btn_click();
 }
-
-
+//请求约稿信息
+let invited_draft_list = ref([]);
+async function get_invited_draft_list(){
+    try{
+        let res=await fetch('api/AuthorGetInvitedDraftAllInfo',{
+            method:'POST',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                request_user:'author',
+                username:get_cookie('user_name'),
+                user_id:get_cookie('user_id'),
+            })
+        })
+        let data=await res.json()
+        if(data.status=='success')
+        {
+            invited_draft_list.value=data.data;
+            console.log(data.data)
+            set_invited_draft_cover_list();
+        }
+        else if (data.status=='error'){
+            console.log('error')
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+//获取约稿作品中内容列表中的第一个内容的地址
+let invited_draft_cover_list = ref([]);
+function set_invited_draft_cover_list() {
+    let temp = invited_draft_list.value;
+    for (let i = 0; i < temp.length; i++) {
+        let temp2=temp[i].work_file_list.split(',');
+        if(temp2.length>0){
+            invited_draft_cover_list.value.push(server_ip+'image/'+temp2[0]);
+        }
+    }
+}
 
 </script>
 
@@ -328,7 +366,11 @@ function save_operation() {
     height: auto;
     max-height: 200px;
     min-height: 180px;
-    margin:5px auto;
+    margin:10px auto;
+    padding: 5px;
+    border-radius: 15px;
+    background-color: rgba(133,133,133,0.1);
+    box-shadow: 0px 0px 10px rgba(255,255,255,0.3);
 }
 .invited_draft_info{
     display: flex;
@@ -392,7 +434,7 @@ function save_operation() {
     padding: 5px;
     margin: 5px auto;
     flex-direction: column;
-    max-height: 250px;
+    max-height: 450px;
     overflow: auto;
 }
 
