@@ -48,8 +48,3 @@ class Logger:
     def _add_timestamp(self, message):
         return f"{message} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
-# 示例使用
-if __name__ == "__main__":
-    logger = Logger(log_file_path="H:/web_preject/logs/")
-    logger.info("This is an info message.")
-    logger.error("This is an error message.")
