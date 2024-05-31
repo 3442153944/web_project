@@ -8,6 +8,7 @@ from model.WeChat import Wechat
 from model.connect_sqlsever import connMysql
 from model.count_work_data import CountNovelWorkData, CountIllustrationData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
+from model.get_Invited_draft import AuthorGetInvitedDraftAllInfo
 from model.get_all_userinfo import get_all_userinfo, update_user_info
 from model.login import do_select_query
 import json
@@ -239,6 +240,8 @@ def make_app():
         (r"/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
         (r"/Wechat",Wechat),#微信小程序后台
         (r"/get_user_IllWork_list",get_user_IllWork_list),#获取用户创作的插画作品或漫画作品列表的信息
+        (r"/AuthorGetInvitedDraftAllInfo",AuthorGetInvitedDraftAllInfo),#通过传入的用户查看位置来确定返回
+        #查询到的值，如果传入的值为user则返回的将会是约稿人的约稿信息，如果是author则返回作者的接受的约稿的信息
     ])
 
 
