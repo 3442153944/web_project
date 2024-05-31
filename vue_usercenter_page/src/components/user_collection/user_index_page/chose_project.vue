@@ -16,7 +16,7 @@
             <div class="ill_page">
                 <div class="item_img" v-for="(item, index) in ill_list" :key="index">
                     <img :src="item" class="ill_img">
-                    <div class="select_ill_btn">
+                    <div class="select_ill_btn" @click="switch_ill_correct_status(index)">
                         <img :src="correct_svg_path" class="icon">
                     </div>
                 </div>
@@ -107,6 +107,16 @@ function switch_work_correct_status(index) {
     }
     else {
         temp[index].src = correct_svg_path.value;
+    }
+}
+function switch_ill_correct_status(index) {
+    let temp=document.querySelectorAll('.select_ill_btn img')
+    let path=temp[index].src
+    if(path==correct_svg_path.value){
+        temp[index].src=select_correct_svg_path.value;
+    }
+    else{
+        temp[index].src=correct_svg_path.value;
     }
 }
 
@@ -274,17 +284,13 @@ async function set_cookie(key, value) {
     expireCookie(key);
     // Get current time
     let now = new Date();
-
     // Set expiration time to 7 days later
     now.setTime(now.getTime() + 7 * 24 * 60 * 60 * 1000);
     let expires = "expires=" + now.toUTCString();
-
     // Concatenate new cookie
     let newCookie = key + '=' + value + '; ' + expires;
-
     // Get current cookies
     let cookies = document.cookie;
-
     // If the same key already exists, delete the old cookie first
     if (cookies.includes(key + '=')) {
         let cookieArray = cookies.split('; ');
