@@ -9,7 +9,6 @@ from model.connect_sqlsever import connMysql
 from model.count_work_data import CountNovelWorkData, CountIllustrationData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
 from model.get_all_userinfo import get_all_userinfo, update_user_info
-from model.get_work_info import get_work_info
 from model.login import do_select_query
 import json
 from model.sub_page import *
@@ -239,6 +238,7 @@ def make_app():
         (r"/CountIllustrationData", CountIllustrationData),  #统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
         (r"/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
         (r"/Wechat",Wechat),#微信小程序后台
+        (r"/get_user_IllWork_list",get_user_IllWork_list),#获取用户创作的插画作品或漫画作品列表的信息
     ])
 
 

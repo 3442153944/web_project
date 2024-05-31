@@ -7,7 +7,7 @@ import json
 from model.connect_sqlsever import *
 from tornado.httpclient import AsyncHTTPClient
 from model.CORSMixin import *
-from datetime import datetime
+from datetime import datetime, date
 from docx import Document
 from docx.shared import Pt
 
@@ -170,7 +170,7 @@ class get_user_followNovelWork_list(tornado.web.RequestHandler, CORSMixin):
             user_id = data['user_id']
             #获取用户关注的小说作品列表
             get_user_list = ('select collected_novel_works_id,like_novel_works_id, watch_novel_list_id from users '
-                             'where username="%s" and userid="%s"')
+                             'where username=%s and userid=%s ')
             cursor.execute(get_user_list, (username, user_id))
             user_following = cursor.fetchone()
             #根据作品ID获取作品信息
@@ -200,3 +200,68 @@ class get_user_followNovelWork_list(tornado.web.RequestHandler, CORSMixin):
 
         except Exception as e:
             print(e)
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError("Type not serializable")
+
+
+class get_work_info(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
+    def post(self):
+        try:
+            self.set_status(200)
+            self.set_header('Content-Type', 'application/json')
+            conn = self.conn.connect()
+            data = json.loads(self.request.body.decode('utf-8'))
+            cursor = conn.cursor()
+            user_id = data['user_id']
+            user_name = data['user_name']
+            sql = "select * from novel_work where belong_to_username=%s and belong_to_userid=%s"
+            cursor.execute(sql, (user_name, user_id))
+            results = cursor.fetchall()
+
+            if results:
+                column_names = [desc[0] for desc in cursor.description]
+                results_dict = [dict(zip(column_names, row)) for row in results]
+            else:
+                results_dict = []
+
+            self.write(json.dumps({"status": "success", "data": results_dict}, default=json_serial))
+            print(results_dict)
+
+        except Exception as e:
+            self.write(json.dumps({"status": "error"}))
+            print(e)
+
+    def get(self):
+        self.set_status(200)
+        self.write(json.dumps({"status": "success"}))
+
+class get_user_IllWork_list(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def post(self):
+        try:
+            self.set_status(200)
+            self.set_header('Content-Type', 'application/json')
+            conn=self.conn.connect()
+            data=json.loads(self.request.body.decode('utf-8'))
+            user_id=data['user_id']
+            user_name=data['user_name']
+            sql="select * from illustration_work where belong_to_user=%s  and belong_to_user_id=%s"
+            cursor=conn.cursor()
+            cursor.execute(sql, (user_name, user_id))
+            results = cursor.fetchall()
+            #获取到的所有结果要与字段名一一对应
+            if results:
+                column_names = [desc[0] for desc in cursor.description]
+                result_list=[dict(zip(column_names,row)) for row in results]
+            self.write(json.dumps({"status": "success", "data": result_list}, default=json_serial))
+            print(result_list)
+            conn.close()
+        except Exception as e:
+            print(e)
+            self.write(json.dumps({"status": "error"}))

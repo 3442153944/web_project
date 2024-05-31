@@ -14,9 +14,9 @@
                 <div class="tag_item" @click="switch_page(2)"><span>约稿</span></div>
             </div>
             <div class="ill_page">
-                <div class="item_img">
-                    <img :src="ill_image_path" class="ill_img">
-                    <div class="select_ill_btn" >
+                <div class="item_img" v-for="(item, index) in ill_list" :key="index">
+                    <img :src="item" class="ill_img">
+                    <div class="select_ill_btn">
                         <img :src="correct_svg_path" class="icon">
                     </div>
                 </div>
@@ -81,6 +81,8 @@ let ill_image_path = ref(server_ip + 'image/65014220_p0.jpg')
 let work_id = ref('1')
 let user_id = ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
 let user_name = ref('admin');
+set_cookie('user_id', user_id.value);
+set_cookie('user_name', user_name.value);
 let work_info = ref([])
 let correct_svg_path = ref(server_ip + 'assets/correct.svg');
 let select_correct_svg_path = ref(server_ip + "assets/select_correct.svg")
@@ -205,8 +207,58 @@ onMounted(() => {
     setTimeout(() => {
         set_series_list();
         set_work_cover_list();
+        get_ill_list();
     }, 100)
+    setTimeout(() => {
+        set_ill_list();
+    }, 200);
 })
+
+//获取用户的插画或漫画作品列表
+let ill_list = ref([]);
+let ill_info_list=ref([]);
+async function get_ill_list() {
+    try{
+            let res=await fetch('api/get_user_IllWork_list',{
+                method:'POST',
+                headers:{
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({
+                    user_id:get_cookie('user_id'),
+                    user_name:get_cookie('user_name'),
+                })
+            })
+            const data=await res.json()
+            if(data.status=='success')
+            {
+                ill_info_list.value=data.data;
+                set_storage('ill_info_list',JSON.stringify(data.data));
+                console.log(data.data)
+            }
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+//设置作品列表
+function set_ill_list(){
+    let temp=get_storage('ill_info_list');
+    let temp2=[];
+    let file_list=[];
+    if(temp!=null){
+        temp2=JSON.parse(temp);
+        console.log(temp2[0].content_file_list)
+    }
+    for(let i=0;i<temp2.length;i++){
+       let temp3=temp2[i].content_file_list.split(',');
+        for(let j=0;j<temp3.length;j++){
+            file_list.push(server_ip+'image/'+temp3[j]);
+        }
+    }
+    ill_list.value=file_list;
+    console.log(ill_list.value)
+}
 
 //保存操作
 function save_operation() {
@@ -215,6 +267,63 @@ function save_operation() {
 
     //关闭弹窗
     chose_close_btn_click();
+}
+
+//设置cookies
+async function set_cookie(key, value) {
+    expireCookie(key);
+    // Get current time
+    let now = new Date();
+
+    // Set expiration time to 7 days later
+    now.setTime(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    let expires = "expires=" + now.toUTCString();
+
+    // Concatenate new cookie
+    let newCookie = key + '=' + value + '; ' + expires;
+
+    // Get current cookies
+    let cookies = document.cookie;
+
+    // If the same key already exists, delete the old cookie first
+    if (cookies.includes(key + '=')) {
+        let cookieArray = cookies.split('; ');
+        for (let i = 0; i < cookieArray.length; i++) {
+            if (cookieArray[i].startsWith(key + '=')) {
+                cookieArray[i] = newCookie;
+            }
+        }
+        document.cookie = cookieArray.join('; ');
+    } else {
+        // Otherwise, directly set the new cookie
+        document.cookie = newCookie;
+    }
+}
+function expireCookie(name) {
+    document.cookie = `name=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
+}
+//获取指定cookies的值
+function get_cookie(name) {
+    let cookies = document.cookie.split('; ')
+    for (let i = 0; i < cookies.length; i++) {
+        let cookie = cookies[i].split('=');
+        if (cookie[0] === name) {
+            return cookie[1];
+        }
+    }
+    return null; // Cookie not found
+}
+
+//设置storage值，设置前清除之前的值
+function set_storage(key, value) {
+    localStorage.removeItem(key);
+    localStorage.setItem(key, value);
+}
+
+//获取storage值
+function get_storage(key) {
+    return localStorage.getItem(key);
+
 }
 
 </script>
@@ -264,7 +373,7 @@ function save_operation() {
     display: flex;
     flex-direction: column;
     overflow: auto;
-    max-height: 200px;
+    max-height: 500px;
 }
 
 .novel_page {
@@ -344,6 +453,7 @@ function save_operation() {
     overflow: hidden;
     margin-top: 5px;
     justify-content: space-between;
+    min-height: 180px;
 }
 
 .ill_img {
