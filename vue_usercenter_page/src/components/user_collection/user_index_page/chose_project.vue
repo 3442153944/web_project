@@ -62,7 +62,7 @@
                         <span>筛选约稿状态</span>
                     </div>
                     <div class="screen_content" @click="screen_invited_draft_list()">
-                        <select>
+                        <select class="screen_select">
                             <option value="全部">全部</option>
                             <option value="未审核">未审核</option>
                             <option value="审核通过">审核通过</option>
@@ -285,7 +285,6 @@ function set_novel_series_list() {
             work_series: temp[i].work_series,
         }
         novel_series_list.value.push(work_info)
-        console.log(novel_series_list.value)
     }
 }
 //按系列筛选作品，可以多选系列
@@ -490,6 +489,31 @@ function count_correct_status() {
 }
 
 /*开始倒序编辑*/
+.screen_select{
+    display: flex;
+    width:60%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 5px;
+    margin:5px auto;
+    box-shadow: 0px 0px 5px rgba(255, 0.3);
+}
+.screen_select option{
+    background-color: rgba(133,133,133,0.2);
+}
+.screen_select option:hover{
+    background-color: rgba(133,133,133,0.4);
+    transition: all 0.3s ease-in-out;
+}
+.screen_title{
+    display: flex;
+    width:90%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin:5px auto;
+}
 .invited_draft_item {
     display: flex;
     width: 100%;
