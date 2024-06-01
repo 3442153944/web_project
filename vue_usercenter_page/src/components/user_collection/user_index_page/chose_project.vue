@@ -62,20 +62,17 @@
                         <span>筛选约稿状态</span>
                     </div>
                     <div class="screen_content" @click="screen_invited_draft_list()">
-                        <select class="screen_select">
-                            <option value="全部">全部</option>
-                            <option value="未审核">未审核</option>
-                            <option value="审核通过">审核通过</option>
-                            <option value="审核未通过">审核未通过</option>
-                            <option value="待接取">待接取</option>
-                            <option value="进行中">进行中</option>
-                            <option value="未完成">未完成</option>
-                            <option value="已完成">已完成</option>
-                        </select>
+                        <rewrite_select
+                        :select_title="rewrite_select_title"
+                        :select_list="rewrite_select_list"
+                        @select-item="set_input_list"
+                        class="invited_draft_status"
+                        >
+                        </rewrite_select>
                     </div>
                 </div>
                 <div class="invited_draft_list">
-                    <div class="invited_draft_item" v-for="(item, index) in invited_draft_list" :key="index">
+                    <div class="invited_draft_item" v-for="(item, index) in back_invited_draft_list" :key="index">
                         <div class="invited_draft_info">
                             <span>发起人：{{ item.launch_user }}</span>
                             <span>标题：{{ item.work_title }}</span>
@@ -100,8 +97,12 @@
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineEmits } from 'vue';
 import { set_cookie, expireCookie, get_cookie, set_storage, get_storage } from '../../../../../model/cookies'
+import rewrite_select from '../../select/select.vue'
 export default {
     name: 'chose_project',
+    components: {
+        rewrite_select
+    },
 }
 </script>
 
@@ -118,6 +119,17 @@ set_cookie('user_name', user_name.value);
 let work_info = ref([])
 let correct_svg_path = ref(server_ip + 'assets/correct.svg');
 let select_correct_svg_path = ref(server_ip + "assets/select_correct.svg")
+
+//设置列表框标题
+let rewrite_select_title=ref('选择约稿作品状态')
+//设置列表项
+let rewrite_select_list=ref(['全部','未审核','审核通过','审核未通过','待接取','进行中','未完成','已完成'])
+//接收子组件传入的列表项
+let select_input_list=ref();
+function set_input_list(list){
+    select_input_list.value=list
+}
+
 
 //点击切换选中状态
 function swich_correct_status(index) {
@@ -370,6 +382,7 @@ function save_operation() {
 }
 //请求约稿信息
 let invited_draft_list = ref([]);
+let back_invited_draft_list=ref([]);
 async function get_invited_draft_list() {
     try {
         let res = await fetch('api/AuthorGetInvitedDraftAllInfo', {
@@ -411,19 +424,19 @@ function set_invited_draft_cover_list() {
 //筛选约稿状态
 let screen_status = ref("全部");
 function screen_invited_draft_list() {
-    let temp = document.querySelector('.screen_content select');
-    let status = temp.value;
-    let temp2 = document.querySelectorAll('.invited_draft_item');
-    for (let i = 0; i < temp2.length; i++) {
-        let temp3 = temp2[i].querySelector('#invited_draft_status');
-        if (status == "全部" || status == temp3.textContent.split('：')[1]) {
-            temp2[i].style.display = '';
-        }
-        else {
-            temp2[i].style.display = 'none';
-        }
+    const data=invited_draft_list.value;
+    for(let i=0;i<data.length;i++)
+{
+    if(data[i].working_condition==select_input_list.value||select_input_list.value=="全部")
+    {
+        back_invited_draft_list.value.push(data[i])
     }
 }
+   console.log(select_input_list.value)
+}
+watch(select_input_list,()=>{
+    screen_invited_draft_list()
+})
 //统计选中状态
 let correct_count = ref(0);
 function count_correct_status() {
