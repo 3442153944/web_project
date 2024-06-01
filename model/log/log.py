@@ -46,5 +46,6 @@ class Logger:
         self.logger.error(timestamped_message, exc_info=exc_info)
 
     def _add_timestamp(self, message):
-        return f"{message} - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        return f"\n{timestamp}\n{message}"
 

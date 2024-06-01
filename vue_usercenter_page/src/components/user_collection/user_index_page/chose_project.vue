@@ -19,6 +19,7 @@
                     <div class="select_ill_btn" @click="switch_ill_correct_status(index)">
                         <img :src="correct_svg_path" class="icon">
                     </div>
+                    <span style="display:none;" id="ill_id">{{ill_id_list[index]}}</span>
                 </div>
             </div>
             <div class="novel_page">
@@ -51,16 +52,34 @@
                         <div class="select_btn_work" @click="switch_work_correct_status(index)">
                             <img class="icon" :src="correct_svg_path">
                         </div>
+                       <span style="display:none;" id="novel_work_id">{{novel_work_id_list[index]}}</span>
                     </div>
                 </div>
             </div>
             <div class="invited_draft">
+                <div class="screen_box">
+                    <div class="screen_title">
+                        <span>筛选约稿状态</span>
+                    </div>
+                    <div class="screen_content" @click="screen_invited_draft_list()">
+                        <select>
+                            <option value="全部">全部</option>
+                            <option value="未审核">未审核</option>
+                            <option value="审核通过">审核通过</option>
+                            <option value="审核未通过">审核未通过</option>
+                            <option value="待接取">待接取</option>
+                            <option value="进行中">进行中</option>
+                            <option value="未完成">未完成</option>
+                            <option value="已完成">已完成</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="invited_draft_list">
                     <div class="invited_draft_item" v-for="(item,index) in invited_draft_list" :key="index">
                         <div class="invited_draft_info">
                             <span>发起人：{{item.launch_user}}</span>
                             <span>标题：{{item.work_title}}</span>
-                            <span>状态：{{item.working_condition}}</span>
+                            <span id="invited_draft_status">状态：{{item.working_condition}}</span>
                             <span>简介：{{item.work_brief_introduction}}</span>
                         </div>
                         <div class="invited_draft_cover">
@@ -116,7 +135,13 @@ function switch_work_correct_status(index) {
     let temp = document.querySelectorAll('.select_btn_work img');
     let path = temp[index].src;
     if (path == correct_svg_path.value) {
+        if(count_correct_status()){
         temp[index].src = select_correct_svg_path.value;
+        }
+        else{
+            temp[index].src = correct_svg_path.value;
+            return;
+        }
     }
     else {
         temp[index].src = correct_svg_path.value;
@@ -126,7 +151,13 @@ function switch_ill_correct_status(index) {
     let temp=document.querySelectorAll('.select_ill_btn img')
     let path=temp[index].src
     if(path==correct_svg_path.value){
-        temp[index].src=select_correct_svg_path.value;
+        if(count_correct_status()){
+            temp[index].src=select_correct_svg_path.value;
+        }
+        else{
+            temp[index].src=correct_svg_path.value;
+            return;
+        }
     }
     else{
         temp[index].src=correct_svg_path.value;
@@ -215,12 +246,14 @@ function set_series_list() {
 //获取作品封面地址列表
 let work_cover_list = ref([]);
 let work_name_list = ref([]);
+let novel_work_id_list = ref([]);
 function set_work_cover_list() {
     let temp = work_info.value;
     for (let i = 0; i < temp.length; i++) {
         work_cover_list.value.push(server_ip + "image/" + temp[i].work_cover)
         work_name_list.value.push(temp[i].work_name)
     }
+    novel_work_id_list.value=temp.map(item=>item.work_id) 
 }
 onMounted(() => {
     setTimeout(() => {
@@ -237,6 +270,7 @@ onMounted(() => {
 
 //获取用户的插画或漫画作品列表
 let ill_list = ref([]);
+let ill_id_list=ref([]);
 let ill_info_list=ref([]);
 async function get_ill_list() {
     try{
@@ -254,6 +288,8 @@ async function get_ill_list() {
             if(data.status=='success')
             {
                 ill_info_list.value=data.data;
+                console.log(ill_info_list.value)
+                console.log(ill_info_list.value[0].Illustration_id)
                 set_storage('ill_info_list',JSON.stringify(data.data));
             }
     }
@@ -276,6 +312,7 @@ function set_ill_list(){
         }
     }
     ill_list.value=file_list;
+    ill_id_list.value=temp2.map(item=>item.Illustration_id);
 }
 
 //保存操作
@@ -327,6 +364,55 @@ function set_invited_draft_cover_list() {
         }
     }
 }
+
+//筛选约稿状态
+let screen_status=ref("全部");
+function screen_invited_draft_list(){
+    let temp=document.querySelector('.screen_content select');
+    let status=temp.value;
+    let temp2=document.querySelectorAll('.invited_draft_item');
+    for(let i=0;i<temp2.length;i++){
+        let temp3=temp2[i].querySelector('#invited_draft_status');
+        if(status=="全部"||status==temp3.textContent.split('：')[1]){
+            temp2[i].style.display='';
+        }
+        else{
+            temp2[i].style.display='none';
+        }
+    }
+}
+//统计选中状态
+let correct_count=ref(0);
+function count_correct_status(){
+    let ill_page=document.querySelectorAll('.select_ill_btn img')
+    let novel_page=document.querySelectorAll('.select_btn_work img');
+    let path="https://127.0.0.1:4434/assets/select_correct.svg"
+    //获取插画页面所有的选中状态
+    let ill_page_path=[]
+    for(let i=0;i<ill_page.length;i++){
+        ill_page_path.push(ill_page[i].src)
+    }
+    //获取小说页面所有的选中状态
+    let novel_page_path=[]
+    for(let i=0;i<novel_page.length;i++){
+        novel_page_path.push(novel_page[i].src)
+    }
+    //统计插画页面选中数量
+    let ill_count=ill_page_path.filter(item=>item==path).length
+    //统计小说页面选中数量
+    let novel_count=novel_page_path.filter(item=>item==path).length
+    //总计选中数量
+    correct_count.value=ill_count+novel_count;
+    if(correct_count.value>=3){
+        alert("最多只可选择三个推荐作品")
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+
 
 </script>
 
