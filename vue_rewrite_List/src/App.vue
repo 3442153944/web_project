@@ -1,11 +1,13 @@
-<script setup lang="ts">
-import rewrite_select from './components/select.vue'
+<script setup >
+import root from './components/root.vue'
+
 
 </script>
 
 <template>
 <div class="root">
-    <rewrite_select></rewrite_select>
+    <root></root>
+    <span></span>
 </div>
 </template>
 
