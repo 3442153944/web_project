@@ -125,7 +125,7 @@ let rewrite_select_title=ref('选择约稿作品状态')
 //设置列表项
 let rewrite_select_list=ref(['全部','未审核','审核通过','审核未通过','待接取','进行中','未完成','已完成'])
 //接收子组件传入的列表项
-let select_input_list=ref();
+let select_input_list=ref('全部');
 function set_input_list(list){
     select_input_list.value=list
 }
@@ -425,6 +425,7 @@ function set_invited_draft_cover_list() {
 let screen_status = ref("全部");
 function screen_invited_draft_list() {
     const data=invited_draft_list.value;
+    back_invited_draft_list.value=[]
     for(let i=0;i<data.length;i++)
 {
     if(data[i].working_condition==select_input_list.value||select_input_list.value=="全部")
@@ -436,6 +437,11 @@ function screen_invited_draft_list() {
 }
 watch(select_input_list,()=>{
     screen_invited_draft_list()
+})
+onMounted(()=>{
+    setTimeout(() => {
+        screen_invited_draft_list();
+    }, 110)
 })
 //统计选中状态
 let correct_count = ref(0);
