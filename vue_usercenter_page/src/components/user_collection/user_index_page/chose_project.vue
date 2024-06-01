@@ -19,7 +19,7 @@
                     <div class="select_ill_btn" @click="switch_ill_correct_status(index)">
                         <img :src="correct_svg_path" class="icon">
                     </div>
-                    <span style="display:none;" id="ill_id">{{ill_id_list[index]}}</span>
+                    <span style="display:none;" id="ill_id">{{ ill_id_list[index] }}</span>
                 </div>
             </div>
             <div class="novel_page">
@@ -28,7 +28,7 @@
                     <div class="series_list">
                         <div class="series_item" v-for="(item, index) in series_list" :key="index">
                             <div class="series_title">
-                                <span style="font-size:18px;font-weight:bold">{{ item }}</span>
+                                <span style="font-size:18px;font-weight:bold" class="list_series_name">{{ item }}</span>
                                 <div class="select_btn" @click="swich_correct_status(index)">
                                     <img class="icon" :src="correct_svg_path">
                                 </div>
@@ -41,18 +41,18 @@
                 </div>
                 <h3>作品</h3>
                 <div class="work_list">
-
-                    <div class="work_item" v-for="(item, index) in work_cover_list" :key="index">
+                    <div class="work_item" v-for="(item, index) in back_novel_series_list" :key="index">
                         <div class="work_cover">
-                            <img class="cover_img" :src="item" alt="">
+                            <img class="cover_img" :src="item.work_cover" alt="">
                         </div>
                         <div class="work_name">
-                            <span>{{ work_name_list[index] }}</span>
+                            <span>{{ item.work_name }}</span>
+                            <span id="novel_series">{{ item.work_series }}</span>
                         </div>
                         <div class="select_btn_work" @click="switch_work_correct_status(index)">
                             <img class="icon" :src="correct_svg_path">
                         </div>
-                       <span style="display:none;" id="novel_work_id">{{novel_work_id_list[index]}}</span>
+                        <span style="display:none;" id="novel_work_id">{{ novel_work_id_list[index] }}</span>
                     </div>
                 </div>
             </div>
@@ -75,12 +75,12 @@
                     </div>
                 </div>
                 <div class="invited_draft_list">
-                    <div class="invited_draft_item" v-for="(item,index) in invited_draft_list" :key="index">
+                    <div class="invited_draft_item" v-for="(item, index) in invited_draft_list" :key="index">
                         <div class="invited_draft_info">
-                            <span>发起人：{{item.launch_user}}</span>
-                            <span>标题：{{item.work_title}}</span>
-                            <span id="invited_draft_status">状态：{{item.working_condition}}</span>
-                            <span>简介：{{item.work_brief_introduction}}</span>
+                            <span>发起人：{{ item.launch_user }}</span>
+                            <span>标题：{{ item.work_title }}</span>
+                            <span id="invited_draft_status">状态：{{ item.working_condition }}</span>
+                            <span>简介：{{ item.work_brief_introduction }}</span>
                         </div>
                         <div class="invited_draft_cover">
                             <img class="invited_draft_cover_img" :src="invited_draft_cover_list[index]">
@@ -99,7 +99,7 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineEmits } from 'vue';
-import {set_cookie, expireCookie, get_cookie, set_storage, get_storage} from '../../../../../model/cookies'
+import { set_cookie, expireCookie, get_cookie, set_storage, get_storage } from '../../../../../model/cookies'
 export default {
     name: 'chose_project',
 }
@@ -129,16 +129,23 @@ function swich_correct_status(index) {
     else {
         temp[index].src = correct_svg_path.value;
     }
+    switch_series();
+}
+
+//根据选择的系列来显示相应系列的作品
+let work_list = ref([]);
+function set_work_list(index) {
+
 }
 
 function switch_work_correct_status(index) {
     let temp = document.querySelectorAll('.select_btn_work img');
     let path = temp[index].src;
     if (path == correct_svg_path.value) {
-        if(count_correct_status()){
-        temp[index].src = select_correct_svg_path.value;
+        if (count_correct_status()) {
+            temp[index].src = select_correct_svg_path.value;
         }
-        else{
+        else {
             temp[index].src = correct_svg_path.value;
             return;
         }
@@ -148,19 +155,19 @@ function switch_work_correct_status(index) {
     }
 }
 function switch_ill_correct_status(index) {
-    let temp=document.querySelectorAll('.select_ill_btn img')
-    let path=temp[index].src
-    if(path==correct_svg_path.value){
-        if(count_correct_status()){
-            temp[index].src=select_correct_svg_path.value;
+    let temp = document.querySelectorAll('.select_ill_btn img')
+    let path = temp[index].src
+    if (path == correct_svg_path.value) {
+        if (count_correct_status()) {
+            temp[index].src = select_correct_svg_path.value;
         }
-        else{
-            temp[index].src=correct_svg_path.value;
+        else {
+            temp[index].src = correct_svg_path.value;
             return;
         }
     }
-    else{
-        temp[index].src=correct_svg_path.value;
+    else {
+        temp[index].src = correct_svg_path.value;
     }
 }
 
@@ -180,6 +187,7 @@ async function get_novel_info() {
         const data = await res.json()
         if (data.status == "success") {
             work_info.value = data.data;
+            set_novel_series_list();
         }
         else {
             console.log('error')
@@ -253,8 +261,49 @@ function set_work_cover_list() {
         work_cover_list.value.push(server_ip + "image/" + temp[i].work_cover)
         work_name_list.value.push(temp[i].work_name)
     }
-    novel_work_id_list.value=temp.map(item=>item.work_id) 
+    novel_work_id_list.value = temp.map(item => item.work_id)
 }
+//设置系列作品列表
+let novel_series_list = ref([]);
+let back_novel_series_list = ref([{
+    work_id:null,
+    work_name:null,
+    work_cover:null,
+    work_series:null,
+}]);
+function set_novel_series_list() {
+    let temp = work_info.value;
+    //获取系列列表
+    let series_list = []
+    for (let i = 0; i < temp.length; i++) {
+        series_list.push(temp[i].work_series)
+        //获取作品信息集合
+        let work_info = {
+            work_id: temp[i].work_id,
+            work_name: temp[i].work_name,
+            work_cover: server_ip + "image/" + temp[i].work_cover,
+            work_series: temp[i].work_series,
+        }
+        novel_series_list.value.push(work_info)
+        console.log(novel_series_list.value)
+    }
+}
+//按系列筛选作品，可以多选系列
+function switch_series() {
+    const temp = document.querySelectorAll('.list_series_name');
+    const status = document.querySelectorAll('.select_btn img');
+    const select_status_list = Array.from(status).reduce((acc, item, index) => {
+        if (item.src === select_correct_svg_path.value) {
+            acc.push(temp[index].textContent);
+        }
+        return acc;
+    }, []);
+    const result = novel_series_list.value.filter(work => 
+        select_status_list.includes(work.work_series)
+    );
+    back_novel_series_list.value = result;
+}
+
 onMounted(() => {
     setTimeout(() => {
         set_series_list();
@@ -264,55 +313,52 @@ onMounted(() => {
     }, 100)
     setTimeout(() => {
         set_ill_list();
-       
+        switch_series();
     }, 200);
 })
 
 //获取用户的插画或漫画作品列表
 let ill_list = ref([]);
-let ill_id_list=ref([]);
-let ill_info_list=ref([]);
+let ill_id_list = ref([]);
+let ill_info_list = ref([]);
 async function get_ill_list() {
-    try{
-            let res=await fetch('api/get_user_IllWork_list',{
-                method:'POST',
-                headers:{
-                    'Content-Type': 'application/json'
-                },
-                body:JSON.stringify({
-                    user_id:get_cookie('user_id'),
-                    user_name:get_cookie('user_name'),
-                })
+    try {
+        let res = await fetch('api/get_user_IllWork_list', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                user_id: get_cookie('user_id'),
+                user_name: get_cookie('user_name'),
             })
-            const data=await res.json()
-            if(data.status=='success')
-            {
-                ill_info_list.value=data.data;
-                console.log(ill_info_list.value)
-                console.log(ill_info_list.value[0].Illustration_id)
-                set_storage('ill_info_list',JSON.stringify(data.data));
-            }
+        })
+        const data = await res.json()
+        if (data.status == 'success') {
+            ill_info_list.value = data.data;
+            set_storage('ill_info_list', JSON.stringify(data.data));
+        }
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 }
 //设置作品列表
-function set_ill_list(){
-    let temp=get_storage('ill_info_list');
-    let temp2=[];
-    let file_list=[];
-    if(temp!=null){
-        temp2=JSON.parse(temp);
+function set_ill_list() {
+    let temp = get_storage('ill_info_list');
+    let temp2 = [];
+    let file_list = [];
+    if (temp != null) {
+        temp2 = JSON.parse(temp);
     }
-    for(let i=0;i<temp2.length;i++){
-       let temp3=temp2[i].content_file_list.split(',');
-        for(let j=0;j<temp3.length;j++){
-            file_list.push(server_ip+'image/'+temp3[j]);
+    for (let i = 0; i < temp2.length; i++) {
+        let temp3 = temp2[i].content_file_list.split(',');
+        for (let j = 0; j < temp3.length; j++) {
+            file_list.push(server_ip + 'image/' + temp3[j]);
         }
     }
-    ill_list.value=file_list;
-    ill_id_list.value=temp2.map(item=>item.Illustration_id);
+    ill_list.value = file_list;
+    ill_id_list.value = temp2.map(item => item.Illustration_id);
 }
 
 //保存操作
@@ -325,31 +371,29 @@ function save_operation() {
 }
 //请求约稿信息
 let invited_draft_list = ref([]);
-async function get_invited_draft_list(){
-    try{
-        let res=await fetch('api/AuthorGetInvitedDraftAllInfo',{
-            method:'POST',
-            headers:{
+async function get_invited_draft_list() {
+    try {
+        let res = await fetch('api/AuthorGetInvitedDraftAllInfo', {
+            method: 'POST',
+            headers: {
                 'Content-Type': 'application/json'
             },
-            body:JSON.stringify({
-                request_user:'author',
-                username:get_cookie('user_name'),
-                user_id:get_cookie('user_id'),
+            body: JSON.stringify({
+                request_user: 'author',
+                username: get_cookie('user_name'),
+                user_id: get_cookie('user_id'),
             })
         })
-        let data=await res.json()
-        if(data.status=='success')
-        {
-            invited_draft_list.value=data.data;
-            console.log(data.data)
+        let data = await res.json()
+        if (data.status == 'success') {
+            invited_draft_list.value = data.data;
             set_invited_draft_cover_list();
         }
-        else if (data.status=='error'){
+        else if (data.status == 'error') {
             console.log('error')
         }
     }
-    catch(err){
+    catch (err) {
         console.log(err)
     }
 }
@@ -358,52 +402,52 @@ let invited_draft_cover_list = ref([]);
 function set_invited_draft_cover_list() {
     let temp = invited_draft_list.value;
     for (let i = 0; i < temp.length; i++) {
-        let temp2=temp[i].work_file_list.split(',');
-        if(temp2.length>0){
-            invited_draft_cover_list.value.push(server_ip+'image/'+temp2[0]);
+        let temp2 = temp[i].work_file_list.split(',');
+        if (temp2.length > 0) {
+            invited_draft_cover_list.value.push(server_ip + 'image/' + temp2[0]);
         }
     }
 }
 
 //筛选约稿状态
-let screen_status=ref("全部");
-function screen_invited_draft_list(){
-    let temp=document.querySelector('.screen_content select');
-    let status=temp.value;
-    let temp2=document.querySelectorAll('.invited_draft_item');
-    for(let i=0;i<temp2.length;i++){
-        let temp3=temp2[i].querySelector('#invited_draft_status');
-        if(status=="全部"||status==temp3.textContent.split('：')[1]){
-            temp2[i].style.display='';
+let screen_status = ref("全部");
+function screen_invited_draft_list() {
+    let temp = document.querySelector('.screen_content select');
+    let status = temp.value;
+    let temp2 = document.querySelectorAll('.invited_draft_item');
+    for (let i = 0; i < temp2.length; i++) {
+        let temp3 = temp2[i].querySelector('#invited_draft_status');
+        if (status == "全部" || status == temp3.textContent.split('：')[1]) {
+            temp2[i].style.display = '';
         }
-        else{
-            temp2[i].style.display='none';
+        else {
+            temp2[i].style.display = 'none';
         }
     }
 }
 //统计选中状态
-let correct_count=ref(0);
-function count_correct_status(){
-    let ill_page=document.querySelectorAll('.select_ill_btn img')
-    let novel_page=document.querySelectorAll('.select_btn_work img');
-    let path="https://127.0.0.1:4434/assets/select_correct.svg"
+let correct_count = ref(0);
+function count_correct_status() {
+    let ill_page = document.querySelectorAll('.select_ill_btn img')
+    let novel_page = document.querySelectorAll('.select_btn_work img');
+    let path = "https://127.0.0.1:4434/assets/select_correct.svg"
     //获取插画页面所有的选中状态
-    let ill_page_path=[]
-    for(let i=0;i<ill_page.length;i++){
+    let ill_page_path = []
+    for (let i = 0; i < ill_page.length; i++) {
         ill_page_path.push(ill_page[i].src)
     }
     //获取小说页面所有的选中状态
-    let novel_page_path=[]
-    for(let i=0;i<novel_page.length;i++){
+    let novel_page_path = []
+    for (let i = 0; i < novel_page.length; i++) {
         novel_page_path.push(novel_page[i].src)
     }
     //统计插画页面选中数量
-    let ill_count=ill_page_path.filter(item=>item==path).length
+    let ill_count = ill_page_path.filter(item => item == path).length
     //统计小说页面选中数量
-    let novel_count=novel_page_path.filter(item=>item==path).length
+    let novel_count = novel_page_path.filter(item => item == path).length
     //总计选中数量
-    correct_count.value=ill_count+novel_count;
-    if(correct_count.value>=3){
+    correct_count.value = ill_count + novel_count;
+    if (correct_count.value >= 3) {
         alert("最多只可选择三个推荐作品")
         return false;
     }
@@ -446,40 +490,44 @@ function count_correct_status(){
 }
 
 /*开始倒序编辑*/
-.invited_draft_item{
+.invited_draft_item {
     display: flex;
-    width:100%;
+    width: 100%;
     height: auto;
     max-height: 200px;
     min-height: 180px;
-    margin:10px auto;
+    margin: 10px auto;
     padding: 5px;
     border-radius: 15px;
-    background-color: rgba(133,133,133,0.1);
-    box-shadow: 0px 0px 10px rgba(255,255,255,0.3);
+    background-color: rgba(133, 133, 133, 0.1);
+    box-shadow: 0px 0px 10px rgba(255, 255, 255, 0.3);
 }
-.invited_draft_info{
+
+.invited_draft_info {
     display: flex;
-    width:60%;
+    width: 60%;
     height: auto;
     flex-direction: column;
     justify-content: space-around;
     overflow: auto;
 }
-.invited_draft_cover{
+
+.invited_draft_cover {
     display: flex;
-    width:40%;
+    width: 40%;
     height: auto;
     justify-content: center;
     align-items: center;
     overflow: hidden;
     border-radius: 15px;
 }
-.invited_draft_cover_img{
-    width:100%;
-    height:100%;
+
+.invited_draft_cover_img {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
 }
+
 .series_title {
     display: flex;
     width: 100%;
@@ -513,7 +561,8 @@ function count_correct_status(){
     display: flex;
     flex-direction: column;
 }
-.invited_draft_list{
+
+.invited_draft_list {
     display: flex;
     width: 100%;
     height: auto;
@@ -654,6 +703,8 @@ function count_correct_status(){
     width: auto;
     height: auto;
     margin-left: 10px;
+    flex-direction: column;
+    justify-content: flex-start;
 }
 
 /*结束*/
