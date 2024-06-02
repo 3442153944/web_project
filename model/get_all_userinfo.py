@@ -197,3 +197,29 @@ class useIdGetWorkInfo(tornado.web.RequestHandler, CORSMixin):
         finally:
             cursor.close()
             conn.close()
+
+class EditSelectWorkList(tornado.web.RequestHandler, CORSMixin):
+    conn=connMysql()
+    def post(self):
+        try:
+            self.set_status(200)
+            data=json.loads(self.request.body.decode('utf-8'))
+            user_id=data['user_id']
+            username=data['username']
+            select_work_list=data['select_work_list']
+            #格式化select_work_list
+            select_work_list=json.dumps(select_work_list)
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            sql="update users set select_work=%s where userid=%s and username=%s"
+            cursor.execute(sql,(select_work_list,user_id,username))
+            conn.commit()
+            if cursor.rowcount>0:
+                self.write(json.dumps({"status":"success","message":"修改成功"}))
+                logger.info("修改成功"+str(data))
+            else:
+                self.write(json.dumps({"status":"error","message":"修改失败"}))
+                logger.info("修改失败"+str(data))
+        except Exception as e:
+            print(e)
+            logger.error(e)

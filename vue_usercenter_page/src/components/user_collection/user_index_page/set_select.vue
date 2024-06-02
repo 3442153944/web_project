@@ -24,6 +24,7 @@
             <div class="work_name">
               <span>{{ item.name }}</span>
             </div>
+            <span>作品ID：{{ item.id }}</span>
           </div>
           <div class="delete_work_btn" @click="delete_work(index)">
             <img class="icon" :src="close_btn_path">
@@ -32,7 +33,7 @@
       </div>
       <div class="add_btn"></div>
       <div class="btn_box">
-        <div class="save_btn"><span>确定</span></div>
+        <div class="save_btn" @click="edit_select_work_list()"><span>确定</span></div>
         <div class="cancel_btn" @click="close_set_select">取消</div>
       </div>
     </div>
@@ -65,19 +66,19 @@ let work_info_list = ref([{
   "cover_path": "https://127.0.0.1:4434/image/65014220_p0.jpg",
   "type": "作品类型",
   "name": "作品名称",
-  "work_id":""
+  "work_id": ""
 },
 {
   "cover_path": "https://127.0.0.1:4434/image/82181448_p0(1).jpg",
   "type": "作品类型",
   "name": "作品名称",
-  "workid":""
+  "workid": ""
 },
 {
   "cover_path": "https://127.0.0.1:4434/image/87328997_p0.jpg",
   "type": "作品类型",
   "name": "作品名称",
-  "work_id":""
+  "work_id": ""
 }])
 item_count.value = work_info_list.value.length;
 
@@ -102,8 +103,6 @@ async function get_select_work_list() {
     const data = await res.json();
     if (data.status == 'success') {
       const temp_work_info_list = data.data;
-      console.log(temp_work_info_list);
-
       let ill_list = [];
       let work_id = [];
       if (temp_work_info_list.ill_id) {
@@ -112,7 +111,7 @@ async function get_select_work_list() {
       if (temp_work_info_list.work_id) {
         work_id = temp_work_info_list.work_id;
       }
-      
+
       await set_workinfo_list(ill_list, work_id);
     } else if (data.status == 'error') {
       console.log(data.message);
@@ -145,27 +144,23 @@ async function get_work_info(type, id) {
 // 组装work_info_list
 function set_work_info_list(type, data_value) {
   let temp = [];
-  let data=data_value[0].data;
-  console.log('组装'+JSON.stringify(data[0].data));
-  console.log(type);
+  let data = data_value[0].data;
   for (let i = 0; i < data.length; i++) {
     let temp_obj = {};
     if (type === 'ill') {
-      console.log(data[i])
-      temp_obj.cover_path ='https://127.0.0.1:4434/image/'+ data[i].content_file_list.split(',')[0];
+      temp_obj.cover_path = 'https://127.0.0.1:4434/image/' + data[i].content_file_list.split(',')[0];
       temp_obj.type = '插画';
       temp_obj.name = data[i].name;
       temp_obj.id = data[i].Illustration_id;
     } else if (type === 'work') {
-     
-      temp_obj.cover_path = 'https://127.0.0.1:4434/image/'+data[i].work_cover;
+
+      temp_obj.cover_path = 'https://127.0.0.1:4434/image/' + data[i].work_cover;
       temp_obj.type = '小说';
       temp_obj.name = data[i].work_name;
       temp_obj.id = data[i].work_id;
     }
     temp.push(temp_obj);
   }
-  console.log('组装'+JSON.stringify(temp));
   return temp;
 }
 
@@ -186,15 +181,60 @@ async function set_workinfo_list(ill_list, work_list) {
       work_info.push(...set_work_info_list('work', [info]));
     }
   }
-  console.log(work_info);
   work_info_list.value = work_info;
-  console.log(work_info_list.value);
   item_count.value = work_info.length;
 }
 onMounted(() => {
   get_select_work_list();
-  console.log(work_info_list.value);
 })
+
+//编辑精选作品列表
+async function edit_select_work_list() {
+  try {
+    const res = await fetch('api/EditSelectWorkList', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: get_storage('username'),
+        user_id: get_cookie('user_id'),
+        select_work_list:set_update_work_info_list(),
+      })
+    })
+    const data = await res.json();
+    if (data.status == 'success') {
+      console.log('精选作品列表修改成功');
+    }
+    else if (data.status == 'error') {
+      console.log(data.message);
+    }
+  }
+  catch (err) {
+    console.log(err);
+  }
+  close_set_select();
+}
+//设置更新的信息
+function set_update_work_info_list() {
+  let temp = work_info_list.value;
+  let obj = {}
+  let ill_id_list = []
+  let work_id_list = []
+  if (temp.length > 0) {
+    for (let i = 0; i < temp.length; i++) {
+      if (temp[i].type == '插画') {
+        ill_id_list.push(temp[i].id)
+      }
+      else if (temp[i].type == '小说') {
+        work_id_list.push(temp[i].id)
+      }
+    }
+  }
+  obj.ill_id = ill_id_list;
+  obj.work_id=work_id_list;
+  return obj;
+}
 </script>
 
 <style scoped>
