@@ -6,6 +6,8 @@ import json
 from model.log.log import Logger
 
 logger = Logger()
+
+
 class get_all_userinfo(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
 
@@ -68,7 +70,7 @@ class update_user_info(tornado.web.RequestHandler, CORSMixin):
             cursor.execute(sql, (username, user_self_introduction, sex, user_address, user_self_website, birthday,
                                  occupation, user_id))
             conn.commit()
-            logger.info("更新的内容"+str(body))
+            logger.info("更新的内容" + str(body))
             # 被更改行大于等于一
             if cursor.rowcount >= 1:
                 self.write(json.dumps({"status": "success", "message": "更新成功"}))
@@ -84,58 +86,114 @@ class update_user_info(tornado.web.RequestHandler, CORSMixin):
             cursor.close()
             conn.close()
 
+
 class updateUserSelectWork(tornado.web.RequestHandler, CORSMixin):
-    conn=connMysql()
+    conn = connMysql()
 
     def post(self):
         try:
             self.set_status(200)
             self.set_header('Content-Type', 'application/json')
-            data=json.loads(self.request.body)
-            user_id=data['user_id']
-            username=data['username']
-            work_id=data['work_id']
-            ill_id=data['ill_id']
-            conn=self.conn.connect()
-            cursor=conn.cursor()
-            select_works=json.dumps({"ill_id":ill_id,"work_id":work_id})
-            print('选择的列表'+select_works)
-            update_sql="update users set select_work=%s where userid=%s and username=%s"
-            cursor.execute(update_sql,(select_works,user_id,username))
+            data = json.loads(self.request.body)
+            user_id = data['user_id']
+            username = data['username']
+            work_id = data['work_id']
+            ill_id = data['ill_id']
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            select_works = json.dumps({"ill_id": ill_id, "work_id": work_id})
+            print('选择的列表' + select_works)
+            update_sql = "update users set select_work=%s where userid=%s and username=%s"
+            cursor.execute(update_sql, (select_works, user_id, username))
             conn.commit()
-            if cursor.rowcount>=1:
-                self.write(json.dumps({"status":"success","message":"更新成功"}))
-                logger.info("更新成功"+str(data))
+            if cursor.rowcount >= 1:
+                self.write(json.dumps({"status": "success", "message": "更新成功"}))
+                logger.info("更新成功" + str(data))
         except Exception as e:
-            self.write(json.dumps({"status":"error","message":"参数错误"}))
+            self.write(json.dumps({"status": "error", "message": "参数错误"}))
             logger.error(e)
             print(e)
         finally:
             cursor.close()
             conn.close()
 
-class getSelectWorkList(tornado.web.RequestHandler,CORSMixin):
-    conn=connMysql()
+
+class getSelectWorkList(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
     def post(self):
         try:
             self.set_status(200)
             self.set_header('Content-Type', 'application/json')
-            data=json.loads(self.request.body.decode('utf-8'))
-            user_id=data['user_id']
-            username=data['username']
-            conn=self.conn.connect()
-            cursor=conn.cursor()
-            select_work_sql="select select_work from users where userid=%s and username=%s"
-            cursor.execute(select_work_sql,(user_id,username))
+            data = json.loads(self.request.body.decode('utf-8'))
+            user_id = data['user_id']
+            username = data['username']
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            select_work_sql = "select select_work from users where userid=%s and username=%s"
+            cursor.execute(select_work_sql, (user_id, username))
             conn.commit()
-            select_work_list=cursor.fetchall()
-            print(select_work_list[0][0])
-            select_work_list=json.loads(select_work_list[0][0])
-            self.write(json.dumps({"status":"success","data":select_work_list}))
-            logger.info("获取选择的作品列表成功"+str(data))
+            select_work_list = cursor.fetchall()
+            if select_work_list:
+                print(select_work_list[0][0])
+                select_work_list = json.loads(select_work_list[0][0])
+                self.write(json.dumps({"status": "success", "data": select_work_list}))
+                logger.info("获取选择的作品列表成功" + str(data))
+            else:
+                self.write(json.dumps({"status": "error", "message": "没有选择的作品"}))
+                logger.info("没有选择的作品" + str(data))
         except Exception as e:
             print(e)
             logger.error(e)
+        finally:
+            cursor.close()
+            conn.close()
+
+
+class useIdGetWorkInfo(tornado.web.RequestHandler, CORSMixin):
+    conn = connMysql()
+
+    def post(self):
+        try:
+            self.set_status(200)
+            conn = self.conn.connect()
+            cursor = conn.cursor()
+            data = json.loads(self.request.body.decode('utf-8'))
+            work_type = data['type']
+            if work_type == 'ill':
+                ill_id = data['ill_id']
+                sql = "select * from illustration_work where Illustration_id=%s"
+                cursor.execute(sql, (ill_id,))
+                conn.commit()
+                work_info = cursor.fetchall()
+                if work_info:
+                    #字段名和值对应
+                    column_names=[desc[0] for desc in cursor.description]
+                    result_list=[dict(zip(column_names,row)) for row in work_info]
+                    self.write(json.dumps({"status": "success", "data": result_list}))
+                    logger.info("获取作品信息成功" + str(data))
+                    print(work_info)
+                else:
+                    self.write(json.dumps({"status": "error", "message": "没有该作品"}))
+                    logger.info("没有该作品" + str(data))
+            if work_type == 'work':
+                work_id = data['work_id']
+                sql = "select * from novel_work where work_id=%s"
+                cursor.execute(sql, (work_id,))
+                conn.commit()
+                work_info = cursor.fetchall()
+                if work_info:
+                    #字段名和值对应
+                    column_names=[desc[0] for desc in cursor.description ]
+                    result_dict=[dict(zip(column_names,row)) for row in work_info]
+                    self.write(json.dumps({"status": "success", "data": result_dict}))
+                    logger.info("获取作品信息成功" + str(data))
+                else:
+                    self.write(json.dumps({"status": "error", "message": "没有该作品"}))
+                    logger.info("没有该作品" + str(data))
+        except Exception as e:
+            logger.error(e)
+            print(e)
         finally:
             cursor.close()
             conn.close()

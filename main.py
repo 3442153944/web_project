@@ -9,7 +9,8 @@ from model.connect_sqlsever import connMysql
 from model.count_work_data import CountNovelWorkData, CountIllustrationData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
 from model.get_Invited_draft import AuthorGetInvitedDraftAllInfo
-from model.get_all_userinfo import get_all_userinfo, update_user_info, updateUserSelectWork, getSelectWorkList
+from model.get_all_userinfo import get_all_userinfo, update_user_info, updateUserSelectWork, getSelectWorkList, \
+    useIdGetWorkInfo
 from model.login import do_select_query
 import json
 from model.sub_page import *
@@ -244,6 +245,7 @@ def make_app():
         #查询到的值，如果传入的值为user则返回的将会是约稿人的约稿信息，如果是author则返回作者的接受的约稿的信息
         (r"/updateUserSelectWork",updateUserSelectWork),#更新用户选择的精选作品
         (r"/getSelectWorkList",getSelectWorkList),#获取用户已经选择的精选作品列表
+        (r"/useIdGetWorkInfo",useIdGetWorkInfo),#通过作品类型以及ID获取作品信息
     ])
 
 
