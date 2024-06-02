@@ -3,8 +3,9 @@ import tornado
 import tornado.web
 from model.connect_sqlsever import *
 import json
+from model.log.log import Logger
 
-
+logger = Logger()
 class get_all_userinfo(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
 
@@ -67,13 +68,74 @@ class update_user_info(tornado.web.RequestHandler, CORSMixin):
             cursor.execute(sql, (username, user_self_introduction, sex, user_address, user_self_website, birthday,
                                  occupation, user_id))
             conn.commit()
+            logger.info("更新的内容"+str(body))
             # 被更改行大于等于一
             if cursor.rowcount >= 1:
                 self.write(json.dumps({"status": "success", "message": "更新成功"}))
+                logger.info("更新成功")
             else:
                 self.write(json.dumps({"status": "error", "message": "更新失败"}))
+                logger.info("更新失败")
         except Exception as e:
             print(e)
+            logger.error(e)
             self.write(json.dumps({"status": "error", "message": "服务器内部错误"}))
+        finally:
+            cursor.close()
+            conn.close()
 
+class updateUserSelectWork(tornado.web.RequestHandler, CORSMixin):
+    conn=connMysql()
 
+    def post(self):
+        try:
+            self.set_status(200)
+            self.set_header('Content-Type', 'application/json')
+            data=json.loads(self.request.body)
+            user_id=data['user_id']
+            username=data['username']
+            work_id=data['work_id']
+            ill_id=data['ill_id']
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            select_works=json.dumps({"ill_id":ill_id,"work_id":work_id})
+            print('选择的列表'+select_works)
+            update_sql="update users set select_work=%s where userid=%s and username=%s"
+            cursor.execute(update_sql,(select_works,user_id,username))
+            conn.commit()
+            if cursor.rowcount>=1:
+                self.write(json.dumps({"status":"success","message":"更新成功"}))
+                logger.info("更新成功"+str(data))
+        except Exception as e:
+            self.write(json.dumps({"status":"error","message":"参数错误"}))
+            logger.error(e)
+            print(e)
+        finally:
+            cursor.close()
+            conn.close()
+
+class getSelectWorkList(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def post(self):
+        try:
+            self.set_status(200)
+            self.set_header('Content-Type', 'application/json')
+            data=json.loads(self.request.body.decode('utf-8'))
+            user_id=data['user_id']
+            username=data['username']
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            select_work_sql="select select_work from users where userid=%s and username=%s"
+            cursor.execute(select_work_sql,(user_id,username))
+            conn.commit()
+            select_work_list=cursor.fetchall()
+            print(select_work_list[0][0])
+            select_work_list=json.loads(select_work_list[0][0])
+            self.write(json.dumps({"status":"success","data":select_work_list}))
+            logger.info("获取选择的作品列表成功"+str(data))
+        except Exception as e:
+            print(e)
+            logger.error(e)
+        finally:
+            cursor.close()
+            conn.close()

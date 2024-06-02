@@ -265,3 +265,5 @@ class get_user_IllWork_list(tornado.web.RequestHandler,CORSMixin):
         except Exception as e:
             print(e)
             self.write(json.dumps({"status": "error"}))
+
+

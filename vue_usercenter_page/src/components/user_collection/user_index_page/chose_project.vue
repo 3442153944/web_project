@@ -142,6 +142,10 @@ function swich_correct_status(index) {
         temp[index].src = correct_svg_path.value;
     }
     switch_series();
+    setTimeout(() => {
+        set_novel_select_status();
+    },50)
+    
 }
 
 //根据选择的系列来显示相应系列的作品
@@ -364,9 +368,14 @@ function set_ill_list() {
     }
     for (let i = 0; i < temp2.length; i++) {
         let temp3 = temp2[i].content_file_list.split(',');
-        for (let j = 0; j < temp3.length; j++) {
-            file_list.push(server_ip + 'image/' + temp3[j]);
+        //获取作品中第一个图片文件地址
+        if(temp3.length>0)
+        {
+            file_list.push(server_ip + 'image/' + temp3[0]);
         }
+        /*for (let j = 0; j < temp3.length; j++) {
+            file_list.push(server_ip + 'image/' + temp3[j]);
+        }*/
     }
     ill_list.value = file_list;
     ill_id_list.value = temp2.map(item => item.Illustration_id);
@@ -376,7 +385,7 @@ function set_ill_list() {
 function save_operation() {
     console.log('save')
     //向服务器通信，保存选中的信息
-
+    get_select_work_list();
     //关闭弹窗
     chose_close_btn_click();
 }
@@ -474,7 +483,112 @@ function count_correct_status() {
     }
 }
 
-
+//获取被选中的作品
+let select_work_list=ref([]);
+async function get_select_work_list() {
+    let ill_page=document.querySelectorAll('.item_img');
+    let novel_page=document.querySelectorAll('.work_item');
+    let ill_select_img=document.querySelectorAll('.select_ill_btn img')
+    let novel_select_img=document.querySelectorAll('.select_btn_work img');
+    let ill_list=[]
+    let novel_list=[]
+    for(let i=0;i<ill_page.length;i++){
+        if(ill_select_img[i].src==select_correct_svg_path.value){
+            let ill_id=ill_page[i].querySelector('#ill_id').textContent;
+            ill_list.push(ill_id)
+        }    
+    }
+    for(let i=0;i<novel_page.length;i++){
+        if(novel_select_img[i].src==select_correct_svg_path.value)
+        {
+            let novel_id=novel_page[i].querySelector('#novel_work_id').textContent;
+            novel_list.push(novel_id)
+        }
+    }
+    console.log(ill_list)
+    console.log(novel_list)
+    try{
+        const res=await fetch('api/updateUserSelectWork',{
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify({
+                user_id:get_cookie('user_id'),
+                username:get_cookie('user_name'),
+                ill_id:ill_list,
+                work_id:novel_list,
+            })
+        })
+        const data=await res.json()
+        if(data.status=='success'){
+            console.log('保存成功')
+        }
+        else{
+            console.log('保存失败')
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+//设置已经选择的作品
+let user_select_work_list=ref([]);
+let user_ill_id_list=ref([]);
+let user_work_id_list=ref([]);
+async function set_select_work_list() {
+   
+    const res=await fetch('api/getSelectWorkList',{
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body:JSON.stringify({
+            user_id:get_cookie('user_id'),
+            username:get_cookie('user_name'),
+        })
+    })
+    const data=await res.json()
+    if(data.status=="success")
+    {
+        user_select_work_list.value=data.data;
+        console.log(user_select_work_list.value)
+        user_ill_id_list.value=user_select_work_list.value.ill_id;
+        user_work_id_list.value=user_select_work_list.value.work_id;
+    }
+    else{
+        console.log('获取失败')
+    }
+}
+onMounted(()=>{
+    set_select_work_list()
+    setTimeout(()=>{
+        set_ill_select_status()
+    },250)
+})
+//设置选中状态
+function set_ill_select_status(){
+    let ill_page=document.querySelectorAll('.item_img');
+    for(let i=0;i<ill_page.length;i++){
+        let ill_id=ill_page[i].querySelector('#ill_id').textContent;
+        let ill_select_img=ill_page[i].querySelector('.select_ill_btn img');
+        if(user_ill_id_list.value.includes(ill_id))
+        {
+            ill_select_img.src=select_correct_svg_path.value;
+        }
+    }
+}
+function set_novel_select_status(){
+    let novel_page=document.querySelectorAll('.work_item');
+    for(let i=0;i<novel_page.length;i++){
+        let novel_id=novel_page[i].querySelector('#novel_work_id').textContent;
+        let novel_select_img=novel_page[i].querySelector('.select_btn_work img');
+        if(user_work_id_list.value.includes(novel_id))
+        {
+            novel_select_img.src=select_correct_svg_path.value;
+        }
+    }
+}
 
 </script>
 
