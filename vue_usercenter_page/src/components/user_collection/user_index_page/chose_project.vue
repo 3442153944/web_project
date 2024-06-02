@@ -383,7 +383,6 @@ function set_ill_list() {
 
 //保存操作
 function save_operation() {
-    console.log('save')
     //向服务器通信，保存选中的信息
     get_select_work_list();
     //关闭弹窗
@@ -442,7 +441,6 @@ function screen_invited_draft_list() {
         back_invited_draft_list.value.push(data[i])
     }
 }
-   console.log(select_input_list.value)
 }
 watch(select_input_list,()=>{
     screen_invited_draft_list()
@@ -552,7 +550,6 @@ async function set_select_work_list() {
     if(data.status=="success")
     {
         user_select_work_list.value=data.data;
-        console.log(user_select_work_list.value)
         user_ill_id_list.value=user_select_work_list.value.ill_id;
         user_work_id_list.value=user_select_work_list.value.work_id;
     }
