@@ -20,7 +20,9 @@ from model.get_workinfo import *
 from model.comment_section import *
 from model.register import *
 from model.CORSMixin import *
+from model.log.log import *
 
+logger=Logger()
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -257,7 +259,7 @@ if __name__ == "__main__":
     http_server = tornado.httpserver.HTTPServer(app)
     http_server.listen(11451)  # 11451 是 HTTP 端口
     print("HTTP 服务器启动成功，请访问 https://localhost:11451")
-
+    logger.info("HTTP 服务器启动成功，请访问 https://localhost:11451")
     # 启动 HTTPS 服务器
     https_server = tornado.httpserver.HTTPServer(app, ssl_options={
         "certfile": "H:/web_preject/key/server.crt",
@@ -265,5 +267,5 @@ if __name__ == "__main__":
     })
     https_server.listen(4434)  # 443 是 HTTPS 端口
     print("HTTPS 服务器启动成功，请访问 https://localhost:4434")
-
+    logger.info("HTTPS 服务器启动成功，请访问 https://localhost:4434")
     tornado.ioloop.IOLoop.current().start()

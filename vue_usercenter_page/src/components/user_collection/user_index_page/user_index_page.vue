@@ -7,19 +7,19 @@
       </div>
     </div>
     <div class="content_list">
-      <div class="item">
+      <div class="item" v-for="(item,index) in user_select_work" :key="index">
         <div class="item_title">
-          <span>{{user_select_work.work_type}}</span>
+          <span>{{item.work_type}}</span>
         </div>
         <div class="content_box">
           <div class="img_box">
-            <img class="work_img" :src="server_ip +'image/'+user_select_work.work_cover_img">
+            <img class="work_img" :src="item.work_cover_img">
           </div>
           <div class="content_info">
-            <span>{{user_select_work.work_title}}</span>
-            <span style="font-size:18px;font-weight:bold;">{{user_select_work.work_chapter}}</span>
-            <span>{{user_select_work.work_brief_introduction}}</span>
-            <span>{{user_select_work.work_word_count}}</span>
+            <span>{{item.work_title}}</span>
+            <span style="font-size:18px;font-weight:bold;">{{item.work_chapter}}</span>
+            <span>{{item.work_brief_introduction}}</span>
+            <span>{{item.work_word_count}}</span>
           </div>
         </div>
       </div>
@@ -40,6 +40,7 @@
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 import set_select from './set_select.vue'
 import chose_project from './chose_project.vue'
+import {set_cookie, expireCookie, get_cookie, set_storage, get_storage } from '../../../../../model/cookies.js'
 export default {
   name: 'user_index_page',
   components:{
@@ -49,6 +50,9 @@ export default {
 </script>
 
 <script setup>
+set_cookie('username', 'admin')
+set_cookie('user_id','f575b4d3-0683-11ef-adf4-00ffc6b98bdb')
+set_storage('username', 'admin')
 let user_select_work=ref({
   work_id:0,
   work_title:'作品名称',
@@ -60,6 +64,116 @@ let user_select_work=ref({
 })
 let server_ip='https://127.0.0.1:4434/'
 let add_img=ref(server_ip+'assets/add.svg');
+
+
+// 请求精选作品列表
+async function get_select_work_list() {
+  try {
+    const res = await fetch('api/getSelectWorkList', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: get_storage('username'),
+        user_id: get_cookie('user_id')
+      }),
+    });
+    const data = await res.json();
+    if (data.status == 'success') {
+      const temp_work_info_list = data.data;
+      let ill_list = [];
+      let work_id = [];
+      if (temp_work_info_list.ill_id) {
+        ill_list = temp_work_info_list.ill_id;
+      }
+      if (temp_work_info_list.work_id) {
+        work_id = temp_work_info_list.work_id;
+      }
+
+      await set_workinfo_list(ill_list, work_id);
+    } else if (data.status == 'error') {
+      console.log(data.message);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+// 通过ID请求作品信息
+async function get_work_info(type, id) {
+  try {
+    const res = await fetch('api/useIdGetWorkInfo', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        [type]: id,
+        type: type === 'ill_id' ? 'ill' : 'work'
+      })
+    });
+    return await res.json();
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+}
+
+// 组装work_info_list
+function set_work_info_list(type, data_value) {
+  let temp = [];
+  let data = data_value[0].data;
+  for (let i = 0; i < data.length; i++) {
+    let temp_obj = {};
+    if (type === 'ill') {
+      temp_obj.work_cover_img = 'https://127.0.0.1:4434/image/' + data[i].content_file_list.split(',')[0];
+      temp_obj.work_type = '插画';
+      temp_obj.work_chapter = data[i].name;
+      temp_obj.id = data[i].Illustration_id;
+      temp_obj.work_brief_introduction=data[i].brief_introduction;
+    } else if (type === 'work') {
+
+      temp_obj.work_cover_img = 'https://127.0.0.1:4434/image/' + data[i].work_cover;
+      temp_obj.work_type = '小说';
+      temp_obj.work_chapter = data[i].work_name;
+      temp_obj.id = data[i].work_id;
+      temp_obj.work_brief_introduction=data[i].brief_introduction;
+    }
+    temp.push(temp_obj);
+  }
+  return temp;
+}
+
+// 设置work_info_list
+async function set_workinfo_list(ill_list, work_list) {
+  let work_info = [];
+
+  for (let i = 0; i < ill_list.length; i++) {
+    let info = await get_work_info('ill_id', ill_list[i]);
+    if (info) {
+      work_info.push(...set_work_info_list('ill', [info]));
+    }
+  }
+
+  for (let i = 0; i < work_list.length; i++) {
+    let info = await get_work_info('work_id', work_list[i]);
+    if (info) {
+      work_info.push(...set_work_info_list('work', [info]));
+    }
+  }
+  console.log(work_info);
+  user_select_work.value=[];
+  user_select_work.value = work_info;
+  console.log(user_select_work.value);
+}
+
+onMounted(()=>{
+
+  get_select_work_list();
+  console.log(get_cookie('user_id'));
+  console.log(get_storage('username'));
+})
 
 //接收精选框关闭消息
 let set_select_close_show=ref(false)
