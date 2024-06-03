@@ -266,4 +266,30 @@ class get_user_IllWork_list(tornado.web.RequestHandler,CORSMixin):
             print(e)
             self.write(json.dumps({"status": "error"}))
 
-
+class GetAllIllustrationInfo(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def post(self):
+        self.set_status(200)
+        self.set_header('Content-Type', 'application/json')
+        try:
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            data=json.loads(self.request.body.decode('utf-8'))
+            ill_id=data['ill_id']
+            username=data['username']
+            user_id=data['user_id']
+            sql=("select * from illustration_work where Illustration_id=%s and belong_to_user=%s "
+                 "and belong_to_user_id=%s")
+            cursor.execute(sql,(ill_id,username,user_id))
+            results = cursor.fetchall()
+            if results:
+                column_names=[dist [0] for dist in cursor.description]
+                result_list=[dict(zip(column_names,row)) for row in results]
+                self.write(json.dumps({"status": "success", "data": result_list}, default=json_serial))
+                logger.info("get illustration info success"+str(result_list)+str(data))
+            else:
+                self.write(json.dumps({"status": "error"}))
+                logger.info("get illustration info error"+str(data))
+        except Exception as e:
+            print(e)
+            logger.error(e)

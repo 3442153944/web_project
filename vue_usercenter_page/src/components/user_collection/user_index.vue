@@ -55,6 +55,8 @@ function switchPage(index) {
     page3.value = false;
     page4.value = false;
     p1.style = ''
+    p3.style = ''
+    p4.style = ''
     p2.style.boxShadow = "0px 0px 5px 0px rgba(0,0,0,0.3)";
     p2.style.borderBottom = "3px solid rgba(0,150,250,1)";
   }

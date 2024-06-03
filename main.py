@@ -249,6 +249,7 @@ def make_app():
         (r"/getSelectWorkList",getSelectWorkList),#获取用户已经选择的精选作品列表
         (r"/useIdGetWorkInfo",useIdGetWorkInfo),#通过作品类型以及ID获取作品信息
         (r"/EditSelectWorkList",EditSelectWorkList),#编辑用户已经选择的精选作品列表
+        (r"/GetAllIllustrationInfo",GetAllIllustrationInfo),#获取所有插画信息
     ])
 
 
