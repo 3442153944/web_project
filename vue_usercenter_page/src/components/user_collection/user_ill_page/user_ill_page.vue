@@ -22,7 +22,7 @@
     <div class="user_ill_item_list">
       <div class="item" v-for="(item,index) in all_ill_list_path" :key="index">
         <div class="item_img">
-          <img :src="'https://127.0.0.1:4434/image/'+all_ill_list_path.value[index]">
+          <img :src="'https://127.0.0.1:4434/image/'+item">
         </div>
         <div class="ill_title">
           <span></span>
@@ -262,6 +262,9 @@ onMounted(async () => {
   overflow: hidden;
   height: auto;
   max-height: 350px;
+  min-height: 280px;
+  max-width: 280px;
+  min-width: 230px;
 }
 .item_img{
   display: flex;
