@@ -20,9 +20,9 @@
       </div>
     </div>
     <div class="user_ill_item_list">
-      <div class="item">
+      <div class="item" v-for="(item,index) in all_ill_list_path" :key="index">
         <div class="item_img">
-          <img>
+          <img :src="'https://127.0.0.1:4434/image/'+all_ill_list_path.value[index]">
         </div>
         <div class="ill_title">
           <span></span>
@@ -52,6 +52,7 @@ let ill_id_list = ref([]);
 let tag_list = ref([]);
 let tag_item=ref(null);
 let item_tag_list=ref(null);
+
 // 获取插画列表的函数
 async function set_ill_list() {
   let temp_list = ill_id_list.value;
@@ -59,6 +60,29 @@ async function set_ill_list() {
   for (let i = 0; i < temp_list.length; i++) {
     ill_list.value.push(await get_ill_list(temp_list[i]));
   }
+  set_ill_list_path();
+  console.log(ill_list.value);
+  console.log(all_ill_list_path.value);
+}
+let all_ill_list_path=ref([]);
+//设置获取到的插画文件路径
+async function set_ill_list_path(){
+  let temp_list = ill_list.value;
+  all_ill_list_path.value=[];
+  for(let i=0;i<temp_list.length;i++){
+    all_ill_list_path.value.push(ill_list.value[i][0].content_file_list.split(/[,，]/))
+  }
+  //合并数组
+  let temp=[];
+  for(let i=0;i<all_ill_list_path.value.length;i++){
+    let temp_arr=all_ill_list_path.value[i];
+    for(let j=0;j<temp_arr.length;j++)
+    {
+      temp=temp.concat(temp_arr[j].split(/[,，]/)).map(item=>item.trim());
+    } 
+  }
+  all_ill_list_path.value=temp;
+  console.log(all_ill_list_path.value[0]);
 }
 
 // 获取单个插画的详细信息
@@ -218,5 +242,39 @@ onMounted(async () => {
   padding-right: 15px;
   font-size: 16px;
   font-weight: bold;
+}
+.user_ill_item_list{
+  display: flex;
+  width: 100%;
+  height: auto;
+  padding:5px; 
+  flex-wrap: wrap;
+}
+.item{
+  display: flex;
+  flex-direction: column;
+  width:calc(30% - 10px);
+  margin-right: 20px;
+  margin-left: 20px;
+  margin-top:10px;
+  margin-bottom: 10px;
+  border-radius: 15px;
+  overflow: hidden;
+  height: auto;
+  max-height: 350px;
+}
+.item_img{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+  width: 100%;
+  border-radius: 15px;
+  overflow: hidden;
+}
+.item_img img{
+  width:100%;
+  height: 100%;
+  object-fit: cover;
 }
 </style>
