@@ -7,8 +7,8 @@
       </div>
     </div>
     <div class="content_list">
-      <div class="item" v-for="(item,index) in user_select_work" :key="index">
-        <div class="item_title">
+      <div class="item" v-for="(item,index) in user_select_work" :key="index" ref="item" >
+        <div class="item_title" >
           <span>{{item.work_type}}</span>
         </div>
         <div class="content_box">
@@ -23,7 +23,7 @@
           </div>
         </div>
       </div>
-      <div class="add_box_item" @click="show_chose_set_select">
+      <div class="add_box_item" @click="show_chose_set_select" v-show="add_box_show">
         <div class="add_img">
           <img :src="add_img">
         </div>
@@ -53,6 +53,29 @@ export default {
 set_cookie('username', 'admin')
 set_cookie('user_id','f575b4d3-0683-11ef-adf4-00ffc6b98bdb')
 set_storage('username', 'admin')
+let add_box_show=ref(true);
+let item=ref(null);
+function add_box_show_handle(){
+  let len=item.value.length;
+  if(len>2)
+  {
+    add_box_show.value=false;
+  }
+  else
+  {
+    add_box_show.value=true;
+  }
+}
+  onMounted(()=>{
+    setTimeout(()=>{
+      add_box_show_handle();
+      watch(user_select_work.value,()=>{
+        add_box_show_handle();
+      })
+    },200)
+  })
+  
+
 let user_select_work=ref({
   work_id:0,
   work_title:'作品名称',
