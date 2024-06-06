@@ -7,7 +7,7 @@
         </span>
       </div>
       <div class="novel_list">
-        <div class="novel_item" v-for="(item,index) in novel_list" :key="index">
+        <div class="novel_item" v-for="(item,index) in novel_list" :key="index" :ref="el=>novel_items[index]=el">
           <div class="novel_cover">
             <img class="novel_img" :src="'https://127.0.0.1:4434/image/'+item.work_cover">
           </div>
@@ -22,11 +22,12 @@
             </div>
             <div class="novel_read_info"></div>
             <div class="start_read_btn">
-              <div class="btn_text">
+              <div class="btn_text" @click="go_to_readPage(item.work_id)">
                 <span>开始阅读</span>
               </div>
             </div>
           </div>
+          <span style="display:none;" id="work_id">{{item.work_id}}</span>
         </div>
       </div>
     </div>
@@ -45,6 +46,7 @@ export default {
 
 <script setup>
 let novel_list = ref([]);
+const novel_items = ref([]);
 
 //请求小说列表数据
 async function get_novel_list() {
@@ -76,8 +78,29 @@ async function get_novel_list() {
   console.log(cookies.get_cookie('user_id'))
   console.log(cookies.get_cookie('user_name'))
   get_novel_list();
-  console.log(novel_list.value)
+  
 })
+
+//带着作品ID跳转到阅读页面
+function go_to_readPage(id)
+{
+  console.log(id)
+  //附加作品ID、用户ID、用户名到URL
+  let user_name=cookies.get_cookie('user_name');
+  let user_id=cookies.get_cookie('user_id');
+  let work_id=id;
+  let url={
+    user_name:user_name,
+    user_id:user_id,
+    work_id:work_id
+  }
+  let jump_url="https://localhost:3001/"
+  let url_str = Object.keys(url).map(key => key + '=' + encodeURIComponent(url[key])).join('&');
+  jump_url += '?' + url_str;
+  console.log(jump_url)
+  window.location.href=jump_url;
+}
+
 </script>
 
 <style scoped>

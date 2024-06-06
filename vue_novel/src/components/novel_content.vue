@@ -30,7 +30,7 @@
 
 <script lang="ts">
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted, mounted } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 // @ts-ignore
 import novel_content_box from './novel_content_box/novel_content_box.vue';
 import author_box from './author_box/author_box.vue';
@@ -42,9 +42,13 @@ import author_worklist from './author_worklist/author_worklist.vue';
 import comment_section from './comment_section/comment_section.vue';
 import work_title_list from './work_title_list/work_title_list.vue';
 import comment_section_box from './comment_section_box/comment_section_box.vue';
+//导入cookies操作函数
+import * as cookies from '../../../model/cookies.js'
+
 
 export default {
   name: 'novel_content',
+  // eslint-disable-next-line vue/no-unused-components
   components: { novel_content_box, author_box, word_content, seriex_box, interactive_box, author_worklist,recomm,comment_section ,
     work_title_list,comment_section_box,
   },
@@ -104,7 +108,19 @@ onMounted(() => {
   window.addEventListener('scroll', do_action);
   // 首次挂载时执行一次do_action  
   do_action();
+  get_params() 
 });
+
+//接受路径中的小说ID及用户信息
+function get_params() {
+  let params = new URLSearchParams(window.location.search);
+  let user_id=params.get('user_id')
+  let user_name=params.get('user_name')
+  let work_id=params.get('work_id')
+  cookies.set_cookie('user_id',user_id)
+  cookies.set_cookie('user_name',user_name)
+  cookies.set_cookie('work_id',work_id)
+}
 
 </script>
 

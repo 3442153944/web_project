@@ -15,6 +15,7 @@
 
 <script>
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import * as cookies from '../../../../model/cookies.js'
 export default {
     name: 'work_title_list',
 }
@@ -63,6 +64,7 @@ let title_list = ref([
     '第三十八章',
 ]);
 let work_id = ref('0000000001');
+
 function show_list_btn() {
     var main_page=document.querySelector('.title_list');
     show_list.value = !show_list.value;
@@ -86,7 +88,7 @@ async function get_work_info(){
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            work_id: work_id.value
+            work_id: cookies.get_cookie('work_id')
         })
     })
     const data=await res.json();
@@ -102,19 +104,19 @@ async function get_work_info(){
     let work_author_username=data.work_info[2]
     let work_author_id=data.work_info[3]
     let work_cover=data.work_info[8]
-    set_cookie('work_author_username', work_author_username);
-    set_cookie('work_author_id', work_author_id);
-    set_cookie('work_id', work_id.value);
-    set_cookie('work_cover', work_cover);
-    set_cookie('work_tag', work_tag);
-    set_cookie('work_series', work_series);
-    set_cookie('work_name', data.work_info[1]);
-    set_cookie('author_say', author_say);
-    set_cookie('age_tag', age_tag);
-    set_cookie('like_num', like_num);
-    set_cookie('collection_num', collection_num);
-    set_cookie('view_num', view_num);
-    set_cookie('create_time', create_time);
+    cookies.set_cookie('work_author_username', work_author_username);
+    cookies.set_cookie('work_author_id', work_author_id);
+    cookies.set_cookie('work_id', work_id.value);
+    cookies.set_cookie('work_cover', work_cover);
+    cookies.set_cookie('work_tag', work_tag);
+    cookies.set_cookie('work_series', work_series);
+    cookies.set_cookie('work_name', data.work_info[1]);
+    cookies.set_cookie('author_say', author_say);
+    cookies.set_cookie('age_tag', age_tag);
+    cookies.set_cookie('like_num', like_num);
+    cookies.set_cookie('collection_num', collection_num);
+    cookies.set_cookie('view_num', view_num);
+    cookies.set_cookie('create_time', create_time);
 }
 onMounted(()=>{
     get_work_info();
@@ -122,7 +124,7 @@ onMounted(()=>{
 
 //获取页面标题，设置正文内容
 async function get_page_title(title_text) {
-    const url = `/api/get_novel_work?work_id=${work_id.value}&title_text=${title_text}&work_name=${get_cookie('work_name')}`;
+    const url = `/api/get_novel_work?work_id=${work_id.value}&title_text=${title_text}&work_name=${cookies.get_cookie('work_name')}`;
     const res = await fetch(url, {
         method: 'get',
         headers: {
@@ -131,58 +133,16 @@ async function get_page_title(title_text) {
     });
     const data = await res.json();
     let word_content = data.work_content;
-    localStorage.setItem('word_content', word_content);
+    //localStorage.setItem('word_content', word_content);
+    cookies.set_storage('word_content',word_content);
     //通过cookies设置小说标题
-    set_cookie('work_title', title_text);
+    cookies.set_cookie('work_title', title_text);
     setTimeout(()=>{
         location.reload();
     },200)
 }
 
-async function set_cookie(key, value) {
-    expireCookie(key);
-    // 获取当前时间
-    let now = new Date();
 
-    // 设置过期时间为 7 天后
-    now.setTime(now.getTime() + 7 * 24 * 60 * 60 * 1000);
-    let expires = "expires=" + now.toUTCString();
-
-    // 拼接新的 cookie
-    let newCookie = key + '=' + value + '; ' + expires;
-
-    // 获取当前 cookie
-    let cookies = document.cookie;
-
-    // 如果已经存在相同的键，则更新原来的 cookie
-    if (cookies.includes(key + '=')) {
-        let cookieArray = cookies.split('; ');
-        for (let i = 0; i < cookieArray.length; i++) {
-            if (cookieArray[i].startsWith(key + '=')) {
-                cookieArray[i] = newCookie;
-            }
-        }
-        document.cookie = cookieArray.join('; ');
-    } else {
-        // 否则直接设置新的 cookie
-        document.cookie = newCookie;
-    }
-}
-
-//清除指定cookies
-function expireCookie(name) {
-    document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;`;
-}
-function get_cookie(name) {
-    let cookies = document.cookie.split('; ')
-    for (let i = 0; i < cookies.length; i++) {
-        let cookie = cookies[i].split('=');
-        if (cookie[0] === name) {
-            return cookie[1];
-        }
-    }
-    return null; // Cookie not found
-}
 
 </script>
 

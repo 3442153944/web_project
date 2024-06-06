@@ -4,15 +4,15 @@
   </div>
 </template>
 
-<script lang="ts">
+<script >
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted, Ref, watchEffect } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted, watchEffect } from 'vue';
 export default {
   name: 'word_content',
 }
 </script>
 
-<script setup lang="ts">
+<script setup >
 let word = ref(`最近发生了不少事情，也让我对某些事情有了一点新的体验，同时也带来了不少的灵感。
 `);
 

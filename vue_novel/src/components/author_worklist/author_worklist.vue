@@ -85,7 +85,7 @@ async function get_workinfo(){
       body:JSON.stringify(
         {
           author_username:get_cookie('work_author_username'),
-          username:get_cookie('username'),
+          username:get_cookie('user_name'),
           userid:get_cookie('userid')
         }
       )

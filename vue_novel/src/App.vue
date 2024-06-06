@@ -76,39 +76,7 @@ onMounted(() => {
         }, 50);
     }
 })
-//获取路径中的cookies设置本网页cookies
-onMounted(() => {
-    function getCookieFromUrlParams() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('cookies');
-    }
-    function setCookiesFromUrlParams() {
-        const cookiesFromUrl = getCookieFromUrlParams();
-        if (cookiesFromUrl) {
-            const cookies = decodeURIComponent(cookiesFromUrl);
-            const cookiesArray = cookies.split(';');
-            cookiesArray.forEach(cookie => {
-                const [name, value] = cookie.split('=');
-                document.cookie = `${name.trim()}=${value.trim()}; path=/`;
-            });
-        }
-    }
-    setCookiesFromUrlParams();
-    
-})
-//获取cookies中的值
-function getCookie(name:any) {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // 判断是否为目标 cookie
-        if (cookie.startsWith(name + '=')) {
-            return cookie.substring(name.length + 1); // 返回 cookie 的值（去掉名称部分）
-        }
-    }
-    return ''; // 如果找不到目标 cookie，则返回空字符串
-}
+
 
 
 </script>
