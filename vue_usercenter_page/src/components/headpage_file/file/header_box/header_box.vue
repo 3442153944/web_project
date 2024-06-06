@@ -47,16 +47,16 @@ export default {
 </script>
 
 <script setup>
-let header_box_background_src = ref("https://localhost:11451/image/97165605_p0.jpg")
-let header_box_avatar_src = ref("../../../image/87328997_p0.jpg")
+let header_box_background_src = ref("https://127.0.0.1:4434/image/97165605_p0.jpg")
+let header_box_avatar_src = ref("https://127.0.0.1:4434/image/87328997_p0.jpg")
 let username = ref("孙源玲")
 let userid = ref('@' + "userid")
 let follow_num = ref(100)
 let fans_num = ref(100)
 
 //测试用cookie数据
-cookies.set_cookie("user_name", "admin")
-cookies.set_cookie("user_id", "f575b4d3-0683-11ef-adf4-00ffc6b98bdb")
+//cookies.set_cookie("user_name", "admin")
+//cookies.set_cookie("user_id", "f575b4d3-0683-11ef-adf4-00ffc6b98bdb")
 
 let user_info = ref([])
 async function getUserInfo() {
@@ -75,6 +75,7 @@ async function getUserInfo() {
             user_info.value = data.data[0]
             console.log(data.data)
             console.log(user_info.value)
+            setUserinfo();
         }
         else{
             console.log(data.meesage)
@@ -88,17 +89,14 @@ async function getUserInfo() {
 function setUserinfo() {
     username.value = cookies.get_cookie("user_name")
     userid.value = '@' + cookies.get_cookie("user_id")
-    console.log(cookies.get_cookie('user_following'))
-    follow_num.value = cookies.get_cookie('user_following')
-    fans_num.value = cookies.get_cookie('user_fans')
-    header_box_avatar_src.value = "https://127.0.0.1:4434/image/" + cookies.get_cookie("user_avatar")
-    header_box_background_src.value = "https://127.0.0.1:4434/image/" + cookies.get_cookie("user_back_img")
+    follow_num.value=user_info.value.user_following.split(/[,，]/).length;
+    fans_num.value=user_info.value.user_fans.split(/[,，]/).length;
+    header_box_avatar_src.value="https://127.0.0.1:4434/image/"+user_info.value.user_avatar;
+    header_box_background_src.value = "https://127.0.0.1:4434/image/" + user_info.value.user_back_img;
 }
 
 onMounted(() => {
-    setTimeout(()=>{
-        setUserinfo();
-    },100);
+   
     getUserInfo();
 })
 

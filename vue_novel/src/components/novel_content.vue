@@ -46,6 +46,7 @@ import comment_section_box from './comment_section_box/comment_section_box.vue';
 import * as cookies from '../../../model/cookies.js'
 
 
+
 export default {
   name: 'novel_content',
   // eslint-disable-next-line vue/no-unused-components

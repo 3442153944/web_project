@@ -1,11 +1,16 @@
 <script setup lang="ts">
 import index from './components/index.vue';
-import head_title from "./components/head_title.vue"
+import * as cookies from '../../model/cookies.js';
+import header_box from './components/headpage_file/header_box.vue';
+
 import { ref, onMounted } from 'vue';
 let cursor_top = ref(0);
 let cursor_left = ref(0);
 let cursor_apactiy = ref(0);
 let cursor_add = ref(0);
+
+cookies.set_cookie('user_name','admin');
+cookies.set_cookie('user_id','f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
 onMounted(() => {
     //获取鼠标坐标
     document.onmousemove = (e) => {
@@ -65,7 +70,7 @@ onMounted(() => {
   </svg>
   <span>喵喵喵~</span>
 </div>
-<head_title></head_title>
+<header_box></header_box>
  <index></index>
 </template>
 
