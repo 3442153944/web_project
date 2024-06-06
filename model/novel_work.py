@@ -37,7 +37,8 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
                     work_name = row['work_name']
                     temp_path = os.path.join(work_path, work_name)
                     if os.path.isdir(temp_path):
-                        file_name_list = sorted(os.listdir(temp_path))  # 先赋值再排序
+                        file_name_list = sorted(os.listdir(temp_path))
+                        file_name_list = [os.path.splitext(file)[0] for file in file_name_list]  # 先赋值再排序
                         title_dict.append({
                             'work_name': work_name,
                             'title_list': file_name_list
@@ -51,13 +52,32 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             self.write(json.dumps({"status":"error","msg":"服务器错误"}))
             print(e)
 
+    def set_default_headers(self):
+        self.set_header("Content-Type", "application/json")
+
+    def get_word_content(self, work_name, title_text):
+        file_path = f"H:/web_preject/novel_work/{work_name}/{title_text}.docx"
+        if os.path.exists(file_path):
+            doc = Document(file_path)
+            full_text = []
+            for para in doc.paragraphs:
+                full_text.append(para.text)
+            return "\n".join(full_text)
+        else:
+            return "文件未找到"
+
     def get(self):
-        self.set_status(200)
-        work_id = self.get_argument('work_id')
-        work_title = self.get_argument('title_text')
-        work_name = self.get_argument('work_name')
-        content = self.get_word_content(work_name, work_title)
-        self.write(json.dumps({"work_content": content}))
+        try:
+            self.set_status(200)
+            work_id = self.get_argument('work_id')
+            work_title = self.get_argument('title')
+            work_name = self.get_argument('work_name')
+            content = self.get_word_content(work_name, work_title)
+            self.write(json.dumps({"status": "success", "work_content": content}))
+        except Exception as e:
+            self.set_status(500)
+            self.write(json.dumps({"status": "error", "message": str(e)}))
+            print(e)
 
     def get_word_content(self, name, work_title):
         file_src = 'H:/web_preject/novel_work/' + name + "/" + work_title + ".docx"

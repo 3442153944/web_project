@@ -55,5 +55,25 @@ function get_storage(key) {
     return localStorage.getItem(key);
 }
 
+//清楚所有cookies
+function clearAllCookies() {
+    const cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+}
+//清除所有localStrong
+function clearAllLocalStorage() {
+    localStorage.clear();
+}
+//清除所有session
+function clearAllSessionStorage() {
+    sessionStorage.clear();
+}
+
 // 导出所有函数
-export { set_cookie, expireCookie, get_cookie, set_storage, get_storage };
+export { set_cookie, expireCookie, get_cookie, set_storage, get_storage, clearAllCookies, clearAllLocalStorage, clearAllSessionStorage};

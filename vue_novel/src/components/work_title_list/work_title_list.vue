@@ -14,6 +14,7 @@
 </template>
 
 <script>
+// eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
 import * as cookies from '../../../../model/cookies.js'
 export default {
@@ -58,7 +59,6 @@ async function get_work_info(){
         })
     })
     const data=await res.json();
-    console.log(data);
     if(data.status=='success')
     {
         let work_data=data.data[0];
@@ -94,13 +94,37 @@ onMounted(()=>{
 
 //获取页面标题，设置正文内容
 async function get_page_title(title_text) {
-    const url = `/api/get_novel_work?work_id=${work_id.value}&title_text=${title_text}&work_name=${cookies.get_cookie('work_name')}`;
-    const res = await fetch(url, {
-        method: 'get',
-        headers: {
-            'Content-Type': 'application/json'
+    try {
+        const params = new URLSearchParams({
+            title: title_text,
+            work_name: cookies.get_cookie('work_name'),
+            work_id: cookies.get_cookie('work_id')
+        });
+        const res = await fetch(`/api/get_novel_work?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (res.ok) {
+            const data = await res.json();
+            if (data.status == "success") {
+                cookies.set_storage('word_content', data.work_content);
+                cookies.set_cookie('work_title', title_text);
+                setTimeout(() => {
+                    location.reload();
+                }, 200);
+            } else {
+                console.log("Error:", data.message);
+            }
+        } else {
+            console.log("HTTP error", res.status);
         }
-    });
+    } catch (err) {
+        console.log("Fetch error:", err);
+    }
+}
+/*
     const data = await res.json();
     let word_content = data.work_content;
     //localStorage.setItem('word_content', word_content);
@@ -110,7 +134,8 @@ async function get_page_title(title_text) {
     setTimeout(()=>{
         location.reload();
     },200)
-}
+    */
+
 
 
 

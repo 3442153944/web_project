@@ -14,37 +14,53 @@ class get_all_userinfo(tornado.web.RequestHandler, CORSMixin):
     def post(self):
         self.set_status(200)
         self.set_header('Content-Type', 'application/json')
-
         try:
             body = json.loads(self.request.body)
             username = body['user_name']
-
             conn = self.conn.connect()
             cursor = conn.cursor()
             sql = "SELECT * FROM users WHERE username=%s"
             cursor.execute(sql, (username,))
             result = cursor.fetchone()
-
             if result:
                 column_names = [desc[0] for desc in cursor.description]
                 user_info = dict(zip(column_names, result))
-
                 # 移除密码字段
                 if 'password' in user_info:
                     del user_info['password']
-
                 print(user_info)
                 self.write(json.dumps({"status": "success", "data": user_info}))
             else:
                 self.write(json.dumps({"status": "error", "message": "用户不存在"}))
-
             cursor.close()
             conn.close()
-
         except Exception as e:
             print(f"获取用户信息时发生错误: {e}")
             self.write(json.dumps({"status": "error", "message": "服务器内部错误", "error": str(e)}))
 
+class UserIdGetAllUserInfo(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def post(self):
+        try:
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            data=json.loads(self.request.body.decode('utf-8'))
+            user_id=data['user_id']
+            sql="SELECT * FROM users WHERE userid=%s"
+            cursor.execute(sql,(user_id,))
+            result=cursor.fetchall()
+            if result:
+                column_names=[desc[0] for desc in cursor.description]
+                result_list=[dict(zip(column_names,row)) for row in result]
+                logger.info("获取用户信息成功"+str(result_list)+json.dumps(data)+"\n")
+                print(result_list)
+                self.write(json.dumps({"status":"success","data":result_list}))
+            else:
+                self.write(json.dumps({"status":"error","message":"用户不存在"}))
+        except Exception as e:
+            print(e)
+            print(61)
+            logger.error("获取用户信息失败"+str(e)+"\n")
 
 class update_user_info(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()

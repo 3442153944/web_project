@@ -10,7 +10,7 @@ from model.count_work_data import CountNovelWorkData, CountIllustrationData
 from model.file_upload import default_upload_Handler, EditBackImgHandler, delete_back_image, update_user_avatar
 from model.get_Invited_draft import AuthorGetInvitedDraftAllInfo
 from model.get_all_userinfo import get_all_userinfo, update_user_info, updateUserSelectWork, getSelectWorkList, \
-    useIdGetWorkInfo, EditSelectWorkList
+    useIdGetWorkInfo, EditSelectWorkList, UserIdGetAllUserInfo
 from model.login import do_select_query
 import json
 from model.sub_page import *
@@ -250,6 +250,7 @@ def make_app():
         (r"/useIdGetWorkInfo",useIdGetWorkInfo),#通过作品类型以及ID获取作品信息
         (r"/EditSelectWorkList",EditSelectWorkList),#编辑用户已经选择的精选作品列表
         (r"/GetAllIllustrationInfo",GetAllIllustrationInfo),#获取所有插画信息
+        (r"/UserIdGetAllUserInfo",UserIdGetAllUserInfo),#使用ID获取该ID用户的所有信息
     ])
 
 
