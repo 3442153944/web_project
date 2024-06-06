@@ -29,7 +29,21 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             if result:
                 column_names=[desc[0] for desc in cursor.description]
                 result_list=[dict(zip(column_names,row)) for row in result]
-                self.write(json.dumps({"status":"success", "data": result_list}))
+                work_path='H:/web_preject/novel_work/'
+                title_dict=[{}]
+                work_name=[]
+                print(result_list)
+                for row in result_list:
+                    work_name = row['work_name']
+                    temp_path = os.path.join(work_path, work_name)
+                    if os.path.isdir(temp_path):
+                        file_name_list = sorted(os.listdir(temp_path))  # 先赋值再排序
+                        title_dict.append({
+                            'work_name': work_name,
+                            'title_list': file_name_list
+                        })
+                print(title_dict)
+                self.write(json.dumps({"status":"success", "data": result_list,'title_list':title_dict}))
             else:
                 self.write(json.dumps({"status":"error","msg":"未找到该作品"}))
             conn.close()

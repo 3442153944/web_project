@@ -26,42 +26,7 @@ let show_list = ref(false);
 let title_list = ref([
     '第一章',
     '第二章',
-    '第三章',
-    '第四章',
-    '第五章',
-    '第六章',
-    '第七章',
-    '第八章',
-    '第九章',
-    '第十章',
-    '第十一章',
-    '第十二章',
-    '第十三章',
-    '第十四章',
-    '第十五章',
-    '第十六章',
-    '第十七章',
-    '第十八章',
-    '第十九章',
-    '第二十章',
-    '第二十一章',
-    '第二十二章',
-    '第二十三章',
-    '第二十四章',
-    '第二十五章',
-    '第二十六章',
-    '第二十七章',
-    '第二十八章',
-    '第二十九章',
-    '第三十章',
-    '第三十一章',
-    '第三十二章',
-    '第三十三章',
-    '第三十四章',
-    '第三十五章',
-    '第三十六章',
-    '第三十七章',
-    '第三十八章',
+
 ]);
 let work_id = ref('0000000001');
 
@@ -94,40 +59,28 @@ async function get_work_info(){
     })
     const data=await res.json();
     console.log(data);
-    if(data.data.status=='success')
+    if(data.status=='success')
     {
-        
-        console.log(data.data);
+        let work_data=data.data[0];
+        title_list.value=data.title_list[1].title_list;
+        cookies.set_cookie('author_say', work_data.author_say);
+        cookies.set_cookie('age_tag',work_data.age_classification)
+        cookies.set_cookie('like_num',work_data.like_num)
+        cookies.set_cookie('collection_num',work_data.collecting_num)
+        cookies.set_cookie('view_num',work_data.views_num)
+        cookies.set_cookie('work_name',work_data.work_name)
+        cookies.set_cookie('work_id',work_data.work_id)
+        cookies.set_cookie('create_time',work_data.work_create_time)
+        cookies.set_cookie('work_tag',work_data.work_tags)
+        cookies.set_cookie('work_series',work_data.work_series)
+        cookies.set_cookie('work_author_username',work_data.belong_to_username)
+        cookies.set_cookie('work_author_id',work_data.belong_to_userid)
+        cookies.set_cookie('work_cover',work_data.work_cover)
+
     }
     else{
-        console.log(data.data.msg)
+        console.log('错误'+data.data.msg)
     }
-
-    title_list.value=data.work_list;
-    let author_say=data.work_info[9]
-    let age_tag=data.work_info[7]
-    let like_num=data.work_info[11]
-    let collection_num=data.work_info[12]
-    let view_num=data.work_info[13]
-    let create_time=data.work_info[10]
-    let work_tag=data.work_info[5]
-    let work_series=data.work_info[4]
-    let work_author_username=data.work_info[2]
-    let work_author_id=data.work_info[3]
-    let work_cover=data.work_info[8]
-    cookies.set_cookie('work_author_username', work_author_username);
-    cookies.set_cookie('work_author_id', work_author_id);
-    cookies.set_cookie('work_id', work_id.value);
-    cookies.set_cookie('work_cover', work_cover);
-    cookies.set_cookie('work_tag', work_tag);
-    cookies.set_cookie('work_series', work_series);
-    cookies.set_cookie('work_name', data.work_info[1]);
-    cookies.set_cookie('author_say', author_say);
-    cookies.set_cookie('age_tag', age_tag);
-    cookies.set_cookie('like_num', like_num);
-    cookies.set_cookie('collection_num', collection_num);
-    cookies.set_cookie('view_num', view_num);
-    cookies.set_cookie('create_time', create_time);
 }catch(err){
     console.log(err);
     
