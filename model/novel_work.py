@@ -24,25 +24,17 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             sql = "select * from novel_work where work_id=%s"
             conn = self.conn.connect()
             cursor = conn.cursor()
-            cursor.execute(sql, work_id)
-            result = cursor.fetchone()
+            cursor.execute(sql, (work_id,))
+            result = cursor.fetchall()
             if result:
-                result_dict = {}
-                for i in range(len(result)):
-                    if isinstance(result[i], datetime):
-                        result_dict[i] = result[i].isoformat()
-                    else:
-                        result_dict[i] = result[i]
-                work_name = result_dict[6]
-                work_list = self.get_file_name_list(work_name)
-                # print(work_list)
-                self.write(json.dumps({"work_info": result_dict, "work_list": work_list}))
-                # print(result_dict)
+                column_names=[desc[0] for desc in cursor.description]
+                result_list=[dict(zip(column_names,row)) for row in result]
+                self.write(json.dumps({"status":"success", "data": result_list}))
             else:
-                # 如果未找到结果，则返回空字典
-                self.write(json.dumps({}))
+                self.write(json.dumps({"status":"error","msg":"未找到该作品"}))
             conn.close()
         except Exception as e:
+            self.write(json.dumps({"status":"error","msg":"服务器错误"}))
             print(e)
 
     def get(self):

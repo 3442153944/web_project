@@ -82,6 +82,7 @@ document.addEventListener('click', function(event) {
 
 //获取作品列表及其其他信息
 async function get_work_info(){
+    try{
     const res=await fetch('/api/get_novel_work',{
         method: 'POST',
         headers: {
@@ -92,6 +93,16 @@ async function get_work_info(){
         })
     })
     const data=await res.json();
+    console.log(data);
+    if(data.data.status=='success')
+    {
+        
+        console.log(data.data);
+    }
+    else{
+        console.log(data.data.msg)
+    }
+
     title_list.value=data.work_list;
     let author_say=data.work_info[9]
     let age_tag=data.work_info[7]
@@ -117,6 +128,12 @@ async function get_work_info(){
     cookies.set_cookie('collection_num', collection_num);
     cookies.set_cookie('view_num', view_num);
     cookies.set_cookie('create_time', create_time);
+}catch(err){
+    console.log(err);
+    
+}
+
+  
 }
 onMounted(()=>{
     get_work_info();
