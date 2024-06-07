@@ -22,7 +22,8 @@ from model.register import *
 from model.CORSMixin import *
 from model.log.log import *
 
-logger=Logger()
+logger = Logger()
+
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def open(self):
@@ -206,8 +207,8 @@ def make_app():
         (r"/login_page", LoginHandler),
         (r"/login", vue_page_login),
         (r"/is_follow", is_follow),
-        (r"/get_novel_work", get_novel_work),  #获取小说作品列表
-        (r"/get_novel_content", get_novel_content),  #获取指定小说的内容
+        (r"/get_novel_work", get_novel_work),  # 获取小说作品列表
+        (r"/get_novel_content", get_novel_content),  # 获取指定小说的内容
         (r"/get_workInfo", get_workInfo),
         (r"/sub_page", subpageHandler),
         (r"/get_authorNovelList", get_authorNovelList),  # 作者作品列表横屏信息获取api
@@ -225,32 +226,32 @@ def make_app():
         (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/css"}),
         (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
         (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
-        (r"/music/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/music"}),  #音乐文件路径
-        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/assets"}),  #svg图标矢量库
+        (r"/music/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/music"}),  # 音乐文件路径
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/assets"}),  # svg图标矢量库
         (r"/register", Register),  # 注册表单提交
         (r"/UploadFile", UploadFile),  # 注册头像提交
         (r"/resetpassword", ResetPassword),  # 重置密码
-        (r"/default_upload_Handler", default_upload_Handler),  #默认上传文件连接
-        (r"/edit_back_img", EditBackImgHandler),  #编辑背景图片
-        (r"/delete_back_image", delete_back_image),  #删除背景图片
-        (r"/get_all_userinfo", get_all_userinfo),  #获取所有用户信息
-        (r"/update_user_info", update_user_info),  #更新用户信息
-        (r"/update_user_avatar", update_user_avatar),  #更新用户头像
-        (r"/get_novelwork_list", get_novelwork_list),  #获取所有小说作品列表
-        (r"/get_user_followNovelWork_list", get_user_followNovelWork_list),  #获取用户关注的小说作品列表的信息
-        (r"/CountNovelWorkData", CountNovelWorkData),  #统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-        (r"/CountIllustrationData", CountIllustrationData),  #统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
-        (r"/get_work_info", get_work_info),  #根据用户信息获取小说作品列表的信息
-        (r"/Wechat",Wechat),#微信小程序后台
-        (r"/get_user_IllWork_list",get_user_IllWork_list),#获取用户创作的插画作品或漫画作品列表的信息
-        (r"/AuthorGetInvitedDraftAllInfo",AuthorGetInvitedDraftAllInfo),#通过传入的用户查看位置来确定返回
-        #查询到的值，如果传入的值为user则返回的将会是约稿人的约稿信息，如果是author则返回作者的接受的约稿的信息
-        (r"/updateUserSelectWork",updateUserSelectWork),#更新用户选择的精选作品
-        (r"/getSelectWorkList",getSelectWorkList),#获取用户已经选择的精选作品列表
-        (r"/useIdGetWorkInfo",useIdGetWorkInfo),#通过作品类型以及ID获取作品信息
-        (r"/EditSelectWorkList",EditSelectWorkList),#编辑用户已经选择的精选作品列表
-        (r"/GetAllIllustrationInfo",GetAllIllustrationInfo),#获取所有插画信息
-        (r"/UserIdGetAllUserInfo",UserIdGetAllUserInfo),#使用ID获取该ID用户的所有信息
+        (r"/default_upload_Handler", default_upload_Handler),  # 默认上传文件连接
+        (r"/edit_back_img", EditBackImgHandler),  # 编辑背景图片
+        (r"/delete_back_image", delete_back_image),  # 删除背景图片
+        (r"/get_all_userinfo", get_all_userinfo),  # 获取所有用户信息
+        (r"/update_user_info", update_user_info),  # 更新用户信息
+        (r"/update_user_avatar", update_user_avatar),  # 更新用户头像
+        (r"/get_novelwork_list", get_novelwork_list),  # 获取所有小说作品列表
+        (r"/get_user_followNovelWork_list", get_user_followNovelWork_list),  # 获取用户关注的小说作品列表的信息
+        (r"/CountNovelWorkData", CountNovelWorkData),  # 统计小说作品数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+        (r"/CountIllustrationData", CountIllustrationData),  # 统计插画数据，以及根据状态码执行不同的点赞，收藏，浏览等操作
+        (r"/get_work_info", get_work_info),  # 根据用户信息获取小说作品列表的信息
+        (r"/Wechat", Wechat),  # 微信小程序后台
+        (r"/get_user_IllWork_list", get_user_IllWork_list),  # 获取用户创作的插画作品或漫画作品列表的信息
+        (r"/AuthorGetInvitedDraftAllInfo", AuthorGetInvitedDraftAllInfo),  # 通过传入的用户查看位置来确定返回
+        # 查询到的值，如果传入的值为user则返回的将会是约稿人的约稿信息，如果是author则返回作者的接受的约稿的信息
+        (r"/updateUserSelectWork", updateUserSelectWork),  # 更新用户选择的精选作品
+        (r"/getSelectWorkList", getSelectWorkList),  # 获取用户已经选择的精选作品列表
+        (r"/useIdGetWorkInfo", useIdGetWorkInfo),  # 通过作品类型以及ID获取作品信息
+        (r"/EditSelectWorkList", EditSelectWorkList),  # 编辑用户已经选择的精选作品列表
+        (r"/GetAllIllustrationInfo", GetAllIllustrationInfo),  # 获取所有插画信息
+        (r"/UserIdGetAllUserInfo", UserIdGetAllUserInfo),  # 使用ID获取该ID用户的所有信息
     ])
 
 
