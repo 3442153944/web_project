@@ -20,6 +20,7 @@ import user_index_page from './user_index_page/user_index_page.vue';
 import user_collection_page from './user_collection_page/user_collection_page.vue'
 import user_ill_page from './user_ill_page/user_ill_page.vue'
 import user_novel_page from './user_novel_page/user_novel_page.vue'
+import * as cookies from '../../../../model/cookies.js'
 export default {
   name: 'user_index',
   components: { user_index_page, user_collection_page, user_ill_page, user_novel_page },
@@ -27,6 +28,10 @@ export default {
 </script>
 
 <script setup>
+
+cookies.set_cookie('user_name','admin')
+cookies.set_cookie('user_id','f575b4d3-0683-11ef-adf4-00ffc6b98bdb')
+
 let page1 = ref(true);
 let page2 = ref(false);
 let page3 = ref(false);

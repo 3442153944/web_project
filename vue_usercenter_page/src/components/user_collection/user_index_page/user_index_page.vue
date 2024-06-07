@@ -57,9 +57,9 @@ let add_box_show=ref(true);
 let item=ref(null);
 function add_box_show_handle(){
   let len=item.value.length;
-  if(len>2)
+  if(len>3)
   {
-    add_box_show.value=false;
+    add_box_show.value=true;
   }
   else
   {

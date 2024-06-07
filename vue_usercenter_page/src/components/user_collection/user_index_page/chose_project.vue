@@ -96,8 +96,8 @@
 <script>
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineEmits } from 'vue';
-import { set_cookie, expireCookie, get_cookie, set_storage, get_storage } from '../../../../../model/cookies'
 import rewrite_select from '../../select/select.vue'
+import * as cookies from '../../../../../model/cookies.js'
 export default {
     name: 'chose_project',
     components: {
@@ -112,10 +112,6 @@ let server_ip = 'https://127.0.0.1:4434/'
 let close_btn_path = ref(server_ip + 'assets/close.svg');
 let ill_image_path = ref(server_ip + 'image/65014220_p0.jpg')
 let work_id = ref('1')
-let user_id = ref('f575b4d3-0683-11ef-adf4-00ffc6b98bdb');
-let user_name = ref('admin');
-set_cookie('user_id', user_id.value);
-set_cookie('user_name', user_name.value);
 let work_info = ref([])
 let correct_svg_path = ref(server_ip + 'assets/correct.svg');
 let select_correct_svg_path = ref(server_ip + "assets/select_correct.svg")
@@ -196,8 +192,8 @@ async function get_novel_info() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: user_id.value,
-                user_name: user_name.value,
+                user_id: cookies.get_cookie('user_id'),
+                user_name: cookies.get_cookie('user_name'),
             })
         })
         const data = await res.json()
@@ -257,6 +253,7 @@ function switch_page(index) {
 }
 onMounted(() => {
     switch_page(0);
+    set_series_list();
 });
 
 //获取系列列表
@@ -344,14 +341,15 @@ async function get_ill_list() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: get_cookie('user_id'),
-                user_name: get_cookie('user_name'),
+                user_id: cookies.get_cookie('user_id'),
+                user_name: cookies.get_cookie('user_name'),
+                
             })
         })
         const data = await res.json()
         if (data.status == 'success') {
             ill_info_list.value = data.data;
-            set_storage('ill_info_list', JSON.stringify(data.data));
+            cookies.set_storage('ill_info_list', JSON.stringify(data.data));
         }
     }
     catch (err) {
@@ -360,7 +358,7 @@ async function get_ill_list() {
 }
 //设置作品列表
 function set_ill_list() {
-    let temp = get_storage('ill_info_list');
+    let temp = cookies.get_storage('ill_info_list');
     let temp2 = [];
     let file_list = [];
     if (temp != null) {
@@ -373,9 +371,7 @@ function set_ill_list() {
         {
             file_list.push(server_ip + 'image/' + temp3[0]);
         }
-        /*for (let j = 0; j < temp3.length; j++) {
-            file_list.push(server_ip + 'image/' + temp3[j]);
-        }*/
+
     }
     ill_list.value = file_list;
     ill_id_list.value = temp2.map(item => item.Illustration_id);
@@ -400,8 +396,8 @@ async function get_invited_draft_list() {
             },
             body: JSON.stringify({
                 request_user: 'author',
-                username: get_cookie('user_name'),
-                user_id: get_cookie('user_id'),
+                username: cookies.get_cookie('user_name'),
+                user_id: cookies.get_cookie('user_id'),
             })
         })
         let data = await res.json()
@@ -512,8 +508,8 @@ async function get_select_work_list() {
                 'Content-Type': 'application/json'
             },
             body:JSON.stringify({
-                user_id:get_cookie('user_id'),
-                username:get_cookie('user_name'),
+                user_id:cookies.get_cookie('user_id'),
+                username:cookies.get_cookie('user_name'),
                 ill_id:ill_list,
                 work_id:novel_list,
             })
@@ -542,8 +538,8 @@ async function set_select_work_list() {
             'Content-Type': 'application/json'
         },
         body:JSON.stringify({
-            user_id:get_cookie('user_id'),
-            username:get_cookie('user_name'),
+            user_id:cookies.get_cookie('user_id'),
+            username:cookies.get_cookie('user_name'),
         })
     })
     const data=await res.json()
@@ -552,37 +548,44 @@ async function set_select_work_list() {
         user_select_work_list.value=data.data;
         user_ill_id_list.value=user_select_work_list.value.ill_id;
         user_work_id_list.value=user_select_work_list.value.work_id;
+        set_ill_select_status();
     }
     else{
         console.log('获取失败')
     }
 }
 onMounted(()=>{
-    set_select_work_list()
+    set_select_work_list();
     setTimeout(()=>{
-        set_ill_select_status()
-    },250)
+        set_ill_select_status();
+    },200)
 })
 //设置选中状态
 function set_ill_select_status(){
     let ill_page=document.querySelectorAll('.item_img');
     for(let i=0;i<ill_page.length;i++){
-        let ill_id=ill_page[i].querySelector('#ill_id').textContent;
+        let ill_id=ill_page[i].querySelector('#ill_id').textContent.trim();
         let ill_select_img=ill_page[i].querySelector('.select_ill_btn img');
-        if(user_ill_id_list.value.includes(ill_id))
+        for(let j=0;j<user_ill_id_list.value.length;j++)
         {
-            ill_select_img.src=select_correct_svg_path.value;
+            if(user_ill_id_list.value[j]==ill_id)
+            {
+                ill_select_img.src=select_correct_svg_path.value;
+            }
         }
     }
 }
 function set_novel_select_status(){
     let novel_page=document.querySelectorAll('.work_item');
     for(let i=0;i<novel_page.length;i++){
-        let novel_id=novel_page[i].querySelector('#novel_work_id').textContent;
+        let novel_id=novel_page[i].querySelector('#novel_work_id').textContent.trim();
         let novel_select_img=novel_page[i].querySelector('.select_btn_work img');
-        if(user_work_id_list.value.includes(novel_id))
+        for(let j=0;j<user_work_id_list.value.length;j++)
         {
-            novel_select_img.src=select_correct_svg_path.value;
+            if(user_work_id_list.value[j]==novel_id)
+            {
+                novel_select_img.src=select_correct_svg_path.value;
+            }
         }
     }
 }
