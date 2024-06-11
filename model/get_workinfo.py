@@ -293,3 +293,34 @@ class GetAllIllustrationInfo(tornado.web.RequestHandler,CORSMixin):
         except Exception as e:
             print(e)
             logger.error(e)
+
+class GetUserFollowIllustration(tornado.web.RequestHandler,CORSMixin):
+    conn=connMysql()
+    def post(self):
+        try:
+            self.set_status(200)
+            conn=self.conn.connect()
+            cursor=conn.cursor()
+            data=json.loads(self.request.body.decode('utf-8'))
+            user_id=data['user_id']
+            get_follow='select follow_user_id from user_follow where user_id=%s'
+            cursor.execute(get_follow,(user_id,))
+            results = cursor.fetchall()
+            if results:
+                column_names=[desc[0] for desc in cursor.description]
+                result_list=[dict(zip(column_names,row)) for row in results]
+                for i in result_list:
+                    sql='select content_file_list from illustration_work where belong_to_user_id=%s'
+                    cursor.execute(sql,(i['follow_user_id'],))
+                    results = cursor.fetchall()
+                    if results:
+                        column_names = [desc[0] for desc in cursor.description]
+                        result_list = [dict(zip(column_names, row)) for row in results]
+                        self.write(json.dumps({"status": "success", "data": result_list}, default=json_serial))
+                        logger.info("get user follow illustration success"+str(result_list)+str(data))
+        except Exception as e:
+            logger.error(e+'GetUserFollowIllustration')
+            print(e)
+        finally:
+            conn.close()
+            cursor.close()

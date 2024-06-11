@@ -59,7 +59,6 @@ class UserIdGetAllUserInfo(tornado.web.RequestHandler,CORSMixin):
                 self.write(json.dumps({"status":"error","message":"用户不存在"}))
         except Exception as e:
             print(e)
-            print(61)
             logger.error("获取用户信息失败"+str(e)+"\n")
 
 class update_user_info(tornado.web.RequestHandler, CORSMixin):

@@ -189,11 +189,11 @@
                     运营公司
                     刊登广告
                     招聘信息
-                    © pixiv</span>
+                    © Illweb</span>
             </div>
         </div>
         <div class="notice">
-            <span>2021年5月30日，Pixiv 宣布将于2022年1月1日停止对旧版API的支持。</span>
+            <span>2021年5月30日，Illweb 宣布将于2022年1月1日停止对旧版API的支持。</span>
         </div>
     </div>
 </template>
