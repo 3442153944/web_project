@@ -1,4 +1,5 @@
 import os
+import re
 import uuid
 
 from model.CORSMixin import CORSMixin
@@ -40,10 +41,8 @@ class UploadFile(tornado.web.RequestHandler, CORSMixin):
 
 class Register(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql
-
     def get(self):
         self.render("../register_page/register.html")
-
     async def post(self):
         self.set_status(200)
         try:
@@ -60,10 +59,16 @@ class Register(tornado.web.RequestHandler, CORSMixin):
             email = data["email"]
             phone = data["phone"]
             password = data["password"]
+            #对密码进行复杂度验证
+            if len(password) < 8:
+                self.write({'status': 'fail','message': '密码长度不能小于8位'})
+                return
+            password_pattern=re.compile(r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$')
+            if not password_pattern.match(password):
+                self.write({'status': 'fail','message': '密码必须包含大小写字母和数字，且长度不能小于8位'})
+                return
             sql = 'insert into users (username,userid,user_avatar,sex,email,phone,password) values(%s,%s,%s,%s,%s,%s,%s)'
-
             cursor.execute(sql, (username, userid, user_avatar, sex, email, phone, password))
-
             conn.commit()
             print("注册成功")
             self.write({'status': 'success', 'message': '注册成功'})

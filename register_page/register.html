@@ -230,7 +230,11 @@
                 if (data.status == "success") {
                     alert("注册成功");
                     window.location.href = "https://localhost:3000/";
-                } else {
+                }
+                else if(data.status=='fail'){
+                    alert(data.message);
+                }
+                 else {
                     alert("注册失败");
                 }
             } catch (e) {
