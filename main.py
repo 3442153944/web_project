@@ -252,6 +252,7 @@ def make_app():
         (r"/EditSelectWorkList", EditSelectWorkList),  # 编辑用户已经选择的精选作品列表
         (r"/GetAllIllustrationInfo", GetAllIllustrationInfo),  # 获取所有插画信息
         (r"/UserIdGetAllUserInfo", UserIdGetAllUserInfo),  # 使用ID获取该ID用户的所有信息
+        (r"/GetUserFollowIllustration",GetUserFollowIllustration),  # 获取用户关注的插画信息
     ])
 
 

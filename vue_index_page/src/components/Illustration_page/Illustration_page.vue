@@ -84,13 +84,13 @@ function switch_love_status(index){
 let follow_illustrations_list=ref([])
 async function get_follow_illustrations_list(){
   try{
-    const res=await fetch('api/UserIdGetAllUserInfo',{
+    const res=await fetch('api/GetUserFollowIllustration',{
       method:'post',
       headers:{
         'Content-Type':'application/json'
       },
       body:JSON.stringify({
-        user_id:cookies.get_cookie('user_id'),
+        user_id:cookies.get_cookie('user_id')
       })
     })
     const data=await res.json()
@@ -98,13 +98,18 @@ async function get_follow_illustrations_list(){
     {
       console.log(data.data)
     }
+    else{
+      console.log(data.message)
+    }
   }
   catch(error){
     console.log(error)
   }
 }
 onMounted(()=>{
+  console.log(cookies.get_cookie('user_id'))
   get_follow_illustrations_list()
+ 
 })
 
 //模拟横向滚动效果

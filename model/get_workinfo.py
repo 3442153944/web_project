@@ -304,20 +304,24 @@ class GetUserFollowIllustration(tornado.web.RequestHandler,CORSMixin):
             data=json.loads(self.request.body.decode('utf-8'))
             user_id=data['user_id']
             get_follow='select follow_user_id from user_follow where user_id=%s'
+            #获取用户关注的所有用户ID
             cursor.execute(get_follow,(user_id,))
             results = cursor.fetchall()
-            if results:
-                column_names=[desc[0] for desc in cursor.description]
-                result_list=[dict(zip(column_names,row)) for row in results]
-                for i in result_list:
-                    sql='select content_file_list from illustration_work where belong_to_user_id=%s'
-                    cursor.execute(sql,(i['follow_user_id'],))
-                    results = cursor.fetchall()
-                    if results:
-                        column_names = [desc[0] for desc in cursor.description]
-                        result_list = [dict(zip(column_names, row)) for row in results]
-                        self.write(json.dumps({"status": "success", "data": result_list}, default=json_serial))
-                        logger.info("get user follow illustration success"+str(result_list)+str(data))
+            follow_list=[]
+            for row in results:
+                follow_list.append(row[0])
+            #使用ID获取关注用户的所有作品，返回作品中文件名，并按照时间排序
+            get_follow_ill=('select Illustration_id,content_file_list,create_time from illustration_work '
+                            'where belong_to_user_id=%s')
+            follow_ill_list=[]
+            for follow_id in follow_list:
+                cursor.execute(get_follow_ill,(follow_id,))
+                follow_ill_result=cursor.fetchall()
+                print(follow_ill_result)
+                if follow_ill_result:
+                    column_names=[desc[0] for desc in cursor.description]
+                    follow_ill_list.append([dict(zip(column_names,row)) for row in follow_ill_result])
+            self.write(json.dumps({"status": "success", "data": follow_ill_list}, default=json_serial))
         except Exception as e:
             logger.error(e+'GetUserFollowIllustration')
             print(e)
