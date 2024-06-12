@@ -3,7 +3,7 @@
     <h3>用户关注的作品</h3>
     <div class="follow_list"  v-if="follow_ill_dict_copy">
       <div class="follow_work" v-for="(item,index) in follow_ill_dict_copy" :key="index">
-        <div class="follow_work_item" @click="go_to_illustration_page(item.work_id)">
+        <div class="follow_work_item" >
           <div class="age_tag">
             <span>{{ item.age_classification }}</span>
           </div>
@@ -14,7 +14,7 @@
           <div class="like" >
             <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index-1)">
           </div>
-          <img :src="'https://127.0.0.1:4434/image/'+item.work_item_path">
+          <img :src="'https://127.0.0.1:4434/image/'+item.work_item_path" @click="go_to_illustration_page(item.work_id)">
         </div>
         <div class="work_name">
           <span>{{ item.work_name }}</span>
