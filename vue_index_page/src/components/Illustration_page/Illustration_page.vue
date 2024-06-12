@@ -1,9 +1,9 @@
 <template>
   <div class="illustration_page">
     <h3>用户关注的作品</h3>
-    <div class="follow_list">
+    <div class="follow_list"  v-if="follow_ill_dict_copy">
       <div class="follow_work" v-for="(item,index) in follow_ill_dict_copy" :key="index">
-        <div class="follow_work_item">
+        <div class="follow_work_item" @click="go_to_illustration_page(item.work_id)">
           <div class="age_tag">
             <span>{{ item.age_classification }}</span>
           </div>
@@ -186,6 +186,12 @@ async function set_author_avatar(){
 
 }
 
+//插画作品的带参跳转
+function go_to_illustration_page(work_id){
+  console.log(work_id)
+  window.location.href='https://localhost:3003'+'?work_id='+work_id;
+}
+
 //模拟横向滚动效果
 function scrollTabs(scrollAmount) {
   const tags = document.querySelector('.follow_list');
@@ -301,6 +307,7 @@ function scrollTabs(scrollAmount) {
   width: 100%;
   height: 80%;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .follow_work_item img {
