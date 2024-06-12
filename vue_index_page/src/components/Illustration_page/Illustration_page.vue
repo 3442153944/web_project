@@ -27,6 +27,7 @@
             <span>{{ item.author_name }}</span>
           </div>
         </div>
+        <span style="display:none;" class="work_id">{{item.work_id}}</span>
       </div>
       <div class="left_btn" @click="scrollTabs(-400)">
        <img :src="left_svg_path">
@@ -126,7 +127,7 @@ function set_follow_ill_dict(){
     {
       
       temp={
-        
+        work_id:follow_illustrations_list.value[i][j].Illustration_id,
         work_name:follow_illustrations_list.value[i][j].name,
         work_item_path:follow_illustrations_list.value[i][j].content_file_list.split(/[,，]/)[0],
         work_count:follow_illustrations_list.value[i][j].content_file_list.split(/[,，]/).length,
@@ -161,6 +162,7 @@ async function set_author_avatar(){
       if(data.status=='success')
       {
         follow_ill_dict_copy.value.push({
+          work_id:follow_ill_dict.value[i].work_id,
           author_id:follow_ill_dict.value[i].author_id,
           author_name:follow_ill_dict.value[i].author_name,
           author_avatar:data.data[0].user_avatar,
