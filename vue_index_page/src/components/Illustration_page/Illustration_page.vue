@@ -2,29 +2,29 @@
   <div class="illustration_page">
     <h3>用户关注的作品</h3>
     <div class="follow_list">
-      <div class="follow_work" v-for="index in 10" :key="index">
+      <div class="follow_work" v-for="(item,index) in follow_ill_dict_copy" :key="index">
         <div class="follow_work_item">
           <div class="age_tag">
-            <span>{{ age_tag }}</span>
+            <span>{{ item.age_classification }}</span>
           </div>
           <div class="page_count">
             <img :src="page_count_svg_path">
-            <span>{{ work_count }}</span>
+            <span>{{ item.work_count }}</span>
           </div>
           <div class="like" >
             <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index-1)">
           </div>
-          <img :src="work_item_path">
+          <img :src="'https://127.0.0.1:4434/image/'+item.work_item_path">
         </div>
         <div class="work_name">
-          <span>{{ work_name }}</span>
+          <span>{{ item.work_name }}</span>
         </div>
         <div class="userinfo">
           <div class="user_avatar">
-            <img :src="user_avatar">
+            <img :src="'https://127.0.0.1:4434/image/'+item.author_avatar">
           </div>
           <div class="username">
-            <span>{{ username }}{{ index }}</span>
+            <span>{{ item.author_name }}</span>
           </div>
         </div>
       </div>
@@ -97,6 +97,11 @@ async function get_follow_illustrations_list(){
     if(data.status=='success')
     {
       console.log(data.data)
+      follow_illustrations_list.value=data.data;
+      set_follow_ill_dict();
+      set_author_avatar();
+      console.log(follow_ill_dict_copy.value)
+      return data.data;
     }
     else{
       console.log(data.message)
@@ -111,6 +116,73 @@ onMounted(()=>{
   get_follow_illustrations_list()
  
 })
+
+let follow_ill_dict=ref([])
+function set_follow_ill_dict(){
+  let temp={}
+  for(let i=0;i<follow_illustrations_list.value.length;i++)
+  {
+    for(let j=0;j<follow_illustrations_list.value[i].length;j++)
+    {
+      
+      temp={
+        
+        work_name:follow_illustrations_list.value[i][j].name,
+        work_item_path:follow_illustrations_list.value[i][j].content_file_list.split(/[,，]/)[0],
+        work_count:follow_illustrations_list.value[i][j].content_file_list.split(/[,，]/).length,
+        author_name:follow_illustrations_list.value[i][j].belong_to_user,
+        author_id:follow_illustrations_list.value[i][j].belong_to_user_id,
+        //如果喜欢列表为空则返回空数组
+        like_list:follow_illustrations_list.value[i][j].like_user_list==null?[]:follow_illustrations_list.value[i][j].like_user_list.split(/[,，]/),
+        create_time:follow_illustrations_list.value[i][j].create_time,
+        age_classification:follow_illustrations_list.value[i][j].age_classification,
+      }
+      follow_ill_dict.value.push(temp)
+    }
+  }
+}
+
+let follow_ill_dict_copy=ref([])
+async function set_author_avatar(){
+  for(let i=0;i<follow_ill_dict.value.length;i++)
+  {
+    try{
+      const res=await fetch('api/UserIdGetAllUserInfo',{
+        method:'post',
+        headers:{
+          'Content-Type':'application/json'
+        },
+        body:JSON.stringify({
+          user_id:follow_ill_dict.value[i].author_id,
+        })
+      })
+      const data=await res.json()
+      
+      if(data.status=='success')
+      {
+        follow_ill_dict_copy.value.push({
+          author_id:follow_ill_dict.value[i].author_id,
+          author_name:follow_ill_dict.value[i].author_name,
+          author_avatar:data.data[0].user_avatar,
+          work_name:follow_ill_dict.value[i].work_name,
+          work_item_path:follow_ill_dict.value[i].work_item_path,
+          work_count:follow_ill_dict.value[i].work_count,
+          like_list:follow_ill_dict.value[i].like_list,
+          create_time:follow_ill_dict.value[i].create_time,
+          age_classification:follow_ill_dict.value[i].age_classification,
+        })
+      }
+    }
+    catch(error){
+      console.log(error)
+    }
+  }
+  //对follow_ill_dict_copy按照create_time进行排序
+  follow_ill_dict_copy.value.sort((a,b)=>{
+    return new Date(b.create_time)-new Date(a.create_time)
+  })
+
+}
 
 //模拟横向滚动效果
 function scrollTabs(scrollAmount) {

@@ -310,8 +310,9 @@ class GetUserFollowIllustration(tornado.web.RequestHandler,CORSMixin):
             follow_list=[]
             for row in results:
                 follow_list.append(row[0])
+            print(follow_list)
             #使用ID获取关注用户的所有作品，返回作品中文件名，并按照时间排序
-            get_follow_ill=('select Illustration_id,content_file_list,create_time from illustration_work '
+            get_follow_ill=('select * from illustration_work '
                             'where belong_to_user_id=%s')
             follow_ill_list=[]
             for follow_id in follow_list:
