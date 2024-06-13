@@ -16,6 +16,10 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+    if len(sys.argv) > 1:
+        sys.argv += ['runserver', '0.0.0.0:2233']
+    elif sys.argv[1] == 'runserver' and len(sys.argv) == 2:
+        sys.argv.append('0.0.0.0:2233')
 
 
 if __name__ == '__main__':
