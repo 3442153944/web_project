@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 #配置静态网页的代理
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    'H:/web_preject',
+    'H:/web_project',
 ]
 
 SECRET_KEY = 'django-insecure-ypu2=#s5wqperumf6kmmi=eb4)u=#sror+nsa*kq$dfkhm7-a-'

@@ -14,8 +14,8 @@ export default defineConfig({
   server:{
     port:3003,
     https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'H:/web_preject/key/server.key')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'H:/web_preject/key/server.crt')),
+      key: fs.readFileSync(path.resolve(__dirname, 'H:/web_project/key/server.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, 'H:/web_project/key/server.crt')),
     },
     proxy: {
       '/api': {

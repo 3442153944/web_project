@@ -262,8 +262,8 @@ function resetContent(id_value) {
 setInterval(autowrap, 500);
 
 function re_boolean(imgId) {
-  var img_src = "file:///H:/web_preject/image/爱心.png";
-  var img_src_1 = "file:///H:/web_preject/image/爱心1.png";
+  var img_src = "file:///H:/web_project/image/爱心.png";
+  var img_src_1 = "file:///H:/web_project/image/爱心1.png";
   var img_elm = document.getElementById(imgId);
   var src = decodeURI(img_elm.src);
 

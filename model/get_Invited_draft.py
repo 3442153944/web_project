@@ -22,7 +22,7 @@ class DecimalEncoder(json.JSONEncoder):
 # 假设 CORSMixin 和 connMysql 在其他地方定义
 class AuthorGetInvitedDraftAllInfo(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
-    log_file_path = "web_preject/logs/"
+    log_file_path = "web_project/logs/"
     log = Logger()
 
     def post(self):

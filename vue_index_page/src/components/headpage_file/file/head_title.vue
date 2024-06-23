@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="index_jump_img ml">
-            <img :src="index_jump_img_src"><!--主页图片路径:H:/web_preject/image/主页.png-->
+            <img :src="index_jump_img_src"><!--主页图片路径:H:/web_project/image/主页.png-->
         </div>
         <div class="input_box">
             <input placeholder="搜索作品">

@@ -29,7 +29,7 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             if result:
                 column_names=[desc[0] for desc in cursor.description]
                 result_list=[dict(zip(column_names,row)) for row in result]
-                work_path='H:/web_preject/novel_work/'
+                work_path='H:/web_project/novel_work/'
                 title_dict=[{}]
                 work_name=[]
                 print(result_list)
@@ -56,7 +56,7 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
         self.set_header("Content-Type", "application/json")
 
     def get_word_content(self, work_name, title_text):
-        file_path = f"H:/web_preject/novel_work/{work_name}/{title_text}.docx"
+        file_path = f"H:/web_project/novel_work/{work_name}/{title_text}.docx"
         if os.path.exists(file_path):
             doc = Document(file_path)
             full_text = []
@@ -80,7 +80,7 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             print(e)
 
     def get_word_content(self, name, work_title):
-        file_src = 'H:/web_preject/novel_work/' + name + "/" + work_title + ".docx"
+        file_src = 'H:/web_project/novel_work/' + name + "/" + work_title + ".docx"
         doc = Document(file_src)
         content = ""
         for para in doc.paragraphs:
@@ -99,7 +99,7 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
         return title_text.split(" ", 1)[1]
 
     def get_work_list(self, work_name):
-        work_file = 'H:/web_preject/novel_work/' + work_name + '.docx'
+        work_file = 'H:/web_project/novel_work/' + work_name + '.docx'
         title_list = []
 
         try:
@@ -132,14 +132,14 @@ class get_novel_work(tornado.web.RequestHandler, CORSMixin):
             return None
 
     def chose_title(self, title, work_name):
-        work_file = 'H:/web_preject/novel_work/' + work_name + '.docx'
+        work_file = 'H:/web_project/novel_work/' + work_name + '.docx'
         title_content = ''
         return title_content
 
     import os
 
     def get_file_name_list(self, name):
-        work_file = "H:/web_preject/novel_work/" + name
+        work_file = "H:/web_project/novel_work/" + name
         file_list = []
         try:
             for file_name in os.listdir(work_file):
@@ -188,7 +188,7 @@ class get_novel_content(tornado.web.RequestHandler, CORSMixin):
             print('发送正文内容失败')
 
     def get_work_content(self, title):
-        work_file = 'H:/web_preject/novel_work/' + self.work_name + '.docx'
+        work_file = 'H:/web_project/novel_work/' + self.work_name + '.docx'
 
         # 清理并标准化传入的标题
         title = re.sub(r'.*?(第[\u4e00-\u9fa5]+章).*', r'\1', title)

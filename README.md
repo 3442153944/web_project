@@ -1,4 +1,4 @@
-# web_preject
+# web_project
 
 ## Project setup
 ```

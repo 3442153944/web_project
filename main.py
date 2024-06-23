@@ -219,15 +219,15 @@ def make_app():
         # (r"/register", FileUploadHandler),#传统网页的注册接口暂时停用
         (r"/reset_password", resetpasswordHandler),
         (r"/user_center", user_center),
-        (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork"}),
-        (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_js"}),
-        (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/artwork/artwork_css"}),
-        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/image"}),
-        (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/css"}),
-        (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/js"}),
-        (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/user_uploadavatar"}),
-        (r"/music/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/music"}),  # 音乐文件路径
-        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_preject/assets"}),  # svg图标矢量库
+        (r"/artwork/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/artwork"}),
+        (r"/artwork_js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/artwork/artwork_js"}),
+        (r"/artwork_css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/artwork/artwork_css"}),
+        (r"/image/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/image"}),
+        (r"/css/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/css"}),
+        (r"/js/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/js"}),
+        (r"/user_uploadavatar/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/user_uploadavatar"}),
+        (r"/music/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/music"}),  # 音乐文件路径
+        (r"/assets/(.*)", tornado.web.StaticFileHandler, {"path": "H:/web_project/assets"}),  # svg图标矢量库
         (r"/register", Register),  # 注册表单提交
         (r"/UploadFile", UploadFile),  # 注册头像提交
         (r"/resetpassword", ResetPassword),  # 重置密码
@@ -266,8 +266,8 @@ if __name__ == "__main__":
     logger.info("HTTP 服务器启动成功，请访问 https://localhost:11451")
     # 启动 HTTPS 服务器
     https_server = tornado.httpserver.HTTPServer(app, ssl_options={
-        "certfile": "H:/web_preject/key/server.crt",
-        "keyfile": "H:/web_preject/key/server.key",
+        "certfile": "H:/web_project/key/server.crt",
+        "keyfile": "H:/web_project/key/server.key",
     })
     https_server.listen(4434)  # 443 是 HTTPS 端口
     print("HTTPS 服务器启动成功，请访问 https://localhost:4434")

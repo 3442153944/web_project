@@ -11,7 +11,7 @@ import json
 
 class default_upload_Handler(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
-    sava_path = 'H:/web_preject/user_upload_file/'
+    sava_path = 'H:/web_project/user_upload_file/'
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 
     def post(self):
@@ -69,7 +69,7 @@ class default_upload_Handler(tornado.web.RequestHandler, CORSMixin):
 
 class EditBackImgHandler(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
-    upload_path = "H:/web_preject/image"
+    upload_path = "H:/web_project/image"
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 
     def post(self):
@@ -124,7 +124,7 @@ class EditBackImgHandler(tornado.web.RequestHandler, CORSMixin):
 
 class delete_back_image(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
-    upload_path = "H:/web_preject/image"
+    upload_path = "H:/web_project/image"
 
     def post(self):
         self.set_status(200)
@@ -158,7 +158,7 @@ class delete_back_image(tornado.web.RequestHandler, CORSMixin):
 
 class update_user_avatar(tornado.web.RequestHandler, CORSMixin):
     conn = connMysql()
-    upload_path = "H:/web_preject/image"
+    upload_path = "H:/web_project/image"
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']
 
     def post(self):

@@ -10,7 +10,7 @@ import json
 
 
 class UploadFile(tornado.web.RequestHandler, CORSMixin):
-    file_path = 'H:/web_preject/image'
+    file_path = 'H:/web_project/image'
     allowed_extensions = ['.jpg', '.jpeg', '.png', '.gif']  # 添加更多类型如有需要
 
     async def post(self):

@@ -1,6 +1,6 @@
 2024-05-31 23:41:15,566 - ERROR - Object of type Decimal is not JSON serializable
 Traceback (most recent call last):
-  File "H:\web_preject\model\get_Invited_draft.py", line 38, in post
+  File "H:\web_project\model\get_Invited_draft.py", line 38, in post
     self.write(json.dumps({"status": "success", "data": result}))
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Python\Lib\json\__init__.py", line 231, in dumps
@@ -17,7 +17,7 @@ Traceback (most recent call last):
 TypeError: Object of type Decimal is not JSON serializable
 2024-05-31 23:41:26,799 - ERROR - Object of type Decimal is not JSON serializable
 Traceback (most recent call last):
-  File "H:\web_preject\model\get_Invited_draft.py", line 38, in post
+  File "H:\web_project\model\get_Invited_draft.py", line 38, in post
     self.write(json.dumps({"status": "success", "data": result}))
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Python\Lib\json\__init__.py", line 231, in dumps
@@ -34,7 +34,7 @@ Traceback (most recent call last):
 TypeError: Object of type Decimal is not JSON serializable
 2024-05-31 23:43:22,395 - ERROR - Object of type Decimal is not JSON serializable
 Traceback (most recent call last):
-  File "H:\web_preject\model\get_Invited_draft.py", line 42, in post
+  File "H:\web_project\model\get_Invited_draft.py", line 42, in post
     self.write(json.dumps({"status": "success", "data": result}))
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
   File "C:\Python\Lib\json\__init__.py", line 231, in dumps

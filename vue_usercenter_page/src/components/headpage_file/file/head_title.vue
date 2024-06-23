@@ -17,7 +17,7 @@
         </div>
         <div class="index_jump_img ml">
             <a href="https://localhost:3002">
-                <img :src="index_jump_img_src"><!--主页图片路径:H:/web_preject/image/主页.png-->
+                <img :src="index_jump_img_src"><!--主页图片路径:H:/web_project/image/主页.png-->
             </a>
         </div>
         <div class="input_box">

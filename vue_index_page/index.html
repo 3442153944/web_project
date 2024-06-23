@@ -10,4 +10,14 @@
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
+  <style>
+      img {
+    image-rendering: -webkit-optimize-contrast; /* For Chrome */
+    image-rendering: optimize-contrast; /* CSS4 Proposed */
+    image-rendering: crisp-edges; /* For Firefox */
+    image-rendering: pixelated; /* For other browsers */
+    transform: translateZ(0); /* Force GPU acceleration */
+    will-change: transform; /* Notify browser of impending change */
+  }
+  </style>
 </html>
