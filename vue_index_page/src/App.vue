@@ -40,21 +40,25 @@
   <index></index>
 </template>
 
-<script  lang="ts">
+<script>
 import index from './components/index.vue';
 import * as cookies from '../../model/cookies.js';
 import header_box from './components/headpage_file/header_box.vue';
 import { ref,onMounted } from 'vue';
 </script>
 
-<script setup lang="ts">
+<script setup>
 let cursor_top = ref(0);
 let cursor_left = ref(0);
 let cursor_apactiy = ref(0);
 let cursor_add = ref(0);
 
-cookies.set_cookie('user_name','admin')
-cookies.set_cookie('user_id','f575b4d3-0683-11ef-adf4-00ffc6b98bdb')
+//读取URL参数设置cookie
+const url = new URL(window.location.href);
+const searchParams = url.searchParams;
+const user_info= JSON.parse(searchParams.get('userinfo'));
+cookies.set_cookie('userinfo',JSON.stringify(user_info))
+console.log(user_info)
 onMounted(() => {
     //获取鼠标坐标
     document.onmousemove = (e) => {

@@ -1,7 +1,9 @@
+import json
+
 from django.http import JsonResponse
 from django.views import View
 from django.db import connection
-
+from ..log.log import Logger
 
 class GetAllUserInfo(View):
     # 允许所有跨域
@@ -15,11 +17,14 @@ class GetAllUserInfo(View):
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 rows = [dict(zip(columns, row)) for row in result]
+                #del password
+                for row in rows:
+                    del row['password']
                 print(rows)
             if rows:
                 return JsonResponse({'status': 'success', 'data': rows})
             else:
-                return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=404)
+                return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
         except Exception as e:
             print(e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
@@ -27,22 +32,25 @@ class GetAllUserInfo(View):
     def post(self, request, *args, **kwargs):
         try:
             with connection.cursor() as cursor:
-                data = request.POST
-                user_id = data.get('id')
-                if user_id:
-                    user_id = int(user_id)
+                data = json.loads(request.body.decode('utf-8'))
+                userid=data['userid']
+                print(data)
+                if userid:
+                    userid = str(userid)
                 else:
-                    user_id = 1
-                sql = 'SELECT * FROM users WHERE id = %s'
-                cursor.execute(sql, [user_id])
+                    return JsonResponse({'status': 'failure', 'message': 'No userid found'}, status=400)
+                sql = 'SELECT * FROM users WHERE userid = %s'
+                cursor.execute(sql, [userid])
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 rows = [dict(zip(columns, row)) for row in result]
+                for row in rows:
+                    del row['password']
                 print(rows)
             if rows:
                 return JsonResponse({'status': 'success', 'data': rows})
             else:
-                return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=404)
+                return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
         except Exception as e:
             print(e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)

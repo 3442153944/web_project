@@ -26,16 +26,16 @@
 <script lang="ts">
  // eslint-disable-next-line no-unused-vars
  import {ref,onMounted,onUnmounted} from 'vue';
+
 export default{
     name:'login',
 }
 </script>
 <script setup lang="ts">   
-  
+import * as cookies from '../../../model/cookies.js'
 let username_in = ref('');  
 let password_in = ref('');  
 let get_message = ref('');
-let userinfo=ref([]);
   
 function login() {  
     if (username_in.value === '') {  
@@ -49,13 +49,11 @@ function login() {
   
     connServer()  
         .then(data => {  
-            if (data.message === 'success') {  
-                let cookies = document.cookie;
-               window.location.href='https://localhost:3002'+'?cookies='+encodeURIComponent(cookies); 
-                userinfo.value=data.userinfo;
-                setUserCookie();
-                let temp=getCookie('username');
-                console.log(temp);
+            if (data.status === 'success') {  
+                console.log(data.data)
+                cookies.set_cookie('userinfo',JSON.stringify(data.data[0]))
+                console.log(JSON.parse(cookies.get_cookie('userinfo')))
+                window.location.href='https://localhost:3002'+'?userinfo='+JSON.stringify(data.data[0]) 
                 return;
             } else {  
                 // 登录失败的处理逻辑  
@@ -69,66 +67,7 @@ function login() {
         });  
 }  
   
-//拆分用户信息存储到cookies
-function setCookie(name:any,value:any,days:any){
-    let expires = '';  
-    if (days) {  
-        let date = new Date();  
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));  
-        expires = '; expires=' + date.toUTCString();  
-    }  
-    document.cookie = name + '=' + (value || '') + expires + '; path=/';  
-}
-function setUserCookie(){
-    let temp=userinfo.value;
-    console.log(userinfo.value);
-    if (temp && temp.length >= 9) { // 检查 temp 是否为空并且长度是否足够
-        let username=temp[1]
-        let userid=temp[2]
-        let user_avatar=temp[3]
-        let user_back_img=temp[4]
-        let user_sex=temp[5]
-        let user_email=temp[6]
-        let user_phone=temp[7]
-        let user_following=temp[8]
-        let user_fans=temp[9]
-       setCookie('username',username,7);
-       setCookie('userid',userid,7);
-       setCookie('user_avatar',user_avatar,7);
-       setCookie('user_back_img',user_back_img,7);
-       setCookie('user_sex',user_sex,7);
-       setCookie('user_email',user_email,7);
-       setCookie('user_phone',user_phone,7);
-       //根据逗号分隔字符串并拼接数组
-       let temp1=[];
-       if (user_following) {
-           temp1=user_following.split(',');
-           user_following=temp1.length;
-       }
-       setCookie('user_following',user_following,7);
-       if (user_fans) {
-           temp1=user_fans.split(',');
-           user_fans=temp1.length;
-       }
-       setCookie('user_fans',user_fans,7);
-    } else {
-        console.error("用户信息数组为空或长度不足");
-    }
-}
 
-//获取cookies
-function getCookie(name:any) {
-    const cookieString = document.cookie;
-    const cookies = cookieString.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        // 判断是否为目标 cookie
-        if (cookie.startsWith(name + '=')) {
-            return cookie.substring(name.length + 1); // 返回 cookie 的值（去掉名称部分）
-        }
-    }
-    return ''; // 如果找不到目标 cookie，则返回空字符串
-}
 // 连接服务器  
 async function connServer() {  
     // eslint-disable-next-line no-useless-catch

@@ -24,6 +24,9 @@ class Login(View):
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 rows = [dict(zip(columns, row)) for row in result]
+                # 删除password列
+                for row in rows:
+                    del row['password']
                 print(rows)
             if rows:
                 self.log.info(rows)

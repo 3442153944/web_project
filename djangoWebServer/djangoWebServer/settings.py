@@ -22,7 +22,10 @@ CORS_ORIGIN_ALLOW_ALL = False  # 改为 False
 CORS_ALLOWED_ORIGINS = [
     'https://localhost:3000',
     'https://localhost',
-    'https://127.0.0.1'
+    'https://localhost:*',
+    'https://127.0.0.1:*',
+    'https://127.0.0.1',
+    'https://localhost:3002',
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -48,7 +51,10 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     'https://localhost:3000',
     'https://localhost',
-    'https://127.0.0.1'
+    'https://127.0.0.1',
+    'https://localhost:3002',
+    'https://127.0.0.1:*',
+    'https://localhost:*',
 ]
 
 # Application definition

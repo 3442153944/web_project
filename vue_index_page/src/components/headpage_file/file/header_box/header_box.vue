@@ -59,15 +59,18 @@ let fans_num = ref(100)
 //cookies.set_cookie("user_id", "f575b4d3-0683-11ef-adf4-00ffc6b98bdb")
 
 let user_info = ref([])
+user_info.value=cookies.get_cookie('userinfo')
+user_info.value=JSON.parse(user_info.value)
+console.log(user_info.value.userid)
 async function getUserInfo() {
     try {
-        const res = await fetch('api/UserIdGetAllUserInfo', {
+        const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
             method: "post",
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                user_id: cookies.get_cookie("user_id")
+                userid:user_info.value.userid,
             })
         })
         const data = await res.json()
