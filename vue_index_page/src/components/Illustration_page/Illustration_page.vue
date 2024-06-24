@@ -14,14 +14,14 @@
           <div class="like" >
             <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index-1)">
           </div>
-          <img :src="'https://127.0.0.1:4434/image/'+item.work_item_path" @click="go_to_illustration_page(item.work_id)">
+          <img :src="'https://www.sunyuanling.com/image/'+item.work_item_path" @click="go_to_illustration_page(item.work_id)">
         </div>
         <div class="work_name">
           <span>{{ item.work_name }}</span>
         </div>
         <div class="userinfo">
           <div class="user_avatar">
-            <img :src="'https://127.0.0.1:4434/image/'+item.author_avatar">
+            <img :src="'https://www.sunyuanling.com/image/'+item.author_avatar">
           </div>
           <div class="username">
             <span>{{ item.author_name }}</span>
@@ -55,12 +55,12 @@ export default {
 
 <script setup>
 //喜欢状态
-let love_svg_path=ref('https://127.0.0.1:4434/assets/love.svg')
+let love_svg_path=ref('https://www.sunyuanling.com/assets/love.svg')
         
-let no_love_svg_path=ref('https://127.0.0.1:4434/assets/no_love.svg')
-let left_svg_path=ref('https://127.0.0.1:4434/assets/left.svg')
-let right_svg_path=ref('https://127.0.0.1:4434/assets/right.svg')
-let page_count_svg_path=ref('https://127.0.0.1:4434/assets/page_count.svg')
+let no_love_svg_path=ref('https://www.sunyuanling.com/assets/no_love.svg')
+let left_svg_path=ref('https://www.sunyuanling.com/assets/left.svg')
+let right_svg_path=ref('https://www.sunyuanling.com/assets/right.svg')
+let page_count_svg_path=ref('https://www.sunyuanling.com/assets/page_count.svg')
 let love_svg=ref(null)
 
 //切换喜欢状态

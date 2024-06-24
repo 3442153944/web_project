@@ -47,8 +47,8 @@ export default {
 </script>
 
 <script setup>
-let header_box_background_src = ref("https://127.0.0.1:4434/image/97165605_p0.jpg")
-let header_box_avatar_src = ref("https://127.0.0.1:4434/image/87328997_p0.jpg")
+let header_box_background_src = ref("https://www.sunyuanling.com/image/97165605_p0.jpg")
+let header_box_avatar_src = ref("https://www.sunyuanling.com/image/87328997_p0.jpg")
 let username = ref("孙源玲")
 let userid = ref('@' + "userid")
 let follow_num = ref(100)
@@ -94,8 +94,8 @@ function setUserinfo() {
     userid.value = '@' +user_info.value.userid;
     follow_num.value=user_info.value.user_following.split(/[,，]/).length;
     fans_num.value=user_info.value.user_fans.split(/[,，]/).length;
-    header_box_avatar_src.value="https://127.0.0.1:4434/image/"+user_info.value.user_avatar;
-    header_box_background_src.value = "https://127.0.0.1:4434/image/" + user_info.value.user_back_img;
+    header_box_avatar_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
+    header_box_background_src.value = "https://www.sunyuanling.com/image/" + user_info.value.user_back_img;
 }
 
 onMounted(() => {

@@ -98,9 +98,9 @@ export default {
 }
 </script>
 <script setup>
-let index_jump_img_src = ref('https://127.0.0.1:4434/image/主页.png')
+let index_jump_img_src = ref('https://www.sunyuanling.com/image/主页.png')
 let submission_text = ref('投稿作品')
-let avatar_img_src = ref('https://127.0.0.1:4434/image/87328997_p0.jpg')
+let avatar_img_src = ref('https://www.sunyuanling.com/image/87328997_p0.jpg')
 let join_vip_text = ref('加入ILLWeb高级会员')
 let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
@@ -108,38 +108,9 @@ let submission_work_box_show = ref(false)
 let header_box_show=ref(false)
 
 let user_info=ref([])
-//获取用户信息
-async function get_user_info(){
-    try{
-        const res=await fetch('api/UserIdGetAllUserInfo',{
-            method:'post',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body:JSON.stringify(
-                {
-                    user_id:cookies.get_cookie('user_id'),
-                }
-            )
-        })
-        const data=await res.json()
-        if(data.status=='success')
-        {
-            user_info.value=data.data;
-            avatar_img_src.value="https://127.0.0.1:4434/image/"+data.data[0].user_avatar;
-        }
-        else{
-            console.log(data.message)
-        }
-    }
-    catch(err)
-    {
-        console.log(err)
-    }
-}
-onMounted(()=>{
-    get_user_info();
-})
+user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
+console.log(user_info.value)
+avatar_img_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
 
 function useravatar_show_btn(){
     var mainpage=document.querySelector('.useravatar');
