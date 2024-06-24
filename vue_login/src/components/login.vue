@@ -133,10 +133,12 @@ function getCookie(name:any) {
 async function connServer() {  
     // eslint-disable-next-line no-useless-catch
     try {  
-        const response = await fetch('/api/login', {  
+        
+        const response = await fetch('https://www.sunyuanling.com/api/GetUserInfo/Login/', {  
             method: 'POST',  
             headers: {  
-                'Content-Type': 'application/json'  
+                'Content-Type': 'application/json',
+                  
             },  
             body: JSON.stringify({  
                 username: username_in.value,  

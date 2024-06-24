@@ -3,43 +3,46 @@ import logging
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
 
+
 class Logger:
-    def __init__(self, log_file_path="H:/logs/", max_bytes=100*1024*1024, backup_count=5):
-        self.log_file_path = log_file_path
+    def __init__(self, log_dir="H:/web_project/log/", max_bytes=10 * 1024 * 1024, backup_count=5):
+        # 检查 H 盘是否存在，不存在则使用 C 盘
+        if not os.path.exists("H:/"):
+            log_dir = "C:/web_project/log/"
+        self.log_dir = log_dir
+
+        # 确保日志目录存在
+        if not os.path.exists(self.log_dir):
+            os.makedirs(self.log_dir)
+
+        # 初始化 logger
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
-        # 确保日志目录存在
-        if not os.path.exists(self.log_file_path):
-            os.makedirs(self.log_file_path)
+        # 创建和添加处理器
+        self._add_handler('info.log', logging.INFO, max_bytes, backup_count)
+        self._add_handler('warning.log', logging.WARNING, max_bytes, backup_count)
+        self._add_handler('error.log', logging.ERROR, max_bytes, backup_count)
 
-        # 通用输入日志的文件处理器，设置大小限制和备份
-        input_log_handler = RotatingFileHandler(
-            os.path.join(self.log_file_path, 'input.log'),
+    def _add_handler(self, filename, level, max_bytes, backup_count):
+        file_path = os.path.join(self.log_dir, filename)
+        handler = RotatingFileHandler(
+            file_path,
             maxBytes=max_bytes,
             backupCount=backup_count
         )
-        input_log_handler.setLevel(logging.INFO)
-        input_log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        input_log_handler.setFormatter(input_log_formatter)
-
-        # 错误日志的文件处理器，设置大小限制和备份
-        error_log_handler = RotatingFileHandler(
-            os.path.join(self.log_file_path, 'error.log'),
-            maxBytes=max_bytes,
-            backupCount=backup_count
-        )
-        error_log_handler.setLevel(logging.ERROR)
-        error_log_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-        error_log_handler.setFormatter(error_log_formatter)
-
-        # 添加处理器到日志记录器
-        self.logger.addHandler(input_log_handler)
-        self.logger.addHandler(error_log_handler)
+        handler.setLevel(level)
+        formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
 
     def info(self, message):
         timestamped_message = self._add_timestamp(message)
         self.logger.info(timestamped_message)
+
+    def warning(self, message):
+        timestamped_message = self._add_timestamp(message)
+        self.logger.warning(timestamped_message)
 
     def error(self, message, exc_info=False):
         timestamped_message = self._add_timestamp(message)
@@ -47,5 +50,4 @@ class Logger:
 
     def _add_timestamp(self, message):
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        return f"\n{timestamp}\n{message}"
-
+        return f"{message}\n{timestamp}"

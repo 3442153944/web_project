@@ -1,0 +1,54 @@
+2024-06-24 20:22:01,223 - WARNING - <QueryDict: {}>
+2024-06-24 20:22:01
+2024-06-24 20:23:54,911 - WARNING - <QueryDict: {}>
+2024-06-24 20:23:54
+2024-06-24 20:24:59,222 - WARNING - <QueryDict: {}>
+2024-06-24 20:24:59
+2024-06-24 20:25:06,110 - WARNING - <QueryDict: {}>
+2024-06-24 20:25:06
+2024-06-24 20:30:55,378 - WARNING - <QueryDict: {}>
+2024-06-24 20:30:55
+2024-06-24 20:33:12,426 - WARNING - <QueryDict: {}>
+2024-06-24 20:33:12
+2024-06-24 20:34:34,392 - WARNING - <QueryDict: {}>
+2024-06-24 20:34:34
+2024-06-24 20:34:37,966 - WARNING - <QueryDict: {}>
+2024-06-24 20:34:37
+2024-06-24 20:36:12,243 - WARNING - <QueryDict: {}>
+2024-06-24 20:36:12
+2024-06-24 20:37:51,835 - ERROR - unsupported operand type(s) for +: 'QueryDict' and 'str'
+2024-06-24 20:37:51
+2024-06-24 20:38:18,294 - WARNING - <QueryDict: {}>
+2024-06-24 20:38:18
+2024-06-24 20:39:08,891 - WARNING - <QueryDict: {}>
+2024-06-24 20:39:08
+2024-06-24 20:39:41,642 - WARNING - <QueryDict: {}>
+2024-06-24 20:39:41
+2024-06-24 20:44:17,567 - WARNING - <QueryDict: {}>
+2024-06-24 20:44:17
+2024-06-24 20:48:21,093 - WARNING - <QueryDict: {}>
+2024-06-24 20:48:21
+2024-06-24 20:58:17,877 - WARNING - <QueryDict: {}>
+2024-06-24 20:58:17
+2024-06-24 20:59:20,689 - WARNING - <QueryDict: {}>
+2024-06-24 20:59:20
+2024-06-24 21:01:29,214 - WARNING - <QueryDict: {}>
+2024-06-24 21:01:29
+2024-06-24 21:01:57,783 - WARNING - <QueryDict: {}>
+2024-06-24 21:01:57
+2024-06-24 21:05:17,469 - WARNING - <QueryDict: {}>
+2024-06-24 21:05:17
+2024-06-24 21:07:07,086 - WARNING - <QueryDict: {}>
+2024-06-24 21:07:07
+2024-06-24 21:08:57,656 - WARNING - <QueryDict: {}>
+2024-06-24 21:08:57
+2024-06-24 21:10:57,266 - ERROR - string indices must be integers, not 'str'
+2024-06-24 21:10:57
+2024-06-24 21:11:25,434 - ERROR - string indices must be integers, not 'str'
+2024-06-24 21:11:25
+2024-06-24 21:12:50,995 - INFO - [{'id': 1, 'username': 'admin', 'user_self_introduction': '这是一个自我介绍', 'user_self_website': 'https://127.0.0.1:4434', 'user_address': '四川泸州', 'birthday': '2002年9月17日', 'occupation': 'IT工程师123', 'userid': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'user_avatar': '87328997_p0.jpg', 'user_back_img': '20240525180208_e94dd6fb14414ad49679b062b92ec1a3.jpg', 'sex': '女', 'email': 'sunfujiaihaonv@gmail.com', 'phone': '18982494924', 'user_following': 'user1,user2,user3,admin', 'user_fans': 'user4,user5,user6', 'password': '123456', 'collected_ill_work': None, 'collected_ill_work_id': '1,2,3', 'collected_novel_works': None, 'collected_novel_works_id': 1, 'like_novel_works': None, 'like_novel_works_id': 1, 'watch_novel_list': None, 'watch_novel_list_id': '1,2,3', 'select_work': '{"ill_id": ["1", "2"], "work_id": ["1"]}'}]
+2024-06-24 21:12:50
+2024-06-24 21:13:36,251 - INFO - [{'id': 1, 'username': 'admin', 'user_self_introduction': '这是一个自我介绍', 'user_self_website': 'https://127.0.0.1:4434', 'user_address': '四川泸州', 'birthday': '2002年9月17日', 'occupation': 'IT工程师123', 'userid': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'user_avatar': '87328997_p0.jpg', 'user_back_img': '20240525180208_e94dd6fb14414ad49679b062b92ec1a3.jpg', 'sex': '女', 'email': 'sunfujiaihaonv@gmail.com', 'phone': '18982494924', 'user_following': 'user1,user2,user3,admin', 'user_fans': 'user4,user5,user6', 'password': '123456', 'collected_ill_work': None, 'collected_ill_work_id': '1,2,3', 'collected_novel_works': None, 'collected_novel_works_id': 1, 'like_novel_works': None, 'like_novel_works_id': 1, 'watch_novel_list': None, 'watch_novel_list_id': '1,2,3', 'select_work': '{"ill_id": ["1", "2"], "work_id": ["1"]}'}]
+2024-06-24 21:13:36
+2024-06-24 21:20:31,678 - INFO - [{'id': 1, 'username': 'admin', 'user_self_introduction': '这是一个自我介绍', 'user_self_website': 'https://127.0.0.1:4434', 'user_address': '四川泸州', 'birthday': '2002年9月17日', 'occupation': 'IT工程师123', 'userid': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'user_avatar': '87328997_p0.jpg', 'user_back_img': '20240525180208_e94dd6fb14414ad49679b062b92ec1a3.jpg', 'sex': '女', 'email': 'sunfujiaihaonv@gmail.com', 'phone': '18982494924', 'user_following': 'user1,user2,user3,admin', 'user_fans': 'user4,user5,user6', 'password': '123456', 'collected_ill_work': None, 'collected_ill_work_id': '1,2,3', 'collected_novel_works': None, 'collected_novel_works_id': 1, 'like_novel_works': None, 'like_novel_works_id': 1, 'watch_novel_list': None, 'watch_novel_list_id': '1,2,3', 'select_work': '{"ill_id": ["1", "2"], "work_id": ["1"]}'}]
+2024-06-24 21:20:31

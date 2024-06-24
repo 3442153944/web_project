@@ -1,0 +1,6 @@
+2024-06-24 20:37:51,835 - ERROR - unsupported operand type(s) for +: 'QueryDict' and 'str'
+2024-06-24 20:37:51
+2024-06-24 21:10:57,266 - ERROR - string indices must be integers, not 'str'
+2024-06-24 21:10:57
+2024-06-24 21:11:25,434 - ERROR - string indices must be integers, not 'str'
+2024-06-24 21:11:25
