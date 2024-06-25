@@ -1,33 +1,32 @@
 <template>
   <div class="illustration_page">
     <h3>用户关注的作品</h3>
-    <div class="follow_list"  v-if="follow_ill_dict_copy">
-      <div class="follow_work" v-for="(item,index) in follow_ill_dict_copy" :key="index">
+    <div class="follow_list"  v-if="follow_illustrations_list">
+      <div class="follow_work" v-for="(item,index) in follow_illustrations_list" :key="index">
         <div class="follow_work_item" >
-          <div class="age_tag">
-            <span>{{ item.age_classification }}</span>
+          <div class="age_tag" v-if="item.age_classification>=18">
+            <span>R-{{ item.age_classification}}</span>
           </div>
-          <div class="page_count">
+          <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length>1">
             <img :src="page_count_svg_path">
-            <span>{{ item.work_count }}</span>
+            <span>{{ item.content_file_list.split(/[,，]/).length }}</span>
           </div>
           <div class="like" >
             <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index-1)">
           </div>
-          <img :src="'https://www.sunyuanling.com/image/'+item.work_item_path" @click="go_to_illustration_page(item.work_id)">
+          <img :src="'https://www.sunyuanling.com/image/'+item.content_file_list.split(/[,，]/)[0]" @click="go_to_illustration_page(item.Illustration_id)">
         </div>
         <div class="work_name">
-          <span>{{ item.work_name }}</span>
+          <span>{{ item.name }}</span>
         </div>
         <div class="userinfo">
           <div class="user_avatar">
-            <img :src="'https://www.sunyuanling.com/image/'+item.author_avatar">
+            <img :src="'https://www.sunyuanling.com/image/'+item.belong_to_user_avatar">
           </div>
           <div class="username">
-            <span>{{ item.author_name }}</span>
+            <span>{{ item.belong_to_user }}</span>
           </div>
         </div>
-        <span style="display:none;" class="work_id">{{item.work_id}}</span>
       </div>
       <div class="left_btn" @click="scrollTabs(-400)">
        <img :src="left_svg_path">
@@ -62,7 +61,7 @@ let left_svg_path=ref('https://www.sunyuanling.com/assets/left.svg')
 let right_svg_path=ref('https://www.sunyuanling.com/assets/right.svg')
 let page_count_svg_path=ref('https://www.sunyuanling.com/assets/page_count.svg')
 let love_svg=ref(null)
-
+let user_info=ref(JSON.parse(cookies.get_cookie('userinfo')))
 //切换喜欢状态
 function switch_love_status(index){
   let temp=love_svg.value[index];
@@ -78,13 +77,13 @@ function switch_love_status(index){
 let follow_illustrations_list=ref([])
 async function get_follow_illustrations_list(){
   try{
-    const res=await fetch('api/GetUserFollowIllustration',{
+    const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowToIll/',{
       method:'post',
       headers:{
         'Content-Type':'application/json'
       },
       body:JSON.stringify({
-        user_id:cookies.get_cookie('user_id')
+        userid:user_info.value.userid,
       })
     })
     const data=await res.json()
@@ -92,9 +91,7 @@ async function get_follow_illustrations_list(){
     {
       console.log(data.data)
       follow_illustrations_list.value=data.data;
-      set_follow_ill_dict();
-      set_author_avatar();
-      console.log(follow_ill_dict_copy.value)
+      console.log(follow_illustrations_list.value)
       return data.data;
     }
     else{
@@ -111,74 +108,6 @@ onMounted(()=>{
  
 })
 
-let follow_ill_dict=ref([])
-function set_follow_ill_dict(){
-  let temp={}
-  for(let i=0;i<follow_illustrations_list.value.length;i++)
-  {
-    for(let j=0;j<follow_illustrations_list.value[i].length;j++)
-    {
-      
-      temp={
-        work_id:follow_illustrations_list.value[i][j].Illustration_id,
-        work_name:follow_illustrations_list.value[i][j].name,
-        work_item_path:follow_illustrations_list.value[i][j].content_file_list.split(/[,，]/)[0],
-        work_count:follow_illustrations_list.value[i][j].content_file_list.split(/[,，]/).length,
-        author_name:follow_illustrations_list.value[i][j].belong_to_user,
-        author_id:follow_illustrations_list.value[i][j].belong_to_user_id,
-        //如果喜欢列表为空则返回空数组
-        like_list:follow_illustrations_list.value[i][j].like_user_list==null?[]:follow_illustrations_list.value[i][j].like_user_list.split(/[,，]/),
-        create_time:follow_illustrations_list.value[i][j].create_time,
-        age_classification:follow_illustrations_list.value[i][j].age_classification,
-      }
-      follow_ill_dict.value.push(temp)
-    }
-  }
-}
-
-let follow_ill_dict_copy=ref([])
-async function set_author_avatar(){
-  for(let i=0;i<follow_ill_dict.value.length;i++)
-  {
-    try{
-      const res=await fetch('api/UserIdGetAllUserInfo',{
-        method:'post',
-        headers:{
-          'Content-Type':'application/json'
-        },
-        body:JSON.stringify({
-          user_id:follow_ill_dict.value[i].author_id,
-        })
-      })
-      const data=await res.json()
-      
-      if(data.status=='success')
-      {
-        follow_ill_dict_copy.value.push({
-          work_id:follow_ill_dict.value[i].work_id,
-          author_id:follow_ill_dict.value[i].author_id,
-          author_name:follow_ill_dict.value[i].author_name,
-          author_avatar:data.data[0].user_avatar,
-          work_name:follow_ill_dict.value[i].work_name,
-          work_item_path:follow_ill_dict.value[i].work_item_path,
-          work_count:follow_ill_dict.value[i].work_count,
-          like_list:follow_ill_dict.value[i].like_list,
-          create_time:follow_ill_dict.value[i].create_time,
-          age_classification:follow_ill_dict.value[i].age_classification,
-        })
-      }
-    }
-    catch(error){
-      console.log(error)
-    }
-  }
-  //对follow_ill_dict_copy按照create_time进行排序
-  follow_ill_dict_copy.value.sort((a,b)=>{
-    return new Date(b.create_time)-new Date(a.create_time)
-  })
-
-}
-
 //插画作品的带参跳转
 function go_to_illustration_page(work_id){
   console.log(work_id)
@@ -193,7 +122,6 @@ function scrollTabs(scrollAmount) {
   const frameDuration = animationDuration / fps; // 每帧持续时间
   const framesCount = Math.ceil(animationDuration / frameDuration); // 总帧数
   let count = 0;
-
   function animateScroll() {
     if (count < framesCount) {
       tags.scrollLeft += scrollAmount / framesCount;
@@ -201,10 +129,8 @@ function scrollTabs(scrollAmount) {
       requestAnimationFrame(animateScroll);
     }
   }
-
   animateScroll();
 }
-
 
 </script>
 
@@ -320,6 +246,7 @@ function scrollTabs(scrollAmount) {
   border-radius: 5px;
   padding: 2px;
   font-weight: bold;
+  z-index: 2;
 }
 
 .page_count {
@@ -327,11 +254,16 @@ function scrollTabs(scrollAmount) {
   position: absolute;
   right: 5px;
   top: 5px;
-  font-size: 12px;
+  min-height: 25px;
+  min-width: 35px;
+  font-size: 14px;
+  font-weight: bold;
   color: white;
-  background-color: rgba(233, 233, 233, 0.5);
+  background-color: rgba(129, 128, 128, 0.8);
   border-radius: 5px;
   padding: 2px;
+  align-items: center;
+  z-index: 2;
 }
 
 .page_count svg {
@@ -342,8 +274,8 @@ function scrollTabs(scrollAmount) {
   fill: rgba(244, 244, 244, 1)
 }
 .page_count img{
-  width: 16px;
-  height: 16px;
+  width: 25px;
+  height: 25px;
   margin-right: 2px;
   object-fit: cover;
 }

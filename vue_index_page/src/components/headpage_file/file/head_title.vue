@@ -109,7 +109,6 @@ let header_box_show=ref(false)
 
 let user_info=ref([])
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
-console.log(user_info.value)
 avatar_img_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
 
 function useravatar_show_btn(){

@@ -47,6 +47,7 @@ export default {
 </script>
 
 <script setup>
+
 let header_box_background_src = ref("https://www.sunyuanling.com/image/97165605_p0.jpg")
 let header_box_avatar_src = ref("https://www.sunyuanling.com/image/87328997_p0.jpg")
 let username = ref("孙源玲")
@@ -59,9 +60,9 @@ let fans_num = ref(100)
 //cookies.set_cookie("user_id", "f575b4d3-0683-11ef-adf4-00ffc6b98bdb")
 
 let user_info = ref([])
-user_info.value=cookies.get_cookie('userinfo')
-user_info.value=JSON.parse(user_info.value)
-console.log(user_info.value.userid)
+user_info.value = cookies.get_cookie('userinfo')
+user_info.value = JSON.parse(user_info.value)
+//获取用户的所有基本信息
 async function getUserInfo() {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
@@ -70,17 +71,15 @@ async function getUserInfo() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                userid:user_info.value.userid,
+                userid: user_info.value.userid,
             })
         })
         const data = await res.json()
         if (data.status == 'success') {
             user_info.value = data.data[0]
-            console.log(data.data)
-            console.log(user_info.value)
             setUserinfo();
         }
-        else{
+        else {
             console.log(data.meesage)
         }
     }
@@ -89,17 +88,75 @@ async function getUserInfo() {
     }
 }
 
-function setUserinfo() {
-    username.value =user_info.value.username;
-    userid.value = '@' +user_info.value.userid;
-    follow_num.value=user_info.value.user_following.split(/[,，]/).length;
-    fans_num.value=user_info.value.user_fans.split(/[,，]/).length;
-    header_box_avatar_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
+//获取用户粉丝列表
+async function getFansList() {
+    try {
+        const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFans/', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                userid: user_info.value.userid
+            })
+        })
+        const data = await res.json()
+        if (res.ok) {
+            if (data.status == 'success') {
+                fans_num.value = data.data.length
+            }
+            else {
+                console.log(data.message)
+            }
+        }
+        else{
+            console.error('连接错误')
+        }
+    }
+    catch (err) {
+        console.log(err)
+    }
+}
+//获取关注列表
+async function getFollowList(){
+    try{
+        const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollow/',{
+            method:'post',
+            headers:{
+                'Content-Type':'application/json'
+            },
+            body:JSON.stringify({
+                userid:user_info.value.userid
+            })
+        })
+        const data=await res.json()
+        if(res.ok){
+            if(data.status=='success'){
+                follow_num.value=data.data.length
+            }
+            else{
+                console.log(data.message)
+            }
+        }
+        else{
+            console.error('连接错误')
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+
+async function setUserinfo() {
+    username.value = user_info.value.username;
+    userid.value = '@' + user_info.value.userid;
+    await getFollowList();
+    await getFansList();
+    header_box_avatar_src.value = "https://www.sunyuanling.com/image/" + user_info.value.user_avatar;
     header_box_background_src.value = "https://www.sunyuanling.com/image/" + user_info.value.user_back_img;
 }
 
 onMounted(() => {
-   
     getUserInfo();
 })
 

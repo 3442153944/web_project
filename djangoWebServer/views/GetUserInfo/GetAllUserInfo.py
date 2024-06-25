@@ -6,6 +6,8 @@ from django.db import connection
 from ..log.log import Logger
 
 class GetAllUserInfo(View):
+
+    logger = Logger()
     # 允许所有跨域
     def options(self, request, *args, **kwargs):
         return JsonResponse({'status': 'success', 'message': 'ok'})
@@ -48,9 +50,12 @@ class GetAllUserInfo(View):
                     del row['password']
                 print(rows)
             if rows:
+                self.logger.info(rows)
                 return JsonResponse({'status': 'success', 'data': rows})
             else:
+                self.logger.warning(data)
                 return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
         except Exception as e:
             print(e)
+            self.logger.error(e)
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
