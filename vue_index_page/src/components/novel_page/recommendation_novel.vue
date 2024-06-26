@@ -46,11 +46,11 @@ export default {
 </script>
 
 <script setup>
-let img_path=ref('https://127.0.0.1:4434/image/65014220_p0.jpg');
+let img_path=ref('https://www.sunyuanling.com/image/65014220_p0.jpg');
 let novel_info=ref({
     state:'单篇完结作品',
     title:'作品标题',
-    useravatar:'https://127.0.0.1:4434/image/100213135_p1.jpg',
+    useravatar:'https://www.sunyuanling.com/image/100213135_p1.jpg',
     username:'用户名',
 })
 let edit_msg=ref('编辑寄语，说的啥，不知道随便')

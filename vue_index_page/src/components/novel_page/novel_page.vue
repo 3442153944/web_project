@@ -56,12 +56,12 @@ export default {
 </script>
 
 <script setup>
-let cover_path=ref('https://127.0.0.1:4434/image/116883317_p0.png')
+let cover_path=ref('https://www.sunyuanling.com/image/116883317_p0.png')
 let state=ref('单篇完结作品');
 let title=ref('小说作品');
 let tags=ref(['标签1','标签2','标签3','标签4','标签5','标签6','标签7','标签8']);
 let age_tag=ref('R-18');
-let user_avatar=ref('https://127.0.0.1:4434/image/103168176_p0.png');
+let user_avatar=ref('https://www.sunyuanling.com/image/103168176_p0.png');
 let user_name=ref('用户名');
 let word_count=ref('1111');
 let read_time=ref('12');

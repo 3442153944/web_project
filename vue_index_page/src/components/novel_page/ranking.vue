@@ -61,11 +61,11 @@ let month = date.getMonth() + 1;
 let day = date.getDate();
 let dateStr = year + '-' + month + '-' + day;
 
-let cover_path=ref('https://127.0.0.1:4434/image/118839253_p1.jpg');
+let cover_path=ref('https://www.sunyuanling.com/image/118839253_p1.jpg');
 let rank=ref(1);
 let work_title=ref('作品标题');
 let work_chapter=ref('章节标题');
-let user_avatar=ref('https://127.0.0.1:4434/image/116883317_p0.png');
+let user_avatar=ref('https://www.sunyuanling.com/image/116883317_p0.png');
 let username=ref('用户名');
 let work_tags=ref(['标签1','标签2','标签3','标签1','标签2','标签3','标签1','标签2','标签3']);
 let brief_introduction=ref('作品简介');

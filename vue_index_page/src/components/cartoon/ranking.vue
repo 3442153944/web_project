@@ -54,11 +54,11 @@ export default {
 </script>
 
 <script setup>
-let img_path=ref('https://127.0.0.1:4434/image/100213135_p0.jpg');
+let img_path=ref('https://www.sunyuanling.com/image/100213135_p0.jpg');
 let rank=ref(1);
 let count_page=ref(12);
 let title=ref('作品标题');
-let user_avatar=ref('https://127.0.0.1:4434/image/118839253_p1.jpg');
+let user_avatar=ref('https://www.sunyuanling.com/image/118839253_p1.jpg');
 let username=ref('用户名');
 
 //滚动函数
