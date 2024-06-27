@@ -66,7 +66,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'corsheaders',
+    'channels',
+    'djangoWebServer.WebSocket',
+    'views.GetUserInfo',
+    'views.mysql_conn_test',
 ]
+ASGI_APPLICATION = 'djangoWebServer.asgi.application'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

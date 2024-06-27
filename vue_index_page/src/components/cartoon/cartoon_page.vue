@@ -1,30 +1,30 @@
 <template>
   <div class="cartoon_page">
     <h3>已关注用户作品</h3>
-    <div class="cartoon_list">
-      <div class="cartoon_item" v-for="index in 10" :key="index">
+    <div class="cartoon_list" v-if="comic_list">
+      <div class="cartoon_item" v-for="(item,index) in comic_list" :key="index">
         <div class="cartoon_img">
-          <div class="age_tag">{{ age_tag }}</div>
-          <div class="page_count">
+          <div class="age_tag" v-if="item.age_classification>=17">R-{{ item.age_classification }}</div>
+          <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length>1">
             <svg t="1715784414381" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
               p-id="9622" width="200" height="200">
               <path
                 d="M819.2 128H409.6c-56.32 0-102.4 46.08-102.4 102.4v409.6c0 56.32 46.08 102.4 102.4 102.4h409.6c56.32 0 102.4-46.08 102.4-102.4V230.4c0-56.32-46.08-102.4-102.4-102.4z m51.2 512c0 28.16-23.04 51.2-51.2 51.2H409.6c-28.16 0-51.2-23.04-51.2-51.2V230.4c0-28.16 23.04-51.2 51.2-51.2h409.6c28.16 0 51.2 23.04 51.2 51.2v409.6z m-204.8 204.8c0 28.16-23.04 51.2-51.2 51.2H204.8c-28.16 0-51.2-23.04-51.2-51.2V435.2c0-28.16 23.04-51.2 51.2-51.2h51.2v-51.2H204.8c-56.32 0-102.4 46.08-102.4 102.4v409.6c0 56.32 46.08 102.4 102.4 102.4h409.6c56.32 0 102.4-46.08 102.4-102.4v-51.2h-51.2v51.2z"
                 fill="#ccd6de" p-id="9623"></path>
             </svg>
-            {{ page_count }}
+            {{ item.content_file_list.split(/[,，]/).length }}
           </div>
-          <img :src="img_path">
+          <img :src="'https://www.sunyuanling.com/image/'+item.content_file_list.split(/[,，]/)[0]">
         </div>
         <div class="cartoon_title">
-          <span>{{ cartoon_title }}</span>
+          <span>{{ item.work_name }}</span>
         </div>
         <div class="user_info">
           <div class="user_avatar">
-            <img :src="user_avatar">
+            <img :src="'https://www.sunyuanling.com/image/'+item.belong_to_avatar">
           </div>
           <div class="username">
-            <span>{{ username }}</span>
+            <span>{{ item.belong_to_user }}</span>
           </div>
         </div>
       </div>
@@ -61,12 +61,46 @@ export default {
 }
 </script>
 <script setup>
+import * as cookies from '../../../../model/cookies.js'
 let img_path = ref('https://www.sunyuanling.com/image/117214493_p0_master1200.jpg')
 let age_tag = ref('R-18');
 let page_count = ref(12);
 let cartoon_title = ref('作品标题');
 let user_avatar = ref('https://www.sunyuanling.com/image/80662332_p0(1).png');
 let username = ref('用户名');
+let userinfo=ref(JSON.parse(cookies.get_cookie('userinfo')))
+console.log(userinfo.value)
+let comic_list=ref([])
+//获取用户关注的漫画作品列表
+async function get_comic_list(){
+  try{
+    const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowToComic/',{
+      method:'post',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        userid:userinfo.value.userid,
+      })
+    })
+    const data=await res.json()
+    if(res.ok)
+    {
+      console.log(data)
+      comic_list.value=data.data
+    }
+    else{
+      console.log('服务器错误')
+    }
+  }
+  catch(e){
+    console.log(e)
+  }
+}
+onMounted(()=>{
+  get_comic_list()
+
+})
 
 //滚动函数
 function scrollTabs(scrollAmount) {
@@ -113,20 +147,21 @@ function scrollTabs(scrollAmount) {
 .cartoon_item {
   display: flex;
   flex-direction: column;
-  width: 260px;
-  min-width: 260px;
+  width: 190px;
+  min-width: 150px;
   height: auto;
-  min-height: 200px;
+  min-height: 180px;
   border-radius: 15px;
   position: relative;
-  margin-right: 20px;
+  margin-right: 25px;
+  margin-left: 25px;
 }
 
 .cartoon_img {
   display: flex;
   width: 100%;
-  height: auto;
-  min-width: 260px;
+  height: 100%;
+  min-width: 200px;
   overflow: hidden;
   border-radius: 15px;
 }
@@ -151,27 +186,29 @@ function scrollTabs(scrollAmount) {
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 2;
 }
 
 .page_count {
   position: absolute;
-  width: 50px;
-  height: 20px;
+  width: 65px;
+  height: 35px;
   right: 5px;
   top: 5px;
   background-color: rgba(87, 85, 85, 0.8);
-  font-size: 12px;
+  font-size: 16px;
   font-weight: bold;
   color: white;
   border-radius: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index:2;
 }
 
 .page_count svg {
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   margin-right: 3px;
   object-fit: cover;
 }
@@ -192,6 +229,7 @@ function scrollTabs(scrollAmount) {
   border-radius: 50%;
   object-fit: cover;
   margin-right: 10px;
+  overflow: hidden;
 }
 
 .user_avatar img {

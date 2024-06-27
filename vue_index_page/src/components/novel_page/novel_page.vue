@@ -2,28 +2,28 @@
   <div class="novel_page">
     <h3>已关注用户作品</h3>
     <div class="novel_list">
-      <div class="novel_item" v-for="index in 4" :key="index">
+      <div class="novel_item" v-for="(item,index) in novel_info_list" :key="index">
         <div class="novel_cover">
-          <img :src="cover_path">
+          <img :src="'https://www.sunyuanling.com/image/'+item.work_cover">
         </div>
         <div class="novel_info">
           <div class="novel_state mt">
-            <span>{{state}}</span>
+            <span>{{item.work_status}}</span>
           </div>
           <div class="novel_title  mt">
-            <span>{{title}}</span>
+            <span>{{item.work_name}}</span>
           </div>
           <div class="novel_userinfo  mt">
             <div class="novel_useravatar">
-              <img :src="user_avatar">
+              <img :src="'https://www.sunyuanling.com/image/'+item.belong_to_avatar">
             </div>
             <div class="novel_username">
-              <span>{{user_name}}</span>
+              <span>{{item.belong_to_username}}</span>
             </div>
           </div>
           <div class="novel_tags  mt">
-            <span style="margin-right: 5px" class="age_tag">{{age_tag}}</span>
-            <span class="tags" v-for="(tags,index) in tags" :key="index">#{{tags}}</span>
+            <span style="margin-right: 5px" class="age_tag" v-if="item.age_classification>17">R-{{item.age_classification}}</span>
+            <span class="tags" v-for="(tags,index) in item.work_tags.split(/[,，]/)" :key="index">#{{tags}}</span>
           </div>
           <div class="novel_read_data  mt">
             <div class="word_count">
@@ -56,6 +56,7 @@ export default {
 </script>
 
 <script setup>
+import * as cookies from '../../../../model/cookies.js'
 let cover_path=ref('https://www.sunyuanling.com/image/116883317_p0.png')
 let state=ref('单篇完结作品');
 let title=ref('小说作品');
@@ -66,6 +67,41 @@ let user_name=ref('用户名');
 let word_count=ref('1111');
 let read_time=ref('12');
 let like_count=ref('45');
+let userinfo=ref(JSON.parse(cookies.get_cookie('userinfo')))
+
+//获取用户关注的用户的小说信息
+let novel_info_list=ref([])
+
+async function get_novel_list(){
+  try{
+    const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowNovel/',{
+      method:'post',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        userid:userinfo.value.userid,
+      })
+    })
+    if(res.ok)
+    {
+      const data=await res.json()
+      console.log(data)
+      novel_info_list.value=data.data
+    }
+    else{
+      console.log('服务器错误')
+    }
+  }
+  catch(e)
+  {
+    console.log(e)
+  }
+}
+onMounted(()=>{
+  get_novel_list()
+})
+
 </script>
 
 <style scoped>

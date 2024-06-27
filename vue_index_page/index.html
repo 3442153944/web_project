@@ -1,23 +1,61 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + Vue + TS</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
-  <style>
-      img {
-    image-rendering: -webkit-optimize-contrast; /* For Chrome */
-    image-rendering: optimize-contrast; /* CSS4 Proposed */
-    image-rendering: crisp-edges; /* For Firefox */
-    image-rendering: pixelated; /* For other browsers */
-    transform: translateZ(0); /* Force GPU acceleration */
-    will-change: transform; /* Notify browser of impending change */
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + Vue + TS</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+<style>
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    /* For Chrome */
+    image-rendering: optimize-contrast;
+    /* CSS4 Proposed */
+    image-rendering: crisp-edges;
+    /* For Firefox */
+    image-rendering: pixelated;
+    /* For other browsers */
+    transform: translateZ(0);
+    /* Force GPU acceleration */
+    will-change: transform;
+    /* Notify browser of impending change */
+    image-rendering: optimizeQuality;
+    /* 浏览器根据图像和显示设备的特点，尽量高质量地渲染图像 */
+    image-rendering: -moz-crisp-edges;
+    /* Firefox */
+    image-rendering: -o-crisp-edges;
+    /* Opera */
+    image-rendering: -webkit-optimize-contrast;
+    /* Webkit (Safari, Chrome) */
+    image-rendering: pixelated;
+    /* CSS4标准，但支持情况较差 */
   }
-  </style>
+
+  .smooth-image {
+    filter: blur(0.5px);
+    /* 适度的模糊以减少锯齿 */
+    image-rendering: auto;
+    /* 浏览器选择最佳的渲染方式 */
+  }
+
+  .high-quality-image {
+    image-rendering: -webkit-optimize-contrast;
+    /* WebKit内核的优化选项 */
+    image-rendering: optimize-contrast;
+    /* 标准选项 */
+  }
+  body{
+    -webkit-font-smoothing: antialiased;
+    font-kerning: normal;
+    font-family: win-bug-omega, system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+  }
+</style>
+
 </html>
