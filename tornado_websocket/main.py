@@ -31,10 +31,10 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
         return True  # 允许所有来源
 
     def open(self):
-        self.user_id = self.get_argument("user_id")
-        ChatWebSocket.connections[self.user_id] = self
-        logger.info(f"WebSocket opened for user {self.user_id}")
-        self.write_message(json.dumps({"message": f"Hello {self.user_id}, you are connected!"}))
+        self.userid = self.get_argument("userid")
+        ChatWebSocket.connections[self.userid] = self
+        logger.info(f"WebSocket opened for user {self.userid}")
+        self.write_message(json.dumps({"message": f"Hello {self.userid}, you are connected!"}))
 
     def on_message(self, message):
         try:
@@ -60,9 +60,9 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
             self.write_message(json.dumps({"error": "Internal server error"}))
 
     def on_close(self):
-        if hasattr(self, 'user_id'):
-            del ChatWebSocket.connections[self.user_id]
-            logger.info(f"WebSocket closed for user {self.user_id}")
+        if hasattr(self, 'userid'):
+            del ChatWebSocket.connections[self.userid]
+            logger.info(f"WebSocket closed for user {self.userid}")
 
     def one_to_one(self, send_msg_user_id, to_user_id, content):
         try:
@@ -70,14 +70,15 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
             now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             conn = connect_mysql()
             cursor = conn.cursor()
+            message_type = "one_to_one"
+            sql = 'INSERT INTO messages (sender_id, receiver_id, content, time,type) VALUES (%s, %s, %s, %s, %s)'
+            cursor.execute(sql, (send_msg_user_id, to_user_id, content, now_time, message_type))
+            conn.commit()
             if to_user:
-                sql = 'INSERT INTO messages (sender_id, receiver_id, content, time) VALUES (%s, %s, %s, %s)'
-                cursor.execute(sql, (send_msg_user_id, to_user_id, content, now_time))
-                conn.commit()
-                to_user.write_message(json.dumps({"message": f"From {self.user_id}: {content}"}))
+                to_user.write_message(json.dumps({"message": f"From {self.userid}: {content}"}))
             else:
-                self.write_message(json.dumps({"error": f"User {to_user_id} not connected"}))
-                logger.error(f"User {to_user_id} not connected")
+                self.write_message(json.dumps({"message": f"User {to_user_id} not connected, message saved"}))
+                logger.info(f"User {to_user_id} not connected, message saved")
             conn.close()
         except Exception as e:
             logger.error(f"Error during one_to_one: {e}")
@@ -88,10 +89,11 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
             conn = connect_mysql()
             cursor = conn.cursor()
             for user_id, connection in ChatWebSocket.connections.items():
-                if user_id != self.user_id:
-                    sql = 'INSERT INTO messages (sender_id, receiver_id, content, time) VALUES (%s, %s, %s, %s)'
-                    cursor.execute(sql, (send_msg_user_id, user_id, content, now_time))
-                    connection.write_message(json.dumps({"message": f"From {self.user_id} to all: {content}"}))
+                if user_id != self.userid:
+                    sql = ('INSERT INTO messages (sender_id, receiver_id, content, time,type) '
+                           'VALUES (%s, %s, %s, %s, %s)')
+                    cursor.execute(sql, (send_msg_user_id, user_id, content, now_time, "one_to_many"))
+                    connection.write_message(json.dumps({"message": f"From {self.userid} to all: {content}"}))
             conn.commit()
             conn.close()
         except Exception as e:
@@ -104,12 +106,11 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
             cursor = conn.cursor()
             for user_id, connection in ChatWebSocket.connections.items():
                 if user_id.startswith(to_group_id):
-                    sql = 'INSERT INTO messages (sender_id, group_id, content, time) VALUES (%s, %s, %s, %s)'
-                    cursor.execute(sql, (send_msg_user_id, to_group_id, content, now_time))
-                    connection.write_message(
-                        json.dumps({"message": f"From {self.user_id} to group {to_group_id}: {content}"}))
+                    sql = 'INSERT INTO messages (sender_id, group_id, content, time,type) VALUES (%s, %s, %s, %s, %s)'
+                    cursor.execute(sql, (send_msg_user_id, to_group_id, content, now_time,'many_to_many'))
+                    connection.write_message(json.dumps({"message": f"From {self.userid} to group {to_group_id}: {content}"}))
                 else:
-                    connection.write_message(json.dumps({"message": f"From {self.user_id} to everyone: {content}"}))
+                    cursor.execute(sql, (send_msg_user_id, to_group_id, content, now_time))
                     logger.error(f"Group {to_group_id} not connected")
             conn.commit()
             conn.close()
