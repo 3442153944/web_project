@@ -15,13 +15,9 @@ class GetUserHistoryMsg(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             print(data)
-            # 消息类型
             msg_type = data['msg_type']
-            # 请求ID
             userid = data['userid']
-            # 好友ID
             friend_id = data['friend_id']
-            # 群组ID
             group_id = data['group_id']
 
             if not msg_type or not userid:
@@ -52,17 +48,17 @@ class GetUserHistoryMsg(View):
             with connection.cursor() as cursor:
                 if msg_type == 'friend':
                     sql = '''
-                           SELECT * FROM messages 
-                           WHERE type = %s AND ((sender_id = %s AND receiver_id = %s) OR (sender_id = %s AND receiver_id = %s))
-                           ORDER BY time ASC 
-                       '''
+                        SELECT * FROM messages 
+                        WHERE type = %s AND ((sender_id = %s AND receiver_id = %s) OR (sender_id = %s AND receiver_id = %s))
+                        ORDER BY time ASC 
+                    '''
                     cursor.execute(sql, ('one_to_one', userid, friend_id, friend_id, userid))
                 elif msg_type == 'group':
                     sql = '''
-                           SELECT * FROM messages 
-                           WHERE type = %s AND group_id = %s 
-                           ORDER BY time ASC 
-                       '''
+                        SELECT * FROM messages 
+                        WHERE type = %s AND group_id = %s 
+                        ORDER BY time ASC 
+                    '''
                     cursor.execute(sql, ('many_to_many', group_id))
 
                 result = cursor.fetchall()
@@ -72,6 +68,21 @@ class GetUserHistoryMsg(View):
                 if rows:
                     self.logger.info('获取成功, data: {}, 消息内容: {}'.format(data, rows))
                     print('获取成功, data: {}, 消息内容: {}'.format(data, rows))
+
+                    # 成功获取数据后将请求者的消息的读取状态设置为已读
+                    if msg_type == 'friend':
+                        update_sql = '''
+                            UPDATE messages SET receiver_read_status=%s 
+                            WHERE type=%s AND ((sender_id=%s AND receiver_id=%s) OR (sender_id=%s AND receiver_id=%s))
+                        '''
+                        cursor.execute(update_sql, ('已读', 'one_to_one', userid, friend_id, friend_id, userid))
+                    elif msg_type == 'group':
+                        update_sql = '''
+                            UPDATE messages SET receiver_read_status=%s 
+                            WHERE type=%s AND group_id=%s AND receiver_id=%s
+                        '''
+                        cursor.execute(update_sql, ('已读', 'many_to_many', group_id, userid))
+
                     return JsonResponse({'status': 'success', 'message': '获取成功', 'data': rows}, status=200)
                 else:
                     self.logger.info('获取失败, data: {}'.format(data))
