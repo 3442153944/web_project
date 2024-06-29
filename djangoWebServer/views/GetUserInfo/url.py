@@ -1,6 +1,7 @@
 from .GetAllUserInfo import GetAllUserInfo
 from django.urls import path
 
+from .GetFriendList import GetFriendList
 from .GetUserFans import GetUserFans
 from .GetUserFollow import GetUserFollow
 from .GetUserFollowNovel import GetUserFollowNovel
@@ -23,4 +24,6 @@ urlpatterns = [
     # 获取用户关注的用户的漫画详情
     path('GetUserFollowNovel/',GetUserFollowNovel.as_view(),name='GetUserFollowNovel'),
     # 获取用户关注的用户的小说详情
+    path('GetFriendList/',GetFriendList.as_view(),name='GetFriendList'),
+    # 获取用户的好友列表
 ]

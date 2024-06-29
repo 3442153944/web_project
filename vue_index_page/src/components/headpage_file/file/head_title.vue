@@ -48,7 +48,7 @@
 
         </div>
         <div class="message ml mr">
-            <div class="message_icon">
+            <div class="message_icon" @click="chat_page_show_click()">
                 <svg t="1713667475510" class="icon" viewBox="0 0 1024 1024" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" p-id="9553" width="200" height="200">
                     <path
@@ -56,6 +56,7 @@
                         fill="#545E68" p-id="9554"></path>
                 </svg>
             </div>
+            
         </div>
         <div class="notice ml mr">
             <div class="notice_icon">
@@ -80,6 +81,7 @@
                 </svg>
             </div>
         </div>
+        <chat_page class="chat_page" v-if="chat_page_show" @close_page="close_chat_page"></chat_page>
         <header_box v-show="header_box_show"></header_box><!--这是头像，不是标题栏-->
     </div>
 </template>
@@ -89,12 +91,13 @@ import { onMounted, ref } from 'vue'
 import sidebar from './sidebar/sidebar.vue'
 import submission_work_box from './submission_work_box/submission_work_box.vue'
 import header_box from './header_box/header_box.vue'
+import chat_page from './chat_page/chat_page.vue'
 import * as cookies from '../../../../../model/cookies.js'
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'head_title',
     // eslint-disable-next-line vue/no-unused-components
-    components: { sidebar, submission_work_box, header_box,}
+    components: { sidebar, submission_work_box, header_box,chat_page}
 }
 </script>
 <script setup>
@@ -106,10 +109,20 @@ let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
 let submission_work_box_show = ref(false)
 let header_box_show=ref(false)
-
+let chat_page_show=ref(false)
 let user_info=ref([])
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
 avatar_img_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
+
+//聊天界面显示
+function chat_page_show_click(){
+    chat_page_show.value=true;
+}
+//接收子组件关闭消息
+function close_chat_page(item){
+    console.log(item);
+    chat_page_show.value=false;
+}
 
 function useravatar_show_btn(){
     var mainpage=document.querySelector('.useravatar');
@@ -339,6 +352,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     overflow: hidden;
     justify-content: center;
     align-self: center;
+    position: relative;
 }
 
 .message:hover,
@@ -347,6 +361,15 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     border-radius: 50%;
     transition: 0.2s;
     cursor: pointer;
+}
+.chat_page{
+    position: fixed;
+    top:0px;
+    left: 0px;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 1);
+    z-index: 10;
 }
 
 .message_icon,
