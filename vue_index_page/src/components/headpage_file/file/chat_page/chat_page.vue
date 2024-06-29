@@ -36,16 +36,46 @@
         </div>
       </div>
       <div class="chat_content">
-        <div class="chat_content_head">
-          <div class="friend_avatar" style="margin-left: 10px;margin-right: 10px;width:60px;height:60px;border-radius: 50%;">
-            <img class="avatar" :src="chatpage_friend_avatar" style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;">
+        <div class="chat_content_head" v-if="chat_content_info.friendname!=''&&chat_content_info.friendname!=null&&chat_content_info.friendname!=undefined">
+          <div class="friend_avatar"
+            style="margin-left: 10px;margin-right: 10px;width:60px;height:60px;border-radius: 50%;">
+            <img class="avatar" :src="chatpage_friend_avatar"
+              style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;">
           </div>
           <span>{{ chat_content_info.friendname }}</span>
         </div>
-        <div class="message_list"></div>
+        <div class="message_list" ref="message_list"
+         v-if="chat_content_info.friendname!=''&&chat_content_info.friendname!=null&&chat_content_info.friendname!=undefined">
+          <div class="message_item" v-for="(item, index) in msg_list" :key="index"
+            style="position: relative; display: flex; margin-bottom: 10px;">
+            <div v-if="item.sender_id == userinfo.userid"
+              style="margin-right: 10px; align-self: flex-end; display: flex; justify-content: flex-end; width: 100%;">
+              <div class="receive_content"
+                style="background-color: #e5e5ea; padding: 10px; border-radius: 10px; max-width: 70%; word-wrap: break-word;">
+                <span style="word-break: break-all;">{{ item.content }}</span>
+              </div>
+              <div class="receive_avatar" style="margin-left: 10px;">
+                <img class="avatar" :src="chatpage_friend_avatar"
+                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+              </div>
+            </div>
+            <div v-else style="margin-left: 10px; align-items: flex-end; display: flex; width: 100%;">
+              <div class="send_avatar" style="margin-right: 10px;">
+                <img class="avatar" :src="'https://www.sunyuanling.com/image/' + userinfo.user_avatar"
+                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+              </div>
+              <div class="send_content"
+                style="background-color: #007bff; color: white; padding: 10px; border-radius: 10px; max-width: 70%; word-wrap: break-word;">
+                <span style="word-break: break-all;">{{ item.content }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
         <div class="send_box">
-          <div class="send_msg_box"> <textarea id="msg" placeholder="请输入消息" ref="msg"></textarea></div>
-          <div class="send_btn">发送</div>
+          <div class="send_msg_box" ref="msg"> <textarea id="msg" placeholder="请输入消息" v-model="msg_content"></textarea>
+          </div>
+          <div class="send_btn" @click="send_msg()">发送</div>
         </div>
       </div>
     </div>
@@ -77,9 +107,12 @@ let group_title = ref(null);
 let chat_content_info = ref([])
 let friend_list_show = ref(true);
 let group_list_show = ref(false);
-let chatpage_friend_avatar=ref();
-let msg=ref(null);
+let chatpage_friend_avatar = ref();
+let msg = ref(null);
 let ws;
+let msg_list = ref([{}]);
+let message_list=ref(null);
+let msg_content = ref(null);
 // 切换列表
 function switch_list(e) {
   if (e.target.innerText == '好友') {
@@ -201,49 +234,194 @@ async function select_friend_or_group(type, item) {
   if (type === 'friend') {
     console.log(item);
     chat_content_info.value = item;
-    await get_user_info_by_id('friend',chat_content_info.value.friendid)
-    await create_websocket('one_to_one',userinfo.value.userid,chat_content_info.value.friendid)
+    chat_content_info.value.type = 'friend';
+    await get_user_info_by_id('friend', chat_content_info.value.friendid)
+    create_websocket('one_to_one', userinfo.value.userid, chat_content_info.value.friendid)
+    get_history_msg('friend', userinfo.value.userid, chat_content_info.value.friendid)
+    //滚动到最新消息
+    setTimeout(() => {
+        message_list.value.scrollTop = message_list.value.scrollHeight;
+      }, 100);
   } else if (type === 'group') {
     console.log(item);
     chat_content_info.value = item;
+    chat_content_info.value.type = 'group';
+    //滚动到最新消息
+    setTimeout(() => {
+      message_list.value.scrollTop = message_list.value.scrollHeight;
+    }, 100);
   }
 }
 //创建websocket链接
 function create_websocket(type, send_msg_user_id, to_user_id = null, content = '', to_group_id = null) {
-    const wsUrl = `wss://127.0.0.1:2234/ws/chat/?userid=${send_msg_user_id}`;
-    ws = new WebSocket(wsUrl);
+  const wsUrl = `wss://127.0.0.1:2234/ws/chat/?userid=${send_msg_user_id}`;
+  ws = new WebSocket(wsUrl);
 
-    ws.onopen = () => {
-        console.log('WebSocket 连接成功');
-        // 如果需要，发送初始消息
-        ws.send(JSON.stringify({
-            type: type,
-            send_msg_user_id: send_msg_user_id,
-            to_user_id: to_user_id,
-            content: content,
-            to_group_id: to_group_id
-        }));
-    };
+  ws.onopen = () => {
+    console.log('WebSocket 连接成功');
+    // 如果需要，发送初始消息
 
-    ws.onmessage = (e) => {
-        console.log('收到消息:', e.data);
-        // 在这里处理收到的消息
-        handle_incoming_message(e.data);
-    };
+  };
 
-    ws.onclose = () => {
-        console.log('WebSocket 连接关闭');
-    };
+  ws.onmessage = (e) => {
+    console.log('收到消息:', e.data);
+    // 在这里处理收到的消息
+    handle_incoming_message(e.data);
+  };
 
-    ws.onerror = (error) => {
-        console.log('WebSocket 连接错误:', error);
-    };
+  ws.onclose = () => {
+    console.log('WebSocket 连接关闭');
+  };
+
+  ws.onerror = (error) => {
+    console.log('WebSocket 连接错误:', error);
+  };
 }
-function handle_incoming_message(message) {
-    let data = JSON.parse(message);
-    // 在前端显示消息的逻辑
-    console.log(data);
+async function handle_incoming_message(message) {
+  let data = JSON.parse(message);
+  // 在前端显示消息的逻辑
+  if (chat_content_info.value.type == 'friend') { 
+    await get_history_msg('friend', userinfo.value.userid, chat_content_info.value.friendid) 
+    console.log(data)
+  }
+  else if (chat_content_info.value.type == 'group') { 
+    await get_history_msg('group', userinfo.value.userid, chat_content_info.value.groupid)
+   }
+  console.log(msg_list.value);
 }
+//获取历史消息
+async function get_history_msg(type, userid, to_user_id = null, group_id = null) {
+  if (type == 'friend') {
+    try {
+      const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserHistoryMsg/', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          msg_type: 'friend',
+          userid: userid,
+          friend_id: to_user_id,
+          group_id: group_id
+        })
+      })
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status == 'success') {
+          console.log(data.data)
+          msg_list.value = data.data;
+        }
+      }
+      else {
+        console.log(res.status);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+  else if (type == 'group') {
+    try {
+      const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserHistoryMsg/', {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          msg_type: 'group',
+          userid: userid,
+          group_id: group_id,
+          friend_id: to_user_id
+        })
+      })
+      if (res.ok) {
+        const data = await res.json();
+        if (data.status == 'success') {
+          console.log(data.data)
+          msg_list.value = data.data;
+        }
+      }
+      else {
+        console.log(res.status);
+      }
+    }
+    catch (e) {
+      console.log(e);
+    }
+  }
+}
+//消息发送
+async function send_msg() {
+  try {
+    let content = msg_content.value;  // 获取消息内容
+    console.log(content);
+
+    if (chat_content_info.value.type == 'friend') {
+      // 构造一对一消息的JSON对象
+      let msg_item = JSON.stringify({
+        type: 'one_to_one',
+        send_msg_user_id: userinfo.value.userid,
+        to_user_id: chat_content_info.value.friendid,
+        content: content,
+        to_group_id: null,
+      });
+      ws.send(msg_item);  // 发送消息
+
+      // 在消息列表中添加新消息
+      msg_list.value.push({
+        ID: 1,
+        content: content,
+        group_id: null,
+        receive_id: chat_content_info.value.friendid,
+        receiver_read_status: '已读',
+        sender_id: userinfo.value.userid,
+        time: new Date().toLocaleString(),
+        type: 'one_to_one'
+      });
+
+      // 清空输入框
+      msg_content.value = '';
+
+      // 自动滑动到最底部
+      setTimeout(() => {
+        message_list.value.scrollTop = message_list.value.scrollHeight;
+      }, 10);
+    } else if (chat_content_info.value.type == 'group') {
+      // 构造群组消息的JSON对象
+      let msg_item = JSON.stringify({
+        type: 'many_to_many',
+        send_msg_user_id: userinfo.value.userid,
+        to_user_id: null,
+        content: content,
+        to_group_id: chat_content_info.value.group_id
+      });
+      ws.send(msg_item);  // 发送消息
+
+      // 在消息列表中添加新消息
+      msg_list.value.push({
+        ID: 1,
+        content: content,
+        group_id: chat_content_info.value.group_id,
+        receive_id: null,
+        receiver_read_status: '已读',
+        sender_id: userinfo.value.userid,
+        time: new Date().toLocaleString(),
+        type: 'many_to_many'
+      });
+
+      // 清空输入框
+      msg_content.value = '';
+
+      // 自动滑动到最底部
+      setTimeout(() => {
+        message_list.value.scrollTop = message_list.value.scrollHeight;
+      }, 10);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+
 onMounted(() => {
   get_user_friend_list();
   // 加载时初始化为好友列表
@@ -392,7 +570,8 @@ onMounted(() => {
   height: 100%;
   object-fit: cover;
 }
-.chat_content_head{
+
+.chat_content_head {
   display: flex;
   width: 100%;
   height: 80px;
@@ -400,7 +579,8 @@ onMounted(() => {
   align-items: center;
   background-color: rgba(133, 133, 133, 0.5);
 }
-.chat_content{
+
+.chat_content {
   display: flex;
   width: 100%;
   height: auto;
@@ -408,7 +588,8 @@ onMounted(() => {
   flex-direction: column;
   position: relative;
 }
-.message_list{
+
+.message_list {
   display: flex;
   flex-direction: column;
   width: 98%;
@@ -418,7 +599,8 @@ onMounted(() => {
   background-color: rgba(244, 244, 244, 1);
   margin: 5px;
 }
-.send_box{
+
+.send_box {
   display: flex;
   width: 100%;
   height: 80px;
@@ -432,31 +614,35 @@ onMounted(() => {
   margin: 10px 0px auto;
   z-index: 10;
 }
+
 .icon {
   width: 25px;
   height: 25px;
   object-fit: cover;
 }
-.send_msg_box{
+
+.send_msg_box {
   display: flex;
   width: 80%;
   height: 100%;
 }
-.send_msg_box textarea{
+
+.send_msg_box textarea {
   width: 100%;
   height: 100%;
   resize: none;
   border: none;
   outline: none;
 }
-.send_btn{
+
+.send_btn {
   width: 20%;
   height: 50%;
   min-height: 30px;
   min-width: 50px;
   max-width: 80px;
   max-height: 40px;
-  background-color: rgba(0,150,250,1);
+  background-color: rgba(0, 150, 250, 1);
   border-radius: 15px;
   align-items: center;
   justify-content: center;
@@ -464,8 +650,9 @@ onMounted(() => {
   display: flex;
   margin: 5px auto;
 }
-.send_btn:hover{
-  background-color: rgba(0,150,250,0.8);
+
+.send_btn:hover {
+  background-color: rgba(0, 150, 250, 0.8);
   cursor: pointer;
   transition: all 0.3s ease-in-out;
 }

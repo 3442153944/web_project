@@ -7,6 +7,7 @@ from .GetUserFollow import GetUserFollow
 from .GetUserFollowNovel import GetUserFollowNovel
 from .GetUserFollowToComic import GetUserFollowToComic
 from .GetUserFollowToIll import GetUserFollowToIll
+from .GetUserHistoryMsg import GetUserHistoryMsg
 from .login import Login
 
 urlpatterns = [
@@ -26,4 +27,6 @@ urlpatterns = [
     # 获取用户关注的用户的小说详情
     path('GetFriendList/',GetFriendList.as_view(),name='GetFriendList'),
     # 获取用户的好友列表
+    path('GetUserHistoryMsg/',GetUserHistoryMsg.as_view(),name='GetUserHistoryMsg'),
+    # 获取用户的历史消息
 ]
