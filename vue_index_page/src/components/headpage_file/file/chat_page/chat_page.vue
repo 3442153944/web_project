@@ -55,13 +55,13 @@
                 <span style="word-break: break-all;">{{ item.content }}</span>
               </div>
               <div class="receive_avatar" style="margin-left: 10px;">
-                <img class="avatar" :src="chatpage_friend_avatar"
+                <img class="avatar" :src="'https://www.sunyuanling.com/image/'+userinfo.user_avatar"
                   style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
               </div>
             </div>
             <div v-else style="margin-left: 10px; align-items: flex-end; display: flex; width: 100%;">
               <div class="send_avatar" style="margin-right: 10px;">
-                <img class="avatar" :src="'https://www.sunyuanling.com/image/' + userinfo.user_avatar"
+                <img class="avatar" :src="chatpage_friend_avatar"
                   style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
               </div>
               <div class="send_content"
@@ -99,7 +99,6 @@ function close_page_click() {
 }
 
 let userinfo = ref(JSON.parse(cookies.get_cookie('userinfo')));
-console.log(userinfo.value);
 let user_friend_list = ref([]);
 let little_title = ref('好友列表');
 let friend_title = ref(null);
@@ -137,7 +136,8 @@ watch(little_title, (newValue, oldValue) => {
 
 // 请求好友列表
 async function get_user_friend_list(id) {
-  if (id == null || !id) {
+  // Helper function to fetch and process friend list
+  async function fetchFriendList(userId) {
     try {
       const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetFriendList/', {
         method: 'post',
@@ -145,16 +145,22 @@ async function get_user_friend_list(id) {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          userid: userinfo.value.userid
+          userid: userId
         })
       });
+
       if (res.ok) {
         const data = await res.json();
         if (data.status === 'success') {
-          let friends = await Promise.all(data.data.map(async (item) => {
+          let friends = [];
+          console.log(data.data);
+          for (let i = 0; i < data.data.length; i++) {
+            let item = data.data[i];
+            console.log(`Fetching avatar for friend id: ${item.friendid}`);
             let avatarUrl = await get_user_info_by_id(item.type, item.friendid);
-            return { ...item, avatarUrl };
-          }));
+            console.log(`Fetched avatar URL: ${avatarUrl}`);
+            friends.push({ ...item, avatarUrl: avatarUrl });
+          }
           user_friend_list.value = friends;
         } else {
           console.log(data.message);
@@ -166,36 +172,15 @@ async function get_user_friend_list(id) {
       console.log(e);
     }
   }
-  if (id != null && id) {
-    try {
-      const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetFriendList/', {
-        method: 'post',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          userid: id
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.status === 'success') {
-          let friends = await Promise.all(data.data.map(async (item) => {
-            let avatarUrl = await get_user_info_by_id(item.type, item.friendid);
-            return { ...item, avatarUrl };
-          }));
-          user_friend_list.value = friends;
-        } else {
-          console.log(data.message);
-        }
-      } else {
-        console.log(res.status);
-      }
-    } catch (e) {
-      console.log(e);
-    }
+
+  // Determine which user ID to use and call fetchFriendList
+  if (id == null || !id) {
+    await fetchFriendList(userinfo.value.userid);
+  } else {
+    await fetchFriendList(id);
   }
 }
+
 
 // 通过ID请求用户信息
 async function get_user_info_by_id(type, userid) {
@@ -232,7 +217,6 @@ async function get_user_info_by_id(type, userid) {
 async function select_friend_or_group(type, item) {
   console.log(type);
   if (type === 'friend') {
-    console.log(item);
     chat_content_info.value = item;
     chat_content_info.value.type = 'friend';
     await get_user_info_by_id('friend', chat_content_info.value.friendid)
@@ -282,12 +266,10 @@ async function handle_incoming_message(message) {
   // 在前端显示消息的逻辑
   if (chat_content_info.value.type == 'friend') { 
     await get_history_msg('friend', userinfo.value.userid, chat_content_info.value.friendid) 
-    console.log(data)
   }
   else if (chat_content_info.value.type == 'group') { 
     await get_history_msg('group', userinfo.value.userid, chat_content_info.value.groupid)
    }
-  console.log(msg_list.value);
 }
 //获取历史消息
 async function get_history_msg(type, userid, to_user_id = null, group_id = null) {
@@ -308,7 +290,6 @@ async function get_history_msg(type, userid, to_user_id = null, group_id = null)
       if (res.ok) {
         const data = await res.json();
         if (data.status == 'success') {
-          console.log(data.data)
           msg_list.value = data.data;
         }
       }
@@ -354,8 +335,6 @@ async function get_history_msg(type, userid, to_user_id = null, group_id = null)
 async function send_msg() {
   try {
     let content = msg_content.value;  // 获取消息内容
-    console.log(content);
-
     if (chat_content_info.value.type == 'friend') {
       // 构造一对一消息的JSON对象
       let msg_item = JSON.stringify({
