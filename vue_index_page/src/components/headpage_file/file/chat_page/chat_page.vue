@@ -47,14 +47,14 @@
         <div class="message_list" ref="message_list"
          v-if="chat_content_info.friendname!=''&&chat_content_info.friendname!=null&&chat_content_info.friendname!=undefined">
           <div class="message_item" v-for="(item, index) in msg_list" :key="index"
-            style="position: relative; display: flex; margin-bottom: 10px;">
+            style="position: relative; display: flex; margin-bottom: 10px;align-items: center;">
             <div v-if="item.sender_id == userinfo.userid"
-              style="margin-right: 10px; align-self: flex-end; display: flex; justify-content: flex-end; width: 100%;">
+              style="margin-right: 10px; align-self: flex-end; display: flex; justify-content: flex-end; width: 100%;align-items: center;">
               <div class="receive_content"
                 style="background-color: #e5e5ea; padding: 10px; border-radius: 10px; max-width: 70%; word-wrap: break-word;">
                 <span style="word-break: break-all;">{{ item.content }}</span>
               </div>
-              <div class="receive_avatar" style="margin-left: 10px;">
+              <div class="receive_avatar" style="margin-left: 10px;display: flex;align-items: center;">
                 <img class="avatar" :src="'https://www.sunyuanling.com/image/'+userinfo.user_avatar"
                   style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
               </div>
@@ -76,6 +76,9 @@
           <div class="send_msg_box" ref="msg"> <textarea id="msg" placeholder="请输入消息" v-model="msg_content"></textarea>
           </div>
           <div class="send_btn" @click="send_msg()">发送</div>
+          <div class="jump_end" @click="jump_end()">
+            <span>最新消息</span>
+          </div>
         </div>
       </div>
     </div>
@@ -236,6 +239,31 @@ async function select_friend_or_group(type, item) {
     }, 100);
   }
 }
+
+ // 跳转到最新消息
+ function jump_end() {
+      if (message_list.value) {
+        message_list.value.scrollTop = message_list.value.scrollHeight;
+      }
+    }
+/*
+    // 处理滚动事件
+    function handleScroll() {
+      const jumpEndButton = document.querySelector('.jump_end');
+      if (message_list.value.scrollTop + message_list.value.clientHeight >= message_list.value.scrollHeight) {
+        jumpEndButton.style.display = 'none';
+        console.log(message_list.value.clientHeight);
+      } else {
+        jumpEndButton.style.display = '';
+      }
+    }
+
+    // 监控滑动操作
+    watch(message_list, (newValue, oldValue) => {
+      handleScroll();
+    });
+    */
+
 //创建websocket链接
 function create_websocket(type, send_msg_user_id, to_user_id = null, content = '', to_group_id = null) {
   const wsUrl = `wss://127.0.0.1:2234/ws/chat/?userid=${send_msg_user_id}`;
@@ -250,6 +278,11 @@ function create_websocket(type, send_msg_user_id, to_user_id = null, content = '
   ws.onmessage = (e) => {
     console.log('收到消息:', e.data);
     // 在这里处理收到的消息
+    const data=JSON.parse(e.data);
+    if (data.status=='warning')
+    {
+      alert(data.message);
+    }
     handle_incoming_message(e.data);
   };
 
@@ -592,6 +625,7 @@ onMounted(() => {
   bottom: -5px;
   margin: 10px 0px auto;
   z-index: 10;
+
 }
 
 .icon {
@@ -633,7 +667,27 @@ onMounted(() => {
   display: flex;
   margin: 5px auto;
 }
+.jump_end{
+  display: flex;
+  position: absolute;
+  top: -40px;
+  right: 50px;
+  z-index: 15;
+  background-color: rgba(0, 150, 250, 1);
+  padding: 5px 10px ;
+  border-radius: 10px;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+}
+.jump_end:hover{
+  background-color: rgba(0, 150, 250, 0.8);
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
 
+}
 .send_btn:hover {
   background-color: rgba(0, 150, 250, 0.8);
   cursor: pointer;
