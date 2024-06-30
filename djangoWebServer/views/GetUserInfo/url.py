@@ -2,6 +2,7 @@ from .GetAllUserInfo import GetAllUserInfo
 from django.urls import path
 
 from .GetFriendList import GetFriendList
+from .GetGroupList import GetGroupList, GroupControlInfo
 from .GetUserFans import GetUserFans
 from .GetUserFollow import GetUserFollow
 from .GetUserFollowNovel import GetUserFollowNovel
@@ -29,4 +30,8 @@ urlpatterns = [
     # 获取用户的好友列表
     path('GetUserHistoryMsg/',GetUserHistoryMsg.as_view(),name='GetUserHistoryMsg'),
     # 获取用户的历史消息
+    path('GetGroupList/',GetGroupList.as_view(),name='GetGroupList'),
+    #获取群组列表
+    path('GroupControlInfo/',GroupControlInfo.as_view(),name='GroupControlInfo')
+    #获取群组管理权限信息
 ]
