@@ -9,6 +9,7 @@ from .GetUserFollowNovel import GetUserFollowNovel
 from .GetUserFollowToComic import GetUserFollowToComic
 from .GetUserFollowToIll import GetUserFollowToIll
 from .GetUserHistoryMsg import GetUserHistoryMsg
+from .GroupControl import GroupControl
 from .login import Login
 
 urlpatterns = [
@@ -32,6 +33,8 @@ urlpatterns = [
     # 获取用户的历史消息
     path('GetGroupList/',GetGroupList.as_view(),name='GetGroupList'),
     #获取群组列表
-    path('GroupControlInfo/',GroupControlInfo.as_view(),name='GroupControlInfo')
+    path('GroupControlInfo/',GroupControlInfo.as_view(),name='GroupControlInfo'),
     #获取群组管理权限信息
+    path('GroupControl/',GroupControl.as_view(),name='GroupControl'),
+    #群管理
 ]

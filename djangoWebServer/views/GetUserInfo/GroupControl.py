@@ -177,4 +177,7 @@ class GroupControl(View):
             return JsonResponse({'status': 'error', 'message': '移除成员失败'}, status=400)
 
     def get_request_path(self, request):
-        return request.path
+        # 请求来源IP地址
+        ip_address = request.META.get('REMOTE_ADDR')
+        request_path = request.path
+        return f'{request_path} (IP: {ip_address})'
