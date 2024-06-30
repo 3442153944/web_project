@@ -11,5 +11,6 @@ start "" "cmd" /k "cd /d H:\web_project\vue_chat && npm run dev"
 
 start "" "cmd" /k "cd /d H:\web_project\djangoWebServer && python manage.py runserver 2233"
 start "" "cmd" /k "cd /d H:\web_project\djangoWebServer && daphne -b 0.0.0.0 -p 2233 djangoWebServer.asgi:application"
+start "" "cmd" /k "cd /d H:\web_project\tornado_websocket && python main.py"
 
 pause
