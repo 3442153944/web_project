@@ -302,18 +302,30 @@ async function get_user_info_by_id(type, userid) {
 }
 
 //遍历消息列表并获取发送者头像并重新设置消息列表
+// 缓存对象，用于存储已经请求过的头像
+const avatarCache = {};
+
+// 遍历消息列表并获取发送者头像并重新设置消息列表
 async function get_msg_list_avatar() {
   console.log(group_msg_list.value);
-  for (let i=0;i<group_msg_list.value.length;i++)
-  {
-    let item=group_msg_list.value[i];
-    let avatar=await get_user_info_by_id('friend',item.sender_id)
-    if(avatar)
-    {
-      group_msg_list.value[i].avatar=avatar
+  for (let i = 0; i < group_msg_list.value.length; i++) {
+    let item = group_msg_list.value[i];
+
+    // 检查缓存中是否已经存在该发送者的头像
+    if (!avatarCache[item.sender_id]) {
+      let avatar = await get_user_info_by_id('friend', item.sender_id);
+      if (avatar) {
+        avatarCache[item.sender_id] = avatar; // 将头像存入缓存
+      } else {
+        avatarCache[item.sender_id] = 'https://www.sunyuanling.com/assets/default_avatar.svg'; // 设置默认头像
+      }
     }
+
+    // 使用缓存中的头像
+    group_msg_list.value[i].avatar = avatarCache[item.sender_id];
   }
 }
+
 watch(group_msg_list, (newValue, oldValue) => {
   console.log(newValue);
   get_msg_list_avatar();
