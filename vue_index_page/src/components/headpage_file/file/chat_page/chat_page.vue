@@ -87,7 +87,7 @@
         </div>
         <div class="message_list" ref="message_list"
          v-else-if="chat_content_info.group_name!=''&&chat_content_info.group_name!=null&&chat_content_info.group_name!=undefined">
-          <div class="message_item" v-for="(item, index) in msg_list" :key="index"
+          <div class="message_item" v-for="(item, index) in group_msg_list" :key="index"
             style="position: relative; display: flex; margin-bottom: 10px;align-items: center;">
             <div v-if="item.sender_id == userinfo.userid"
               style="margin-right: 10px; align-self: flex-end; display: flex; justify-content: flex-end; width: 100%;align-items: center;">
@@ -102,7 +102,7 @@
             </div>
             <div v-else style="margin-left: 10px; align-items: flex-end; display: flex; width: 100%;">
               <div class="send_avatar" style="margin-right: 10px;">
-                <img class="avatar" :src="chatpage_friend_avatar"
+                <img class="avatar" :src="group_msg_list[index].avatar||'https://www.sunyuanling.com/assets/default_avatar.svg'"
                   style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
               </div>
               <div class="send_content"
@@ -150,6 +150,7 @@ let chat_content_info = ref([])
 let friend_list_show = ref(true);
 let group_list_show = ref(false);
 let group_info_list = ref([]);
+let group_msg_list=ref([{}])
 let chatpage_friend_avatar = ref();
 let msg = ref(null);
 let ws;
@@ -300,6 +301,24 @@ async function get_user_info_by_id(type, userid) {
   return 'https://www.sunyuanling.com/assets/default_avatar.svg';
 }
 
+//遍历消息列表并获取发送者头像并重新设置消息列表
+async function get_msg_list_avatar() {
+  console.log(group_msg_list.value);
+  for (let i=0;i<group_msg_list.value.length;i++)
+  {
+    let item=group_msg_list.value[i];
+    let avatar=await get_user_info_by_id('friend',item.sender_id)
+    if(avatar)
+    {
+      group_msg_list.value[i].avatar=avatar
+    }
+  }
+}
+watch(group_msg_list, (newValue, oldValue) => {
+  console.log(newValue);
+  get_msg_list_avatar();
+});
+
 let group_info=ref()
 //选择好用或者群聊
 async function select_friend_or_group(type, item) {
@@ -318,7 +337,7 @@ async function select_friend_or_group(type, item) {
       }, 100);
   } else if (type === 'group') {
       //进行新的消息选择时清空消息列表
-      msg_list.value = [];
+      group_msg_list.value = [];
     chat_content_info.value = item;
     chat_content_info.value.type = 'group';
     console.log(chat_content_info.value);
@@ -464,7 +483,7 @@ async function get_history_msg(type, userid, to_user_id = null, group_id = null)
         const data = await res.json();
         if (data.status == 'success') {
           console.log(data.data)
-          msg_list.value = data.data;
+          group_msg_list.value = data.data;
         }
       }
       else {
