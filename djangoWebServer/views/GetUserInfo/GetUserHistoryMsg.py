@@ -30,8 +30,8 @@ class GetUserHistoryMsg(View):
             elif msg_type == 'group' and group_id:
                 return self._get_messages('group', userid, data, group_id=group_id)
             else:
-                self.logger.error('无效的消息类型或缺少必要参数: {}'.format(msg_type))
-                print('无效的消息类型或缺少必要参数: {}'.format(msg_type))
+                self.logger.error('无效的消息类型或缺少必要参数: {}，请求数据：{}'.format(msg_type,data))
+                print('无效的消息类型或缺少必要参数: {}，请求数据{}'.format(msg_type, data))
                 return JsonResponse({'status': 'error', 'message': '无效的消息类型或缺少必要参数'}, status=400)
 
         except json.JSONDecodeError:

@@ -2,7 +2,7 @@ from .GetAllUserInfo import GetAllUserInfo
 from django.urls import path
 
 from .GetFriendList import GetFriendList
-from .GetGroupList import GetGroupList, GroupControlInfo
+from .GetGroupList import GetGroupList, GroupControlInfo, GetGroupInfo
 from .GetUserFans import GetUserFans
 from .GetUserFollow import GetUserFollow
 from .GetUserFollowNovel import GetUserFollowNovel
@@ -37,4 +37,6 @@ urlpatterns = [
     #获取群组管理权限信息
     path('GroupControl/',GroupControl.as_view(),name='GroupControl'),
     #群管理
+    path('GetGroupInfo/',GetGroupInfo.as_view(),name='GetGroupInfo'),
+    # 获取群组信息
 ]

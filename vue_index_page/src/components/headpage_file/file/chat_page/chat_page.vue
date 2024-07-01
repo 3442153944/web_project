@@ -31,7 +31,8 @@
             </div>
           </div>
           <div class="group_list" v-if="group_list_show">
-            <div class="list_content_item" v-for="(item,index) in group_info_list" :key="index">
+            <div class="list_content_item" v-for="(item,index) in group_info_list" :key="index"
+            @click="select_friend_or_group('group', item)">
               <div class="user_avatar">
                 <img class="avatar" v-lazy="'https://www.sunyuanling.com/image/'+item.group_avatar">
               </div>
@@ -48,6 +49,14 @@
               style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;">
           </div>
           <span>{{ chat_content_info.friendname }}</span>
+        </div>
+        <div class="chat_content_head" v-else-if="chat_content_info.group_name!=''&&chat_content_info.group_name!=null&&chat_content_info.group_name!=undefined">
+          <div class="friend_avatar"
+            style="margin-left: 10px;margin-right: 10px;width:60px;height:60px;border-radius: 50%;">
+            <img class="avatar" :src="'https://www.sunyuanling.com/image/'+chat_content_info.group_avatar"
+              style="width: 50px;height: 50px;object-fit: cover;border-radius: 50%;">
+          </div>
+          <span>{{ chat_content_info.group_name }}</span>
         </div>
         <div class="message_list" ref="message_list"
          v-if="chat_content_info.friendname!=''&&chat_content_info.friendname!=null&&chat_content_info.friendname!=undefined">
@@ -75,7 +84,33 @@
               </div>
             </div>
           </div>
-
+        </div>
+        <div class="message_list" ref="message_list"
+         v-else-if="chat_content_info.group_name!=''&&chat_content_info.group_name!=null&&chat_content_info.group_name!=undefined">
+          <div class="message_item" v-for="(item, index) in msg_list" :key="index"
+            style="position: relative; display: flex; margin-bottom: 10px;align-items: center;">
+            <div v-if="item.sender_id == userinfo.userid"
+              style="margin-right: 10px; align-self: flex-end; display: flex; justify-content: flex-end; width: 100%;align-items: center;">
+              <div class="receive_content"
+                style="background-color: #e5e5ea; padding: 10px; border-radius: 10px; max-width: 70%; word-wrap: break-word;">
+                <span style="word-break: break-all;">{{ item.content }}</span>
+              </div>
+              <div class="receive_avatar" style="margin-left: 10px;display: flex;align-items: center;">
+                <img class="avatar" :src="'https://www.sunyuanling.com/image/'+userinfo.user_avatar"
+                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+              </div>
+            </div>
+            <div v-else style="margin-left: 10px; align-items: flex-end; display: flex; width: 100%;">
+              <div class="send_avatar" style="margin-right: 10px;">
+                <img class="avatar" :src="chatpage_friend_avatar"
+                  style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%;">
+              </div>
+              <div class="send_content"
+                style="background-color: #007bff; color: white; padding: 10px; border-radius: 10px; max-width: 70%; word-wrap: break-word;">
+                <span style="word-break: break-all;">{{ item.content }}</span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="send_box">
           <div class="send_msg_box" ref="msg"> <textarea id="msg" placeholder="请输入消息" v-model="msg_content"></textarea>
@@ -265,27 +300,71 @@ async function get_user_info_by_id(type, userid) {
   return 'https://www.sunyuanling.com/assets/default_avatar.svg';
 }
 
+let group_info=ref()
 //选择好用或者群聊
 async function select_friend_or_group(type, item) {
   console.log(type);
   if (type === 'friend') {
+    //进行新的消息选择时清空消息列表
+    msg_list.value = [];
     chat_content_info.value = item;
     chat_content_info.value.type = 'friend';
     await get_user_info_by_id('friend', chat_content_info.value.friendid)
-    create_websocket('one_to_one', userinfo.value.userid, chat_content_info.value.friendid)
+    create_websocket('one_to_one', userinfo.value.userid, chat_content_info.value.friendid,null,null)
     get_history_msg('friend', userinfo.value.userid, chat_content_info.value.friendid)
     //滚动到最新消息
     setTimeout(() => {
         message_list.value.scrollTop = message_list.value.scrollHeight;
       }, 100);
   } else if (type === 'group') {
-    console.log(item);
+      //进行新的消息选择时清空消息列表
+      msg_list.value = [];
     chat_content_info.value = item;
     chat_content_info.value.type = 'group';
+    console.log(chat_content_info.value);
     //滚动到最新消息
+   await get_group_info_by_id(chat_content_info.value.group_id);
+   create_websocket('many_to_many',userinfo.value.userid,null,null,chat_content_info.value.group_id)
+   await get_history_msg('group', userinfo.value.userid, chat_content_info.value.group_id)
     setTimeout(() => {
       message_list.value.scrollTop = message_list.value.scrollHeight;
     }, 100);
+  }
+}
+
+//获取指定ID的群组详细信息
+async function get_group_info_by_id(group_id)
+{
+  try{
+    const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetGroupInfo/',{
+      method:'post',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        group_id:group_id,
+        userid:userinfo.value.userid
+      })
+    })
+    if(res.ok)
+    {
+      const data=await res.json()
+      if(data.status=='success')
+      {
+        group_info.value=data.data[0]
+        console.log(group_info.value)
+      }
+      else{
+        console.log(data.message)
+      }
+    }
+    else{
+      console.log(res.status)
+    }
+  }
+  catch(e)
+  {
+    console.log(e)
   }
 }
 
@@ -295,27 +374,11 @@ async function select_friend_or_group(type, item) {
         message_list.value.scrollTop = message_list.value.scrollHeight;
       }
     }
-/*
-    // 处理滚动事件
-    function handleScroll() {
-      const jumpEndButton = document.querySelector('.jump_end');
-      if (message_list.value.scrollTop + message_list.value.clientHeight >= message_list.value.scrollHeight) {
-        jumpEndButton.style.display = 'none';
-        console.log(message_list.value.clientHeight);
-      } else {
-        jumpEndButton.style.display = '';
-      }
-    }
 
-    // 监控滑动操作
-    watch(message_list, (newValue, oldValue) => {
-      handleScroll();
-    });
-    */
 
 //创建websocket链接
 function create_websocket(type, send_msg_user_id, to_user_id = null, content = '', to_group_id = null) {
-  const wsUrl = `wss://127.0.0.1:2234/ws/chat/?userid=${send_msg_user_id}`;
+  const wsUrl = `wss://127.0.0.1:2234/ws/chat/?userid=${userinfo.value.userid}`;
   ws = new WebSocket(wsUrl);
 
   ws.onopen = () => {
@@ -392,8 +455,8 @@ async function get_history_msg(type, userid, to_user_id = null, group_id = null)
         },
         body: JSON.stringify({
           msg_type: 'group',
-          userid: userid,
-          group_id: group_id,
+          userid: userinfo.value.userid,
+          group_id: chat_content_info.value.group_id,
           friend_id: to_user_id
         })
       })
@@ -449,6 +512,7 @@ async function send_msg() {
       }, 10);
     } else if (chat_content_info.value.type == 'group') {
       // 构造群组消息的JSON对象
+      console.log(chat_content_info.value.group_id)
       let msg_item = JSON.stringify({
         type: 'many_to_many',
         send_msg_user_id: userinfo.value.userid,

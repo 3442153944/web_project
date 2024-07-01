@@ -34,10 +34,15 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
         return True  # 允许所有来源
 
     def open(self):
-        self.userid = self.get_argument("userid")
-        ChatWebSocket.connections[self.userid] = self
-        logger.info(f"WebSocket opened for user {self.userid}")
-        self.write_message(json.dumps({"message": f"Hello {self.userid}, you are connected!"}))
+        try:
+            self.userid = self.get_argument("userid")
+            ChatWebSocket.connections[self.userid] = self
+            logger.info(f"WebSocket opened for user {self.userid}")
+            self.write_message(json.dumps({"message": f"Hello {self.userid}, you are connected!"}))
+            print(f"WebSocket opened for user {self.userid}")
+        except Exception as e:
+            logger.error(f"Error during open: {e}")
+            print(e)
 
     def on_message(self, message):
         try:
@@ -47,7 +52,7 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
             to_user_id = data.get("to_user_id")
             content = data.get("content")
             to_group_id = data.get("to_group_id")
-
+            print(message)
             if message_type == "one_to_one":
                 self.one_to_one(send_msg_user_id, to_user_id, content)
             elif message_type == "one_to_many":
@@ -58,9 +63,11 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
                 self.write_message(json.dumps({"error": "Invalid message type"}))
         except json.JSONDecodeError:
             self.write_message(json.dumps({"error": "Invalid JSON"}))
+            print("Invalid JSON:", message)
         except Exception as e:
             logger.error(f"Error during on_message: {e}")
             self.write_message(json.dumps({"error": "Internal server error"}))
+            print("Internal server error:", e)
 
     def on_close(self):
         if hasattr(self, 'userid'):
@@ -68,23 +75,19 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
             logger.info(f"WebSocket closed for user {self.userid}")
 
     def one_to_one(self, send_msg_user_id, to_user_id, content):
-        if len(content) > 500:
-            self.write_message(json.dumps({"status":"warning","message": "Message too long"}))
-            return
-
-        if not content or content.strip() == '':
-            self.write_message(json.dumps({'status': 'warning', 'message': '不能发送空消息'}))
+        if content is None or len(content) > 500:
+            self.write_message(json.dumps({"status": "warning", "message": "Message too long or empty"}))
             return
 
         try:
             with connect_mysql() as conn:
-                cursor = conn.cursor()
-                now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                message_type = "one_to_one"
-                sql = ('INSERT INTO messages (sender_id, receiver_id, content, time, type, receiver_read_status) '
-                       'VALUES (%s, %s, %s, %s, %s, %s)')
-                cursor.execute(sql, (send_msg_user_id, to_user_id, content, now_time, message_type, '未读'))
-                conn.commit()
+                with conn.cursor() as cursor:
+                    now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    message_type = "one_to_one"
+                    sql = ('INSERT INTO messages (sender_id, receiver_id, content, time, type, receiver_read_status) '
+                           'VALUES (%s, %s, %s, %s, %s, %s)')
+                    cursor.execute(sql, (send_msg_user_id, to_user_id, content, now_time, message_type, '未读'))
+                    conn.commit()
 
             to_user = ChatWebSocket.connections.get(to_user_id)
             if to_user:
@@ -94,53 +97,54 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
                 logger.info(f"User {to_user_id} not connected, message saved")
         except Exception as e:
             logger.error(f"Error during one_to_one: {e}")
+            print(e)
 
     def one_to_many(self, send_msg_user_id, content):
-        if len(content) > 500:
-            self.write_message(json.dumps({"status":"warning","message": "Message too long"}))
-            return
-
-        if not content or content.strip() == '':
-            self.write_message(json.dumps({'status': 'warning', 'message': '不能发送空消息'}))
+        if content is None or len(content) > 500:
+            self.write_message(json.dumps({"status": "warning", "message": "Message too long or empty"}))
             return
 
         try:
             with connect_mysql() as conn:
-                cursor = conn.cursor()
-                now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                for user_id, connection in ChatWebSocket.connections.items():
-                    if user_id != self.userid:
-                        sql = ('INSERT INTO messages (sender_id, receiver_id, content, time, type, receiver_read_status) '
-                               'VALUES (%s, %s, %s, %s, %s, %s)')
-                        cursor.execute(sql, (send_msg_user_id, user_id, content, now_time, "one_to_many", '未读'))
-                        connection.write_message(json.dumps({"message": f"From {self.userid} to all: {content}"}))
-                conn.commit()
+                with conn.cursor() as cursor:
+                    now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    for user_id, connection in ChatWebSocket.connections.items():
+                        if user_id != self.userid:
+                            sql = ('INSERT INTO messages (sender_id, receiver_id, content, time, type, receiver_read_status) '
+                                   'VALUES (%s, %s, %s, %s, %s, %s)')
+                            cursor.execute(sql, (send_msg_user_id, user_id, content, now_time, "one_to_many", '未读'))
+                            connection.write_message(json.dumps({"message": f"From {self.userid} to all: {content}"}))
+                    conn.commit()
         except Exception as e:
             logger.error(f"Error during one_to_many: {e}")
+            print(e)
 
     def many_to_many(self, send_msg_user_id, content, to_group_id):
-        if len(content) > 500:
-            self.write_message(json.dumps({"status": "warning", "message": "Message too long"}))
+        if content is None or len(content) > 500:
+            self.write_message(json.dumps({"status": "warning", "message": "Message too long or empty"}))
             return
 
-        if not content or content.strip() == '':
-            self.write_message(json.dumps({'status': 'warning', 'message': '不能发送空消息'}))
-            return
+        print(f"many_to_many: {send_msg_user_id} {content} {to_group_id}")
 
         try:
             with connect_mysql() as conn:
-                cursor = conn.cursor()
-                now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-                sql = ('INSERT INTO messages (sender_id, group_id, content, time, type, receiver_read_status) '
-                       'VALUES (%s, %s, %s, %s, %s, %s)')
-                for user_id, connection in ChatWebSocket.connections.items():
-                    if user_id.startswith(to_group_id):
-                        cursor.execute(sql, (send_msg_user_id, to_group_id, content, now_time, 'many_to_many', '未读'))
-                        connection.write_message(
-                            json.dumps({"message": f"From {self.userid} to group {to_group_id}: {content}"}))
-                conn.commit()
+                with conn.cursor() as cursor:
+                    now_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                    sql = ('INSERT INTO messages (sender_id, group_id, content, time, type, receiver_read_status) '
+                           'VALUES (%s, %s, %s, %s, %s, %s)')
+                    # 先将消息写入数据库
+                    cursor.execute(sql, (send_msg_user_id, to_group_id, content, now_time, 'many_to_many', '未读'))
+                    conn.commit()
+
+            # 然后尝试发送消息
+            for user_id, connection in ChatWebSocket.connections.items():
+                if user_id.startswith(to_group_id):
+                    connection.write_message(
+                        json.dumps({"message": f"From {self.userid} to group {to_group_id}: {content}"}))
+
         except Exception as e:
             logger.error(f"Error during many_to_many: {e}")
+            print(e)
 
 
 def make_app():
