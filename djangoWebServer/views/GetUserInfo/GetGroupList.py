@@ -25,9 +25,9 @@ class GetGroupList(View):
             with connection.cursor() as cursor:
                 sql = '''
                     SELECT * FROM `group`
-                    WHERE member_id = %s OR admin_id = %s OR create_user_id = %s
+                    WHERE userid = %s 
                 '''
-                cursor.execute(sql, [userid, userid, userid])
+                cursor.execute(sql, [userid, ])
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 if result:
@@ -69,7 +69,7 @@ class GroupControlInfo(View):
             with connection.cursor() as cursor:
                 sql = '''
                     SELECT role FROM `group`
-                    WHERE `group`.id = %s AND (create_user_id = %s OR admin_id = %s or member_id = %s or userid=%s)
+                    WHERE `group`.group_id = %s AND (create_user_id = %s OR admin_id = %s or member_id = %s or userid=%s)
                 '''
                 cursor.execute(sql,[group_id,userid,userid,userid,userid])
                 result = cursor.fetchone()

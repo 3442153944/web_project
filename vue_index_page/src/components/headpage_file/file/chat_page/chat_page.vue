@@ -31,7 +31,12 @@
             </div>
           </div>
           <div class="group_list" v-if="group_list_show">
-            群列表
+            <div class="list_content_item" v-for="(item,index) in group_info_list" :key="index">
+              <div class="user_avatar">
+                <img class="avatar" v-lazy="'https://www.sunyuanling.com/image/'+item.group_avatar">
+              </div>
+              <span>{{item.group_name}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -109,6 +114,7 @@ let group_title = ref(null);
 let chat_content_info = ref([])
 let friend_list_show = ref(true);
 let group_list_show = ref(false);
+let group_info_list = ref([]);
 let chatpage_friend_avatar = ref();
 let msg = ref(null);
 let ws;
@@ -184,6 +190,49 @@ async function get_user_friend_list(id) {
   }
 }
 
+//获取群组列表
+async function get_user_group_list(id) {
+  async function fetchGroupList(userId) {
+    try{
+      const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetGroupList/',
+        {
+          method:'post',
+          headers:{
+            'Content-Type':'application/json'
+          },
+          body:JSON.stringify({
+            userid:userId
+          })
+        }
+      )
+      if(res.ok)
+      {
+        const data=await res.json()
+        if (data.status=='success')
+        {
+          group_info_list.value=data.data;
+          console.log(group_info_list.value)
+        }
+        else{
+          console.log(data.message)
+        }
+      }
+      else{
+        console.log(res.status)
+      }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+  if(id==null||!id)
+  {
+    await fetchGroupList(userinfo.value.userid)
+  }
+  else{
+    await fetchGroupList(id)
+  }
+}
 
 // 通过ID请求用户信息
 async function get_user_info_by_id(type, userid) {
@@ -437,6 +486,7 @@ async function send_msg() {
 onMounted(() => {
   get_user_friend_list();
   // 加载时初始化为好友列表
+  get_user_group_list();
   friend_title.value.style.borderBottom = '2px solid #000000';
   group_title.value.style.borderBottom = 'none';
 });

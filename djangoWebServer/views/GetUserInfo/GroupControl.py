@@ -30,7 +30,7 @@ class GroupControl(View):
                 return JsonResponse({'status': 'error', 'message': '缺少重要参数'}, status=400)
 
             with connection.cursor() as cursor:
-                sql = 'SELECT role FROM `group` WHERE id = %s AND userid = %s'
+                sql = 'SELECT role FROM `group` WHERE group_id = %s AND userid = %s'
                 cursor.execute(sql, [group_id, userid])
                 result = cursor.fetchone()
 
@@ -94,7 +94,7 @@ class GroupControl(View):
         if userid_operator == userid:
             self.logger.warning(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，不能设置自己为管理员')
             return JsonResponse({'status': 'error', 'message': '不能设置自己为管理员'}, status=403)
-        sql = 'UPDATE `group` SET role = %s WHERE id = %s AND userid = %s'
+        sql = 'UPDATE `group` SET role = %s WHERE `group`.group_id = %s AND userid = %s'
         cursor.execute(sql, ['admin', group_id, userid])
         if cursor.rowcount > 0:
             self.logger.info(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，设置管理员成功')
@@ -111,7 +111,7 @@ class GroupControl(View):
         if userid_operator == userid:
             self.logger.warning(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，不能移除自己')
             return JsonResponse({'status': 'error', 'message': '不能移除自己'}, status=403)
-        sql = 'DELETE FROM `group` WHERE id = %s AND userid = %s'
+        sql = 'DELETE FROM `group` WHERE group_id = %s AND userid = %s'
         cursor.execute(sql, [group_id, userid])
         if cursor.rowcount > 0:
             self.logger.info(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，移除成员成功')
@@ -123,7 +123,7 @@ class GroupControl(View):
     def dissolve_group(self, cursor, data, now, request_path):
         # 解散群组
         group_id = data.get('group_id')
-        sql = 'DELETE FROM `group` WHERE id = %s'
+        sql = 'DELETE FROM `group` WHERE `group`.group_id = %s'
         cursor.execute(sql, [group_id])
         if cursor.rowcount > 0:
             self.logger.info(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，解散群组成功')
@@ -140,8 +140,8 @@ class GroupControl(View):
         if transfer_userid == userid:
             self.logger.warning(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，不能转移群组给自己')
             return JsonResponse({'status': 'error', 'message': '不能转移群组给自己'}, status=403)
-        sql = ('UPDATE `group` SET role = %s WHERE id = %s AND userid = %s;'
-               'UPDATE `group` SET role = %s WHERE id = %s AND userid = %s')
+        sql = ('UPDATE `group` SET role = %s WHERE group_id = %s AND userid = %s;'
+               'UPDATE `group` SET role = %s WHERE group_id = %s AND userid = %s')
         cursor.execute(sql, ['master', group_id, transfer_userid, 'admin', group_id, userid])
         if cursor.rowcount > 0:
             self.logger.info(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，转移群组成功')
@@ -154,7 +154,7 @@ class GroupControl(View):
         # 管理成员
         group_id = data.get('group_id')
         userid = data.get('move_userid')
-        sql = 'SELECT userid FROM `group` WHERE id = %s AND role = %s'
+        sql = 'SELECT userid FROM `group` WHERE group_id = %s AND role = %s'
         cursor.execute(sql, [group_id, 'master'])
         result = cursor.fetchone()
         if result is None:
@@ -167,7 +167,7 @@ class GroupControl(View):
         if userid_operator == userid:
             self.logger.warning(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，不能移除自己')
             return JsonResponse({'status': 'error', 'message': '不能移除自己'}, status=403)
-        sql = 'DELETE FROM `group` WHERE id = %s AND userid = %s'
+        sql = 'DELETE FROM `group` WHERE group_id = %s AND userid = %s'
         cursor.execute(sql, [group_id, userid])
         if cursor.rowcount > 0:
             self.logger.info(f'时间：{now}，请求地址：{request_path}，请求数据：{data}，移除成员成功')
