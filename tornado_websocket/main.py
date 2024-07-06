@@ -138,8 +138,9 @@ class ChatWebSocket(tornado.websocket.WebSocketHandler):
 
             # 然后尝试发送消息
             for user_id, connection in ChatWebSocket.connections.items():
-                if user_id.startswith(to_group_id):
-                    connection.write_message(
+                print(f"user_id: {user_id} to_group_id: {to_group_id}")
+                #if user_id.startswith(to_group_id):
+                connection.write_message(
                         json.dumps({"message": f"From {self.userid} to group {to_group_id}: {content}"}))
 
         except Exception as e:

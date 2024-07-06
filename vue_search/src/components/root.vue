@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import chat from './chat.vue';
+import chat from './head_file.vue';
 
 </script>
 

@@ -1,7 +1,7 @@
 <!-- eslint-disable no-unused-vars -->
 <template>
-  <div class="chat">
-    聊天页面
+  <div class="head_file">
+    导航栏预留
   </div>
 </template>
 

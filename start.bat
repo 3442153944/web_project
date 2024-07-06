@@ -6,7 +6,7 @@ start "" "cmd" /k "cd /d H:\web_project\vue_login && npm run dev"
 start "" "cmd" /k "cd /d H:\web_project\vue_index_page && npm run dev"
 start "" "cmd" /k "cd /d H:\web_project\vue_illustration_page && npm run dev"
 start "" "cmd" /k "cd /d H:\web_project\vue_usercenter_page && npm run dev"
-start "" "cmd" /k "cd /d H:\web_project\vue_chat && npm run dev"
+start "" "cmd" /k "cd /d H:\web_project\vue_search && npm run dev"
 
 
 start "" "cmd" /k "cd /d H:\web_project\djangoWebServer && python manage.py runserver 2233"

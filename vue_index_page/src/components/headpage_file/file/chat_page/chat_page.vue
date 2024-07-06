@@ -445,6 +445,10 @@ async function handle_incoming_message(message) {
   }
   else if (chat_content_info.value.type == 'group') { 
     await get_history_msg('group', userinfo.value.userid, chat_content_info.value.groupid)
+    console.log(group_msg_list.value);
+    setTimeout(() => {
+      message_list.value.scrollTop = message_list.value.scrollHeight;
+    }, 100);
    }
 }
 //获取历史消息
@@ -554,7 +558,7 @@ async function send_msg() {
       ws.send(msg_item);  // 发送消息
 
       // 在消息列表中添加新消息
-      msg_list.value.push({
+      group_msg_list.value.push({
         ID: 1,
         content: content,
         group_id: chat_content_info.value.group_id,
