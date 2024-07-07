@@ -58,7 +58,7 @@ onMounted(() => {
     daytime.value = datetime;
 })
 
-let item_path = ref('https://www.sunyuanling.com/image/65014220_p0.jpg');
+let item_path = ref('https://www.sunyuanling.com/image/thumbnail/65014220_p0.jpg');
 let rank = ref(1);
 let page_count = ref(12);
 let work_title = ref('作品标题');

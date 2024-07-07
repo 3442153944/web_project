@@ -14,14 +14,14 @@
             </svg>
             {{ item.content_file_list.split(/[,，]/).length }}
           </div>
-          <img :src="'https://www.sunyuanling.com/image/'+item.content_file_list.split(/[,，]/)[0]">
+          <img :src="'https://www.sunyuanling.com/image/thumbnail/'+item.content_file_list.split(/[,，]/)[0]">
         </div>
         <div class="cartoon_title">
           <span>{{ item.work_name }}</span>
         </div>
         <div class="user_info">
           <div class="user_avatar">
-            <img :src="'https://www.sunyuanling.com/image/'+item.belong_to_avatar">
+            <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/'+item.belong_to_avatar">
           </div>
           <div class="username">
             <span>{{ item.belong_to_user }}</span>
@@ -193,7 +193,7 @@ function scrollTabs(scrollAmount) {
   position: absolute;
   width: 65px;
   height: 35px;
-  right: 5px;
+  right: 0px;
   top: 5px;
   background-color: rgba(87, 85, 85, 0.8);
   font-size: 16px;

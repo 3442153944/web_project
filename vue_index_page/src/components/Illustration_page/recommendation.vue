@@ -40,7 +40,7 @@ export default {
 </script>
 
 <script setup>
-let work_item_path = ref('https://www.sunyuanling.com/image/105716156_p0.jpg');
+let work_item_path = ref('https://www.sunyuanling.com/image/thumbnail/105716156_p0.jpg');
 let work_item_age = ref('R-18');
 let work_item_page_count = ref('12');
 let work_item_title = ref('作品标题');

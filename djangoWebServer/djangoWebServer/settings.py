@@ -70,6 +70,7 @@ INSTALLED_APPS = [
     'djangoWebServer.WebSocket',
     'views.GetUserInfo',
     'views.mysql_conn_test',
+    'views.upload'
 ]
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'
 

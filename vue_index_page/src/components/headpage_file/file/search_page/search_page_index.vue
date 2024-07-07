@@ -5,7 +5,9 @@
     </div>
     <div class="content">
       <div class="head_box">
-        <div class="search_result_cover"></div>
+        <div class="search_result_cover">
+          <img :src="search_result_cover">
+        </div>
         <div class="search_result_info_box">
           <div  class="search_tag_name"></div>
           <div calss='search_result_count'></div>
@@ -49,6 +51,7 @@ let ill_list = ref([])
 let comic_list = ref([])
 let novel_list = ref([])
 let tag_list=ref()
+let search_result_cover=ref('https://www.sunyuanling.com/image/thumbnail/120282888_p0.jpg')
 watch(() => props.search_item, async (new_value, old_value) => {
   search_data.value = await get_search_data(new_value)
   categorize_data(search_data.value)
@@ -167,6 +170,17 @@ defineExpose({
 .head_box{
   display: flex;
   width: 80%;
-  height: 150px;
+  height: 200px;
+  align-items: center;
+}
+.search_result_cover{
+  width: 100%;
+  height: 100%;
+  display: flex;
+}
+.search_result_cover image{
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
 }
 </style>

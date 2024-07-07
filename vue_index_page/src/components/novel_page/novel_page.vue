@@ -4,7 +4,7 @@
     <div class="novel_list">
       <div class="novel_item" v-for="(item,index) in novel_info_list" :key="index">
         <div class="novel_cover">
-          <img :src="'https://www.sunyuanling.com/image/'+item.work_cover">
+          <img :src="'https://www.sunyuanling.com/image/thumbnail/'+item.work_cover">
         </div>
         <div class="novel_info">
           <div class="novel_state mt">
@@ -131,11 +131,15 @@ onMounted(()=>{
     min-width: 350px;
     min-height: 230px;
     margin-top: 20px;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
  }
  .novel_cover{
   display: flex;
   width:30%;
   height: 100%;
+  max-height: 200px;
   border-radius: 15px;
   overflow: hidden;
   justify-content: center;
@@ -145,6 +149,7 @@ onMounted(()=>{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  max-height: 200px;
  }
  .novel_info{
   display: flex;
@@ -153,6 +158,7 @@ onMounted(()=>{
   height: 100%;
   padding: 5px;
   justify-content: space-around;
+  padding: 10px;
  }
  .novel_userinfo{
   display: flex;

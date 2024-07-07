@@ -61,11 +61,11 @@ let month = date.getMonth() + 1;
 let day = date.getDate();
 let dateStr = year + '-' + month + '-' + day;
 
-let cover_path=ref('https://www.sunyuanling.com/image/118839253_p1.jpg');
+let cover_path=ref('https://www.sunyuanling.com/image/thumbnail/118839253_p1.jpg');
 let rank=ref(1);
 let work_title=ref('作品标题');
 let work_chapter=ref('章节标题');
-let user_avatar=ref('https://www.sunyuanling.com/image/116883317_p0.png');
+let user_avatar=ref('https://www.sunyuanling.com/image/avatar_thumbnail/116883317_p0.png');
 let username=ref('用户名');
 let work_tags=ref(['标签1','标签2','标签3','标签1','标签2','标签3','标签1','标签2','标签3']);
 let brief_introduction=ref('作品简介');
@@ -137,6 +137,7 @@ function scrollTabs(scrollAmount) {
   position: relative;
   border-radius: 15px;
   overflow: hidden;
+  max-height: 200px;
 }
 
 .cover img {
@@ -149,13 +150,14 @@ function scrollTabs(scrollAmount) {
   position: absolute;
   left: 5px;
   top: 5px;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   display: flex;
   border-radius: 50%;
   justify-content: center;
   align-items: center;
-  background-color: rgba(236, 87, 41, 1);
+  background-color: rgba(236, 87, 41, 0.6);
+  z-index: 2;
 }
 
 .work_info {
@@ -166,7 +168,7 @@ function scrollTabs(scrollAmount) {
   padding: 10px;
   flex-grow: 1;
   justify-content: space-around;
-
+  max-height: 200px;
 }
 
 .work_title {
@@ -220,7 +222,7 @@ function scrollTabs(scrollAmount) {
 .left_btn{
   position: absolute;
   width: 50px;
-  height: 350px;
+  height: 200px;
   left:0px;
   display: flex;
   justify-content: center;
@@ -239,7 +241,7 @@ function scrollTabs(scrollAmount) {
 .right_btn{
   position: absolute;
   width:50px;
-  height: 350px;
+  height: 200px;
   right: 0px;
   display: flex;
   justify-content: center;

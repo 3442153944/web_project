@@ -39,11 +39,11 @@ export default{
 }
 </script>
 <script setup>
-let img_path = ref('https://www.sunyuanling.com/image/82181448_p0(1).jpg');
+let img_path = ref('https://www.sunyuanling.com/image/thumbnail/82181448_p0(1).jpg');
 let age_tag = ref('R-18');
 let page_count = ref('12');
 let work_title = ref('作品标题');
-let user_avatar = ref('https://www.sunyuanling.com/image/104705167_p0.jpg');
+let user_avatar = ref('https://www.sunyuanling.com/image/avatar_thumbnail/104705167_p0.jpg');
 let username = ref('用户名');
 
 

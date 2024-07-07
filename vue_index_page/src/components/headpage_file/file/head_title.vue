@@ -108,7 +108,7 @@ export default {
 <script setup>
 let index_jump_img_src = ref('https://www.sunyuanling.com/image/主页.png')
 let submission_text = ref('投稿作品')
-let avatar_img_src = ref('https://www.sunyuanling.com/image/87328997_p0.jpg')
+let avatar_img_src = ref('https://www.sunyuanling.com/image/avatar_thumbnail/87328997_p0.jpg')
 let join_vip_text = ref('加入ILLWeb高级会员')
 let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
@@ -118,7 +118,7 @@ let chat_page_show=ref(false)
 let user_info=ref([])
 let search_data=ref()//搜索数据
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
-avatar_img_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
+avatar_img_src.value="https://www.sunyuanling.com/image/avatar_thumbnail/"+user_info.value.user_avatar;
 let search_show_status=ref(false);
 let input_box=ref(null)
 let search_page_click=ref(null)

@@ -14,14 +14,14 @@
           <div class="like" >
             <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index-1)">
           </div>
-          <img :src="'https://www.sunyuanling.com/image/'+item.content_file_list.split(/[,，]/)[0]" @click="go_to_illustration_page(item.Illustration_id)">
+          <img :src="'https://www.sunyuanling.com/image/thumbnail/'+item.content_file_list.split(/[,，]/)[0]" @click="go_to_illustration_page(item.Illustration_id)">
         </div>
         <div class="work_name">
           <span>{{ item.name }}</span>
         </div>
         <div class="userinfo">
           <div class="user_avatar">
-            <img :src="'https://www.sunyuanling.com/image/'+item.belong_to_user_avatar">
+            <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/'+item.belong_to_user_avatar">
           </div>
           <div class="username">
             <span>{{ item.belong_to_user }}</span>

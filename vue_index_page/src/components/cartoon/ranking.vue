@@ -54,7 +54,7 @@ export default {
 </script>
 
 <script setup>
-let img_path=ref('https://www.sunyuanling.com/image/100213135_p0.jpg');
+let img_path=ref('https://www.sunyuanling.com/image/thumbnail/100213135_p0.jpg');
 let rank=ref(1);
 let count_page=ref(12);
 let title=ref('作品标题');
@@ -106,8 +106,8 @@ function scrollTabs(scrollAmount) {
       width: auto;
       max-width: calc(100%*0.3);
       height: auto;
-      min-height: 320px;
-      min-width: 260px;
+      min-height: 280px;
+      min-width: 200px;
       margin-right: 10px;
       white-space: nowrap;
       position: relative;
@@ -125,6 +125,8 @@ function scrollTabs(scrollAmount) {
     .work_img img{
       width:100%;
       height:100%;
+      max-width: 200px;
+      max-height: 200px;
       object-fit: cover;
       border-radius: 15px;
     }
@@ -144,6 +146,7 @@ function scrollTabs(scrollAmount) {
       display: flex;
       justify-content: center;
       align-items: center;
+      z-index: 2;
     }
     .count_page{
       position: absolute;
@@ -159,6 +162,7 @@ function scrollTabs(scrollAmount) {
       color:#fff;
       font-size: 12px;
       font-weight: bold;
+      z-index: 2;
     }
     .count_page svg{
       width:20px;
