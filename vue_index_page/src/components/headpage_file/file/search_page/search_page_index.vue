@@ -4,20 +4,23 @@
       <img class="icon" src="https://www.sunyuanling.com/assets/close.svg" alt="close_btn">
     </div>
     <div class="content">
-      <div>搜索内容框</div>
-      <div>小说列表：<span v-for="(item, index) in ill_list" :key="index">{{ item.name }}</span></div>
-      <div>漫画列表：<span v-for="(item, index) in comic_list" :key="index">{{ item.work_name }}</span></div>
-      <div>小说列表：<span v-for="(item, index) in novel_list" :key="index">{{ item.work_name }}</span></div>
+      <div class="head_box">
+        <div class="search_result_cover"></div>
+        <div class="search_result_info_box">
+          <div  class="search_tag_name"></div>
+          <div calss='search_result_count'></div>
+        </div>
+      </div>
       <ill_page :ill_data="ill_list"></ill_page>
-      <comic_page></comic_page>
-      <novel_page></novel_page>
+      <comic_page :comic_data='comic_list'></comic_page>
+      <novel_page :novel_data="novel_list"></novel_page>
     </div>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineProps, defineEmits } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineProps, defineEmits,defineExpose } from 'vue';
 // eslint-disable-next-line no-unused-vars
 import * as cookies from '../../../../../../model/cookies.js'
 import ill_page from './page/ill_page.vue'
@@ -45,9 +48,12 @@ let search_data = ref(props.search_item)
 let ill_list = ref([])
 let comic_list = ref([])
 let novel_list = ref([])
+let tag_list=ref()
 watch(() => props.search_item, async (new_value, old_value) => {
   search_data.value = await get_search_data(new_value)
   categorize_data(search_data.value)
+  set_tag_list(search_data.value)
+  console.log(tag_list.value)
 }
 )
 function categorize_data(data) {
@@ -69,12 +75,23 @@ function categorize_data(data) {
     });
   }
 }
+//放入所有的tag
+function set_tag_list(data) {
+  if (data == null) {
+    tag_list.value = []
+    return
+  }
+  let all_tags = data.flatMap(item => item.work_tags.split(/[,，]/).map(tag => tag.trim()))
+  tag_list.value = [...new Set(all_tags)]
+}
+
 let close_msg = defineEmits(['close_msg'])
 function close_btn_click() {
   close_msg('close_msg', false)
 }
 
 async function get_search_data(data) {
+  search_data.value = null
   try {
     const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetSearch/', {
       method: 'POST',
@@ -101,6 +118,9 @@ async function get_search_data(data) {
     return []
   }
 }
+defineExpose({
+  get_search_data
+})
 
 </script>
 
@@ -143,5 +163,10 @@ async function get_search_data(data) {
   width: 100%;
   height: 100%;
   margin-top: 30px;
+}
+.head_box{
+  display: flex;
+  width: 80%;
+  height: 150px;
 }
 </style>

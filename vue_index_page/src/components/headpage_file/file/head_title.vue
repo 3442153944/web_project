@@ -20,7 +20,7 @@
         </div>
         <div class="input_box" ref="input_box">
             <input v-model="search_data" placeholder="搜索作品" @focus="input_box_focus">
-            <div class="search_icon">
+            <div class="search_icon" @click="search_data_updata">
                 <svg t="1713666425341" class="icon" viewBox="0 0 1024 1024" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" p-id="7531" width="200" height="200">
                     <path
@@ -83,7 +83,9 @@
         </div>
         <chat_page class="chat_page" v-if="chat_page_show" @close_page="close_chat_page"></chat_page>
         <header_box v-show="header_box_show"></header_box><!--这是头像，不是标题栏-->
-        <search_page_index :search_item="search_data" @close_msg="close_search_page" v-if="search_show_status">
+        <search_page_index :search_item="search_data" @close_msg="close_search_page"
+        ref="search_page_click"
+         v-if="search_show_status">
         </search_page_index>
     </div>
 </template>
@@ -119,12 +121,24 @@ user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
 avatar_img_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
 let search_show_status=ref(false);
 let input_box=ref(null)
+let search_page_click=ref(null)
+
 //搜索实现
 watch(search_data,(newValue,oldValue)=>{
     search_data.value=newValue;
-    console.log(search_data.value);
-    console.log(search_data.value);
 })
+//更新search_data以触发搜索页面的更新
+async function search_data_updata(){
+  if (search_page_click.value){
+    try{
+    const result=await search_page_click.value.get_search_data(search_data.value)
+    }
+    catch(error){
+      console.log(error);
+    }
+  }
+
+}
 //获取焦点时显示搜索页面，失去焦点时隐藏搜索页面
 function input_box_focus(){
     search_show_status.value=true;
@@ -137,6 +151,7 @@ function input_box_blur(){
 function close_search_page(item){
     console.log(item);
     search_show_status.value=false;
+    search_data.value=null;
 }
 
 //聊天界面显示

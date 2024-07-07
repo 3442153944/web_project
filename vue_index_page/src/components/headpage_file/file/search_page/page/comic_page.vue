@@ -1,6 +1,6 @@
 <template>
   <div class="comic_page">
-    
+    {{data}}
   </div>
 </template>
 
@@ -17,9 +17,13 @@ let comic_data=defineProps({
     comic_data:{
         type:Object,
         default(){
-            []
+            return {}
         }
     }
+})
+let data=ref()
+watch(()=>comic_data.comic_data,(newValue,oldValue)=>{
+    data.value=newValue
 })
 </script>
 
