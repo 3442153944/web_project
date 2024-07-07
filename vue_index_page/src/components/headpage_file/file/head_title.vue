@@ -18,8 +18,8 @@
         <div class="index_jump_img ml">
             <img :src="index_jump_img_src"><!--主页图片路径:H:/web_project/image/主页.png-->
         </div>
-        <div class="input_box">
-            <input v-model="search_data" placeholder="搜索作品">
+        <div class="input_box" ref="input_box">
+            <input v-model="search_data" placeholder="搜索作品" @focus="input_box_focus">
             <div class="search_icon">
                 <svg t="1713666425341" class="icon" viewBox="0 0 1024 1024" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" p-id="7531" width="200" height="200">
@@ -83,7 +83,8 @@
         </div>
         <chat_page class="chat_page" v-if="chat_page_show" @close_page="close_chat_page"></chat_page>
         <header_box v-show="header_box_show"></header_box><!--这是头像，不是标题栏-->
-        <search_page_index :search_item="search_data" v-if="search_show_status"></search_page_index>
+        <search_page_index :search_item="search_data" @close_msg="close_search_page" v-if="search_show_status">
+        </search_page_index>
     </div>
 </template>
 
@@ -117,6 +118,7 @@ let search_data=ref()//搜索数据
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
 avatar_img_src.value="https://www.sunyuanling.com/image/"+user_info.value.user_avatar;
 let search_show_status=ref(false);
+let input_box=ref(null)
 //搜索实现
 watch(search_data,(newValue,oldValue)=>{
     search_data.value=newValue;
@@ -124,9 +126,16 @@ watch(search_data,(newValue,oldValue)=>{
     console.log(search_data.value);
 })
 //获取焦点时显示搜索页面，失去焦点时隐藏搜索页面
+function input_box_focus(){
+    search_show_status.value=true;
+}
+function input_box_blur(){
+    search_show_status.value=false;
+}
 
 //接收搜索页面的关闭消息
 function close_search_page(item){
+    console.log(item);
     search_show_status.value=false;
 }
 

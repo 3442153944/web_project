@@ -3,6 +3,7 @@ from django.urls import path
 
 from .GetFriendList import GetFriendList
 from .GetGroupList import GetGroupList, GroupControlInfo, GetGroupInfo
+from .GetSearch import GetSearch
 from .GetUserFans import GetUserFans
 from .GetUserFollow import GetUserFollow
 from .GetUserFollowNovel import GetUserFollowNovel
@@ -39,4 +40,6 @@ urlpatterns = [
     #群管理
     path('GetGroupInfo/',GetGroupInfo.as_view(),name='GetGroupInfo'),
     # 获取群组信息
+    path('GetSearch/',GetSearch.as_view(),name='GetSearch'),
+    #作品查询/搜索
 ]
