@@ -9,11 +9,11 @@ class UploadFile(View):
     pass
 
 
-def img_file_convert(file=None, src_path=None, tar_path=None):
+def img_file_convert(file=None, src_path=None, tar_path=None,width=200,height=200):
     append_name = 'thumbnail'
 
     def convert_image(img):
-        target_size = (128, 128)
+        target_size = (width, height)
         img = ImageOps.fit(img, target_size, Image.LANCZOS, 0.5, (0.5, 0.5))
         return img
 
