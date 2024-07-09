@@ -27,11 +27,22 @@ class UploadFile(View):
             work_type = request.POST.get('work_type')
             work_info = json.loads(request.POST.get('work_info'))
 
-            if files and work_type in ('ill', 'comic', 'novel'):
-                self.handle_upload(work_type, files, work_info, request)
-                return JsonResponse({'status': 'success', 'message': '上传成功'}, status=200)
-            else:
+            if not files or work_type not in ('ill', 'comic', 'novel'):
+                self.logger.warning(self.request_path(request) + str('无效的文件或类型') + str(request.POST))
                 return JsonResponse({'status': 'error', 'message': '无效的文件或类型'}, status=400)
+
+            for file in files:
+                if not self.is_valid_image(file):
+                    self.logger.warning(self.request_path(request) + str('无效的图片文件') + str(request.POST))
+                    return JsonResponse({'status': 'error', 'message': '无效的图片文件'}, status=400)
+                if file.size > 50 * 1024 * 1024:
+                    self.logger.warning(self.request_path(request) + str('文件大小超过限制'))
+                    return JsonResponse({'status': 'error', 'message': '文件大小超过限制'}, status=400)
+
+            self.handle_upload(work_type, files, work_info, request)
+            self.logger.info(self.request_path(request) + str('上传成功'))
+            return JsonResponse({'status': 'success', 'message': '上传成功'}, status=200)
+
         except json.JSONDecodeError as e:
             self.logger.error(self.request_path(request) + str(e) + str(request.body))
             return JsonResponse({'status': 'error', 'message': 'json格式错误'}, status=400)
@@ -39,8 +50,16 @@ class UploadFile(View):
             self.logger.error(self.request_path(request) + str(e) + str(request.body))
             return JsonResponse({'status': 'error', 'message': '服务器内部错误'}, status=500)
 
+    def is_valid_image(self, file):
+        try:
+            Image.open(file).verify()
+            return True
+        except:
+            return False
+
     def handle_upload(self, work_type, files, work_info, request):
         now = datetime.now()
+        user_prefix = f"{work_info['username']}_{now.strftime('%Y%m%d%H%M%S')}"
         paths = {
             'ill': ('H:/web_project/image/', 'H:/web_project/image/thumbnail/'),
             'comic': ('H:/web_project/image/comic/', 'H:/web_project/image/comic/thumbnail/'),
@@ -49,22 +68,48 @@ class UploadFile(View):
         save_path, save_thumbnail_path = paths[work_type]
         content_file_list = []
 
-        for file in files:
-            filename = file.name
+        for idx, file in enumerate(files):
+            filename = self.get_unique_filename(save_path, user_prefix, file.name, idx + 1)
             full_file_path = os.path.join(save_path, filename)
             with open(full_file_path, 'wb') as f:
-                f.write(file.read())
+                img_data = self.process_image(file)
+                f.write(img_data.getvalue())
             content_file_list.append(filename)
 
-            img_thumbnail = img_file_convert(file, None, None, 200, 200)
+            img_thumbnail = self.create_thumbnail(file, 200, 200)
             thumbnail_path = os.path.join(save_thumbnail_path, filename)
             with open(thumbnail_path, 'wb') as f:
-                f.write(img_thumbnail.content)
+                f.write(img_thumbnail.getvalue())
 
         content_file_list_str = ','.join(content_file_list)
         self.save_to_db(work_type, work_info, content_file_list_str, now)
 
         self.logger.info(self.request_path(request) + str('上传成功'))
+
+    def get_unique_filename(self, path, prefix, filename, idx):
+        base, ext = os.path.splitext(filename)
+        unique_filename = f"{prefix}_p{idx}{ext}"
+        return unique_filename
+
+    def process_image(self, file):
+        with Image.open(file) as img:
+            img = img.convert("RGB")
+            width, height = img.size
+            new_img = Image.new("RGB", (width, height), (255, 255, 255))
+            new_img.paste(img, (0, 0))
+            buffer = BytesIO()
+            new_img.save(buffer, format='JPEG', quality=95)
+            buffer.seek(0)
+            return buffer
+
+    def create_thumbnail(self, file, width, height):
+        with Image.open(file) as img:
+            target_size = (width, height)
+            img = ImageOps.fit(img, target_size, Image.LANCZOS, 0.5, (0.5, 0.5))
+            buffer = BytesIO()
+            img.save(buffer, format='JPEG', quality=95)
+            buffer.seek(0)
+            return buffer
 
     def save_to_db(self, work_type, work_info, content_file_list_str, now):
         queries = {
@@ -86,31 +131,3 @@ class UploadFile(View):
                 work_info['brief_introduction'], work_info['age_classification']
             ))
             cursor.commit()
-
-
-def img_file_convert(file=None, src_path=None, tar_path=None, width=200, height=200):
-    def convert_image(img):
-        target_size = (width, height)
-        img = ImageOps.fit(img, target_size, Image.LANCZOS, 0.5, (0.5, 0.5))
-        return img
-
-    if file:
-        with Image.open(file) as img:
-            img = convert_image(img)
-            buffer = BytesIO()
-            img.save(buffer, format='JPEG', quality=95)
-            buffer.seek(0)
-            return HttpResponse(buffer, content_type='image/jpeg')
-    elif src_path and tar_path:
-        if not os.path.exists(tar_path):
-            os.makedirs(tar_path)
-
-        for filename in os.listdir(src_path):
-            if filename.lower().endswith(('.jpg', '.jpeg', '.png', '.tiff')):
-                src_file_path = os.path.join(src_path, filename)
-                tar_file_path = os.path.join(tar_path,
-                                             f"{os.path.splitext(filename)[0]}{os.path.splitext(filename)[1]}")
-
-                with Image.open(src_file_path) as img:
-                    img = convert_image(img)
-                    img.save(tar_file_path, quality=95)
