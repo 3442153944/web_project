@@ -1,5 +1,5 @@
 <template>
-  <div class="comic_page">
+  <div class="user_page">
     {{data}}
   </div>
 </template>
@@ -8,25 +8,25 @@
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted,defineEmits,defineProps } from 'vue';
 export default {
-  name: 'comic_page',
+  name: 'user_page',
 }
 </script>
 
 <script setup>
-let comic_data=defineProps({
-    comic_data:{
-        type:Object,
-        default(){
-            return {}
-        }
+let user_data=defineProps({
+  user_data:{
+    type:Object,
+    default:()=>{
+      return {}
     }
+  }
 })
-let data=ref(comic_data.comic_data)
-watch(()=>comic_data.comic_data,(newValue,oldValue)=>{
+let data=ref(user_data.user_data)
+watch(()=>user_data.user_data,(newValue,oldValue)=>{
     data.value=newValue
 })
 onMounted(()=>{
-  data.value=comic_data.comic_data
+    data.value=user_data.user_data;
 })
 </script>
 

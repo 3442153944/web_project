@@ -64,6 +64,16 @@ class GetSearch(View):
                 rows = [dict(zip(columns, row)) for row in result]
                 combined_results.extend(rows)
 
+                # 查询用户信息
+                sql="""
+                select userid,username,user_avatar,user_self_introduction ,'user' as type from users where username like %s 
+                """
+                cursor.execute(sql,(search_pattern,))
+                result = cursor.fetchall()
+                columns = [desc[0] for desc in cursor.description]
+                rows = [dict(zip(columns, row)) for row in result]
+                combined_results.extend(rows)
+
             return JsonResponse({'status': 'success', 'message': '请求成功', 'data': combined_results}, status=200)
         except JSONDecodeError as e:
             self.logger.error(self.request_path(request) +

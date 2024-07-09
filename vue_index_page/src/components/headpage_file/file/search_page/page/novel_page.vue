@@ -21,9 +21,12 @@ let novel_data=defineProps({
       }
     }
 })
-let data=ref()
+let data=ref(novel_data.novel_data)
 watch(()=>novel_data.novel_data,(newValue,oldValue)=>{
     data.value=newValue
+})
+onMounted(()=>{
+  data.value=novel_data.novel_data
 })
 </script>
 
