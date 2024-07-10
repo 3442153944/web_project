@@ -10,6 +10,7 @@ from .GetUserFollowNovel import GetUserFollowNovel
 from .GetUserFollowToComic import GetUserFollowToComic
 from .GetUserFollowToIll import GetUserFollowToIll
 from .GetUserHistoryMsg import GetUserHistoryMsg
+from .GetUserWorkList import GetUserWorkList
 from .GroupControl import GroupControl
 from .login import Login
 
@@ -24,22 +25,24 @@ urlpatterns = [
     # 获取用户关注
     path('GetUserFollowToIll/', GetUserFollowToIll.as_view(), name='GetUserFollowToIll'),
     # 获取用户关注的用户的插画详情
-    path('GetUserFollowToComic/',GetUserFollowToComic.as_view(),name='GetUserFollowToComic'),
+    path('GetUserFollowToComic/', GetUserFollowToComic.as_view(), name='GetUserFollowToComic'),
     # 获取用户关注的用户的漫画详情
-    path('GetUserFollowNovel/',GetUserFollowNovel.as_view(),name='GetUserFollowNovel'),
+    path('GetUserFollowNovel/', GetUserFollowNovel.as_view(), name='GetUserFollowNovel'),
     # 获取用户关注的用户的小说详情
-    path('GetFriendList/',GetFriendList.as_view(),name='GetFriendList'),
+    path('GetFriendList/', GetFriendList.as_view(), name='GetFriendList'),
     # 获取用户的好友列表
-    path('GetUserHistoryMsg/',GetUserHistoryMsg.as_view(),name='GetUserHistoryMsg'),
+    path('GetUserHistoryMsg/', GetUserHistoryMsg.as_view(), name='GetUserHistoryMsg'),
     # 获取用户的历史消息
-    path('GetGroupList/',GetGroupList.as_view(),name='GetGroupList'),
-    #获取群组列表
-    path('GroupControlInfo/',GroupControlInfo.as_view(),name='GroupControlInfo'),
-    #获取群组管理权限信息
-    path('GroupControl/',GroupControl.as_view(),name='GroupControl'),
-    #群管理
-    path('GetGroupInfo/',GetGroupInfo.as_view(),name='GetGroupInfo'),
+    path('GetGroupList/', GetGroupList.as_view(), name='GetGroupList'),
+    # 获取群组列表
+    path('GroupControlInfo/', GroupControlInfo.as_view(), name='GroupControlInfo'),
+    # 获取群组管理权限信息
+    path('GroupControl/', GroupControl.as_view(), name='GroupControl'),
+    # 群管理
+    path('GetGroupInfo/', GetGroupInfo.as_view(), name='GetGroupInfo'),
     # 获取群组信息
-    path('GetSearch/',GetSearch.as_view(),name='GetSearch'),
-    #作品查询/搜索
+    path('GetSearch/', GetSearch.as_view(), name='GetSearch'),
+    # 作品查询/搜索
+    path('GetUserWorkList/', GetUserWorkList.as_view(), name='GetUserWorkList'),
+    # 获取用户的作品列表
 ]

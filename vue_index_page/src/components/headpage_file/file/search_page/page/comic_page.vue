@@ -15,7 +15,7 @@
       </div>
       <div class="comic_box" v-if="data">
         <div class="comic_item" v-for="(item,index) in data" :key="index">
-          <div class="age_classification">
+          <div class="age_classification" v-if="item.age_classification>16">
             <span>R-{{item.age_classification}}</span>
           </div>
           <div class="page_count">
