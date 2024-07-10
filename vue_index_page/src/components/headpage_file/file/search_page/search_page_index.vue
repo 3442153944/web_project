@@ -1,5 +1,5 @@
 <template>
-  <div class="search_page_index">
+  <div class="search_page_index" @wheel="onWheel">
     <div class="close_btn" @click="close_btn_click()">
       <img class="icon" src="https://www.sunyuanling.com/assets/close.svg" alt="close_btn">
     </div>
@@ -225,6 +225,10 @@ async function get_search_data(data) {
     return []
   }
 }
+//阻止滚动事件传播
+function onWheel(event) {
+      event.stopPropagation();
+    }
 defineExpose({
   get_search_data
 })
@@ -238,6 +242,7 @@ defineExpose({
   height: 100%;
   padding:5px 10px;
   align-items: center;
+  margin-bottom: 30px;
 }
 /*倒序*/
 .search_page_index {
