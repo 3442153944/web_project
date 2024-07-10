@@ -109,12 +109,14 @@ function jump_to_page(id)
     display: flex;
     flex-direction: column;
     padding: 5px;
+    margin-bottom: 10%;
   }
   .content{
     width: 100%;
     height: auto;
     display: flex;
     flex-direction: column;
+    margin: 5px 10% auto auto;
   }
   .comic_box{
     width: 100%;

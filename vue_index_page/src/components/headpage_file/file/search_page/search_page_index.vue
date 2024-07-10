@@ -243,6 +243,7 @@ defineExpose({
   padding:5px 10px;
   align-items: center;
   margin-bottom: 30px;
+  cursor:default;
 }
 /*倒序*/
 .search_page_index {

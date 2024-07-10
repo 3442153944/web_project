@@ -99,6 +99,14 @@ function jump_to_page(id) {
   height: auto;
   display: flex;
   margin: 5px auto;
+  margin-bottom: 10%;
+}
+.content{
+  width: 100%;
+  height: auto;
+  display: flex;
+  margin: 5px 10% auto auto;
+  flex-direction: column
 }
 
 .ill_box {

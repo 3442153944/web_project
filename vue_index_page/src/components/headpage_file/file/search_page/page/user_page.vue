@@ -11,15 +11,18 @@
                             <span>{{ item.username }}</span>
                         </div>
                         <div class="user_work" v-if="show_work_list.length > 0">
-                            <div class="user_work_for" v-for="(work, workIndex) in show_work_list" :key="workIndex">
+                            <div class="user_work_for" v-for="(work, workIndex) in show_work_list" :key="workIndex" >
                                 <div class="item_img" v-if="work.Illustration_id">
-                                    <img :src="'https://www.sunyuanling.com/image/thumbnail/' + work.content_file_list.split(/[,，]/)[0]">
+                                    <img :src="'https://www.sunyuanling.com/image/thumbnail/' + work.content_file_list.split(/[,，]/)[0]"
+                                    @click="jump_to_page('ill',work.Illustration_id)">
                                 </div>
                                 <div class="item_img" v-else-if="work.id">
-                                    <img :src="'https://www.sunyuanling.com/image/comic/thumbnail/' + work.content_file_list.split(/[,，]/)[0]">
+                                    <img :src="'https://www.sunyuanling.com/image/comic/thumbnail/' + work.content_file_list.split(/[,，]/)[0]"
+                                    @click="jump_to_page('comic',work.id)">
                                 </div>
                                 <div class="item_img" v-else-if="work.work_id">
-                                    <img :src="'https://www.sunyuanling.com/image/novel/thumbnail/' + work.work_cover">
+                                    <img :src="'https://www.sunyuanling.com/image/novel/thumbnail/' + work.work_cover"
+                                    @click="jump_to_page('novel',work.work_id)">
                                 </div>
                             </div>
                         </div>
@@ -123,6 +126,12 @@ function set_work_list() {
 
     console.log(show_work_list.value);
 }
+//页面带参跳转
+function jump_to_page(type,id) {
+    console.log(id);
+    console.log(type);
+    //window.location.href='https://localhost:3002/?id='+id+'&work_type='type'
+}
 </script>
 
 <style scoped>
@@ -182,6 +191,7 @@ function set_work_list() {
     width: 100px;
     height: 100px;
     object-fit: cover;
+    cursor: pointer;
 }
 
 .brief_introduction {

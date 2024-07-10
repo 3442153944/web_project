@@ -112,6 +112,7 @@ function jump_to_page(id)
   display: flex;
   flex-direction: column;
   margin: 5px auto;
+  margin-bottom: auto;
 }
 
 .content {
@@ -119,7 +120,7 @@ function jump_to_page(id)
   height: auto;
   display: flex;
   flex-direction: column;
-  margin: 5px auto;
+  margin: 5px 10% auto auto;
 }
 
 .title {
