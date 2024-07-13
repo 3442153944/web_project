@@ -26,6 +26,11 @@ CORS_ALLOWED_ORIGINS = [
     'https://127.0.0.1:*',
     'https://127.0.0.1',
     'https://localhost:3002',
+    'https://localhost:3001',
+    'https://localhost:3003',
+    'https://localhost:3004',
+    'https://localhost:3005',
+    'https://localhost:3006',
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -55,6 +60,14 @@ CSRF_TRUSTED_ORIGINS = [
     'https://localhost:3002',
     'https://127.0.0.1:*',
     'https://localhost:*',
+    'https://localhost:3001',
+    'https://localhost:3003',
+    'https://localhost:3004',
+    'https://localhost:3005',
+    'https://localhost:3006',
+    'http://localhost:3000',
+    'http://localhost:*'
+    'http://127.0.0.1:*'
 ]
 
 # Application definition
@@ -70,8 +83,11 @@ INSTALLED_APPS = [
     'djangoWebServer.WebSocket',
     'views.GetUserInfo',
     'views.mysql_conn_test',
-    'views.upload'
+    'views.upload',
+    'views.notice_control',
+
 ]
+
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'
 
 MIDDLEWARE = [
@@ -142,3 +158,4 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
