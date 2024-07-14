@@ -31,11 +31,11 @@
         <div class="is_important">
           是否重要：
           <select v-model="is_important">
-            <option value="yes">是</option>
-            <option value="no">否</option>
+            <option value="1">是</option>
+            <option value="0">否</option>
           </select>
         </div>
-        <div class="submit">
+        <div class="submit" @click="add_notice()">
           <span>提交</span>
         </div>
       </div>
@@ -63,10 +63,54 @@ let publish_time = ref(new Date().toISOString().split('T')[0]);
 let expire_time = ref('');
 let status = ref('draft');
 let attachment = ref('');
-let is_important = ref('no');
+let is_important = ref('0');
+// eslint-disable-next-line no-unused-vars
 let la_modifiy_time = ref('');
-let token=ref(cookies.get_cookie('token'));
+let token = ref(cookies.get_cookie('token'));
 let type = ref('add');
+
+async function add_notice() {
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/notice_control/NoticeOperations/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: title.value,
+        content: content.value,
+        author_id: author_id.value,
+        author_name: author_name.value,
+        create_time: create_time.value,
+        publish_time: publish_time.value,
+        expire_time:expire_time.value,
+        category:'默认',
+        attachment_url:attachment.value,
+        status:status.value,
+        is_important:is_important.value,
+        operate_type: type.value,
+        token:token.value,
+      })
+    })
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status == 'success') {
+        alert('添加成功');
+        console.log(data.message);
+      }
+      else {
+        alert('添加失败');
+        console.log(data.message);
+      }
+    }
+    else {
+      console.log('网络错误');
+    }
+  }
+  catch (error) {
+    console.log(error);
+  }
+}
 
 onMounted(() => {
   publish_time.value = new Date().toISOString().split('T')[0];
@@ -130,15 +174,16 @@ onMounted(() => {
   height: 100px;
   resize: vertical;
 }
-.submit{
+
+.submit {
   margin-top: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
   width: auto;
   height: auto;
-  padding:10px 20px;
-  background-color:rgba(0,150,250,1);
+  padding: 10px 20px;
+  background-color: rgba(0, 150, 250, 1);
   border-radius: 10px;
   color: rgba(255, 255, 255, 1);
   font-size: 16px;
@@ -146,8 +191,9 @@ onMounted(() => {
   transition: all 0.3s;
   font-weight: bold;
 }
-.submit:hover{
-  background-color:rgba(0,100,200,1);
+
+.submit:hover {
+  background-color: rgba(0, 100, 200, 1);
   transition: all 0.3s;
 }
 </style>

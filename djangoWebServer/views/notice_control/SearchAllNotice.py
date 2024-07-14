@@ -19,8 +19,8 @@ class NoticeOperations(View):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     sql_dict = {
         'add': 'INSERT INTO notice (title, content, author_id, author_name, create_time, publish_time, '
-               'expire_time, category, attachment_url, last_modified_time) '
-               'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
+               'expire_time, status, category, attachment_url, is_important, last_modified_time) '
+               'VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)',
         'delete': 'DELETE FROM notice WHERE id = %s',
         'update': 'UPDATE notice SET title = %s, content = %s, author_id = %s, author_name = %s, create_time = %s, '
                   'publish_time = %s, expire_time = %s, category = %s, attachment_url = %s, last_modified_time = %s '
@@ -42,8 +42,10 @@ class NoticeOperations(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
+            print(data)
             operate_type = data.get('operate_type')
             userid = ''
+            username = ''
             token = data.get('token')
             if token:
                 sql = 'select * from users where token=%s'
@@ -55,6 +57,7 @@ class NoticeOperations(View):
                         rows = [dict(zip(columns, row)) for row in result]
                         if rows:
                             userid = rows[0]['userid']
+                            username = rows[0]['username']
                         else:
                             self.logger.warning(
                                 f'{self.get_request_info(request)} - 访问失败：token无效 {str(request.body)}')
@@ -84,8 +87,9 @@ class NoticeOperations(View):
 
                 with connection.cursor() as cursor:
                     cursor.execute(self.sql_dict['add'], [
-                        data['title'], data['content'], data['author_id'], data['author_name'], self.now,
-                        data['publish_time'], data['expire_time'], data['category'], data.get('attachment_url'),
+                        data['title'], data['content'], userid, username, self.now,
+                        data['publish_time'], data['expire_time'], data['status'], data['category'],
+                        data.get('attachment_url'), data.get('is_important'),
                         self.now
                     ])
                 self.logger.info(f'{self.get_request_info(request)} - 公告添加成功：{str(data)}')
@@ -99,6 +103,10 @@ class NoticeOperations(View):
 
                 with connection.cursor() as cursor:
                     cursor.execute(self.sql_dict['delete'], [notice_id])
+                    if cursor.rowcount == 0:
+                        self.logger.warning(
+                            f'{self.get_request_info(request)} - 访问失败：公告不存在 {str(request.body)}')
+                        return JsonResponse({'status': 'failed', 'message': '公告不存在'}, status=404)
                 self.logger.info(f'{self.get_request_info(request)} - 公告删除成功：{str(data)}')
                 return JsonResponse({'status': 'success', 'message': '公告删除成功'}, status=200)
 
@@ -148,6 +156,7 @@ class NoticeOperations(View):
             return JsonResponse({'status': 'failed', 'message': '请求数据格式错误'}, status=400)
         except Exception as e:
             self.logger.error(f'{self.get_request_info(request)} - 访问失败：Exception {str(e)}')
+            print(str(e))
             return JsonResponse({'status': 'failed', 'message': '服务器内部错误'}, status=500)
 
 
