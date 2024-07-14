@@ -13,6 +13,7 @@ import json
 from django.contrib.auth import authenticate, login
 import time
 
+
 class NoticeOperations(View):
     logger = Logger()
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -42,7 +43,29 @@ class NoticeOperations(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             operate_type = data.get('operate_type')
-            userid = data.get('userid')
+            userid = ''
+            token = data.get('token')
+            if token:
+                sql = 'select * from users where token=%s'
+                with connection.cursor() as cursor:
+                    cursor.execute(sql, [token])
+                    result = cursor.fetchall();
+                    if result:
+                        columns = [desc[0] for desc in cursor.description]
+                        rows = [dict(zip(columns, row)) for row in result]
+                        if rows:
+                            userid = rows[0]['userid']
+                        else:
+                            self.logger.warning(
+                                f'{self.get_request_info(request)} - 访问失败：token无效 {str(request.body)}')
+                            return JsonResponse({'status': 'failed', 'message': 'token无效'}, status=403)
+                    else:
+                        self.logger.warning(
+                            f'{self.get_request_info(request)} - 访问失败：token无效 {str(request.body)}')
+                        return JsonResponse({'status': 'failed', 'message': 'token无效'}, status=403)
+            else:
+                self.logger.warning(f'{self.get_request_info(request)} - 访问失败：缺少参数token {str(request.body)}')
+                return JsonResponse({'status': 'failed', 'message': '缺少参数token'}, status=400)
 
             if not userid:
                 self.logger.warning(f'{self.get_request_info(request)} - 访问失败：缺少参数userid {str(request.body)}')
@@ -58,13 +81,6 @@ class NoticeOperations(View):
                 return JsonResponse({'status': 'failed', 'message': '缺少参数operate_type'}, status=400)
 
             if operate_type == 'add':
-                required_params = ['title', 'content', 'author_id', 'author_name', 'publish_time', 'expire_time',
-                                   'category']
-                for param in required_params:
-                    if not data.get(param):
-                        self.logger.warning(
-                            f'{self.get_request_info(request)} - 访问失败：缺少参数{param} {str(request.body)}')
-                        return JsonResponse({'status': 'failed', 'message': f'缺少参数{param}'}, status=400)
 
                 with connection.cursor() as cursor:
                     cursor.execute(self.sql_dict['add'], [
@@ -135,8 +151,6 @@ class NoticeOperations(View):
             return JsonResponse({'status': 'failed', 'message': '服务器内部错误'}, status=500)
 
 
-# 禁用cors检查
-
 class ControlNoticeLogin(View):
     now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     logger = Logger()
@@ -173,7 +187,7 @@ class ControlNoticeLogin(View):
                     if token:
                         token_createtime = row.get('token_createtime')
                         token_value = row.get('token')
-                        userid=row.get('userid')
+                        userid = row.get('userid')
 
                         if token_createtime:
                             token_createtime = datetime.strptime(token_createtime, '%Y-%m-%d %H:%M:%S')
@@ -208,7 +222,8 @@ class ControlNoticeLogin(View):
                         cursor.execute(update_token_sql, [new_token, new_token_time, userid])
                         cursor.connection.commit()
                         print(f'{token}\t{new_token}\t用户名登录，token已更新')
-                        return JsonResponse({'status': 'success', 'message': '登录成功', 'token': new_token}, status=200)
+                        return JsonResponse({'status': 'success', 'message': '登录成功', 'token': new_token},
+                                            status=200)
                     else:
                         return JsonResponse({'status': 'failed', 'message': '用户名或密码错误'}, status=400)
                 else:
@@ -222,3 +237,46 @@ class ControlNoticeLogin(View):
             self.logger.error(
                 f'{self.request_path(request)} - 访问失败：Exception {str(e)}，请求数据：{str(request.body)}')
             return JsonResponse({'status': 'failed', 'message': '服务器内部错误'}, status=500)
+
+
+# 使用token获取用户信息
+class UserInfoByToken(View):
+    now = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    logger = Logger()
+
+    def create_uuid(self):
+        return str(uuid.uuid4())
+
+    def request_path(self, request):
+        request_path = request.path
+        request_ip = request.META.get('REMOTE_ADDR')
+        return f'访问IP：{request_ip}，访问路径：{request_path}，时间：{self.now}'
+
+    def get(self, request):
+        self.logger.warning(f'{self.request_path(request)} - 访问失败：无效的请求方法')
+        return JsonResponse({'status': 'failed', 'message': '无效的请求方法'}, status=400)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            token = data.get('token')
+            if token:
+                sql = 'select * from users where token=%s'
+                with connection.cursor() as cursor:
+                    cursor.execute(sql, [token])
+                    result = cursor.fetchall()
+                    if result:
+                        columns = [desc[0] for desc in cursor.description]
+                        rows = [dict(zip(columns, row)) for row in result]
+                        # 删除密码
+                        del rows[0]['password']
+                        self.logger.info(f'{self.request_path(request)} - 访问成功')
+                        return JsonResponse({'status': 'success', 'message': '获取用户信息成功', 'data': rows},
+                                            status=200)
+        except json.JSONDecodeError as e:
+            self.logger.error(f'{self.request_path(request)} - 访问失败：JSONDecodeError {str(e)}')
+            return JsonResponse({'status': 'failed', 'message': '请求数据格式错误'}, status=400)
+        except Exception as e:
+            self.logger.error(
+                f'{self.request_path(request)} - 访问失败：Exception {str(e)}，请求数据：{str(request.body)}')
+            return JsonResponse({'status': 'fail', 'message': '服务器错误'}, status=500)

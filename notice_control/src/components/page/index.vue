@@ -1,6 +1,6 @@
 <template>
     <div class="index">
-       
+
         <notice_head></notice_head>
         <div class="content" v-if="index_page">
             <div class="content-left">
@@ -50,12 +50,10 @@ let login_page = ref(true)
 let index_page = ref(false)
 console.log(cookies.get_cookie('token'))
 async function login_item(item) {
-
-        login_page.value = false
-        index_page.value = true
-    
-    console.log(item)
+    login_page.value = false
+    index_page.value = true
 }
+
 //验证token正确则跳过登录，否则使用账号密码进行登录
 async function check_token() {
     const res = await fetch('https://www.sunyuanling.com/api/notice_control/ControlNoticeLogin/', {
@@ -89,9 +87,36 @@ async function check_token() {
         console.log('网络错误')
     }
 }
+//使用token获取用户信息
+async function get_user_info() {
+    try {
+        const res = await fetch('https://www.sunyuanling.com/api/notice_control/UserInfoByToken/', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: cookies.get_cookie('token')
+            })
+        })
+        if (res.ok) {
+            const data = await res.json()
+            if (data.status == 'success') {
+                cookies.set_storage('user_info', JSON.stringify( data.data[0]))
+            }
+            else {
+                console.log(data.message)
+            }
+        }
+    }
+    catch (e) {
+        console.log(e)
+    }
+}
 
 onMounted(async () => {
-   await check_token() // 组件挂载时验证token
+    await check_token(); // 组件挂载时验证token
+    await  get_user_info();
 })
 
 
