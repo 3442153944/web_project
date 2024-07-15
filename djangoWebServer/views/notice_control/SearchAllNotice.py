@@ -24,7 +24,7 @@ class NoticeOperations(View):
         'delete': 'DELETE FROM notice WHERE id = %s',
         'update': 'UPDATE notice SET title = %s, content = %s, author_id = %s, author_name = %s, create_time = %s, '
                   'publish_time = %s, expire_time = %s, category = %s, attachment_url = %s, last_modified_time = %s '
-                  'WHERE id = %s',
+                  ',status=%s,priority=%s,category=%s,is_important=%s WHERE id = %s',
         'search': 'SELECT * FROM notice LIMIT %s OFFSET %s',
         'count': 'SELECT COUNT(*) FROM notice'
     }
@@ -111,19 +111,13 @@ class NoticeOperations(View):
                 return JsonResponse({'status': 'success', 'message': '公告删除成功'}, status=200)
 
             elif operate_type == 'update':
-                required_params = ['id', 'title', 'content', 'author_id', 'author_name', 'publish_time', 'expire_time',
-                                   'category']
-                for param in required_params:
-                    if not data.get(param):
-                        self.logger.warning(
-                            f'{self.get_request_info(request)} - 访问失败：缺少参数{param} {str(request.body)}')
-                        return JsonResponse({'status': 'failed', 'message': f'缺少参数{param}'}, status=400)
+                id = data.get('id')
 
                 with connection.cursor() as cursor:
                     cursor.execute(self.sql_dict['update'], [
-                        data['title'], data['content'], data['author_id'], data['author_name'], self.now,
+                        data['title'], data['content'], userid, username, self.now,
                         data['publish_time'], data['expire_time'], data['category'], data.get('attachment_url'),
-                        self.now, data['id']
+                        self.now, data.get('status'),data.get('priority'),data.get('category'),data.get('is_important'), id
                     ])
                 self.logger.info(f'{self.get_request_info(request)} - 公告更新成功：{str(data)}')
                 return JsonResponse({'status': 'success', 'message': '公告更新成功'}, status=200)
@@ -145,6 +139,15 @@ class NoticeOperations(View):
                 return JsonResponse(
                     {'status': 'success', 'data': rows, 'total_count': total_count, 'page': page, 'per_page': per_page},
                     status=200)
+            elif operate_type == 'key_search':
+                key = data.get('key')
+                sql = 'select * from notice where title like %s or id like %s or author_name like %s'
+                with connection.cursor() as cursor:
+                    cursor.execute(sql, [key, key, key])
+                    columns = [desc[0] for desc in cursor.description]
+                    result = cursor.fetchall()
+                    rows = [dict(zip(columns, row)) for row in result]
+                    return JsonResponse({'status': 'success', 'data': rows}, status=200)
 
             else:
                 self.logger.warning(
