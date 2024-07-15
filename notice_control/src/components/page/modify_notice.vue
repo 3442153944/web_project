@@ -21,7 +21,7 @@
             发布时间<input type="datetime-local" v-model="item.publish_time" />
             截止时间<input type="datetime-local" v-model="item.expire_time" />
             公告状态
-            <select v-model="item.status">
+            <select v-model="item.status" style="width:90%;">
               <option value="draft">草稿</option>
               <option value="published">发布</option>
               <option value="expired">过期</option>

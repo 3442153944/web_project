@@ -6,7 +6,7 @@
     <div class="time">
       {{ time }}
     </div>
-    <div class="user_box" @mouseover="showDropdown" @mouseleave="hideDropdown">
+    <div class="user_box" v-if="user_info" @mouseover="showDropdown" @mouseleave="hideDropdown">
       <span>{{ user_info.username }}</span>
       <div class="user_avatar" @click="drop_down">
         <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + user_info.user_avatar">

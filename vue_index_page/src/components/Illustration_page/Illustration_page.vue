@@ -103,7 +103,6 @@ async function get_follow_illustrations_list(){
   }
 }
 onMounted(()=>{
-  console.log(cookies.get_cookie('user_id'))
   get_follow_illustrations_list()
  
 })

@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/no-unused-components -->
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="title">
+    <div class="title" v-if="user_info">
         <div class="show_more">
             <div class="show_more_icon" @click="switch_show_sidebar">
                 <svg t="1713665000311" class="icon" viewBox="0 0 1024 1024" version="1.1"
@@ -67,6 +67,13 @@
                         p-id="10589"></path>
                 </svg>
             </div>
+            <div class="notice_box">
+                <div class="notice_item">
+                    <div class="notice_title"></div>
+                    <div class="notice_content"></div>
+                    <div class="notice_time"></div>
+                </div>
+            </div>
         </div>
         <div class="useravatar ml mr" @click="useravatar_show_btn">
             <div class="useravatar_img">
@@ -118,11 +125,12 @@ let chat_page_show=ref(false)
 let user_info=ref([])
 let search_data=ref()//搜索数据
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
-avatar_img_src.value="https://www.sunyuanling.com/image/avatar_thumbnail/"+user_info.value.user_avatar;
+//avatar_img_src.value="https://www.sunyuanling.com/image/avatar_thumbnail/"+user_info.value.user_avatar;
 let search_show_status=ref(false);
 let input_box=ref(null)
 let search_page_click=ref(null)
 
+let notice_info=ref()
 //搜索实现
 watch(search_data,(newValue,oldValue)=>{
     search_data.value=newValue;

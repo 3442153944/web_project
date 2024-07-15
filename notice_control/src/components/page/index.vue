@@ -13,9 +13,7 @@
                 <div class="item-box" @click="currentComponent = 'modify_notice'">
                     <span>修改公告</span>
                 </div>
-                <div class="item-box" @click="currentComponent = 'show_all_notice'">
-                    <span>公告列表</span>
-                </div>
+              
             </div>
             <div class="content-right">
                 <component :is="currentComponent"></component>

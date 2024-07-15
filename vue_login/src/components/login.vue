@@ -51,9 +51,9 @@ function login() {
         .then(data => {  
             if (data.status === 'success') {  
                 console.log(data.data)
-                cookies.set_cookie('userinfo',JSON.stringify(data.data[0]))
-                console.log(JSON.parse(cookies.get_cookie('userinfo')))
-                window.location.href='https://localhost:3002'+'?userinfo='+JSON.stringify(data.data[0]) 
+                //cookies.set_cookie('userinfo',JSON.stringify(data.data))
+                //console.log(JSON.parse(cookies.get_cookie('userinfo')))
+                window.location.href='https://localhost:3002'+'?token='+data.token;
                 return;
             } else {  
                 // 登录失败的处理逻辑  
@@ -81,7 +81,8 @@ async function connServer() {
             },  
             body: JSON.stringify({  
                 username: username_in.value,  
-                password: password_in.value  
+                password: password_in.value,
+                token:null,
             })  
         });
   
@@ -91,7 +92,7 @@ async function connServer() {
 
         const data = await response.json(); // 将响应数据解析为 JSON 格式
         get_message.value = data; // 存储响应数据
-
+        console.log(data)
         return data; // 返回解析后的数据
     } catch (error) {  
         // 这里可以抛出错误或返回某种失败状态  
