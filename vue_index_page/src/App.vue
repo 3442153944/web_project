@@ -23,17 +23,22 @@ let cursor_top = ref(0);
 let cursor_left = ref(0);
 let cursor_apactiy = ref(0);
 let cursor_add = ref(0);
-let load_reading = ref(false)
-//读取URL参数设置cookie
-if (cookies.get_cookie('token') == null || cookies.get_cookie('token') == '' || cookies.get_cookie('token') == undefined) {
+let load_reading = ref(false);
+
+// 读取URL参数设置cookie并清除URL中的token参数
+function setTokenFromURL() {
     const url = new URL(window.location.href);
-    const searchParams = url.searchParams;
-    const token = searchParams.get('token')
-    cookies.set_cookie('token', token)
-    console.log(cookies.get_cookie('token'))
+    const token = url.searchParams.get('token');
+    if (token && (cookies.get_cookie('token') == null || cookies.get_cookie('token') === '' || cookies.get_cookie('token') === undefined)) {
+        cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+        url.searchParams.delete('token');
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+        console.log('Token set and URL cleaned:', cookies.get_cookie('token'));
+    }
 }
-console.log(cookies.get_cookie('token'))
+
 onMounted(() => {
+    setTokenFromURL();
     //获取鼠标坐标
     document.onmousemove = (e) => {
         cursor_top.value = e.clientY;
@@ -53,42 +58,44 @@ onMounted(() => {
             }
         }, 50);
     }
-})
-//获取用户信息并设置为cookies
+});
+
+// 获取用户信息并设置为cookies
 async function get_userinfo() {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
             method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies.get_cookie('token')}`
+            },
             body: JSON.stringify({
                 userid: null,
-                token: cookies.get_cookie('token'),
+                token: cookies.get_cookie('token')
             })
-        })
+        });
         if (res.ok) {
             const data = await res.json();
             if (data.status == 'success') {
-                console.log(data)
-                cookies.set_cookie('userinfo', JSON.stringify(data.data[0]))
+                console.log(data);
+                cookies.set_cookie('userinfo', JSON.stringify(data.data[0]), { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
                 load_reading.value = true;
+            } else {
+                console.log('用户未登录');
+                window.location.href = 'https://localhost:3000';
             }
-            else {
-                console.log('用户未登录')
-                window.location.href='https://localhost:3000'
-            }
+        } else if (res.status == 400) {
+            console.log('用户未登录');
+            window.location.href = 'https://localhost:3000';
+        } else {
+            console.log('网络错误');
         }
-        else if (res.status == 400) {
-            console.log('用户未登录')
-            window.location.href='https://localhost:3000'
-        }
-        else {
-            console.log('网络错误')
-        }
-    }
-    catch (err) {
-        console.log(err)
+    } catch (err) {
+        console.log('获取用户信息失败:', err);
     }
 }
-//登录验证
+
+// 登录验证
 async function load_login() {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/Login/', {
@@ -100,22 +107,22 @@ async function load_login() {
                 userid: null,
                 token: cookies.get_cookie('token')
             })
-        })
+        });
         if (res.ok) {
-            const data = await res.json()
+            const data = await res.json();
             if (data.status == 'success') {
-                cookies.set_cookie('token', data.token)
+                cookies.set_cookie('token', data.token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
             }
         }
-    }
-    catch (err) {
-        console.log(err)
+    } catch (err) {
+        console.log('登录验证失败:', err);
     }
 }
+
 onMounted(async () => {
     await get_userinfo();
     await load_login();
-})
+});
 </script>
 
 <style scoped>
@@ -128,12 +135,13 @@ onMounted(async () => {
     pointer-events: none;
 }
 
-.cursor_action svg img{
+.cursor_action svg img {
     width: 20px;
     height: 20px;
     object-fit: cover;
 }
-.icon{
+
+.icon {
     width: 25px;
     height: 25px;
     object-fit: cover;
