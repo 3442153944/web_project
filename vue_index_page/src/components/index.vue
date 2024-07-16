@@ -1,4 +1,3 @@
-<!-- eslint-disable no-unused-vars -->
 <template>
   <work_tags></work_tags>
   <div class="switch_page">
@@ -6,37 +5,32 @@
     <span class="active" @click="choosePage(1)">漫画</span>
     <span class="active" @click="choosePage(2)">小说</span>
   </div>
-  <illustration_page v-if="pageIndex === 0"></illustration_page>
-  <cartoon_page v-if="pageIndex === 1"></cartoon_page>
-  <novel_page v-if="pageIndex === 2"></novel_page>
+  <illustration_page v-if="page_show == 0"></illustration_page>
+  <cartoon_page v-if="page_show == 1"></cartoon_page>
+  <novel_page v-if="page_show == 2"></novel_page>
 </template>
 
 <script setup>
-// eslint-disable-next-line no-unused-vars
-import { onMounted, ref, watch } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 import work_tags from './work_tags/work_tags.vue';
 import illustration_page from './Illustration_page/Illustration_page.vue';
 import cartoon_page from './cartoon/cartoon_page.vue';
 import novel_page from './novel_page/novel_page.vue';
 import { useStore } from 'vuex';
-
 const store = useStore();
-
-const pageIndex = ref(store.state.pageStatus);
-watch(
-  () => store.state.pageStatus,
-  (newValue) => {
-    pageIndex.value = newValue;
-    updateButtonStyles(newValue);
-  }
-);
-onMounted(async () => {
-  await store.dispatch('getUserInfo');
-  console.log('User Info:', store.getters.userinfo);
-});
+const pageIndex = computed(() => store.getters.indexPage);
+const page_show=ref(pageIndex.value)
+console.log(store.state.pageStatus.indexPage)
 function choosePage(index) {
-  store.commit('SET_PAGESTATUS', index);
+  store.commit('SET_INDEXPAGE', index);
+  store.commit('SET_PAGESTATUS')
+  page_show.value=index
+  updateButtonStyles(index);
 }
+watch(()=>store.state.pageStatus,(newValue,oldValue)=>{
+    page_show.value=store.state.pageStatus.indexPage
+    updateButtonStyles(page_show.value);
+},{deep:true})
 
 function updateButtonStyles(index) {
   let btns = document.querySelectorAll('.switch_page > span.active');
@@ -56,7 +50,7 @@ function updateButtonStyles(index) {
 }
 
 onMounted(() => {
-  updateButtonStyles(pageIndex.value);
+  choosePage(pageIndex.value);
   choosePage(0)
 });
 </script>

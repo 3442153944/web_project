@@ -150,12 +150,15 @@ function switch_index_page(index)
     {
         case 0:
             store.commit('SET_PAGESTATUS',0)
+            store.commit('SET_INDEXPAGE',0)
             break;
         case 1:
             store.commit('SET_PAGESTATUS',1)
+            store.commit('SET_INDEXPAGE',1)
             break;
         case 2:
             store.commit('SET_PAGESTATUS',2)
+            store.commit('SET_INDEXPAGE',2)
     }
 }
 function show_more_btn() {

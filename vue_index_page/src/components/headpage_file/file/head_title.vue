@@ -255,10 +255,10 @@ function submission_work_box_show_btn() {
     });
     if (submission_work_box_show.value == false) {
         submission_work_box_show.value = true;
-    }
+    }/*
     else {
         submission_work_box_show.value = false;
-    }
+    }*/
 }
 
 function switch_show_sidebar() {
