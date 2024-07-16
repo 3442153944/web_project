@@ -51,6 +51,7 @@ const store = createStore({
     upload_work: state => state.pageStatus.upload_work,
     upload_work_type: state => state.pageStatus.upload_work_type,
     index_page: state => state.pageStatus.index_page,
+    indexPage: state => state.pageStatus.indexPage,
   },
 });
 

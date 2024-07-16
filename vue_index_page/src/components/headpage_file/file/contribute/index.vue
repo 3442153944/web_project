@@ -32,12 +32,12 @@ function close_upload_page()
 {
     store.commit('SET_UPLOAD_WORK',false)
 }
-watch(()=>store.state.upload_work_type,(newValue)=>{
+watch(()=>store.getters.upload_work_type,(newValue)=>{
     type.value=newValue;
     console.log(newValue)
 })
 onMounted(()=>{
-    type.value=store.state.upload_work_type;
+    type.value=store.getters.upload_work_type;
 })
 </script>
 

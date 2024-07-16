@@ -27,10 +27,10 @@ function choosePage(index) {
   page_show.value=index
   updateButtonStyles(index);
 }
-watch(()=>store.state.pageStatus,(newValue,oldValue)=>{
-    page_show.value=store.state.pageStatus.indexPage
+watch(()=>store.getters.indexPage,(newValue,oldValue)=>{
+    page_show.value=newValue
     updateButtonStyles(page_show.value);
-},{deep:true})
+})
 
 function updateButtonStyles(index) {
   let btns = document.querySelectorAll('.switch_page > span.active');
