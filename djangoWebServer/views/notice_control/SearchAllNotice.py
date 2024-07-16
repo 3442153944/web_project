@@ -25,7 +25,7 @@ class NoticeOperations(View):
         'update': 'UPDATE notice SET title = %s, content = %s, author_id = %s, author_name = %s, create_time = %s, '
                   'publish_time = %s, expire_time = %s, category = %s, attachment_url = %s, last_modified_time = %s '
                   ',status=%s,priority=%s,category=%s,is_important=%s WHERE id = %s',
-        'search': 'SELECT * FROM notice LIMIT %s OFFSET %s',
+        'search': 'SELECT * FROM notice order by last_modified_time desc LIMIT %s OFFSET %s ',
         'count': 'SELECT COUNT(*) FROM notice'
     }
 
@@ -152,6 +152,7 @@ class NoticeOperations(View):
             else:
                 self.logger.warning(
                     f'{self.get_request_info(request)} - 访问失败：无效的操作类型{operate_type} {str(request.body)}')
+
                 return JsonResponse({'status': 'failed', 'message': '无效的操作类型'}, status=400)
 
         except json.JSONDecodeError as e:

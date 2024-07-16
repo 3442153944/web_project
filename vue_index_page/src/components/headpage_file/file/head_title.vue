@@ -58,7 +58,7 @@
             </div>
             
         </div>
-        <div class="notice ml mr">
+        <div class="notice ml mr" @click="show_notice()" @blur="notice_box_blur" ref="notice_box">
             <div class="notice_icon">
                 <svg t="1713667792090" class="icon" viewBox="0 0 1024 1024" version="1.1"
                     xmlns="http://www.w3.org/2000/svg" p-id="10588" width="200" height="200">
@@ -67,11 +67,11 @@
                         p-id="10589"></path>
                 </svg>
             </div>
-            <div class="notice_box">
-                <div class="notice_item">
-                    <div class="notice_title"></div>
-                    <div class="notice_content"></div>
-                    <div class="notice_time"></div>
+            <div class="notice_box" v-if="notice_info&&show_notice_box" @click="get_notice_info()">
+                <div class="notice_item" v-for="(item,index) in notice_info" :key="index">
+                    <div class="notice_title">{{item.title}}</div>
+                    <div class="notice_content">{{item.content}}</div>
+                    <div class="notice_time">{{item.last_modified_time}}</div>
                 </div>
             </div>
         </div>
@@ -129,8 +129,66 @@ user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
 let search_show_status=ref(false);
 let input_box=ref(null)
 let search_page_click=ref(null)
-
+let notice_box=ref(null)
 let notice_info=ref()
+//获取公告信息
+async function get_notice_info(){
+    try{
+        const res=await fetch('https://www.sunyuanling.com/api/notice_control/NoticeOperations/',
+            {
+                method:'post',
+                headers:{
+                    'Content-Type':'application/json'
+                },
+                body:JSON.stringify({
+                    operate_type:'search',
+                    token:cookies.get_cookie('token'),
+                })
+            }
+        )
+        if(res.ok)
+        {
+            const data=await res.json()
+            if(data.status=='success')
+            {
+                console.log(data.data)
+                notice_info.value=data.data;
+            }
+            else{
+                console.log(data.message)
+            }
+        }
+        else{
+            console.log(res.status)
+        
+        }
+    }
+    catch(error){
+        console.log(error)
+    }
+}
+onMounted(async()=>{
+    await get_notice_info()
+})
+//公告信息框的显示和隐藏
+let show_notice_box=ref(false)
+function show_notice(){
+    show_notice_box.value=!show_notice_box.value;
+}
+function notice_box_blur()
+{
+    show_notice_box.value=false;
+}
+//不在元素及其子元素中点击隐藏公告框
+function notice_box_click(e)
+{
+    if (!e.target.closest('.notice')) {
+        show_notice_box.value = false;
+      }
+}
+onMounted(()=>{
+    document.addEventListener('click',notice_box_click);
+})
 //搜索实现
 watch(search_data,(newValue,oldValue)=>{
     search_data.value=newValue;
@@ -303,6 +361,36 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 .pb {
     padding-bottom: 5px;
 }
+/*公告框*/
+.notice_box{
+    display: flex;
+    width:250px;
+    height: auto;
+    max-height: 250px;
+    position: absolute;
+    top: 45px;
+    left: auto;
+    right: 0px;
+    z-index: 15;
+    flex-direction: column;
+    cursor: default;
+    overflow-y:auto ;
+    background-color: rgba(255,255,255,1);
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 10px;
+}
+.notice_box::-webkit-scrollbar {
+    display: none;
+}
+.notice_item{
+    display: flex;
+    width: 95%;
+    height: auto;
+    padding: 3px 5px;
+    margin: 5px auto;
+    flex-direction: column;
+    border-bottom: 1px solid rgba(0,0,0,0.5);
+}
 
 /*作品上传框*/
 .submission_work_box {
@@ -397,7 +485,6 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     width: 35px;
     height: 35px;
     align-items: center;
-    overflow: hidden;
     justify-content: center;
     align-self: center;
     position: relative;
