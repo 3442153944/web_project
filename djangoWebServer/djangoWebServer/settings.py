@@ -14,12 +14,24 @@ PORT = 2233
 
 DEBUG = True
 
+# 允许所有主机名请求
 ALLOWED_HOSTS = ['*']
 
 # 设置跨域
 CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = False  # 改为 False
 CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost',
+    'http://localhost:*',
+    'http://127.0.0.1:*',
+    'http://127.0.0.1',
+    'http://localhost:3002',
+    'http://localhost:3001',
+    'http://localhost:3003',
+    'http://localhost:3004',
+    'http://localhost:3005',
+    'http://localhost:3006',
     'https://localhost:3000',
     'https://localhost',
     'https://localhost:*',
@@ -31,6 +43,7 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost:3004',
     'https://localhost:3005',
     'https://localhost:3006',
+    'https://192.168.43.1:3002'
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -54,20 +67,32 @@ CORS_ALLOW_HEADERS = [
 
 # 添加信任的 CSRF 域名
 CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://localhost:3002',
+    'http://127.0.0.1:*',
+    'http://localhost:*',
+    'http://localhost:3001',
+    'http://localhost:3003',
+    'http://localhost:3004',
+    'http://localhost:3005',
+    'http://localhost:3006',
+    'http://localhost:3000',
+    'http://localhost:*',
+    'http://127.0.0.1:*',
     'https://localhost:3000',
     'https://localhost',
+    'https://localhost:*',
+    'https://127.0.0.1:*',
     'https://127.0.0.1',
     'https://localhost:3002',
-    'https://127.0.0.1:*',
-    'https://localhost:*',
     'https://localhost:3001',
     'https://localhost:3003',
     'https://localhost:3004',
     'https://localhost:3005',
     'https://localhost:3006',
-    'http://localhost:3000',
-    'http://localhost:*'
-    'http://127.0.0.1:*'
+    'https://192.168.43.1:3002'
 ]
 
 # Application definition
@@ -85,7 +110,6 @@ INSTALLED_APPS = [
     'views.mysql_conn_test',
     'views.upload',
     'views.notice_control',
-
 ]
 
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'
@@ -95,7 +119,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',  # 这里
     'django.middleware.common.CommonMiddleware',
-    #'django.middleware.csrf.CsrfViewMiddleware',
+    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -158,4 +182,3 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

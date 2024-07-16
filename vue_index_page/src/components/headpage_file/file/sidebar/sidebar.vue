@@ -3,25 +3,25 @@
     <div class="sidebar">
         <div class="title"><span>首页</span></div>
         <div class="sidebar_content">
-            <div class="sidebar_content_item" style="">
+            <div class="sidebar_content_item" style="" @click="switch_index_page(0)">
                 <div class="sidebar_content_item_icon">
                     <img src="https://www.sunyuanling.com/assets/photo.svg" class="icon">
                 </div>
                 <div class="sidebar_content_item_text"><span>插画</span></div>
             </div>
-            <div class="sidebar_content_item">
+            <div class="sidebar_content_item" @click="switch_index_page(0)">
                 <div class="sidebar_content_item_icon">
                     <img src="https://www.sunyuanling.com/assets/play.svg" class="icon">
                 </div>
                 <div class="sidebar_content_item_text">动图</div>
             </div>
-            <div class="sidebar_content_item">
+            <div class="sidebar_content_item" @click="switch_index_page(1)">
                 <div class="sidebar_content_item_icon">
                     <img src="https://www.sunyuanling.com/assets/comic.svg" class="icon">
                 </div>
                 <div class="sidebar_content_item_text"><span>漫画</span></div>
             </div>
-            <div class="sidebar_content_item">
+            <div class="sidebar_content_item" @click="switch_index_page(2)">
                 <div class="sidebar_content_item_icon">
                     <img class="icon" src="https://www.sunyuanling.com/assets/novel.svg">
                 </div>
@@ -131,6 +131,7 @@
 <script>
 import { onMounted, ref } from 'vue'
 import * as cookies from '../../../../../../model/cookies.js'
+import {useStore} from 'vuex'
 export default {
     // eslint-disable-next-line vue/multi-word-component-names
     name: 'sidebar'
@@ -141,7 +142,22 @@ let show_more_content = ref(false);
 let show_more = ref(true);
 let token = cookies.get_cookie('token')
 let notice_content = ref()
+const store = useStore()
 
+function switch_index_page(index)
+{
+    switch(index)
+    {
+        case 0:
+            store.commit('SET_PAGESTATUS',0)
+            break;
+        case 1:
+            store.commit('SET_PAGESTATUS',1)
+            break;
+        case 2:
+            store.commit('SET_PAGESTATUS',2)
+    }
+}
 function show_more_btn() {
     if (show_more.value == true) {
         show_more.value = false;

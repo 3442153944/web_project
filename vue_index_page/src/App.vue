@@ -1,7 +1,7 @@
 <template>
     <div class="cursor_action"
         :style="{ top: cursor_top + 'px', left: cursor_left + 'px', opacity: cursor_apactiy, transform: `translateY(${cursor_add}px)` }">
-       <img src="https://www.sunyuanling.com/assets/cat.svg" class="icon">
+        <img src="https://www.sunyuanling.com/assets/cat.svg" class="icon">
         <span>喵喵喵~</span>
     </div>
     <header_box v-if="load_reading"></header_box>
@@ -30,10 +30,11 @@ function setTokenFromURL() {
     const url = new URL(window.location.href);
     const token = url.searchParams.get('token');
     if (token && (cookies.get_cookie('token') == null || cookies.get_cookie('token') === '' || cookies.get_cookie('token') === undefined)) {
-        cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+        cookies.set_cookie('token', token,)/*{ secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
         url.searchParams.delete('token');
         window.history.replaceState({}, document.title, url.pathname + url.search);
         console.log('Token set and URL cleaned:', cookies.get_cookie('token'));
+    }*/
     }
 }
 
@@ -82,16 +83,19 @@ async function get_userinfo() {
                 load_reading.value = true;
             } else {
                 console.log('用户未登录');
-                window.location.href = 'https://localhost:3000';
+               // window.location.href = 'https://localhost:3000';
             }
         } else if (res.status == 400) {
             console.log('用户未登录');
-            window.location.href = 'https://localhost:3000';
+            cookies.clearAllCookies();
+            //window.location.href = 'https://localhost:3000';
         } else {
             console.log('网络错误');
+            cookies.clearAllCookies();
         }
     } catch (err) {
         console.log('获取用户信息失败:', err);
+        cookies.clearAllCookies();
     }
 }
 
