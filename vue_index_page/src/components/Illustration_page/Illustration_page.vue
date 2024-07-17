@@ -12,7 +12,7 @@
             <span>{{ item.content_file_list.split(/[,，]/).length }}</span>
           </div>
           <div class="like">
-            <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index - 1)">
+            <img :src="temp_svg" ref="like" @click="switch_love_status(index)">
           </div>
           <img :src="'https://www.sunyuanling.com/image/thumbnail/' + item.content_file_list.split(/[,，]/)[0]"
             @click="go_to_illustration_page(item.Illustration_id)">
@@ -63,15 +63,16 @@ let right_svg_path = ref('https://www.sunyuanling.com/assets/right.svg')
 let page_count_svg_path = ref('https://www.sunyuanling.com/assets/page_count.svg')
 let love_svg = ref(null)
 let user_info = ref(JSON.parse(cookies.get_cookie('userinfo')))
+let temp_svg = ref('https://www.sunyuanling.com/assets/love.svg')
+let like = ref(null)
 //切换喜欢状态
 function switch_love_status(index) {
-  let temp = love_svg.value[index];
-  if (temp.src == love_svg_path.value) {
-    temp.src = no_love_svg_path.value
-  } else {
-    temp.src = love_svg_path.value
+  if (like.value[index].src == love_svg_path.value) {
+    like.value[index].src = no_love_svg_path.value
   }
-  console.log(index)
+  else {
+    like.value[index].src = love_svg_path.value
+  }
 }
 
 //获取用户关注用户的插画作品列表
@@ -316,6 +317,7 @@ function scrollTabs(scrollAmount) {
   position: absolute;
   right: 5px;
   bottom: 5px;
+  z-index: 2;
 }
 
 .like svg {
