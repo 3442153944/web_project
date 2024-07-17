@@ -4,9 +4,15 @@
       <div class="close_btn" @click="close_upload_page()">
         <img class="icon" src="https://www.sunyuanling.com/assets/close.svg">
       </div>
-      <span @click="type = 'ill'" class="choose_page_item">插画</span>
-      <span @click="type = 'comic'" class="choose_page_item">漫画</span>
-      <span @click="type = 'novel'" class="choose_page_item">小说</span>
+      <span @click="type = 'ill'" class="choose_page_item" :class="{ select: type === 'ill' }">
+        <img class="icon" src="https://www.sunyuanling.com/assets/photo.svg">
+        插画</span>
+      <span @click="type = 'comic'" class="choose_page_item" :class="{ select: type === 'comic' }">
+        <img class="icon" src="https://www.sunyuanling.com/assets/comic.svg">
+        漫画</span>
+      <span @click="type = 'novel'" class="choose_page_item" :class="{ select: type === 'novel' }">
+        <img class="icon" src="https://www.sunyuanling.com/assets/novel.svg">
+        小说</span>
     </div>
     <ill_page v-if="type == 'ill'"></ill_page>
     <comic_page v-else-if="type == 'comic'"></comic_page>
@@ -51,7 +57,12 @@ onMounted(() => {
   height: 25px;
   object-fit: cover;
 }
-
+.select {
+  background-color: rgba(200, 200, 200, 1);
+  border-bottom: 3px solid rgba(0, 150, 250, 1);
+  transition: all 0.2s ease-in-out;
+  margin-bottom: 5px;
+}
 .index {
   width: 100vw;
   min-height: 90vh;
@@ -69,12 +80,13 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(77, 77, 77, 1);
-  margin: 5px auto;
+  background-color: rgba(107, 107, 107, 1);
+  margin: 0px auto;
   position: relative;
   color:rgba(233,233,233,1);
   font-size: 16px;
   font-weight: bold;
+  overflow: hidden;
 }
 .close_btn{
   width:30px;
@@ -94,12 +106,17 @@ onMounted(() => {
 }
 .choose_page_item {
   width: auto;
-  height: 100%;
+  height: 85%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 5px 10px;
-  padding: 2px 10px;
+  margin: auto 10px;
+  padding: 2px 20px;
   cursor: pointer;
+  gap: 10px;
+}
+.choose_page_item:hover{
+  background-color: rgba(200,200,200,1);
+  transition: all 0.3s ease-in-out;
 }
 </style>
