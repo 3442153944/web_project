@@ -30,7 +30,7 @@ const store=useStore()
 let type=ref();
 function close_upload_page()
 {
-    store.commit('SET_UPLOAD_WORK',false)
+    store.commit('SET_SINGLE_PAGE_STATUS',{key:'upload_work',value:false})
 }
 watch(()=>store.getters.upload_work_type,(newValue)=>{
     type.value=newValue;

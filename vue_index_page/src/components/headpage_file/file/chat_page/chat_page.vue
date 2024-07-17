@@ -128,17 +128,20 @@
 <script>
 import { ref, watch, onMounted, defineEmits } from 'vue';
 import * as cookies from '../../../../../../model/cookies.js';
-
 export default {
   name: 'chat_page',
 }
 </script>
 
 <script setup>
+import {useStore} from 'vuex'
+const store = useStore()
 let close_page = defineEmits(['close_page']);
 // 向父组件传递关闭消息
+
 function close_page_click() {
-  close_page('close_page', false)
+  //close_page('close_page', false)
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'chat_page',value:false})
 }
 
 let userinfo = ref(JSON.parse(cookies.get_cookie('userinfo')));

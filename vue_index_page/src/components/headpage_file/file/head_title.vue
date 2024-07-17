@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { onMounted, ref,watch } from 'vue'
+import { onMounted, ref,watch,computed } from 'vue'
 import sidebar from './sidebar/sidebar.vue'
 import submission_work_box from './submission_work_box/submission_work_box.vue'
 import header_box from './header_box/header_box.vue'
@@ -113,6 +113,9 @@ export default {
 }
 </script>
 <script setup>
+import {useStore} from 'vuex'
+const store = useStore()
+
 let index_jump_img_src = ref('https://www.sunyuanling.com/image/主页.png')
 let submission_text = ref('投稿作品')
 let avatar_img_src = ref('https://www.sunyuanling.com/image/avatar_thumbnail/87328997_p0.jpg')
@@ -121,12 +124,12 @@ let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
 let submission_work_box_show = ref(false)
 let header_box_show=ref(false)
-let chat_page_show=ref(false)
+let chat_page_show=computed(()=>store.getters.chat_page)
 let user_info=ref([])
 let search_data=ref()//搜索数据
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
 //avatar_img_src.value="https://www.sunyuanling.com/image/avatar_thumbnail/"+user_info.value.user_avatar;
-let search_show_status=ref(false);
+let search_show_status=computed(()=>store.getters.search_page);
 let input_box=ref(null)
 let search_page_click=ref(null)
 let notice_box=ref(null)
@@ -207,7 +210,8 @@ async function search_data_updata(){
 }
 //获取焦点时显示搜索页面，失去焦点时隐藏搜索页面
 function input_box_focus(){
-    search_show_status.value=true;
+   // search_show_status.value=true;
+    store.commit('SET_SINGLE_PAGE_STATUS',{key:'search_page',value:true})
 }
 function input_box_blur(){
     search_show_status.value=false;
@@ -216,13 +220,14 @@ function input_box_blur(){
 //接收搜索页面的关闭消息
 function close_search_page(item){
     console.log(item);
-    search_show_status.value=false;
+    //search_show_status.value=false;
+    store.commit('SET_SINGLE_PAGE_STATUS',{key:'search_page',value:false})
     search_data.value=null;
 }
 
 //聊天界面显示
 function chat_page_show_click(){
-    chat_page_show.value=true;
+   store.commit('SET_SINGLE_PAGE_STATUS',{key:'chat_page',value:true})
 }
 //接收子组件关闭消息
 function close_chat_page(item){

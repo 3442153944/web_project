@@ -42,7 +42,8 @@ const store=useStore()
 
 function set_page_type(type){
  store.commit('SET_UPLOAD_WORK_TYPE',type)
- store.commit('SET_UPLOAD_WORK',true)
+ //store.commit('SET_UPLOAD_WORK',true)
+ store.commit('SET_SINGLE_PAGE_STATUS',{key:'upload_work',value:true})
 }
 </script>
 

@@ -37,7 +37,7 @@ let cursor_apactiy = ref(0);
 let cursor_add = ref(0);
 let load_reading = ref(false);
 let upload_page_show=computed(()=>store.getters.upload_work)
-let index_page_show=computed(()=>!store.getters.upload_work)
+let index_page_show=computed(()=>store.getters.index_page)
 const store = useStore()
 
 // 读取URL参数设置cookie并清除URL中的token参数
