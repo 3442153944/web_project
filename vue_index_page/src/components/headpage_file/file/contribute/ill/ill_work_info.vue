@@ -67,10 +67,10 @@ const add_tags = () => {
 // 设置并发送作品信息
 const send_work_info = () => {
     const work_info = {
-        work_title: work_title.value,
-        work_introduce: work_introduce.value,
+        name: work_title.value,
+        brief_introduction: work_introduce.value,
         age_classification: age_classification.value,
-        tags: tags.value,
+        work_tags: tags.value,
     };
     emit('work_info', work_info);
 };

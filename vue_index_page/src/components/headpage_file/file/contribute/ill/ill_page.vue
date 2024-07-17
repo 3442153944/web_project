@@ -1,7 +1,8 @@
 <template>
   <div class="ill_page">
     <div class="upload_work_box">
-      <input type="file" id="upload_work_file" accept="image/*" style="display: none;" ref="upload_work_file" multiple @change="handleFileUpload">
+      <input type="file" id="upload_work_file" accept="image/*" style="display: none;" ref="upload_work_file" multiple
+        @change="handleFileUpload">
       <div class="upload_btn_box" v-if="temp_file_list.length <= 0">
         <div class="upload_btn" @click="upload_work_file_click()">
           <div class="upload_svg">
@@ -45,16 +46,23 @@
 <script setup>
 import { ref, watch } from 'vue';
 import ill_page_info from './ill_work_info.vue';
+import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
 
 let temp_file_list = ref([]);
 let file_size = ref(0);
 let file_count = ref(0);
 let work_info = ref({});
+let userinfo = ref(JSON.parse(cookies.get_cookie('userinfo')))
+console.log(userinfo.value)
 
 //接收子组件信息
 function get_sub_work_info(info) {
   work_info.value = info;
-  console.log(info);
+  work_info.value.username = userinfo.value.username
+  work_info.value.userid = userinfo.value.userid
+  work_info.value.work_type='ill'
+  work_info.value.token = cookies.get_cookie('token')
+  console.log(work_info.value)
 }
 
 function upload_work_file_click() {
@@ -111,9 +119,31 @@ function add_work() {
   upload_work_file_click();
 }
 
-function submit_work() {
-  // 提交逻辑
-  console.log('提交作品信息', work_info.value, temp_file_list.value);
+async function submit_work() {  
+  try {  
+    const formData = new FormData();  
+    temp_file_list.value.forEach((item, index) => {  
+      formData.append('files', item.file, item.file.name); // 最好包含文件名  
+    });  
+    formData.append('work_info', JSON.stringify(work_info.value)); // 将 work_info 转换为 JSON 字符串  
+  
+    const res = await fetch('https://www.sunyuanling.com/api/file/UploadFile/', {  
+      method: 'POST',  
+      body: formData, // 直接使用 FormData  
+    });  
+  
+    if (res.ok) {  
+      const data = await res.json();  
+      console.log(data.message);  
+      alert('上传成功');
+    } else {  
+      console.log('服务器错误');  
+      console.log(res.status);  
+    }  
+  } catch (e) {  
+    console.log(e);  
+  }  
+  console.log('提交作品信息', work_info.value, temp_file_list.value);  
 }
 </script>
 
@@ -245,11 +275,13 @@ function submit_work() {
   border-radius: 50%;
   cursor: pointer;
 }
-.delete_btn img{
+
+.delete_btn img {
   width: 25px;
   height: 25px;
   object-fit: cover;
 }
+
 .delete_btn:hover {
   background-color: rgba(188, 188, 188, 1);
   transition: all 0.3s ease-in-out;

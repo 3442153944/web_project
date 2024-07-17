@@ -1,27 +1,28 @@
 <template>
   <div class="illustration_page">
     <h3>用户关注的作品</h3>
-    <div class="follow_list"  v-if="follow_illustrations_list">
-      <div class="follow_work" v-for="(item,index) in follow_illustrations_list" :key="index">
-        <div class="follow_work_item" >
-          <div class="age_tag" v-if="item.age_classification>=18">
-            <span>R-{{ item.age_classification}}</span>
+    <div class="follow_list" v-if="follow_illustrations_list">
+      <div class="follow_work" v-for="(item, index) in follow_illustrations_list" :key="index">
+        <div class="follow_work_item">
+          <div class="age_tag" v-if="item.age_classification >= 18">
+            <span>R-{{ item.age_classification }}</span>
           </div>
-          <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length>1">
+          <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length > 1">
             <img :src="page_count_svg_path">
             <span>{{ item.content_file_list.split(/[,，]/).length }}</span>
           </div>
-          <div class="like" >
-            <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index-1)">
+          <div class="like">
+            <img :src="love_svg_path" ref="love_svg" @click="switch_love_status(index - 1)">
           </div>
-          <img :src="'https://www.sunyuanling.com/image/thumbnail/'+item.content_file_list.split(/[,，]/)[0]" @click="go_to_illustration_page(item.Illustration_id)">
+          <img :src="'https://www.sunyuanling.com/image/thumbnail/' + item.content_file_list.split(/[,，]/)[0]"
+            @click="go_to_illustration_page(item.Illustration_id)">
         </div>
         <div class="work_name">
           <span>{{ item.name }}</span>
         </div>
         <div class="userinfo">
           <div class="user_avatar">
-            <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/'+item.belong_to_user_avatar">
+            <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.belong_to_user_avatar">
           </div>
           <div class="username">
             <span>{{ item.belong_to_user }}</span>
@@ -29,10 +30,10 @@
         </div>
       </div>
       <div class="left_btn" @click="scrollTabs(-400)">
-       <img :src="left_svg_path">
+        <img :src="left_svg_path">
       </div>
       <div class="right_btn" @click="scrollTabs(400)">
-       <img :src="right_svg_path">
+        <img :src="right_svg_path">
       </div>
     </div>
     <recommendation></recommendation>
@@ -54,63 +55,92 @@ export default {
 
 <script setup>
 //喜欢状态
-let love_svg_path=ref('https://www.sunyuanling.com/assets/love.svg')
-        
-let no_love_svg_path=ref('https://www.sunyuanling.com/assets/no_love.svg')
-let left_svg_path=ref('https://www.sunyuanling.com/assets/left.svg')
-let right_svg_path=ref('https://www.sunyuanling.com/assets/right.svg')
-let page_count_svg_path=ref('https://www.sunyuanling.com/assets/page_count.svg')
-let love_svg=ref(null)
-let user_info=ref(JSON.parse(cookies.get_cookie('userinfo')))
+let love_svg_path = ref('https://www.sunyuanling.com/assets/love.svg')
+
+let no_love_svg_path = ref('https://www.sunyuanling.com/assets/no_love.svg')
+let left_svg_path = ref('https://www.sunyuanling.com/assets/left.svg')
+let right_svg_path = ref('https://www.sunyuanling.com/assets/right.svg')
+let page_count_svg_path = ref('https://www.sunyuanling.com/assets/page_count.svg')
+let love_svg = ref(null)
+let user_info = ref(JSON.parse(cookies.get_cookie('userinfo')))
 //切换喜欢状态
-function switch_love_status(index){
-  let temp=love_svg.value[index];
-  if(temp.src==love_svg_path.value){
-    temp.src=no_love_svg_path.value
-  }else{
-    temp.src=love_svg_path.value
+function switch_love_status(index) {
+  let temp = love_svg.value[index];
+  if (temp.src == love_svg_path.value) {
+    temp.src = no_love_svg_path.value
+  } else {
+    temp.src = love_svg_path.value
   }
   console.log(index)
 }
 
 //获取用户关注用户的插画作品列表
-let follow_illustrations_list=ref([])
-async function get_follow_illustrations_list(){
-  try{
-    const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowToIll/',{
-      method:'post',
-      headers:{
-        'Content-Type':'application/json'
+let follow_illustrations_list = ref([])
+async function get_follow_illustrations_list() {
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowToIll/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
       },
-      body:JSON.stringify({
-        userid:user_info.value.userid,
+      body: JSON.stringify({
+        userid: user_info.value.userid,
       })
     })
-    const data=await res.json()
-    if(data.status=='success')
-    {
+    const data = await res.json()
+    if (data.status == 'success') {
       console.log(data.data)
-      follow_illustrations_list.value=data.data;
+      follow_illustrations_list.value = data.data;
+      for (let i = 0; i < follow_illustrations_list.value.length; i++) {
+        follow_illustrations_list.value[i].belong_to_user_avatar = await get_author_avatar(follow_illustrations_list.value[i].belong_to_user_id)
+      }
       console.log(follow_illustrations_list.value)
       return data.data;
     }
-    else{
+    else {
       console.log(data.message)
     }
   }
-  catch(error){
+  catch (error) {
     console.log(error)
   }
 }
-onMounted(()=>{
+//根据ID获取用户作者头像
+async function get_author_avatar(userid) {
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userid: userid,
+        token: null,
+      })
+    })
+    if (res.ok) {
+      const data = await res.json()
+      if (data.status == 'success') {
+        return data.data[0].user_avatar;
+      }
+    }
+    else {
+      console.log(res.status)
+    }
+  }
+  catch (error) {
+    console.log(error)
+  }
+}
+onMounted(() => {
   get_follow_illustrations_list()
- 
+
 })
 
 //插画作品的带参跳转
-function go_to_illustration_page(work_id){
+function go_to_illustration_page(work_id) {
   console.log(work_id)
-  window.location.href='https://localhost:3003'+'?work_id='+work_id;
+  window.location.href = 'https://localhost:3003' + '?work_id=' + work_id;
 }
 
 //模拟横向滚动效果
@@ -181,8 +211,9 @@ function scrollTabs(scrollAmount) {
   height: 40px;
   object-fit: cover;
 }
+
 .left_btn img,
-.right_btn img{
+.right_btn img {
   width: 40px;
   height: 40px;
   object-fit: cover;
@@ -272,7 +303,8 @@ function scrollTabs(scrollAmount) {
   object-fit: cover;
   fill: rgba(244, 244, 244, 1)
 }
-.page_count img{
+
+.page_count img {
   width: 25px;
   height: 25px;
   margin-right: 2px;
@@ -291,7 +323,8 @@ function scrollTabs(scrollAmount) {
   height: 30px;
   object-fit: cover;
 }
-.like img{
+
+.like img {
   width: 30px;
   height: 30px;
   object-fit: cover;
