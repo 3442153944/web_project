@@ -173,15 +173,15 @@
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    border: 1px solid #555;
     background-color: #dadada;
     border-radius: 5px;
     position: relative;
+    padding: 1px;
   }
   .select {
     width: 100%;
     height: 100%;
-    background-color: #a7a7a7;
+    background-color: #d1d1d1;
     min-height: 30px;
     min-width: 10px;
     justify-content: center;
@@ -189,7 +189,6 @@
     display: flex;
     font-size: 14px;
     position: relative;
-    border-bottom: 1px solid #555;
     cursor: pointer;
     border-radius: 5px;
   }
@@ -222,14 +221,14 @@
   .select_item {
     display: flex;
     position: relative;
-    justify-content: center;
     align-items: center;
-    height: 30px;
-    width: 100%;
+    height: auto;
+    width: auto;
     border-bottom: 1px solid #555;
     cursor: pointer;
     background-color: rgba(211,211,211,1);
-    border-radius: 5px;
+    padding: 5px 10px;
+    flex: 1;
   }
   .select_item:hover {
     background-color: rgba(133, 133, 133, 0.3);
