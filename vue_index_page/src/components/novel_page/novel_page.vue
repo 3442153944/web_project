@@ -4,7 +4,7 @@
     <div class="novel_list">
       <div class="novel_item" v-for="(item,index) in novel_info_list" :key="index">
         <div class="novel_cover">
-          <img :src="'https://www.sunyuanling.com/image/thumbnail/'+item.work_cover">
+          <img :src="'https://www.sunyuanling.com/image/novel/thumbnail/'+item.work_cover">
         </div>
         <div class="novel_info">
           <div class="novel_state mt">
@@ -88,6 +88,10 @@ async function get_novel_list(){
       const data=await res.json()
       console.log(data)
       novel_info_list.value=data.data
+      for(let i=0;i<novel_info_list.value.length;i++)
+    {
+      novel_info_list.value[i].belong_to_avatar=await get_author_avatar(novel_info_list.value[i].belong_to_userid)
+    }
     }
     else{
       console.log('服务器错误')
@@ -96,6 +100,32 @@ async function get_novel_list(){
   catch(e)
   {
     console.log(e)
+  }
+}
+async function get_author_avatar(userid) {
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userid: userid,
+        token: null,
+      })
+    })
+    if (res.ok) {
+      const data = await res.json()
+      if (data.status == 'success') {
+        return data.data[0].user_avatar;
+      }
+    }
+    else {
+      console.log(res.status)
+    }
+  }
+  catch (error) {
+    console.log(error)
   }
 }
 onMounted(()=>{

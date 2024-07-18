@@ -1,6 +1,11 @@
 <template>
   <div class="novel_page">
-    小说上传页面
+    <div class="page_title">
+      小说投稿
+    </div>
+    <div class="content">
+      
+    </div>
   </div>
 </template>
 

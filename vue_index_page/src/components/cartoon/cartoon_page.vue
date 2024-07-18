@@ -14,7 +14,7 @@
             </svg>
             {{ item.content_file_list.split(/[,，]/).length }}
           </div>
-          <img :src="'https://www.sunyuanling.com/image/thumbnail/'+item.content_file_list.split(/[,，]/)[0]">
+          <img :src="'https://www.sunyuanling.com/image/comic/thumbnail/'+item.content_file_list.split(/[,，]/)[0]">
         </div>
         <div class="cartoon_title">
           <span>{{ item.work_name }}</span>
@@ -88,6 +88,11 @@ async function get_comic_list(){
     {
       console.log(data)
       comic_list.value=data.data
+      console.log(comic_list.value)
+      for(let i=0;i<comic_list.value.length;i++)
+      {
+        comic_list.value[i].belong_to_avatar=await get_author_avatar(comic_list.value[i].belong_to_userid)
+      }
     }
     else{
       console.log('服务器错误')
@@ -95,6 +100,32 @@ async function get_comic_list(){
   }
   catch(e){
     console.log(e)
+  }
+}
+async function get_author_avatar(userid) {
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userid: userid,
+        token: null,
+      })
+    })
+    if (res.ok) {
+      const data = await res.json()
+      if (data.status == 'success') {
+        return data.data[0].user_avatar;
+      }
+    }
+    else {
+      console.log(res.status)
+    }
+  }
+  catch (error) {
+    console.log(error)
   }
 }
 onMounted(()=>{
@@ -164,6 +195,7 @@ function scrollTabs(scrollAmount) {
   min-width: 200px;
   overflow: hidden;
   border-radius: 15px;
+  position: relative;
 }
 
 .cartoon_img img {
