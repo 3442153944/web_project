@@ -7,6 +7,7 @@
             <img class="icon" src="https://www.sunyuanling.com/assets/close.svg">
         </div>
     </div>
+    <div class="content"></div>
   </div>
 </template>
 
