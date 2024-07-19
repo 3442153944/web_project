@@ -9,7 +9,7 @@
                 </div>
             </div>
             <div class="content">
-                <div class="title">
+                <div class="work_title">
                     <label>标题</label>
                     <input type="text" v-model="work_info.title" maxlength="100">
                 </div>
@@ -42,13 +42,13 @@
                 </div>
                 <div class="work_status">
                     <switch_btn @change_status="get_work_status"></switch_btn>
+                    <span>连载中</span>
                 </div>
                 <div class="choose_cover">
                     <span>封面</span>
                     <div class="cover_list">
-                        <div class="cover_item" v-for="(item,index) in template_cover" :key="index">
-                            <img class="cover_img" :src="'https://www.sunyuanling.com/image/novel/cover_material/'+item">
-                        </div>
+                       <scroll_box :msg_type="'image'" :msg_list="set_template_cover_path()" 
+                       @chose_item="get_choose_cover_path"></scroll_box>
                     </div>
                 </div>
             </div>
@@ -56,51 +56,61 @@
     </div>
 </template>
 
-<script>
-// eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted, defineEmits } from 'vue';
-export default {
-    name: 'create_new_series',
-}
-</script>
-
 <script setup>
 import auto_textarea from '../../../../models/auto_textarea.vue';
 import switch_btn from '../../../../models/switch_btn.vue';
-let emit = defineEmits(['close_create_new_series'], ['new_series_info'])
-let new_series_info = ref({})
-let template_cover=ref(['template_1.jpg','template_2.jpg','template_3.jpg','template_4.jpg'])
+import scroll_box from '../../../../models/scroll_box.vue';
+import { ref, watch, defineEmits } from 'vue';
+
+const emit = defineEmits(['close_create_new_series', 'new_series_info']);
+const new_series_info = ref({});
+const template_cover = ref(['template_1.jpg', 'template_2.jpg', 'template_3.jpg', 'template_4.jpg', 'template_5.jpg']);
+
+function set_template_cover_path() {
+    const path = 'https://www.sunyuanling.com/image/novel/cover_material/';
+    return template_cover.value.map(cover => path + cover);
+}
+
 function close_page() {
-    emit('close_create_new_series', false)
+    emit('close_create_new_series', false);
 }
+
 function create_new_series() {
-    emit('new_series_info', new_series_info.value)
+    emit('new_series_info', new_series_info.value);
 }
-watch(new_series_info, (new_value, old_value) => {
-    create_new_series()
-    console.log(new_value)
-})
-let work_info = ref({
+
+const work_info = ref({
     title: '',
     introducation: '',
     tags: '',
     age_classification: '',
     work_status: '',
-})
-let tags_list_input = ref(null)
+});
+
+watch(work_info, (new_value) => {
+    new_series_info.value = { ...new_value };
+    create_new_series();
+    console.log(new_value);
+}, { deep: true });
+
+const tags_list_input = ref(null);
 watch(() => work_info.value.tags, (new_value) => {
-    tags_list_input.value += new_value.split(',')
-})
+    if (tags_list_input.value) {
+        tags_list_input.value.value = new_value.split(',');
+    }
+});
+
 function get_work_status(status) {
-    if (status == false) {
-        work_info.value.work_status = '已完结';
-    }
-    else {
-        work_info.value.work_status = '连载中';
-    }
-    console.log(work_info.value)
+    work_info.value.work_status = status ? '连载中' : '已完结';
+    console.log(work_info.value);
+}
+let choose_cover_path=ref()
+function get_choose_cover_path(path) {
+    choose_cover_path.value=path;
+    console.log(choose_cover_path.value)
 }
 </script>
+
 
 <style scoped>
 .create_new_series {
@@ -113,6 +123,7 @@ function get_work_status(status) {
     flex-direction: column;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 10;
+    padding: 50px;
 }
 
 .background {
@@ -122,14 +133,19 @@ function get_work_status(status) {
     flex-direction: column;
     background-color: rgba(255, 255, 255, 1);
     min-height: 100px;
-    min-width: 350px;
+    min-width: 550px;
     margin: auto;
     padding: 5px 20px;
     border-radius: 15px;
+    overflow: auto;
+    margin-bottom: 100px;
+    max-width: 550px;
 }
-
+.background::-webkit-scrollbar{
+    display: none;
+}
 .title {
-    width: 100%;
+    width: auto;
     height: 50px;
     display: flex;
     justify-content: space-between;
@@ -167,5 +183,18 @@ function get_work_status(status) {
     display: flex;
     flex-direction: column;
     gap: 10px;
+}
+.work_status{
+    width: auto;
+    display: flex;
+    height: auto;
+    align-items: center;
+    gap: 10px;
+}
+.work_title{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
 }
 </style>
