@@ -24,11 +24,11 @@
   const props = defineProps({
     select_title: {
       type: String,
-      default: '重写的select组件'
+      default: '新建系列'
     },
     select_list: {
       type: Array,
-      default: () => ['选项一']
+      default: () => ['新建系列']
     },
     drop_down_icon_path: {
       type: String,
@@ -190,7 +190,7 @@
     font-size: 14px;
     position: relative;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius:5px 5px 0px 0px;
   }
   .select:hover {
     background-color: rgba(133, 133, 133, 0.3);
@@ -217,6 +217,10 @@
     opacity: 0;
     border-top: 1px solid #555;
     background-color: #fff;
+    position: absolute;
+    left: 0px;
+    top: 100%;
+    border-radius: 0px 0px 5px 5px ;
   }
   .select_item {
     display: flex;
