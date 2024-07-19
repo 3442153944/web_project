@@ -9,13 +9,15 @@
           <img :src="props.right_btn" class="icon">
         </div>
       </div>
-      <div class="item" v-for="(item, index) in props.msg_list" :key="index">
+      <div class="list" ref="list">
+        <div class="item" v-for="(item, index) in props.msg_list" :key="index">
           <div v-if="props.msg_type === 'tags'" class="tags_item" ref="tags_item" @click="chose_item(item)">
             <span>{{ item }}</span>
           </div>
           <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item)">
             <img :src="item" class="image">
           </div>
+        </div>
       </div>
     </div>
   </div>
@@ -43,7 +45,7 @@ const props = defineProps({
   },
   animationDuration: {
     type: Number,
-    default: 1000 // Default animation duration in ms
+    default: 500 // Default animation duration in ms
   },
   scrollDistance: {
     type: Number,
@@ -57,7 +59,7 @@ const colorArr = ref([
 ]);
 
 const tags_item = ref(null);
-const scrollBoxContent = ref(null);
+const list = ref(null);
 
 const set_tag_color = () => {
   if (tags_item.value) {
@@ -72,18 +74,36 @@ const chose_item = (item) => {
   emit('chose_item', item);
 };
 
+// Easing function for smooth animation
+const easeInOutQuad = (t) => {
+  return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+};
+
+const smoothScroll = (distance, duration) => {
+  const start = list.value.scrollLeft;
+  const startTime = performance.now();
+
+  const animateScroll = (currentTime) => {
+    const elapsedTime = currentTime - startTime;
+    const progress = Math.min(elapsedTime / duration, 1);
+    const ease = easeInOutQuad(progress);
+
+    list.value.scrollLeft = start + distance * ease;
+
+    if (progress < 1) {
+      requestAnimationFrame(animateScroll);
+    }
+  };
+
+  requestAnimationFrame(animateScroll);
+};
+
 const scrollLeft = () => {
-  scrollBoxContent.value.scrollBy({
-    left: -props.scrollDistance,
-    behavior: 'smooth'
-  });
+  smoothScroll(-props.scrollDistance, props.animationDuration);
 };
 
 const scrollRight = () => {
-  scrollBoxContent.value.scrollBy({
-    left: props.scrollDistance,
-    behavior: 'smooth'
-  });
+  smoothScroll(props.scrollDistance, props.animationDuration);
 };
 
 onMounted(() => {
@@ -99,19 +119,19 @@ onMounted(() => {
   min-width: 50px;
   display: flex;
   align-items: center;
+  max-height: 200px;
 }
 
 .scroll_box_content {
+  display: flex;
   width: 100%;
   height: 100%;
-  overflow-x: scroll;
-  position: relative;
-  display: flex;
   align-items: center;
-  overflow: hidden;
-  min-height: 30px;
-  min-width: 50px;
-  scroll-behavior: smooth;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  transition: transform 0.3s ease;
+  position: relative;
 }
 
 .btn_box {
@@ -124,13 +144,15 @@ onMounted(() => {
   top: 0;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
+  z-index: 5;
+  pointer-events: none;
 }
 
 .scroll_box:hover .btn_box {
   opacity: 1;
 }
 
-.left_btn {
+.left_btn, .right_btn {
   width: 60px;
   height: 100%;
   display: flex;
@@ -138,20 +160,17 @@ onMounted(() => {
   justify-content: center;
   cursor: pointer;
   position: absolute;
+  pointer-events: auto; /* Enable pointer events only for the buttons */
+}
+
+.left_btn {
   left: 0;
-  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  background: linear-gradient(to right, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
 .right_btn {
-  width: 60px;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  position: absolute;
   right: 0;
-  background: linear-gradient(to left, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1));
+  background: linear-gradient(to left, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0));
 }
 
 .icon {
@@ -160,12 +179,23 @@ onMounted(() => {
   object-fit: cover;
 }
 
-.item {
+.list {
   width: auto;
-  height: auto;
+  height: 200px;
   display: flex;
   align-items: center;
   gap: 10px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  white-space: nowrap;
+  transition: transform 0.3s ease;
+}
+
+.item {
+  width: auto;
+  height: 200px;
+  display: flex;
+  align-items: center;
 }
 
 .tags_item {
@@ -182,16 +212,23 @@ onMounted(() => {
 
 .image_item {
   width: auto;
-  height: auto;
+  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border-radius: 15px;
-  overflow: hidden;
-  min-width: 100px;
-  min-height: 80px;
-  max-height: 300px;
-  max-width: 400px;
+  min-width: 150px;
+  min-height: 75px;
+  max-height: 100px;
+  max-width: 200px;
+  margin: 0px 10px;
+}
+
+.image_item img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 15px;
 }
 </style>
