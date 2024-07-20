@@ -11,8 +11,9 @@ import magic
 from asgiref.sync import sync_to_async
 from ..log.log import Logger
 from .config import settings
+from .CoverHandle import CoverHandle
 
-
+cover_handle = CoverHandle()
 class UploadFile(View):
     logger = Logger()
 
@@ -55,7 +56,9 @@ class UploadFile(View):
                 cursor.execute("SELECT * FROM users WHERE token = %s AND userid = %s LIMIT 1", [token, userid])
                 if cursor.fetchone() is None:
                     return JsonResponse({'status': 'error', 'message': 'token或userid错误'}, status=400)
-
+            if work_type=='get_preview_cover':
+                temp_name=cover_handle.handle(work_info['title'],None,work_info['template'])
+                return JsonResponse({'status':'success','message':'获取成功','preview_cover':temp_name})
             if files and work_type in ('ill', 'comic', 'novel'):
                 for file in files:
                     if not self.is_valid_file(file):
@@ -128,6 +131,7 @@ class UploadFile(View):
                 work_info['age_classification'], work_info['brief_introduction']
             )
         elif work_type == 'novel':
+            temp_path=cover_handle.handle(work_info['name'],None,work_info['template_index'])
             query = settings['queries']['novel']
             params = (
                 work_info['name'], content_file_list_str, work_info['username'],

@@ -10,6 +10,11 @@
         </div>
       </div>
       <div class="list" ref="list">
+        <div class="item" v-if="props.msg_type === 'image'" @click="chose_item('custom_cover')">
+          <div class="image_item">
+            <img class="icon" src="https://www.sunyuanling.com/assets/add.svg">
+          </div>
+        </div>
         <div class="item" v-for="(item, index) in props.msg_list" :key="index">
           <div v-if="props.msg_type === 'tags'" class="tags_item" ref="tags_item" @click="chose_item(item)">
             <span>{{ item }}</span>
@@ -77,15 +82,18 @@ let select_svg=ref('https://www.sunyuanling.com/assets/select_correct.svg')
 let select_box=ref(null)
 let select_icon=ref(null)
 const chose_item = (item,index) => {
-  emit('chose_item', item);
-  //设置指定索引元素为内部阴影
-  select_box.value[index].style.boxShadow='inset 0px 0px 10px 0px rgba(0, 150, 250, 1)';
-  select_icon.value[index].style.display='';
-  //遍历其他位置元素，去除所有内部阴影和select_icon的src值
-  for(let i=0;i<select_box.value.length;i++){
-    if(i!=index){
-      select_box.value[i].style.boxShadow='none';
-      select_icon.value[i].style.display='none';
+  emit('chose_item', 'template_'+(index+1));
+  if(item!='custom_cover')
+{
+    //设置指定索引元素为内部阴影
+    select_box.value[index].style.boxShadow='inset 0px 0px 10px 0px rgba(0, 150, 250, 1)';
+    select_icon.value[index].style.display='';
+    //遍历其他位置元素，去除所有内部阴影和select_icon的src值
+    for(let i=0;i<select_box.value.length;i++){
+      if(i!=index){
+        select_box.value[i].style.boxShadow='none';
+        select_icon.value[i].style.display='none';
+      }
     }
   }
 };
@@ -213,7 +221,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
 }
-
+.custom_cover{
+  width: auto;
+  height: 200px;
+  display: flex;
+  align-items: center;
+}
 .tags_item {
   width: auto;
   height: auto;

@@ -2,12 +2,12 @@ import os
 from PIL import Image, ImageDraw, ImageFont
 import numpy as np
 import uuid
-from djangoWebServer.views.upload.CoverConfig import cover_dict
+from .CoverConfig import cover_dict
+
 
 class CoverHandle:
-    def __init__(self, cover):
-        self.cover = cover
 
+    cover='template_1'
     def create_uuid(self):
         return str(uuid.uuid4())
 
@@ -37,7 +37,7 @@ class CoverHandle:
         max_width = max(x_coords) - min(x_coords)
         max_height = max(y_coords) - min(y_coords)
 
-        #逐步尝试以获取合适文字大小
+        # 逐步尝试以获取合适文字大小
         def get_font_size(text, max_width, max_height, direction, min_font_size=26):
             text_len = len(text)
 
@@ -65,7 +65,7 @@ class CoverHandle:
             return int(high)
 
         # 确定适合区域的最大字体大小
-        max_font_size=get_font_size(text,max_width,max_height,direction)
+        max_font_size = get_font_size(text, max_width, max_height, direction)
         print(max_font_size)
         font = ImageFont.truetype(font_path, max_font_size)
 
@@ -76,8 +76,10 @@ class CoverHandle:
 
         # 计算文本位置以确保竖直和横向居中
         if direction == 'vertical':
-            text_x = min(x_coords) + (max(x_coords) - min(x_coords) - text_height) / 2  # 确保在x轴上居中
-            text_y = min(y_coords) + (max(y_coords) - min(y_coords) - text_width) / 2  # 确保在y轴上居中
+            # 计算竖直文本的起始位置
+            text_x = min(x_coords) + (max(x_coords) - min(x_coords) - text_height) / 2
+            text_y = min(y_coords) + (max(y_coords) - min(y_coords) - (text_height * 1.5 * len(text))) / 2
+
             # 绘制竖直方向的文本
             for i, char in enumerate(text):
                 char_bbox = draw.textbbox((0, 0), char, font=font)
@@ -85,20 +87,25 @@ class CoverHandle:
                 char_height = char_bbox[3] - char_bbox[1]
                 char_x = text_x
                 char_y = text_y + i * char_height * 1.5  # 设置行间距为1.5倍
-                color = font_color if not isinstance(font_color, list) else self.convert_color(font_color[i % len(font_color)])
+                color = font_color if not isinstance(font_color, list) else self.convert_color(
+                    font_color[i % len(font_color)])
                 draw.text((char_x, char_y), char, font=font, fill=color)
         else:
+            # 计算水平文本的起始位置
             text_x = min(x_coords) + (max(x_coords) - min(x_coords) - text_width) / 2
             text_y = min(y_coords) + (max(y_coords) - min(y_coords) - text_height) / 2
+
             # 绘制水平方向的文本
-            for i, char in enumerate(text):
-                char_bbox = draw.textbbox((0, 0), char, font=font)
-                char_width = char_bbox[2] - char_bbox[0]
-                char_height = char_bbox[3] - char_bbox[1]
-                char_x = text_x + i * char_width * 1.5  # 设置段间距为1.5倍
-                char_y = text_y
-                color = font_color if not isinstance(font_color, list) else self.convert_color(font_color[i % len(font_color)])
-                draw.text((char_x, char_y), char, font=font, fill=color)
+            lines = self.wrap_text(text, max_width, draw, font)
+            for i, line in enumerate(lines):
+                line_bbox = draw.textbbox((0, 0), line, font=font)
+                line_width = line_bbox[2] - line_bbox[0]
+                line_height = line_bbox[3] - line_bbox[1]
+                line_x = min(x_coords) + (max(x_coords) - min(x_coords) - line_width) / 2
+                line_y = text_y + i * line_height * 1.5  # 设置行间距为1.5倍
+                color = font_color if not isinstance(font_color, list) else self.convert_color(
+                    font_color[i % len(font_color)])
+                draw.text((line_x, line_y), line, font=font, fill=color)
 
         # 创建临时文件夹路径
         temp_path = self.cover_dict['temp_path']
@@ -118,11 +125,27 @@ class CoverHandle:
 
         return output_path
 
+    def wrap_text(self, text, max_width, draw, font):
+        """Wrap text to fit within the given width."""
+        words = text.split(' ')
+        lines = []
+        line = ''
+        for word in words:
+            test_line = line + word + ' '
+            test_width = draw.textbbox((0, 0), test_line, font=font)[2] - draw.textbbox((0, 0), test_line, font=font)[0]
+            if test_width <= max_width:
+                line = test_line
+            else:
+                lines.append(line)
+                line = word + ' '
+        lines.append(line)
+        return lines
+
     def convert_color(self, color):
         if isinstance(color, str):
             if color.startswith('#'):
                 hex_color = color.lstrip('#')
-                return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4)) + (255,)
+                return tuple(int(hex_color[i:i + 2], 16) for i in (0, 2, 4)) + (255,)
         return color
 
     def create_gradient(self, colors, direction, model, font_size, text_length):
@@ -151,13 +174,9 @@ class CoverHandle:
             return (0, 0, 0, 255)  # 返回黑色不透明作为默认值或根据需要处理错误
 
     def interpolate_colors(self, color1, color2, ratio):
-        return tuple(int(color1[i] * (1 - ratio) + color2[i] * ratio) for i in range(3)) + (int(color1[3] * (1 - ratio) + color2[3] * ratio),)
+        return tuple(int(color1[i] * (1 - ratio) + color2[i] * ratio) for i in range(3)) + (
+        int(color1[3] * (1 - ratio) + color2[3] * ratio),)
 
     def rgb_to_hex(self, rgb):
         return '#%02x%02x%02x' % tuple(map(int, rgb[:3]))
 
-
-# 示例使用
-cover_handle = CoverHandle('template_2')
-output_path = cover_handle.handle('测试标题', template_name='template_3')
-print(f"生成的图片保存到: {output_path}")
