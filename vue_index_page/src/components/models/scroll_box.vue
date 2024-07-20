@@ -14,8 +14,11 @@
           <div v-if="props.msg_type === 'tags'" class="tags_item" ref="tags_item" @click="chose_item(item)">
             <span>{{ item }}</span>
           </div>
-          <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item)">
+          <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item,index)">
             <img :src="item" class="image">
+            <div class="select_box" ref="select_box">
+              <img :src="select_svg" class="icon" ref="select_icon" style="display: none;">
+            </div>
           </div>
         </div>
       </div>
@@ -70,8 +73,21 @@ const set_tag_color = () => {
 };
 
 const emit = defineEmits(['chose_item']);
-const chose_item = (item) => {
+let select_svg=ref('https://www.sunyuanling.com/assets/select_correct.svg')
+let select_box=ref(null)
+let select_icon=ref(null)
+const chose_item = (item,index) => {
   emit('chose_item', item);
+  //设置指定索引元素为内部阴影
+  select_box.value[index].style.boxShadow='inset 0px 0px 10px 0px rgba(0, 150, 250, 1)';
+  select_icon.value[index].style.display='';
+  //遍历其他位置元素，去除所有内部阴影和select_icon的src值
+  for(let i=0;i<select_box.value.length;i++){
+    if(i!=index){
+      select_box.value[i].style.boxShadow='none';
+      select_icon.value[i].style.display='none';
+    }
+  }
 };
 
 // Easing function for smooth animation
@@ -220,9 +236,10 @@ onMounted(() => {
   border-radius: 15px;
   min-width: 150px;
   min-height: 75px;
-  max-height: 100px;
-  max-width: 200px;
+  max-height: 200px;
+  max-width: 100px;
   margin: 0px 10px;
+  position: relative;
 }
 
 .image_item img {
@@ -230,5 +247,22 @@ onMounted(() => {
   height: 200px;
   object-fit: cover;
   border-radius: 15px;
+}
+.select_box{
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  background-color: rgb(255, 255, 255);
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.select_box img{
+  width:20px;
+  height: 20px;
+  object-fit: cover;
 }
 </style>
