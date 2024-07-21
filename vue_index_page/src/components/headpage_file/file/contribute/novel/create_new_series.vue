@@ -126,6 +126,7 @@ function get_choose_cover_path(path) {
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 10;
     padding: 50px;
+    box-sizing: border-box;
 }
 
 .background {
@@ -140,7 +141,6 @@ function get_choose_cover_path(path) {
     padding: 5px 20px;
     border-radius: 15px;
     overflow: auto;
-    margin-bottom: 100px;
     max-width: 550px;
 }
 .background::-webkit-scrollbar{
