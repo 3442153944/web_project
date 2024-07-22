@@ -47,11 +47,13 @@
                 <div class="choose_cover" style="gap:10px;display:flex;flex-direction:column;">
                     <span>封面</span>
                     <div class="cover_list">
-                       <scroll_box :msg_type="'image'" :msg_list="set_template_cover_path()" 
-                       @chose_item="get_choose_cover_path"></scroll_box>
+                        <scroll_box :msg_type="'image'" :msg_list="set_template_cover_path()"
+                            @chose_item="get_choose_cover_path" @choose_cover_file="get_choose_cover_file"
+                            @clear_cover_file="clear_choose_cover_file"></scroll_box>
                     </div>
                 </div>
-                <preview_cover :title="work_info.title" :template_name="work_info.choose_cover_path"></preview_cover>
+                <preview_cover :title="work_info.title" :template_name="work_info.choose_cover_path"
+                    :file="user_choose_cover_file" @temp_cover_path="user_choose_cover_path" @clear_uploaded_file="clear_choose_cover_file"></preview_cover>
             </div>
         </div>
     </div>
@@ -67,7 +69,7 @@ import { ref, watch, defineEmits } from 'vue';
 const emit = defineEmits(['close_create_new_series', 'new_series_info']);
 const new_series_info = ref({});
 const template_cover = ref(['template_1.jpg', 'template_2.jpg', 'template_3.jpg', 'template_4.jpg', 'template_5.jpg',
-'template_6.jpg','template_7.jpg'
+    'template_6.jpg', 'template_7.jpg'
 ]);
 
 function set_template_cover_path() {
@@ -83,14 +85,20 @@ function create_new_series() {
     emit('new_series_info', new_series_info.value);
 }
 
+// 作品系列信息
 const work_info = ref({
     title: '',
     introducation: '',
     tags: '',
     age_classification: '',
     work_status: '',
-    choose_cover_path:'',
+    choose_cover_path: '',
 });
+let user_choose_cover_file = ref(null);
+
+let user_choose_cover_path = (item) => {
+    work_info.value.user_choose_cover_path = item
+}
 
 watch(work_info, (new_value) => {
     new_series_info.value = { ...new_value };
@@ -109,12 +117,34 @@ function get_work_status(status) {
     work_info.value.work_status = status ? '连载中' : '已完结';
     console.log(work_info.value);
 }
-let choose_cover_path=ref()
-function get_choose_cover_path(path) {
-    choose_cover_path.value=path;
-    work_info.value.choose_cover_path=path;
-    console.log(choose_cover_path.value)
+
+// 获取子组件传值
+function get_choose_cover_file(file) {
+    user_choose_cover_file.value = file;
 }
+
+// 通知本组件清空文件
+function clear_choose_cover_file() {
+    user_choose_cover_file.value = null;
+}
+
+function get_choose_cover_path(path) {
+    if (path != 'custom_cover') {
+        work_info.value.choose_cover_path = path;
+        user_choose_cover_file.value = null; // 清空用户选择的文件
+    } else {
+        console.log('自定义封面')
+    }
+}
+
+// 监视作品标题和封面路径，如果变化先清空用户选择的封面文件
+watch(() => work_info.value.title, () => {
+    user_choose_cover_file.value = null;
+});
+
+watch(() => work_info.value.choose_cover_path, () => {
+    user_choose_cover_file.value = null;
+});
 </script>
 
 
@@ -147,9 +177,11 @@ function get_choose_cover_path(path) {
     overflow: auto;
     max-width: 550px;
 }
-.background::-webkit-scrollbar{
+
+.background::-webkit-scrollbar {
     display: none;
 }
+
 .title {
     width: auto;
     height: 50px;
@@ -190,39 +222,45 @@ function get_choose_cover_path(path) {
     flex-direction: column;
     gap: 10px;
 }
-.work_status{
+
+.work_status {
     width: auto;
     display: flex;
     height: auto;
     align-items: center;
     gap: 10px;
 }
-.work_title{
+
+.work_title {
     width: 100%;
     height: auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.work_introducation{
+
+.work_introducation {
     width: 100%;
     height: auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.tags_box{
+
+.tags_box {
     width: 100%;
     height: auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.add_tag_btn{
+
+.add_tag_btn {
     display: flex;
     flex-direction: column;
 }
-.tags_list{
+
+.tags_list {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -230,8 +268,12 @@ function get_choose_cover_path(path) {
     justify-content: center;
     align-items: center;
 }
-.tags_list input{width: 100%;}
-.age_classification{
+
+.tags_list input {
+    width: 100%;
+}
+
+.age_classification {
     display: flex;
     flex-direction: column;
     gap: 5px;

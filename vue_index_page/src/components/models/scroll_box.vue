@@ -19,7 +19,7 @@
           <div v-if="props.msg_type === 'tags'" class="tags_item" ref="tags_item" @click="chose_item(item)">
             <span>{{ item }}</span>
           </div>
-          <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item,index)">
+          <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item, index)">
             <img :src="item" class="image">
             <div class="select_box" ref="select_box">
               <img :src="select_svg" class="icon" ref="select_icon" style="display: none;">
@@ -27,6 +27,8 @@
           </div>
         </div>
       </div>
+      <input class="select_cover" type="file" ref="select_cover" id="select_cover" style="display: none;"
+       accept="image/*" @change="upload_choose_cover_file">
     </div>
   </div>
 </template>
@@ -68,7 +70,7 @@ const colorArr = ref([
 
 const tags_item = ref(null);
 const list = ref(null);
-
+let select_cover=ref(null)
 const set_tag_color = () => {
   if (tags_item.value) {
     tags_item.value.forEach((item, index) => {
@@ -77,26 +79,52 @@ const set_tag_color = () => {
   }
 };
 
-const emit = defineEmits(['chose_item']);
-let select_svg=ref('https://www.sunyuanling.com/assets/select_correct.svg')
-let select_box=ref(null)
-let select_icon=ref(null)
-const chose_item = (item,index) => {
-  emit('chose_item', 'template_'+(index+1));
-  if(item!='custom_cover')
-{
+const emit = defineEmits(['chose_item','choose_cover_file','clear_cover_file']);
+let select_svg = ref('https://www.sunyuanling.com/assets/select_correct.svg')
+let select_box = ref(null)
+let select_icon = ref(null)
+const chose_item = (item, index) => {
+
+  if (item != 'custom_cover') {
+    emit('chose_item', 'template_' + (index + 1));
+    emit('clear_cover_file',true)
     //设置指定索引元素为内部阴影
-    select_box.value[index].style.boxShadow='inset 0px 0px 10px 0px rgba(0, 150, 250, 1)';
-    select_icon.value[index].style.display='';
+    select_box.value[index].style.boxShadow = 'inset 0px 0px 10px 0px rgba(0, 150, 250, 1)';
+    select_icon.value[index].style.display = '';
     //遍历其他位置元素，去除所有内部阴影和select_icon的src值
-    for(let i=0;i<select_box.value.length;i++){
-      if(i!=index){
-        select_box.value[i].style.boxShadow='none';
-        select_icon.value[i].style.display='none';
+    for (let i = 0; i < select_box.value.length; i++) {
+      if (i != index) {
+        select_box.value[i].style.boxShadow = 'none';
+        select_icon.value[i].style.display = 'none';
       }
     }
   }
+  else{
+    //模拟点击
+    select_cover.value.click();
+    emit('chose_item','custom_cover')
+  }
 };
+function upload_choose_cover_file(e)
+{
+  let file=e.target.files[0];
+  if(file.type.indexOf('image')==-1)
+  {
+    alert('请选择图片文件');
+    return;
+  }
+  if(file.size>1024*1024*35)
+  {
+    alert('请选择小于35M的图片');
+    return;
+  }
+  if(file)
+  {
+    emit('choose_cover_file',file)
+    console.log('文件传递父组件')
+    console.log(file)
+  }
+}
 
 // Easing function for smooth animation
 const easeInOutQuad = (t) => {
@@ -157,8 +185,8 @@ onMounted(() => {
   white-space: nowrap;
   transition: transform 0.3s ease;
   position: relative;
-  padding:5px;
-  background-color: rgba(233,233,233,1);
+  padding: 5px;
+  background-color: rgba(233, 233, 233, 1);
   border-radius: 10px;
 }
 
@@ -180,7 +208,8 @@ onMounted(() => {
   opacity: 1;
 }
 
-.left_btn, .right_btn {
+.left_btn,
+.right_btn {
   width: 60px;
   height: 100%;
   display: flex;
@@ -188,7 +217,8 @@ onMounted(() => {
   justify-content: center;
   cursor: pointer;
   position: absolute;
-  pointer-events: auto; /* Enable pointer events only for the buttons */
+  pointer-events: auto;
+  /* Enable pointer events only for the buttons */
 }
 
 .left_btn {
@@ -225,12 +255,14 @@ onMounted(() => {
   display: flex;
   align-items: center;
 }
-.custom_cover{
+
+.custom_cover {
   width: auto;
   height: 200px;
   display: flex;
   align-items: center;
 }
+
 .tags_item {
   width: auto;
   height: auto;
@@ -265,7 +297,8 @@ onMounted(() => {
   object-fit: cover;
   border-radius: 15px;
 }
-.select_box{
+
+.select_box {
   position: absolute;
   right: 5px;
   bottom: 5px;
@@ -277,8 +310,9 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
 }
-.select_box img{
-  width:20px;
+
+.select_box img {
+  width: 20px;
   height: 20px;
   object-fit: cover;
 }

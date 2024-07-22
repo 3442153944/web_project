@@ -2,7 +2,7 @@
     <div class="preview_cover">
         <span>封面预览</span>
         <div class="cover_box">
-            <img :src="'https://www.sunyuanling.com/image/novel/temp_cover/' + cover_path" alt="封面预览">
+            <img :src="cover_img_src" alt="封面预览" ref="cover_img">
         </div>
     </div>
 </template>
@@ -11,9 +11,8 @@
 import { ref, watch, defineEmits, defineProps, onMounted } from 'vue';
 import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
 
-let cover_path = ref();
-let token = cookies.get_cookie('token');
-
+const cover_img_src = ref('');
+const token = cookies.get_cookie('token');
 const props = defineProps({
     title: {
         type: String,
@@ -22,10 +21,14 @@ const props = defineProps({
     template_name: {
         type: String,
         default: 'template_1'
+    },
+    file: {
+        type: File,
+        default: null
     }
 });
 
-let emit = defineEmits(['temp_cover_path']);
+const emit = defineEmits(['temp_cover_path']);
 
 const get_preview_cover = async () => {
     try {
@@ -53,19 +56,32 @@ const get_preview_cover = async () => {
     }
 };
 
+const update_cover_img = async () => {
+    if (props.file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            cover_img_src.value = e.target.result;
+        };
+        reader.readAsDataURL(props.file);
+    } else if (props.title || props.template_name) {
+        cover_img_src.value = 'https://www.sunyuanling.com/image/novel/temp_cover/' + await get_preview_cover();
+        console.log('服务器绘制封面');
+    } else {
+        cover_img_src.value = ''; // 清空封面预览
+    }
+    emit('temp_cover_path', cover_img_src.value);
+};
+
 onMounted(async () => {
-    cover_path.value = await get_preview_cover();
-    emit('temp_cover_path', cover_path.value);
+    await update_cover_img();
 });
 
-watch(
-    () => ({ ...props }),
-    async () => {
-        cover_path.value = await get_preview_cover();
-        emit('temp_cover_path', cover_path.value);
-    },
-    { deep: true }
-);
+watch(() => ({ ...props }), async (newVal, oldVal) => {
+    if (newVal.file !== oldVal.file || newVal.title !== oldVal.title || newVal.template_name !== oldVal.template_name) {
+        cover_img_src.value = ''; // 先清空值
+        await update_cover_img();
+    }
+}, { deep: true });
 </script>
 
 <style scoped>
@@ -85,8 +101,9 @@ watch(
     margin: 10px auto;
     background-color: rgba(233, 233, 233, 1);
     border-radius: 10px;
-    padding: 10px 0px ;
+    padding: 10px 0px;
 }
+
 .cover_box img {
     width: 30%;
     height: 100%;

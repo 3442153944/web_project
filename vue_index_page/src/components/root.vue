@@ -98,12 +98,12 @@ async function get_userinfo() {
                 load_reading.value = true;
             } else {
                 console.log('用户未登录');
-               // window.location.href = 'https://localhost:3000';
+               window.location.href = 'https://localhost:3000';
             }
         } else if (res.status == 400) {
             console.log('用户未登录');
             cookies.clearAllCookies();
-            //window.location.href = 'https://localhost:3000';
+            window.location.href = 'https://localhost:3000';
         } else {
             console.log('网络错误');
             cookies.clearAllCookies();

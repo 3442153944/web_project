@@ -42,6 +42,9 @@ class GetPreviewCover(View):
 
             title = data.get('title', '实例标题')
             template_name = data.get('template_name', 'template_1')
+            if not template_name or template_name == '':
+                template_name = 'template_1'
+            print(title, template_name)
             temp_cover_path = coverhand.handle(title, None, template_name)
 
             self.logger.info(
