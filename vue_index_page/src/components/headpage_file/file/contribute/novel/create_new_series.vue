@@ -44,14 +44,14 @@
                     <switch_btn @change_status="get_work_status"></switch_btn>
                     <span>连载中</span>
                 </div>
-                <div class="choose_cover">
+                <div class="choose_cover" style="gap:10px;display:flex;flex-direction:column;">
                     <span>封面</span>
                     <div class="cover_list">
                        <scroll_box :msg_type="'image'" :msg_list="set_template_cover_path()" 
                        @chose_item="get_choose_cover_path"></scroll_box>
                     </div>
                 </div>
-                <preview_cover></preview_cover>
+                <preview_cover :title="work_info.title" :template_name="work_info.choose_cover_path"></preview_cover>
             </div>
         </div>
     </div>
@@ -89,6 +89,7 @@ const work_info = ref({
     tags: '',
     age_classification: '',
     work_status: '',
+    choose_cover_path:'',
 });
 
 watch(work_info, (new_value) => {
@@ -111,6 +112,7 @@ function get_work_status(status) {
 let choose_cover_path=ref()
 function get_choose_cover_path(path) {
     choose_cover_path.value=path;
+    work_info.value.choose_cover_path=path;
     console.log(choose_cover_path.value)
 }
 </script>
@@ -233,6 +235,6 @@ function get_choose_cover_path(path) {
     display: flex;
     flex-direction: column;
     gap: 5px;
-    
+
 }
 </style>
