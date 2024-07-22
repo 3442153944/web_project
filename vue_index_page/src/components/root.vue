@@ -29,6 +29,7 @@ export default {
 
 <script setup>
 import * as cookies from '../../../model/cookies.js';
+// eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import { useStore } from 'vuex'
 let cursor_top = ref(0);
