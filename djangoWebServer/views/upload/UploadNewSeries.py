@@ -60,11 +60,13 @@ class UploadNewSeries(View):
         处理POST请求，上传新的系列作品
         """
         try:
-            files = request.FILES.getlist('work_cover')
-            work_info = json.loads(request.POST.get('work_info'))
+            files = request.FILES.getlist('file')
+            work_info = request.POST.get('work_info')
+            work_info=json.loads(work_info)
             cover_type = work_info.get('cover_type')
             token = work_info.get('token')
-            user_info = json.loads(work_info.get('user_info'))
+            user_info = work_info.get('user_info')
+            print(user_info)
             belong_to_user_id = user_info.get('userid')
             belong_to_username = user_info.get('username')
 
@@ -79,7 +81,7 @@ class UploadNewSeries(View):
                     self.logger.error(self.request_path(request) + 'token错误' + '请求参数' + request.POST)
                     return JsonResponse({'status': 'error', 'message': 'token错误'}, status=403)
 
-            tags = work_info.get('tags').split(',')
+            tags = work_info.get('tags')
             str_tag = ','.join(tags)
 
             if cover_type == 'default_cover':
@@ -94,13 +96,22 @@ class UploadNewSeries(View):
                     self.generate_thumbnail(final_file_path, thumbnail_path)
                 except Exception as e:
                     self.logger.error(self.request_path(request) + '文件不存在' + '请求参数' + request.POST)
+                    print(e)
                     return JsonResponse({'status': 'error', 'message': '文件不存在'}, status=404)
 
-                cursor.execute(self.sql, [work_info.get('title'), belong_to_username, belong_to_user_id,
-                                          work_info.get('series'), str_tag, work_info.get('age_classification'),
-                                          file_name, work_info.get('author_say'), self.now,
-                                          work_info.get('brief_introduction'), work_info.get('work_status'),
-                                          work_info.get('original'), work_info.get('category')])
+                with connection.cursor() as cursor:
+                    cursor.execute(self.sql, [work_info.get('work_name'), belong_to_username, belong_to_user_id,
+                                              work_info.get('title'), str_tag, work_info.get('age_classification'),
+                                              file_name, work_info.get('author_say'), self.now,
+                                              work_info.get('introducation'), work_info.get('work_status'),
+                                              work_info.get('is_original'), work_info.get('series_name')])
+
+                    if cursor.rowcount == 0:
+                        print('上传失败')
+                        self.logger.error(self.request_path(request) + '上传失败' + '请求参数' + request.POST)
+                        return JsonResponse({'status': 'error', 'message': '上传失败'}, status=500)
+                    print('上传成功')
+                    return JsonResponse({'status': 'success', 'message': '上传成功'})
 
             elif cover_type == 'custom_cover':
                 file_name = self.create_uuid() + 'custom_cover.jpg'
@@ -108,20 +119,28 @@ class UploadNewSeries(View):
                 self.save_file(files[0], final_file_path)
                 thumbnail_path = self.cover_thumbnail_path + file_name
                 self.generate_thumbnail(final_file_path, thumbnail_path)
-
-                cursor.execute(self.sql, [work_info.get('title'), belong_to_username, belong_to_user_id,
-                                          work_info.get('series'), str_tag, work_info.get('age_classification'),
-                                          file_name, work_info.get('author_say'), self.now,
-                                          work_info.get('brief_introduction'), work_info.get('work_status'),
-                                          work_info.get('original'), work_info.get('category')])
+                with connection.cursor() as cursor:
+                    cursor.execute(self.sql, [work_info.get('work_name'), belong_to_username, belong_to_user_id,
+                                              work_info.get('title'), str_tag, work_info.get('age_classification'),
+                                              file_name, work_info.get('author_say'), self.now,
+                                              work_info.get('introducation'), work_info.get('work_status'),
+                                              work_info.get('is_original'), work_info.get('series_name')])
+                    if cursor.rowcount == 0:
+                        print('上传失败')
+                        self.logger.error(self.request_path(request) + '上传失败' + '请求参数' + request.POST)
+                        return JsonResponse({'status': 'error', 'message': '上传失败'}, status=500)
+                    print('上传成功')
+                    return JsonResponse({'status': 'success', 'message': '上传成功'})
 
             return JsonResponse({'status': 'success', 'message': '上传成功'})
 
-        except json.JSONDecodeError:
-            self.logger.error(self.request_path(request) + '请求参数错误' + '请求参数' + request.POST)
+        except json.JSONDecodeError as e:
+            self.logger.error(self.request_path(request) + '请求参数错误' + '请求参数' + work_info+str(e))
+            print(e)
             return JsonResponse({'status': 'error', 'message': '请求参数错误'}, status=400)
         except Exception as e:
             self.logger.error(self.request_path(request) + '服务器错误' + '错误信息' + str(e))
+            print(e)
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
 
     def generate_thumbnail(self, original_path, thumbnail_path, size=(200, 200)):

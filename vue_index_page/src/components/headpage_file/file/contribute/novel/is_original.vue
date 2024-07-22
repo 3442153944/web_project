@@ -32,7 +32,7 @@ function get_is_original(item)
 }
 let emit=defineEmits(['series_info'])
 // eslint-disable-next-line no-unused-vars
-watch(()=>[select_item,is_original],()=>{
+watch([select_item,is_original],()=>{
     emit('series_info',{'series_name':select_item.value,'is_original':is_original.value,})
 })
 </script>

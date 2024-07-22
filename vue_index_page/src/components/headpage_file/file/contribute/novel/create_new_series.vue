@@ -10,8 +10,12 @@
             </div>
             <div class="content">
                 <div class="work_title">
-                    <label>标题</label>
+                    <label>系列标题</label>
                     <input type="text" v-model="work_info.title" maxlength="100">
+                </div>
+                <div class="work_name">
+                    <label>作品名称</label>
+                    <input type="text" v-model="work_info.work_name" maxlength="100">
                 </div>
                 <div class="work_introducation">
                     <label>作品介绍</label>
@@ -22,10 +26,15 @@
                 <div class="tags_box">
                     <div class="add_tag_btn">
                         <label>作品标签</label>
-                        <input type="text" v-model="work_info.tags">
+                        <input type="text" v-model="temp_tag_list" placeholder="请输入标签..." @keyup.enter="add_tag">
                     </div>
                     <div class="tags_list">
-                        <input type="text" v-model="work_info.tags" ref="tags_list_input">
+                        <div class="tag_item" v-for="(item,index) in work_info.tags" :key="index">
+                            <span>{{item}}</span>
+                            <div class="delete_btn" @click="delete_tag(index)">
+                                <img class="icon" src="https://www.sunyuanling.com/assets/close.svg">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="age_classification">
@@ -57,6 +66,14 @@
                     @clear_uploaded_file="clear_choose_cover_file">
                 </preview_cover>
                 <is_original @series_info="get_series_info"></is_original>
+                <div class="btn_box">
+                    <div class="sure_btn" @click="set_send_work_info()">
+                        <span>确定</span>
+                    </div>
+                    <div class="cancel_btn" @click="close_page()">
+                        <span>取消</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -71,7 +88,7 @@ import is_original from './is_original.vue';
 import { ref, watch, defineEmits } from 'vue';
 import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
 
-let token=cookies.get_cookie('token');
+let token = cookies.get_cookie('token');
 let user_info = JSON.parse(cookies.get_cookie('userinfo'));
 const emit = defineEmits(['close_create_new_series', 'new_series_info']);
 const new_series_info = ref({});
@@ -91,20 +108,39 @@ function close_page() {
 function create_new_series() {
     emit('new_series_info', new_series_info.value);
 }
-
+let temp_tag_list=ref()
 // 作品系列信息
 const work_info = ref({
+    work_name:'',
     title: '',
     introducation: '',
-    tags: '',
+    tags: [],
     age_classification: '',
     work_status: '',
     choose_cover_path: '',
-    token:token,
-    user_info:user_info,
+    token: token,
+    user_info: user_info,
+    cover_type: 'default_cover',
 });
 let user_choose_cover_file = ref(null);
-
+//删除指定索引标签
+function delete_tag(index){
+    work_info.value.tags.splice(index, 1);
+}
+//按回车键增加标签
+function add_tag() {
+    const new_tag = temp_tag_list.value.trim();
+    if (new_tag === '') {
+        alert('标签不能为空！');
+        return;
+    }
+    if (work_info.value.tags.includes(new_tag)) {
+        alert('标签已存在！');
+        return;
+    }
+    work_info.value.tags.push(new_tag);
+    temp_tag_list.value = '';
+}
 let user_choose_cover_path = (item) => {
     work_info.value.user_choose_cover_path = item
 }
@@ -143,6 +179,7 @@ function get_choose_cover_path(path) {
         user_choose_cover_file.value = null; // 清空用户选择的文件
     } else {
         console.log('自定义封面')
+        work_info.value.cover_type = 'custom_cover'
     }
 }
 
@@ -154,16 +191,40 @@ watch(() => work_info.value.title, () => {
 watch(() => work_info.value.choose_cover_path, () => {
     user_choose_cover_file.value = null;
 });
-let series_info=ref()
-function get_series_info(item)
-{
-    series_info.value=item
-    console.log(work_info.value)
+let series_info = ref()
+function get_series_info(item) {
+    series_info.value = item
+    work_info.value.series_name = series_info.value.series_name
+    work_info.value.is_original = series_info.value.is_original
 }
-//组装最后的消息
-function set_send_work_info()
-{
-
+//组装最后的消息并上传
+async function set_send_work_info() {
+    console.log('work_info', work_info.value)
+    let file = new FormData()
+    file.append('file', user_choose_cover_file.value)
+    file.append('work_info', JSON.stringify(work_info.value))
+    try {
+        const res = await fetch('https://www.sunyuanling.com/api/file/UploadNewSeries/', {
+            method: 'POST',
+            body: file
+        })
+        if (res.ok) {
+            const data = await res.json()
+            if (data.status == 'success') {
+                alert(data.message)
+            }
+            else {
+                alert(data.message)
+            }
+        }
+        else {
+            console.log('服务器错误')
+            console.log(res.status)
+        }
+    }
+    catch (e) {
+        console.log(e)
+    }
 }
 </script>
 
@@ -251,7 +312,7 @@ function set_send_work_info()
     gap: 10px;
 }
 
-.work_title {
+.work_title ,.work_name{
     width: 100%;
     height: auto;
     display: flex;
@@ -283,20 +344,95 @@ function set_send_work_info()
 .tags_list {
     width: 100%;
     display: flex;
-    flex-direction: column;
     gap: 5px;
-    justify-content: center;
     align-items: center;
 }
 
 .tags_list input {
     width: 100%;
 }
-
+.tag_item{
+    display: flex;
+    position: relative;
+    width: auto;
+    height: auto;
+    align-items: center;
+    background-color: rgba(188, 188, 188, 1);
+    padding: 5px 25px;
+    border-radius: 5px;
+}
+.delete_btn{
+    position: absolute;
+    display: flex;
+    width: 15px;
+    height: 15px;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+}
+.delete_btn:hover{
+    border-radius: 50%;
+    background-color: rgba(188, 188, 188, 0.8);
+    transition: 0.2s;
+}
+.delete_btn img{
+    width:10px;
+    height:10px;
+    object-fit: cover;
+}
 .age_classification {
     display: flex;
     flex-direction: column;
     gap: 5px;
+}
 
+.btn_box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 80%;
+    height: auto;
+    padding: 5px;
+    margin: 5px auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.sure_btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: rgba(0, 150, 250, 1);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.sure_btn:hover {
+    opacity: 0.8;
+    transition: all 0.3s ease-in-out;
+}
+
+.cancel_btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 15px;
+    background-color: rgba(188, 188, 188, 1);
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.cancel_btn:hover {
+    opacity: 0.8;
+    transition: all 0.3s ease-in-out;
 }
 </style>
