@@ -53,7 +53,8 @@
                     </div>
                 </div>
                 <preview_cover :title="work_info.title" :template_name="work_info.choose_cover_path"
-                    :file="user_choose_cover_file" @temp_cover_path="user_choose_cover_path" @clear_uploaded_file="clear_choose_cover_file"></preview_cover>
+                    :file="user_choose_cover_file" @temp_cover_path="user_choose_cover_path"
+                    @clear_uploaded_file="clear_choose_cover_file"></preview_cover>
             </div>
         </div>
     </div>
