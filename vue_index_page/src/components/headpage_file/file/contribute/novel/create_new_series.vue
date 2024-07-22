@@ -51,6 +51,7 @@
                        @chose_item="get_choose_cover_path"></scroll_box>
                     </div>
                 </div>
+                <preview_cover></preview_cover>
             </div>
         </div>
     </div>
@@ -60,6 +61,7 @@
 import auto_textarea from '../../../../models/auto_textarea.vue';
 import switch_btn from '../../../../models/switch_btn.vue';
 import scroll_box from '../../../../models/scroll_box.vue';
+import preview_cover from './preview_cover.vue'
 import { ref, watch, defineEmits } from 'vue';
 
 const emit = defineEmits(['close_create_new_series', 'new_series_info']);
@@ -198,5 +200,39 @@ function get_choose_cover_path(path) {
     height: auto;
     display: flex;
     flex-direction: column;
+    gap: 5px;
+}
+.work_introducation{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.tags_box{
+    width: 100%;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.add_tag_btn{
+    display: flex;
+    flex-direction: column;
+}
+.tags_list{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    align-items: center;
+}
+.tags_list input{width: 100%;}
+.age_classification{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    
 }
 </style>

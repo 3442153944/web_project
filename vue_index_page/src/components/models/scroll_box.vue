@@ -143,7 +143,8 @@ onMounted(() => {
   min-width: 50px;
   display: flex;
   align-items: center;
-  max-height: 200px;
+  max-height: 220px;
+  flex-direction: column;
 }
 
 .scroll_box_content {
@@ -156,6 +157,9 @@ onMounted(() => {
   white-space: nowrap;
   transition: transform 0.3s ease;
   position: relative;
+  padding:5px;
+  background-color: rgba(233,233,233,1);
+  border-radius: 10px;
 }
 
 .btn_box {
