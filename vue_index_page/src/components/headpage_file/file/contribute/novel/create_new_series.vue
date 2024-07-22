@@ -54,7 +54,9 @@
                 </div>
                 <preview_cover :title="work_info.title" :template_name="work_info.choose_cover_path"
                     :file="user_choose_cover_file" @temp_cover_path="user_choose_cover_path"
-                    @clear_uploaded_file="clear_choose_cover_file"></preview_cover>
+                    @clear_uploaded_file="clear_choose_cover_file">
+                </preview_cover>
+                <is_original @series_info="get_series_info"></is_original>
             </div>
         </div>
     </div>
@@ -65,8 +67,12 @@ import auto_textarea from '../../../../models/auto_textarea.vue';
 import switch_btn from '../../../../models/switch_btn.vue';
 import scroll_box from '../../../../models/scroll_box.vue';
 import preview_cover from './preview_cover.vue'
+import is_original from './is_original.vue';
 import { ref, watch, defineEmits } from 'vue';
+import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
 
+let token=cookies.get_cookie('token');
+let user_info = JSON.parse(cookies.get_cookie('userinfo'));
 const emit = defineEmits(['close_create_new_series', 'new_series_info']);
 const new_series_info = ref({});
 const template_cover = ref(['template_1.jpg', 'template_2.jpg', 'template_3.jpg', 'template_4.jpg', 'template_5.jpg',
@@ -94,6 +100,8 @@ const work_info = ref({
     age_classification: '',
     work_status: '',
     choose_cover_path: '',
+    token:token,
+    user_info:user_info,
 });
 let user_choose_cover_file = ref(null);
 
@@ -146,6 +154,17 @@ watch(() => work_info.value.title, () => {
 watch(() => work_info.value.choose_cover_path, () => {
     user_choose_cover_file.value = null;
 });
+let series_info=ref()
+function get_series_info(item)
+{
+    series_info.value=item
+    console.log(work_info.value)
+}
+//组装最后的消息
+function set_send_work_info()
+{
+
+}
 </script>
 
 
