@@ -114,16 +114,16 @@ class CoverHandle:
 
         # 保存中间PNG图像
         image.save(temp_output_path)
-
+        filename=f'{template_name}_{self.create_uuid()}_output.jpg'
         # 转换PNG图像为JPG并保存
-        output_path = os.path.join(temp_path, f"{template_name}_{self.create_uuid()}_output.jpg")
+        output_path = os.path.join(temp_path, filename)
         with Image.open(temp_output_path) as img:
             img.convert('RGB').save(output_path, 'JPEG')
 
         # 删除临时PNG文件
         os.remove(temp_output_path)
 
-        return output_path
+        return filename
 
     def wrap_text(self, text, max_width, draw, font):
         """Wrap text to fit within the given width."""
