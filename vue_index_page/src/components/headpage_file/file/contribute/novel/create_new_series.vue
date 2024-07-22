@@ -3,34 +3,34 @@
         <div class="background">
             <div class="title">
                 <div></div>
-                <span>新建系列</span>
+                <span style="font-weight:bold;">新建系列</span>
                 <div class="close_btn" @click="close_page()">
                     <img class="icon" src="https://www.sunyuanling.com/assets/close.svg">
                 </div>
             </div>
             <div class="content">
                 <div class="work_title">
-                    <label>系列标题</label>
+                    <label style="font-weight:bold;">系列标题</label>
                     <input type="text" v-model="work_info.title" maxlength="100">
                 </div>
                 <div class="work_name">
-                    <label>作品名称</label>
+                    <label style="font-weight:bold;">作品名称</label>
                     <input type="text" v-model="work_info.work_name" maxlength="100">
                 </div>
                 <div class="work_introducation">
-                    <label>作品介绍</label>
+                    <label style="font-weight:bold;">作品介绍</label>
                     <auto_textarea style="border:1px solid rgba(77,77,77,0.8);" v-model="work_info.introducation"
                         :maxlength="300000" :rows="5" placeholder="请输入作品介绍..." :fontsize="14" :lineheight="1.6">
                     </auto_textarea>
                 </div>
                 <div class="tags_box">
                     <div class="add_tag_btn">
-                        <label>作品标签</label>
+                        <label style="font-weight:bold;">作品标签</label>
                         <input type="text" v-model="temp_tag_list" placeholder="请输入标签..." @keyup.enter="add_tag">
                     </div>
                     <div class="tags_list">
-                        <div class="tag_item" v-for="(item,index) in work_info.tags" :key="index">
-                            <span>{{item}}</span>
+                        <div class="tag_item" v-for="(item, index) in work_info.tags" :key="index">
+                            <span>{{ item }}</span>
                             <div class="delete_btn" @click="delete_tag(index)">
                                 <img class="icon" src="https://www.sunyuanling.com/assets/close.svg">
                             </div>
@@ -38,10 +38,10 @@
                     </div>
                 </div>
                 <div class="age_classification">
-                    <label>作品年龄分类</label>
+                    <label style="font-weight:bold;">作品年龄分类</label>
                     <div class="age_classification_list">
                         <input type="radio" value="16" name="age_classification" v-model="work_info.age_classification">
-                        <span>全年龄</span>
+                        <label>全年龄</label>
                         <input type="radio" value="18" name="age_classification" v-model="work_info.age_classification">
                         <span>R-18</span>
                         <input type="radio" value="18+" name="age_classification"
@@ -108,10 +108,10 @@ function close_page() {
 function create_new_series() {
     emit('new_series_info', new_series_info.value);
 }
-let temp_tag_list=ref()
+let temp_tag_list = ref()
 // 作品系列信息
 const work_info = ref({
-    work_name:'',
+    work_name: '',
     title: '',
     introducation: '',
     tags: [],
@@ -124,7 +124,7 @@ const work_info = ref({
 });
 let user_choose_cover_file = ref(null);
 //删除指定索引标签
-function delete_tag(index){
+function delete_tag(index) {
     work_info.value.tags.splice(index, 1);
 }
 //按回车键增加标签
@@ -230,6 +230,16 @@ async function set_send_work_info() {
 
 
 <style scoped>
+input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid rgba(77, 77, 77, 0.5);
+    border-radius: 5px;
+    outline: none;
+    background-color: rgba(143, 143, 143, 0.1);
+
+}
+
 .create_new_series {
     width: 100vw;
     height: 100vh;
@@ -312,13 +322,15 @@ async function set_send_work_info() {
     gap: 10px;
 }
 
-.work_title ,.work_name{
+.work_title,
+.work_name {
     width: 100%;
     height: auto;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
+
 
 .work_introducation {
     width: 100%;
@@ -351,7 +363,8 @@ async function set_send_work_info() {
 .tags_list input {
     width: 100%;
 }
-.tag_item{
+
+.tag_item {
     display: flex;
     position: relative;
     width: auto;
@@ -361,7 +374,8 @@ async function set_send_work_info() {
     padding: 5px 25px;
     border-radius: 5px;
 }
-.delete_btn{
+
+.delete_btn {
     position: absolute;
     display: flex;
     width: 15px;
@@ -370,21 +384,36 @@ async function set_send_work_info() {
     top: 0;
     cursor: pointer;
 }
-.delete_btn:hover{
+
+.delete_btn:hover {
     border-radius: 50%;
     background-color: rgba(188, 188, 188, 0.8);
     transition: 0.2s;
 }
-.delete_btn img{
-    width:10px;
-    height:10px;
+
+.delete_btn img {
+    width: 10px;
+    height: 10px;
     object-fit: cover;
 }
+
 .age_classification {
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
+
+.age_classification input {
+    width: 15px;
+    height:15px;
+}
+.age_classification_list{
+    width: auto;
+    height: auto;
+    display: flex;
+    gap: 10px;
+}
+
 
 .btn_box {
     display: flex;
