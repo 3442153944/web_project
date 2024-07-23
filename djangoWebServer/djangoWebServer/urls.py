@@ -8,6 +8,7 @@ urlpatterns = [
     path('mysql_conn_test/', include('views.mysql_conn_test.urls')),
     path('GetUserInfo/',include('views.GetUserInfo.url')),
     path('file/',include('views.upload.url')),
-    path('notice_control/',include('views.notice_control.url'))
+    path('notice_control/',include('views.notice_control.url')),
+    path('novel/',include('views.novel.url')),
 ]
 

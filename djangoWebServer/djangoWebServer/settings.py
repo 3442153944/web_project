@@ -110,6 +110,7 @@ INSTALLED_APPS = [
     'views.mysql_conn_test',
     'views.upload',
     'views.notice_control',
+    'views.novel',
 ]
 
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'

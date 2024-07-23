@@ -12,6 +12,7 @@ from .GetUserFollowToComic import GetUserFollowToComic
 from .GetUserFollowToIll import GetUserFollowToIll
 from .GetUserHistoryMsg import GetUserHistoryMsg
 from .GetUserWorkList import GetUserWorkList
+from .GetUserWorkSeries import GetUserWorkSeries
 from .GroupControl import GroupControl
 from .login import Login
 
@@ -46,8 +47,10 @@ urlpatterns = [
     # 作品查询/搜索
     path('GetUserWorkList/', GetUserWorkList.as_view(), name='GetUserWorkList'),
     # 获取用户的作品列表
-    path('GetUserFollowList/',GetUserFollowList.as_view(), name='GetUserFollowList'),
-    #获取用户关注的用户用户列表
-    path('UserAddFollow/',UserAddFollow.as_view(),name='UserAddFollow'),
-    #用户关注
+    path('GetUserFollowList/', GetUserFollowList.as_view(), name='GetUserFollowList'),
+    # 获取用户关注的用户用户列表
+    path('UserAddFollow/', UserAddFollow.as_view(), name='UserAddFollow'),
+    # 用户关注
+    path('GetUserWorkSeries/', GetUserWorkSeries.as_view(), name='GetUserWorkSeries'),
+    # 获取用户的作品系列
 ]

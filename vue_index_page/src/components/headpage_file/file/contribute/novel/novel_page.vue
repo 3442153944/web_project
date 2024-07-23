@@ -24,67 +24,114 @@
           <span style="position:absolute;right:2px;color:rgba(77,77,77,0.6)">{{ work_title_len }}/100</span>
         </div>
         <div class="work_content">
-          <auto_textarea v-model="work_content" :maxlength="300000" :rows="5" placeholder="请输入正文内容..." :fontsize="14"
-            :lineheight="1.6"></auto_textarea>
-          <span
-            style="position:absolute;right:0px;top:100%;color:rgba(77,77,77,0.6);">{{ work_content_len }}/300000</span>
+          <CKEditor :editor="editor" v-model="editorData" :config="editorConfig" />
+          <span style="position:absolute;right:0px;top:100%;color:rgba(77,77,77,0.6);">{{ work_content_len
+            }}/300000</span>
         </div>
       </div>
     </div>
-    <create_new_series v-if="create_new_series_show" @close_create_new_series="close_create_new_series"></create_new_series>
+    <create_new_series v-if="create_new_series_show" @close_create_new_series="close_create_new_series">
+    </create_new_series>
     <div class="hr" style="border-top:1px solid rgba(77,77,77,0.3);margin-top:50px;
     height:1px;width:90%;margin-left:auto;margin-right:auto;">
     </div>
   </div>
 </template>
 
-<script>
-// eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
-export default {
-  name: 'novel_page',
-}
-</script>
-
 <script setup>
+import { ref, watch, onMounted } from 'vue';
 import re_select from '../../../../models/select.vue'
 import auto_textarea from '../../../../models/auto_textarea.vue'
 import create_new_series from './create_new_series.vue';
-let select_title = ref('新建系列')
-let select_list = ref([
+import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
+import { CKEditor, CKEditorComponent } from '@ckeditor/ckeditor5-vue'; 
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+const editor = ClassicEditor;
+let editorData = ref('<p>Hello World!</p>');
+const editorConfig = ref({});
+
+// 初始化参数
+const token = cookies.get_cookie('token');
+const select_title = ref('新建系列')
+const select_list = ref([
   '新建系列',
   '作品系列一'
 ])
-let select_item = ref();
-let work_content = ref('')
-let work_content_len = ref(work_content.value.length);
-let work_title = ref('');
-let work_title_len = ref(work_title.value.length);
-let create_new_series_show=ref(false)
+const select_item = ref();
+const work_content = ref('')
+const work_content_len = ref(work_content.value.length);
+const work_title = ref('');
+const work_title_len = ref(work_title.value.length);
+const create_new_series_show = ref(false)
+let editcontent=ref(null)
+
 watch(work_title, () => {
   work_title_len.value = work_title.value.length
 })
+
 watch(work_content, () => {
   work_content_len.value = work_content.value.length
+  console.log(work_content.value)
 })
+
 function get_select_item(item) {
   select_item.value = item
   console.log(item)
 }
-function open_create_new_series(){
-  if(select_item.value=='新建系列'){
-    create_new_series_show.value=true
-  }
-  else{
-    create_new_series_show.value=false
+
+function open_create_new_series() {
+  if (select_item.value == '新建系列') {
+    create_new_series_show.value = true
+  } else {
+    create_new_series_show.value = false
   }
 }
-watch(select_item,(newValue)=>{
+
+watch(select_item, (newValue) => {
   open_create_new_series()
 })
-function close_create_new_series()
-{
-  create_new_series_show.value=false
+
+function close_create_new_series() {
+  create_new_series_show.value = false
+}
+
+async function get_user_series_list() {
+  let temp = [];
+  select_list.value = ['新建系列']
+  try {
+    let res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkSeries/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token: token,
+      })
+    });
+    if (!res.ok) {
+      console.error('HTTP error:', res.status);
+      return;
+    }
+    const data = await res.json();
+    if (data.status === 'success') {
+      temp = data.data;
+      const workSeries = temp.map(item => item.work_series).filter(Boolean);
+      select_list.value = [...new Set([...select_list.value, ...workSeries])];
+    } else {
+      alert(data.message);
+    }
+  } catch (e) {
+    console.error('Fetch error:', e);
+  }
+}
+
+onMounted(async () => {
+  await get_user_series_list()
+})
+
+// 章节上传
+async function upload_chapter() {
+
 }
 </script>
 
@@ -109,7 +156,6 @@ function close_create_new_series()
   background-color: #f5f5f5;
   align-items: center;
   padding: 5px 10px;
-
 }
 
 .content {
