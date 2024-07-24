@@ -55,14 +55,19 @@ let content_novel_page_show=computed(()=>store.getters.novel_page)
 function setTokenFromURL() {
     const url = new URL(window.location.href);
     const token = url.searchParams.get('token');
-    if (token && (cookies.get_cookie('token') == null || cookies.get_cookie('token') === '' || cookies.get_cookie('token') === undefined)) {
-        cookies.set_cookie('token', token,)/*{ secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
-        url.searchParams.delete('token');
-        window.history.replaceState({}, document.title, url.pathname + url.search);
-        console.log('Token set and URL cleaned:', cookies.get_cookie('token'));
-    }*/
+
+    if (token && (!cookies.get_cookie('token') || cookies.get_cookie('token') === '')) {
+        cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: false });
+        
+        // 移除 URL 中的所有参数，只保留基本路径
+        const newUrl = url.origin + url.pathname;
+        
+        // 替换当前历史记录
+        window.history.replaceState({}, document.title, newUrl);
     }
 }
+
+
 
 onMounted(() => {
     setTokenFromURL();
