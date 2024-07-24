@@ -3,7 +3,7 @@
     <h3>已关注用户作品</h3>
     <div class="novel_list">
       <div class="novel_item" v-for="(item,index) in novel_info_list" :key="index">
-        <div class="novel_cover">
+        <div class="novel_cover" @click="open_novel_page(item.work_id)">
           <img :src="'https://www.sunyuanling.com/image/novel/thumbnail/'+item.work_cover">
         </div>
         <div class="novel_info">
@@ -57,14 +57,8 @@ export default {
 
 <script setup>
 import * as cookies from '../../../../model/cookies.js'
-/*
-let cover_path=ref('https://www.sunyuanling.com/image/116883317_p0.png')
-let state=ref('单篇完结作品');
-let title=ref('小说作品');
-let tags=ref(['标签1','标签2','标签3','标签4','标签5','标签6','标签7','标签8']);
-let age_tag=ref('R-18');
-let user_avatar=ref('https://www.sunyuanling.com/image/103168176_p0.png');
-let user_name=ref('用户名');*/
+import { useStore } from 'vuex';
+const store=useStore();
 let word_count=ref('1111');
 let read_time=ref('12');
 let like_count=ref('45');
@@ -133,6 +127,13 @@ onMounted(()=>{
   get_novel_list()
 })
 
+//打开小说作品详情页并设置work_id参数
+function open_novel_page(id)
+{
+  store.commit('SET_WORK_ID',id)
+  store.commit('SET_CONTENT_PAGE',{key:'novel_page',value:true})
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'all',value:false})
+}
 </script>
 
 <style scoped>
@@ -175,6 +176,7 @@ onMounted(()=>{
   overflow: hidden;
   justify-content: center;
   align-items: center;
+  cursor: pointer;
  }
  .novel_cover img{
   width: 100%;

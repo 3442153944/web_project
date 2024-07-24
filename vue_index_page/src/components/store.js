@@ -11,8 +11,14 @@ const store = createStore({
       search_page: false,
       chat_page: false,
     },
+    content_page:{
+      ill_page:false,
+      comic_page:false,
+      novel_page:false,
+    },
     token: cookies.get_cookie('token'),
     userinfo: {},
+    work_id:'',
   },
   mutations: {
     SET_USERINFO(state, userinfo) { state.userinfo = userinfo; },
@@ -25,6 +31,15 @@ const store = createStore({
     SET_INDEXPAGE(state, value) { state.pageStatus.indexPage = value; },
     SET_SEARCH_PAGE(state, search_page) { state.pageStatus.search_page = search_page; },
     SET_SINGLE_PAGE_STATUS(state, { key, value }) {
+      if(key=='all')
+      {
+        for (const k in state.pageStatus) {
+          if (Object.prototype.hasOwnProperty.call(state.pageStatus, k) && typeof state.pageStatus[k] === 'boolean') {
+            state.pageStatus[k] = false;
+          }
+        }
+        return;
+      }
       for (const k in state.pageStatus) {
         if (Object.prototype.hasOwnProperty.call(state.pageStatus, k) && typeof state.pageStatus[k] === 'boolean') {
           state.pageStatus[k] = false;
@@ -37,6 +52,15 @@ const store = createStore({
         state.pageStatus.index_page = true;
       }
     },
+    SET_CONTENT_PAGE(state,{key,value}){
+      for (const k in state.content_page) {
+        if (Object.prototype.hasOwnProperty.call(state.content_page, k) && typeof state.content_page[k] === 'boolean') {
+          state.content_page[k] = false;
+        }
+      }
+      state.content_page[key] = value;
+    },
+    SET_WORK_ID(state, work_id) { state.work_id = work_id;console.log(state) },
   },
   getters: {
     userinfo: state => state.userinfo,
@@ -47,6 +71,10 @@ const store = createStore({
     indexPage: state => state.pageStatus.indexPage,
     search_page: state => state.pageStatus.search_page,
     chat_page: state => state.pageStatus.chat_page,
+    ill_page: state => state.content_page.ill_page,
+    comic_page: state => state.content_page.comic_page,
+    novel_page: state => state.content_page.novel_page,
+    work_id: state => state.work_id,
   },
 });
 

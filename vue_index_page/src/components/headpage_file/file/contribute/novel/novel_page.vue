@@ -6,9 +6,9 @@
     <div class="content">
       <span>投稿形式</span>
       <div class="work_typeof">
-        <input type="radio" value="系列作品" name="novel_typeof">
+        <input type="radio" value="系列作品" name="novel_typeof" ref="novel_typeof">
         <label for="">系列作品</label>
-        <input type="radio" value="单篇完结作品" name="novel_typeof">
+        <input type="radio" value="单篇完结作品" name="novel_typeof" ref="novel_typeof">
         <label for="">单篇完结作品</label>
         <div class="contribute_tips" style="margin-top: 10px;color:rgba(77,77,77,0.9);font-size:14px;">
           <span>若是连载作品，或是类似短篇小说集等分多个篇章叙述的作品，还请选为系列作品进行投稿。
@@ -24,9 +24,15 @@
           <span style="position:absolute;right:2px;color:rgba(77,77,77,0.6)">{{ work_title_len }}/100</span>
         </div>
         <div class="work_content">
-          <CKEditor :editor="editor" v-model="editorData" :config="editorConfig" />
+          <auto_textarea v-model="work_content" :maxlength="300000" :rows="5" placeholder="请输入正文内容..." :fontsize="14"
+            :lineheight="1.6"></auto_textarea>
           <span style="position:absolute;right:0px;top:100%;color:rgba(77,77,77,0.6);">{{ work_content_len
             }}/300000</span>
+        </div>
+      </div>
+      <div class="btn_box">
+        <div class="sure_btn" @click="upload_chapter()">
+          <span>确定</span>
         </div>
       </div>
     </div>
@@ -38,63 +44,56 @@
   </div>
 </template>
 
+<script>
+// eslint-disable-next-line no-unused-vars
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+export default {
+  name: 'novel_page',
+}
+</script>
+
 <script setup>
-import { ref, watch, onMounted } from 'vue';
 import re_select from '../../../../models/select.vue'
 import auto_textarea from '../../../../models/auto_textarea.vue'
 import create_new_series from './create_new_series.vue';
 import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
-import { CKEditor, CKEditorComponent } from '@ckeditor/ckeditor5-vue'; 
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-const editor = ClassicEditor;
-let editorData = ref('<p>Hello World!</p>');
-const editorConfig = ref({});
-
-// 初始化参数
-const token = cookies.get_cookie('token');
-const select_title = ref('新建系列')
-const select_list = ref([
+let token = cookies.get_cookie('token');
+let select_title = ref('新建系列')
+let select_list = ref([
   '新建系列',
   '作品系列一'
 ])
-const select_item = ref();
-const work_content = ref('')
-const work_content_len = ref(work_content.value.length);
-const work_title = ref('');
-const work_title_len = ref(work_title.value.length);
-const create_new_series_show = ref(false)
-let editcontent=ref(null)
-
+let novel_typeof=ref(null)
+let select_item = ref();
+let work_content = ref('')
+let work_content_len = ref(work_content.value.length);
+let work_title = ref('');
+let work_title_len = ref(work_title.value.length);
+let create_new_series_show = ref(false)
 watch(work_title, () => {
   work_title_len.value = work_title.value.length
 })
-
 watch(work_content, () => {
   work_content_len.value = work_content.value.length
-  console.log(work_content.value)
 })
-
 function get_select_item(item) {
   select_item.value = item
   console.log(item)
 }
-
 function open_create_new_series() {
   if (select_item.value == '新建系列') {
     create_new_series_show.value = true
-  } else {
+  }
+  else {
     create_new_series_show.value = false
   }
 }
-
 watch(select_item, (newValue) => {
   open_create_new_series()
 })
-
 function close_create_new_series() {
   create_new_series_show.value = false
 }
-
 async function get_user_series_list() {
   let temp = [];
   select_list.value = ['新建系列']
@@ -124,18 +123,72 @@ async function get_user_series_list() {
     console.error('Fetch error:', e);
   }
 }
-
 onMounted(async () => {
   await get_user_series_list()
 })
-
-// 章节上传
+//章节上传
 async function upload_chapter() {
-
+  let temp=work_content.value.replace(/\n/g, '\\n')
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/novel/UploadNewChapter/', {
+      method: 'post',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        token: token,
+        series_name: select_item.value,
+        chapter_name: work_title.value,
+        content: temp,
+        is_series:novel_typeof.value.value
+      })
+    })
+    if (res.ok) {
+      const data = await res.json()
+      if (data.status == 'success') {
+        alert(data.message)
+      }
+      else {
+        alert(data.message)
+      }
+    }
+    else {
+      console.log('服务器错误')
+    }
+  }
+  catch (e) {
+    console.log(e)
+  }
 }
 </script>
 
 <style scoped>
+.btn_box {
+  display: flex;
+  width: auto;
+  height: auto;
+  padding: 10px 20px;
+  flex-direction: column;
+}
+
+.sure_btn {
+  width: 100%;
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 15px;
+  background-color: rgba(0, 150, 250, 1);
+  cursor: pointer;
+  color: white;
+}
+
+.sure_btn:hover {
+  opacity: 0.8;
+  transition: all 0.3s ease-in-out;
+}
+
 .novel_page {
   width: 100%;
   height: 100%;
@@ -156,6 +209,7 @@ async function upload_chapter() {
   background-color: #f5f5f5;
   align-items: center;
   padding: 5px 10px;
+
 }
 
 .content {

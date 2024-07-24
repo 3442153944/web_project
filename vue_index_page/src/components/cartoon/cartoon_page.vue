@@ -3,7 +3,7 @@
     <h3>已关注用户作品</h3>
     <div class="cartoon_list" v-if="comic_list">
       <div class="cartoon_item" v-for="(item,index) in comic_list" :key="index">
-        <div class="cartoon_img">
+        <div class="cartoon_img" @click="open_comic_page(item.id)">
           <div class="age_tag" v-if="item.age_classification>=17">R-{{ item.age_classification }}</div>
           <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length>1">
             <svg t="1715784414381" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg"
@@ -62,12 +62,8 @@ export default {
 </script>
 <script setup>
 import * as cookies from '../../../../model/cookies.js'
-let img_path = ref('https://www.sunyuanling.com/image/117214493_p0_master1200.jpg')
-let age_tag = ref('R-18');
-let page_count = ref(12);
-let cartoon_title = ref('作品标题');
-let user_avatar = ref('https://www.sunyuanling.com/image/80662332_p0(1).png');
-let username = ref('用户名');
+import { useStore } from 'vuex';
+const store = useStore()
 let userinfo=ref(JSON.parse(cookies.get_cookie('userinfo')))
 console.log(userinfo.value)
 let comic_list=ref([])
@@ -152,6 +148,13 @@ function scrollTabs(scrollAmount) {
 
   animateScroll();
 }
+//带参跳转
+function open_comic_page(id)
+{
+  store.commit('SET_CONTENT_PAGE',{key:'comic_page',value:true})
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'all',value:false})
+  store.commit('SET_WORK_ID',id)
+}
 </script>
 
 <style scoped>
@@ -196,6 +199,7 @@ function scrollTabs(scrollAmount) {
   overflow: hidden;
   border-radius: 15px;
   position: relative;
+  cursor: pointer;
 }
 
 .cartoon_img img {

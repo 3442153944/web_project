@@ -42,15 +42,16 @@ class UploadNewChapter(View):
             chapter_name = data.get('chapter_name')
             content = data.get('content')
             series_name = data.get('series_name')
+            is_series=data.get('is_series')
 
             work_id = next((row['work_id'] for row in rows if row['work_series'] == series_name), None)
             if not work_id:
                 return JsonResponse({'status': 'error', 'message': '指定的系列不存在！'}, status=404)
 
-            sql = ('INSERT INTO novel_content (belong_to_series_id, belong_to_userid, title, content, create_time) '
-                   'VALUES (%s, %s, %s, %s, %s)')
+            sql = ('INSERT INTO novel_content (belong_to_series_id, belong_to_userid, title, content, create_time,is_series) '
+                   'VALUES (%s, %s, %s, %s, %s,%s)')
             with connection.cursor() as cursor:
-                cursor.execute(sql, [work_id, userid, chapter_name, content, self.now])
+                cursor.execute(sql, [work_id, userid, chapter_name, content, self.now,is_series])
                 if cursor.rowcount <= 0:
                     return JsonResponse({'status': 'error', 'message': '上传新章节失败，请重试！'}, status=500)
 

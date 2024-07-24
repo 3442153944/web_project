@@ -54,6 +54,9 @@ export default {
 </script>
 
 <script setup>
+import { useStore } from 'vuex';
+const store = useStore()
+let work_id=ref('')
 //喜欢状态
 let love_svg_path = ref('https://www.sunyuanling.com/assets/love.svg')
 
@@ -139,9 +142,13 @@ onMounted(() => {
 })
 
 //插画作品的带参跳转
-function go_to_illustration_page(work_id) {
-  console.log(work_id)
-  window.location.href = 'https://localhost:3003' + '?work_id=' + work_id;
+function go_to_illustration_page(id) {
+  store.commit('SET_CONTENT_PAGE', {
+    key: 'ill_page',
+    value: true
+  })
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'all',value:false})
+  store.commit('SET_WORK_ID',id)
 }
 
 //模拟横向滚动效果
