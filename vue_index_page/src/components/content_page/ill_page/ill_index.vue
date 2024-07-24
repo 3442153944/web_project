@@ -1,7 +1,7 @@
 <template>
   <div class="ill_index">
-    <div class="close_page" @click="close_page_click()">
-        退出当前页面
+    <div class="close_page" @click="go_back">
+        返回上一页面
     </div>
     插画页面{{ work_id }}
   </div>
@@ -25,6 +25,9 @@ watch(()=>props.work_id,(newValue)=>{
 function close_page_click(){
     store.commit('SET_CONTENT_PAGE',{key:'ill_page',value:false})
     store.commit('SET_SINGLE_PAGE_STATUS',{key:'index_page',value:true})
+}
+function go_back(){
+    store.dispatch('goBack')
 }
 watch(()=>store.getters.work_id,(newValue)=>{
     work_id.value=newValue

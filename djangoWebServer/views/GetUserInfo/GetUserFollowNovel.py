@@ -29,7 +29,6 @@ class GetUserFollowNovel(View):
                 novel_result=cursor.fetchall()
                 novel_list=[dict(zip(columns,row)) for row in novel_result]
                 self.logger.info(novel_list)
-                print(novel_list)
                 #获取作品列表
                 return JsonResponse({'status':'success','data':novel_list})
         except Exception as e:

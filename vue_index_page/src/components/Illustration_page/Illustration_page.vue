@@ -147,7 +147,7 @@ function go_to_illustration_page(id) {
     key: 'ill_page',
     value: true
   })
-  store.commit('SET_SINGLE_PAGE_STATUS',{key:'all',value:false})
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'content_index_page',value:true})
   store.commit('SET_WORK_ID',id)
 }
 

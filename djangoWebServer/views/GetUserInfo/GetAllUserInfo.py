@@ -22,7 +22,6 @@ class GetAllUserInfo(View):
                 #del password
                 for row in rows:
                     del row['password']
-                print(rows)
             if rows:
                 return JsonResponse({'status': 'success', 'data': '非法访问'})
             else:
@@ -37,7 +36,6 @@ class GetAllUserInfo(View):
                 data = json.loads(request.body.decode('utf-8'))
                 userid=data['userid']
                 token=data.get('token')
-                print(data)
                 if userid and token:
                     return JsonResponse({'status':'fail','message':'请输入userid或token'},status=400)
                 sql = 'SELECT * FROM users WHERE userid = %s or token=%s'
@@ -47,7 +45,6 @@ class GetAllUserInfo(View):
                 rows = [dict(zip(columns, row)) for row in result]
                 for row in rows:
                     del row['password']
-                print(rows)
             if rows:
                 self.logger.info(rows)
                 return JsonResponse({'status': 'success', 'data': rows})

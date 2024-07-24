@@ -17,7 +17,8 @@
     "vue-lazyload": "^3.0.0",
     "vue-quill-editor": "^3.0.6",
     "vue3-quill": "^0.3.1",
-    "vuex": "^4.0.2"
+    "vuex": "^4.0.2",
+    "vuex-persistedstate": "^4.1.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.4",

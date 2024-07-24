@@ -32,6 +32,8 @@ class Login(View):
             username=data.get('username')
             password = data.get('password')
             token = data.get('token')
+            cookies_token=request.COOKIES
+
             token_sql = 'SELECT * FROM users WHERE username=%s or userid=%s OR token=%s'
 
             with connection.cursor() as cursor:
@@ -60,6 +62,7 @@ class Login(View):
                                 cursor.execute(update_token_sql, [new_token, new_token_time, userid])
                                 cursor.connection.commit()
                                 print(f'{token}\t{new_token}\ttoken登录，token已更新')
+                                print('从请求连接中获取的cookies'+str(cookies_token))
                                 return JsonResponse(
                                     {'status': 'success', 'message': '登录成功', 'token': new_token}, status=200)
                             else:

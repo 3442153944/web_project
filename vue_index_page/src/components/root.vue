@@ -11,9 +11,7 @@
       <img class="icon" src="https://www.sunyuanling.com/image/loading.gif">
     </div>
     <upload_page v-if="upload_page_show" />
-    <content_ill_page v-if="content_ill_page_show"/>
-    <content_comic_page v-if="content_comic_page_show"/>
-    <content_novel_page v-if="content_novel_page_show"/>
+    <content_index_page v-if="content_index_page_show"/>
   </div>
 </template>
 
@@ -35,9 +33,7 @@ import * as cookies from '../../../model/cookies.js';
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import { useStore } from 'vuex'
-import content_ill_page from './content_page/ill_page/ill_index.vue'
-import content_comic_page from './content_page/comic_page/comic_index.vue'
-import content_novel_page from './content_page/novel_page/novel_index.vue'
+import content_index_page from './content_page/content_index_page.vue';
 const store = useStore()
 let cursor_top = ref(0);
 let cursor_left = ref(0);
@@ -46,9 +42,7 @@ let cursor_add = ref(0);
 let load_reading = ref(false);
 let upload_page_show=computed(()=>store.getters.upload_work)
 let index_page_show=computed(()=>store.getters.index_page)
-let content_ill_page_show=computed(()=>store.getters.ill_page)
-let content_comic_page_show=computed(()=>store.getters.comic_page)
-let content_novel_page_show=computed(()=>store.getters.novel_page)
+let content_index_page_show=computed(()=>store.getters.content_index_page)
 
 
 // 读取URL参数设置cookie并清除URL中的token参数
@@ -57,7 +51,7 @@ function setTokenFromURL() {
     const token = url.searchParams.get('token');
 
     if (token && (!cookies.get_cookie('token') || cookies.get_cookie('token') === '')) {
-        cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: false });
+        cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
         
         // 移除 URL 中的所有参数，只保留基本路径
         const newUrl = url.origin + url.pathname;
@@ -136,7 +130,8 @@ async function load_login() {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/Login/', {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${cookies.get_cookie('token')}`
             },
             body: JSON.stringify({
                 userid: null,

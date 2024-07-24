@@ -51,7 +51,7 @@ function updateButtonStyles(index) {
 
 onMounted(() => {
   choosePage(pageIndex.value);
-  choosePage(0)
+  choosePage(store.getters.indexPage)
 });
 </script>
 
