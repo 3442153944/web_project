@@ -17,7 +17,7 @@
             </div>
         </div>
         <div class="author_info_box" v-if="work_info">
-            <author_info :author_id="work_info.belong_to_user_id"></author_info>
+            <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info>
         </div>
     </div>
     <img_content_page :item_path="item_path" v-if="img_content_page_show" @close_img_content_page="close_content_page">
@@ -63,7 +63,9 @@ onMounted(async () => {
     work_id.value = store.getters.work_id;
     await get_work_info();
 });
-
+watch(work_id,async()=>{
+    await get_work_info();
+})
 // 使用ID请求作品信息
 async function get_work_info() {
     try {
@@ -106,6 +108,11 @@ watch(img_content_page_show, (newValue) => {
 
 function close_content_page() {
     img_content_page_show.value = false;
+}
+//获取子组件传递的作品ID并设置在本页面
+function get_choose_item(item)
+{
+    work_id.value=item.work_id;
 }
 </script>
 

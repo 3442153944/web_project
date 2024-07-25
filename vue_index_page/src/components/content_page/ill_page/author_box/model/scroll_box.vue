@@ -10,12 +10,17 @@
         </div>
       </div>
       <div class="list" ref="list">
-        <div class="item" v-for="(item, index) in props.msg_list" :key="index">
+        <div class="item" v-for="(item, index) in msg_list" :key="index">
           <div v-if="props.msg_type === 'tags'" class="tags_item" ref="tags_item" @click="chose_item(item)">
             <span>{{ item }}</span>
           </div>
-          <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item)">
-            <img :src="item" class="image">
+          <div v-if="props.msg_type === 'image'" class="image_item"
+            @click="chose_item({ 'item': item, 'work_id': item.Illustration_id })">
+            <img :src="item.item_path" class="image">
+            <div class="work_count" v-if="item.work_count>1">
+              <img :src="props.page_count_svg" class="icon">
+              <span>{{item.work_count}}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -24,7 +29,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps, defineEmits } from 'vue';
+import { ref, onMounted, defineProps, defineEmits, watch } from 'vue';
 
 const props = defineProps({
   left_btn: {
@@ -50,7 +55,11 @@ const props = defineProps({
   scrollDistance: {
     type: Number,
     default: 400 // Default scroll distance in px
-  }
+  },
+  page_count_svg: {
+    type: String,
+    default: 'https://www.sunyuanling.com/assets/page_count.svg'
+  },
 });
 
 const colorArr = ref([
@@ -68,6 +77,10 @@ const set_tag_color = () => {
     });
   }
 };
+let msg_list = ref(props.msg_list);
+watch(() => props.msg_list, () => {
+  msg_list.value = props.msg_list;
+})
 
 const emit = defineEmits(['chose_item']);
 const chose_item = (item) => {
@@ -106,9 +119,39 @@ const scrollRight = () => {
   smoothScroll(props.scrollDistance, props.animationDuration);
 };
 
-onMounted(() => {
+onMounted(async () => {
   set_tag_color();
+  msg_list.value = props.msg_list;
+  for (let i = 0; i < props.msg_list.length; i++) {
+    msg_list.value[i].work_count = await get_work_info(props.msg_list[i].Illustration_id);
+  }
+  console.log(msg_list.value);
 });
+//通过ID请求作品详情，并获取数量
+async function get_work_info(work_id) {
+  try {
+    const res = await fetch('https://www.sunyuanling.com/api/get_work_info/GetIllInfo/',
+      {
+        method: 'post',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          work_id: work_id
+        })
+      }
+    )
+    if (res.ok) {
+      const data = await res.json();
+      if (data.status == 'success') {
+        return data.data[0].content_file_list.split(/[,，]/).length;
+      }
+    }
+  }
+  catch (e) {
+    console.log(e);
+  }
+}
 </script>
 
 <style scoped>
@@ -152,7 +195,8 @@ onMounted(() => {
   opacity: 1;
 }
 
-.left_btn, .right_btn {
+.left_btn,
+.right_btn {
   width: 60px;
   height: 100%;
   display: flex;
@@ -160,7 +204,8 @@ onMounted(() => {
   justify-content: center;
   cursor: pointer;
   position: absolute;
-  pointer-events: auto; /* Enable pointer events only for the buttons */
+  pointer-events: auto;
+  /* Enable pointer events only for the buttons */
 }
 
 .left_btn {
@@ -181,10 +226,9 @@ onMounted(() => {
 
 .list {
   width: auto;
-  height: 200px;
+  height: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
   overflow-x: auto;
   scrollbar-width: none;
   white-space: nowrap;
@@ -193,14 +237,14 @@ onMounted(() => {
 
 .item {
   width: auto;
-  height: 200px;
+  height: 100%;
   display: flex;
   align-items: center;
 }
 
 .tags_item {
   width: auto;
-  height: auto;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -212,23 +256,45 @@ onMounted(() => {
 
 .image_item {
   width: auto;
-  height: 200px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  border-radius: 15px;
-  min-width: 150px;
-  min-height: 75px;
+  border-radius: 10px;
+  min-width: 50px;
+  min-height: 100px;
   max-height: 100px;
   max-width: 200px;
-  margin: 0px 10px;
+  margin: 0px 5px;
+  position: relative;
 }
 
 .image_item img {
   width: 100%;
-  height: 200px;
+  height: 100%;
   object-fit: cover;
   border-radius: 15px;
+}
+.work_count{
+  width: auto;
+  height: auto;
+  padding: 3px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  top:5px;
+  right: 5px;
+  z-index: 10;
+  gap:3px;
+  background-color: rgba(133,133,133,0.8);
+  border-radius: 10px;
+  color: white;
+}
+.work_count img{
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
 }
 </style>

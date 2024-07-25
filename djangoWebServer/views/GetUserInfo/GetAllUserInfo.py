@@ -55,4 +55,4 @@ class GetAllUserInfo(View):
         except Exception as e:
             print(e)
             self.logger.error(e)
-            return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+            return JsonResponse({'status': 'error', 'message': '服务器异常'}, status=500)
