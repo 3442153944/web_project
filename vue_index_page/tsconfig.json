@@ -26,6 +26,6 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/shims-vue.d.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.vue", "src/shims-vue.d.ts","src/**/d.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -16,8 +16,8 @@
                 </div>
             </div>
         </div>
-        <div class="author_info_box">
-            <author_info></author_info>
+        <div class="author_info_box" v-if="work_info">
+            <author_info :author_id="work_info.belong_to_user_id"></author_info>
         </div>
     </div>
     <img_content_page :item_path="item_path" v-if="img_content_page_show" @close_img_content_page="close_content_page">
@@ -29,7 +29,7 @@ import { ref, watch, onMounted, defineProps } from 'vue';
 import { useStore } from 'vuex';
 import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
-import author_info from './author_info.vue';
+import author_info from './author_box/author_info.vue';
 
 const store = useStore();
 const work_id = ref('');
