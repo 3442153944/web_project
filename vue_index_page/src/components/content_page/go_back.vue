@@ -35,7 +35,7 @@
     padding: 5px;
     position: fixed;
     top: 80px;
-    left: 20px;
+    left: 10px;
     background-color: rgba(133, 133, 133, 1);
     border-radius: 50%;
     opacity: 0.6;
