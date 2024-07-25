@@ -45,6 +45,7 @@ class GetAllUserInfo(View):
                 rows = [dict(zip(columns, row)) for row in result]
                 for row in rows:
                     del row['password']
+                    del row['token']
             if rows:
                 self.logger.info(rows)
                 return JsonResponse({'status': 'success', 'data': rows})

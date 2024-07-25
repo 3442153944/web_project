@@ -149,8 +149,9 @@ class UploadFile(View):
         img = Image.open(file)
         if img.mode == 'RGBA':
             img = img.convert('RGB')
+        img = img.resize(img.size, Image.LANCZOS)
         buffer = BytesIO()
-        img.save(buffer, format='JPEG', quality=95)
+        img.save(buffer, format='JPEG', quality=100, subsampling=0)
         buffer.seek(0)
         return buffer
 
@@ -160,6 +161,6 @@ class UploadFile(View):
         if img.mode == 'RGBA':
             img = img.convert('RGB')
         buffer = BytesIO()
-        img.save(buffer, format='JPEG', quality=95)
+        img.save(buffer, format='JPEG', quality=100)
         buffer.seek(0)
         return buffer

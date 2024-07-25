@@ -10,5 +10,6 @@ urlpatterns = [
     path('file/',include('views.upload.url')),
     path('notice_control/',include('views.notice_control.url')),
     path('novel/',include('views.novel.url')),
+    path('get_work_info/',include('views.get_work_info.url'))
 ]
 
