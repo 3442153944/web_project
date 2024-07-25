@@ -101,6 +101,11 @@ class UploadFile(View):
             thumbnail_path = os.path.join(save_thumbnail_path, safe_filename)
             self.save_file(thumbnail_path, img_thumbnail)
 
+            #生成内容页的长宽最大1200的缩略图
+            img_content = self.img_file_convert(file, 1200, 1200)
+            content_path = os.path.join(save_path+'content_thumbnail/', safe_filename)
+            self.save_file(content_path, img_content)
+
         content_file_list_str = ','.join(content_file_list)
         self.save_to_db(work_type, work_info, content_file_list_str, now, tag_list)
         self.logger.info(self.request_path(request) + ' 上传成功')
@@ -147,20 +152,89 @@ class UploadFile(View):
 
     def process_image(self, file):
         img = Image.open(file)
+        original_format = img.format  # 获取原始图像格式
         if img.mode == 'RGBA':
             img = img.convert('RGB')
+        # 保持原有渲染方式并使用 LANCZOS 滤镜
         img = img.resize(img.size, Image.LANCZOS)
         buffer = BytesIO()
-        img.save(buffer, format='JPEG', quality=100, subsampling=0)
+        img.save(buffer, format=original_format, quality=100, subsampling=0)
         buffer.seek(0)
         return buffer
 
     def img_file_convert(self, file, width, height):
         img = Image.open(file)
-        img = ImageOps.fit(img, (width, height), Image.LANCZOS, 0.5, (0.5, 0.5))
+        original_format = img.format  # 获取原始图像格式
+        img_width, img_height = img.size
+        aspect_ratio = img_width / img_height
+
+        if img_width > 300 and img_height > 300:
+            # 当图像宽高都大于300时，优先进行缩放
+            if img_width > width or img_height > height:
+                if img_width >= img_height:
+                    new_width = width
+                    new_height = int(new_width / aspect_ratio)
+                else:
+                    new_height = height
+                    new_width = int(new_height * aspect_ratio)
+                img = img.resize((new_width, new_height), Image.LANCZOS)
+
+                # 如果缩放后的宽高仍然大于目标宽高，则进行裁切
+                if new_width > width or new_height > height:
+                    img = ImageOps.fit(img, (width, height), Image.LANCZOS, 0.5, (0.5, 0.5))
+            else:
+                # 如果宽高都小于目标尺寸，按最大边进行裁切
+                img = ImageOps.fit(img, (width, height), Image.LANCZOS, 0.5, (0.5, 0.5))
+        else:
+            # 当图像宽高小于300时，裁切和缩放同等优先级
+            if img_width >= width and img_height >= height:
+                img = ImageOps.fit(img, (width, height), Image.LANCZOS, 0.5, (0.5, 0.5))
+            elif img_width >= width or img_height >= height:
+                target_size = max(width, height)
+                if img_width > img_height:
+                    new_height = target_size
+                    new_width = int(new_height * aspect_ratio)
+                else:
+                    new_width = target_size
+                    new_height = int(new_width / aspect_ratio)
+                img = img.resize((new_width, new_height), Image.LANCZOS)
+                img = ImageOps.fit(img, (width, height), Image.LANCZOS, 0.5, (0.5, 0.5))
+            else:
+                if img_width >= img_height:
+                    new_width = width
+                    new_height = int(new_width / aspect_ratio)
+                else:
+                    new_height = height
+                    new_width = int(new_height * aspect_ratio)
+                img = img.resize((new_width, new_height), Image.LANCZOS)
+                # 确保宽高小于300时进行裁切
+                if new_width < 300 or new_height < 300:
+                    img = ImageOps.fit(img, (max(new_width, 300), max(new_height, 300)), Image.LANCZOS, 0.5, (0.5, 0.5))
+
         if img.mode == 'RGBA':
             img = img.convert('RGB')
+
         buffer = BytesIO()
-        img.save(buffer, format='JPEG', quality=100)
+        img.save(buffer, format=original_format, quality=100)
         buffer.seek(0)
         return buffer
+"""
+os_path = 'H:/web_project/image/'
+target_path = 'H:/web_project/image/content_thumbnail/'
+
+# 创建 UploadFile 实例
+uploadfile = UploadFile()
+
+# 遍历文件夹生成内容页缩略图
+for file in os.listdir(os_path):
+    if file.lower().endswith(('.jpg', '.png', '.jpeg', '.tiff')):
+        file_path = os.path.join(os_path, file)
+        img = uploadfile.img_file_convert(file_path, 1200, 1200)
+
+        # 确保目标路径存在
+        os.makedirs(target_path, exist_ok=True)
+
+        # 保存转换后的缩略图
+        with open(os.path.join(target_path, file), 'wb') as f:
+            f.write(img.read())
+"""

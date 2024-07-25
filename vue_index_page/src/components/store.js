@@ -1,5 +1,4 @@
 import { createStore } from 'vuex';
-import createPersistedState from 'vuex-persistedstate';
 import * as cookies from 'H:/web_project/model/cookies.js';
 
 const MAX_STACK_DEPTH = 500; // 设置栈的最大深度
@@ -20,6 +19,7 @@ const store = createStore({
       comic_page: false,
       novel_page: false,
       img_content_page: false,
+      item_path:'',
     },
     token: cookies.get_cookie('token'),
     userinfo: {},
@@ -89,6 +89,9 @@ const store = createStore({
       state.pageStack = [];
       state.pushTimer = null; // 清除定时器
     },
+    SET_ITEM_PATH(state, path) {
+      state.content_page.item_path = path;
+    },
   },
   actions: {
     goBack({ commit }) {
@@ -111,8 +114,8 @@ const store = createStore({
     img_content_page: state => state.content_page.img_content_page,
     content_index_page: state => state.pageStatus.content_index_page,
     pageStack: state => state.pageStack,
+    item_path:state=>state.content_page.item_path,
   },
-  plugins: [createPersistedState()],
 });
 
 export default store;
