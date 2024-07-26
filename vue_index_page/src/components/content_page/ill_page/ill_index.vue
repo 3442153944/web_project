@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps } from 'vue';
+import { ref, watch, onMounted, defineProps,onUnmounted } from 'vue';
 import { useStore } from 'vuex';
 import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
@@ -73,10 +73,11 @@ async function get_collect_status(item) {
         work_id.value, 'add', token, 'ill', work_info.value.name) == 1 ? true : false;
 }
 
-//浮动互动栏的实现
-function float_interaction_bar() {
+function float_interaction_bar(status) {
     try {
-        if (!fixed_interaction.value || !float_interaction.value) return;
+        if (!fixed_interaction.value || !float_interaction.value || !status) {
+            return;
+        }
         // 获取当前窗体高度
         let window_height = window.innerHeight;
         // 获取固定互动栏底部高度距离窗体底部的高度
@@ -84,27 +85,36 @@ function float_interaction_bar() {
         // 当固定互动栏距离窗体距离为正时，隐藏浮动互动栏
         if (fixed_interaction_bottom < window_height) {
             float_interaction.value.style.transform = 'translateY(100%)';
-            //鼠标向上滑动时出现向下时隐藏
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 0) {
-                    float_interaction.value.style.transform = 'translateY(100%)';
-                } else {
-                    float_interaction.value.style.transform = 'translateY(0)';
-                }
-            });
+            // 鼠标向上滑动时出现，向下时隐藏
+            window.addEventListener('scroll', handleScroll);
+        } else {
+            float_interaction.value.style.transform = 'translateY(0)';
+        }
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+function handleScroll() {
+    if (float_interaction.value) {
+        if (window.scrollY > 0) {
+            float_interaction.value.style.transform = 'translateY(100%)';
         } else {
             float_interaction.value.style.transform = 'translateY(0)';
         }
     }
-    catch (e) {
-        console.log(e)
-    }
 }
 
 onMounted(() => {
-    float_interaction_bar(); // 初始调用
-    window.addEventListener('scroll', float_interaction_bar);
+    float_interaction_bar(true); // 初始调用
+    window.addEventListener('scroll', handleScroll);
 });
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handleScroll);
+    float_interaction_bar(false);
+});
+
 //查看更多按钮实现
 function show_all_img() {
     max_img_len.value = work_info.value.content_file_list.split(/[,，]/).length + 1;
