@@ -73,6 +73,8 @@ async function get_collect_status(item) {
         work_id.value, 'add', token, 'ill', work_info.value.name) == 1 ? true : false;
 }
 
+let lastScrollTop = 0; // 上一个滚动位置
+
 function float_interaction_bar(status) {
     try {
         if (!fixed_interaction.value || !float_interaction.value || !status) {
@@ -80,37 +82,45 @@ function float_interaction_bar(status) {
         }
         let window_height = window.innerHeight;
         let fixed_interaction_bottom = fixed_interaction.value.getBoundingClientRect().bottom;
-        console.log(window_height)
-        if (fixed_interaction_bottom < window_height) {
+        
+        if (fixed_interaction_bottom <= window_height) {
+            // 当固定互动栏距离窗体底部的距离小于或等于窗体高度时，隐藏浮动互动栏
             float_interaction.value.style.transform = 'translateY(100%)';
         } else {
+            // 否则显示浮动互动栏
             float_interaction.value.style.transform = 'translateY(0)';
         }
+        
+        // 确保在初始状态设置完成后添加滚动事件监听器
+        window.addEventListener('scroll', handleScroll);
     } catch (e) {
         console.log(e);
     }
 }
 
-
 function handleScroll() {
     if (float_interaction.value) {
-        if (window.scrollY > 0) {
+        const currentScrollTop = window.scrollY;
+        if (currentScrollTop > lastScrollTop) {
+            // 向下滚动，隐藏浮动互动栏
             float_interaction.value.style.transform = 'translateY(100%)';
         } else {
+            // 向上滚动，显示浮动互动栏
             float_interaction.value.style.transform = 'translateY(0)';
+            float_interaction_bar(true)
         }
+        lastScrollTop = currentScrollTop;
     }
 }
 
-onMounted(async () => {
-    await nextTick();
+onMounted(() => {
     float_interaction_bar(true); // 初始调用
     window.addEventListener('scroll', handleScroll);
 });
 
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
-    float_interaction_bar(false);
+    float_interaction_bar(false); // 清理状态
 });
 
 //查看更多按钮实现
