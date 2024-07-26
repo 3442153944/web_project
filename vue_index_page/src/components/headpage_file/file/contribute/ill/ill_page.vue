@@ -46,7 +46,7 @@
 <script setup>
 import { ref, watch } from 'vue';
 import ill_page_info from './ill_work_info.vue';
-import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
+import * as cookies from '@/assets/js/cookies'
 
 let temp_file_list = ref([]);
 let file_size = ref(0);

@@ -56,7 +56,7 @@ export default {
 import re_select from '../../../../models/select.vue'
 import auto_textarea from '../../../../models/auto_textarea.vue'
 import create_new_series from './create_new_series.vue';
-import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
+import * as cookies from '@/assets/js/cookies'
 let token = cookies.get_cookie('token');
 let select_title = ref('新建系列')
 let select_list = ref([

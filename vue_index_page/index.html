@@ -14,9 +14,6 @@
 </body>
 <style>
   img {
-    image-rendering: -webkit-optimize-contrast;
-    /* For Chrome */
-    image-rendering: optimize-contrast;
     /* CSS4 Proposed */
     image-rendering: crisp-edges;
     /* For Firefox */
@@ -31,8 +28,6 @@
     image-rendering: -moz-crisp-edges;
     /* Firefox */
     image-rendering: -o-crisp-edges;
-    /* Opera */
-    image-rendering: -webkit-optimize-contrast;
     /* Webkit (Safari, Chrome) */
     image-rendering: pixelated;
     /* CSS4标准，但支持情况较差 */
@@ -45,12 +40,6 @@
     /* 浏览器选择最佳的渲染方式 */
   }
 
-  .high-quality-image {
-    image-rendering: -webkit-optimize-contrast;
-    /* WebKit内核的优化选项 */
-    image-rendering: optimize-contrast;
-    /* 标准选项 */
-  }
   body{
     -webkit-font-smoothing: antialiased;
     font-kerning: normal;

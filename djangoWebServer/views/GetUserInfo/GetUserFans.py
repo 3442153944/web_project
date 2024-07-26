@@ -26,7 +26,6 @@ class GetUserFans(View):
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 rows = [dict(zip(columns, row)) for row in result]
-                print(rows)
             if rows:
                 self.logger.info(rows)
                 return JsonResponse({'status': 'success', 'data': rows})

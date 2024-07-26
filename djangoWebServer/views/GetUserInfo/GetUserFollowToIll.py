@@ -35,7 +35,6 @@ class GetUserFollowToIll(View):
                 ill_list = [dict(zip(columns, row)) for row in ill_result]
 
                 self.logger.info(ill_list)
-                print(ill_list)
                 #获取作品列表
                 return JsonResponse({'status': 'success', 'data': ill_list})
 

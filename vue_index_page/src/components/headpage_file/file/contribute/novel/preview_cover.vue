@@ -9,7 +9,7 @@
 
 <script setup>
 import { ref, watch, defineEmits, defineProps, onMounted } from 'vue';
-import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
+import * as cookies from '@/assets/js/cookies'
 
 const cover_img_src = ref('');
 const token = cookies.get_cookie('token');

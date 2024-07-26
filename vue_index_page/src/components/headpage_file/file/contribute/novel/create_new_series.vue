@@ -86,7 +86,7 @@ import scroll_box from '../../../../models/scroll_box.vue';
 import preview_cover from './preview_cover.vue'
 import is_original from './is_original.vue';
 import { ref, watch, defineEmits } from 'vue';
-import * as cookies from 'https://www.sunyuanling.com/model/cookies.js'
+import * as cookies from '@/assets/js/cookies'
 
 let token = cookies.get_cookie('token');
 let user_info = JSON.parse(cookies.get_cookie('userinfo'));
