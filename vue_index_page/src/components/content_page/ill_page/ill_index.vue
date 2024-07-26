@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps,onUnmounted } from 'vue';
+import { ref, watch, onMounted, defineProps,onUnmounted,nextTick } from 'vue';
 import { useStore } from 'vuex';
 import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
@@ -78,15 +78,11 @@ function float_interaction_bar(status) {
         if (!fixed_interaction.value || !float_interaction.value || !status) {
             return;
         }
-        // 获取当前窗体高度
         let window_height = window.innerHeight;
-        // 获取固定互动栏底部高度距离窗体底部的高度
         let fixed_interaction_bottom = fixed_interaction.value.getBoundingClientRect().bottom;
-        // 当固定互动栏距离窗体距离为正时，隐藏浮动互动栏
+        console.log(window_height)
         if (fixed_interaction_bottom < window_height) {
             float_interaction.value.style.transform = 'translateY(100%)';
-            // 鼠标向上滑动时出现，向下时隐藏
-            window.addEventListener('scroll', handleScroll);
         } else {
             float_interaction.value.style.transform = 'translateY(0)';
         }
@@ -94,6 +90,7 @@ function float_interaction_bar(status) {
         console.log(e);
     }
 }
+
 
 function handleScroll() {
     if (float_interaction.value) {
@@ -105,7 +102,8 @@ function handleScroll() {
     }
 }
 
-onMounted(() => {
+onMounted(async () => {
+    await nextTick();
     float_interaction_bar(true); // 初始调用
     window.addEventListener('scroll', handleScroll);
 });

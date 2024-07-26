@@ -24,6 +24,7 @@ class Watch(View):
         now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         try:
             data = json.loads(request.body.decode('utf-8'))
+            print(data)
             token = data.get('token')
             with connection.cursor() as cursor:
                 cursor.execute('select userid from users where token=%s', [token])
@@ -46,13 +47,13 @@ class Watch(View):
                 if cursor.fetchone():  # 如果存在则更新
                     sql = 'update user_watch_table set time=%s where userid=%s and workid=%s and type=%s'
                     cursor.execute(sql, [now, userid[0], work_id, work_type])
-                    if cursor.rowcount == 1:
+                    if cursor.rowcount >= 1:
                         self.logger.info(self.request_path(request) + '请求数据为：' + str(request.POST) + '操作成功')
                         return JsonResponse({'status': 'success', 'message': '更新观看数据','count':count}, status=200)
                 else:
                     sql = 'insert into user_watch_table (userid,workid,workname,time,type)values(%s,%s,%s,%s,%s)'
                     cursor.execute(sql, [userid[0], work_id, work_name, now, work_type])
-                    if cursor.rowcount == 1:
+                    if cursor.rowcount >= 1:
                         self.logger.info(self.request_path(request) + '请求数据为：' + str(request.POST) + '操作成功')
                         return JsonResponse({'status': 'success', 'message': '新增一个观看','count':count}, status=200)
 

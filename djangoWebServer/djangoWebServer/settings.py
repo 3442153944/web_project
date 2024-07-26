@@ -7,7 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     'H:/web_project',
+    'C:/Python/Lib/site-packages/drf_yasg/static',
 ]
+
 
 SECRET_KEY = 'django-insecure-ypu2=#s5wqperumf6kmmi=eb4)u=#sror+nsa*kq$dfkhm7-a-'
 PORT = 2233
@@ -111,7 +113,8 @@ INSTALLED_APPS = [
     'views.upload',
     'views.notice_control',
     'views.novel',
-    'views.get_work_info'
+    'views.get_work_info',
+    'rest_framework'
 ]
 
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'
@@ -132,7 +135,10 @@ ROOT_URLCONF = 'djangoWebServer.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',
+            'C:/Python/Lib/site-packages/drf_yasg/templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -144,6 +150,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 WSGI_APPLICATION = 'djangoWebServer.wsgi.application'
 

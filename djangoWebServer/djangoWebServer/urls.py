@@ -1,7 +1,22 @@
 # djangoWebServer/urls.py
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Your API",
+        default_version='v1',
+        description="Test description",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@yourapi.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('mysql_conn_test/', include('views.mysql_conn_test.urls')),
@@ -10,6 +25,8 @@ urlpatterns = [
     path('notice_control/', include('views.notice_control.url')),
     path('novel/', include('views.novel.url')),
     path('get_work_info/', include('views.get_work_info.url')),
-    path('work_interaction/', include('views.work_interaction.url'))
+    path('work_interaction/', include('views.work_interaction.url')),
     # 作品互动的主接口
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]

@@ -5,6 +5,7 @@ from django.views import View
 from django.db import connection
 from ..log.log import Logger
 
+
 class GetAllUserInfo(View):
 
     logger = Logger()
