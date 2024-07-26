@@ -93,12 +93,10 @@ async function get_follow_illustrations_list() {
     })
     const data = await res.json()
     if (data.status == 'success') {
-      console.log(data.data)
       follow_illustrations_list.value = data.data;
       for (let i = 0; i < follow_illustrations_list.value.length; i++) {
         follow_illustrations_list.value[i].belong_to_user_avatar = await get_author_avatar(follow_illustrations_list.value[i].belong_to_user_id)
       }
-      console.log(follow_illustrations_list.value)
       return data.data;
     }
     else {

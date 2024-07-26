@@ -24,7 +24,7 @@ const props = defineProps({
     type: Object,
     default: () => ({
       'like': '100',
-      'love': '100',
+      'collect': '100',
       'watch': '100'
     })
   },
@@ -61,7 +61,7 @@ const props = defineProps({
         </div>
         <div class="work_data_item">
           <img src="https://www.sunyuanling.com/assets/work_like.svg" class="icon" style="width:25px;height:25px;">
-          <span>{{ work_data.love }}</span>
+          <span>{{ work_data.collect }}</span>
         </div>
         <div class="work_data_item">
           <img src="https://www.sunyuanling.com/assets/show.svg" class="icon">

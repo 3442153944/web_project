@@ -118,7 +118,6 @@ async function get_author_work(){
     if(data.status=='success')
     {
       author_other_work_list.value=data.data.ill;
-      console.log(author_other_work_list.value);
       for(let i=0;i<author_other_work_list.value.length;i++)
     {
       author_other_work_list_path.value.push({'item_path':'https://www.sunyuanling.com/image/thumbnail/'+

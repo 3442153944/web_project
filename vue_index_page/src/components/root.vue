@@ -103,7 +103,6 @@ async function get_userinfo() {
         if (res.ok) {
             const data = await res.json();
             if (data.status == 'success') {
-                console.log(data);
                 cookies.set_cookie('userinfo', JSON.stringify(data.data[0]), { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
                 load_reading.value = true;
             } else {

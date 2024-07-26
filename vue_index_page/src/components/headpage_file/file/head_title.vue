@@ -154,7 +154,6 @@ async function get_notice_info(){
             const data=await res.json()
             if(data.status=='success')
             {
-                console.log(data.data)
                 notice_info.value=data.data;
             }
             else{

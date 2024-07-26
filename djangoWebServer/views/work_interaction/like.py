@@ -46,14 +46,42 @@ class Like(View):
                         return JsonResponse({'status': 'success', 'data': 1, 'message': '已经点赞'}, status=200)
                     else:
                         return JsonResponse({'status': 'success', 'data': 0, 'message': '未点赞'}, status=200)
+                if operate_type == 'count':
+                    sql = 'select count(*) from user_like_table where workid=%s and type=%s'
+                    cursor.execute(sql, [work_id, work_type])
+                    return JsonResponse({'status': 'success', 'data': cursor.fetchone()[0], 'message': '查询成功'},
+                                        status=200)
+
                 elif operate_type == 'add':
-                    sql = 'insert into user_like_table(userid, workid, workname, time, type) values (%s,%s,%s,%s,%s)'
-                    cursor.execute(sql, [userid, work_id, work_name, now, work_type])
-                    if cursor.rowcount == 1:
-                        return JsonResponse({'status': 'success', 'message': '点赞成功'}, status=200)
+                    # 首先检查是否已经存在点赞记录
+                    search_sql = 'select * from user_like_table where userid=%s and workid=%s and type=%s'
+                    cursor.execute(search_sql, [userid, work_id, work_type])
+                    existing_like = cursor.fetchone()
+
+                    if existing_like:
+                        # 如果存在点赞记录，则删除记录并返回取消点赞的消息
+                        delete_sql = 'delete from user_like_table where userid=%s and workid=%s and type=%s'
+                        cursor.execute(delete_sql, [userid, work_id, work_type])
+                        if cursor.rowcount == 1:
+                            self.logger.info(
+                                self.request_path(request) + '请求信息：' + str(request.POST) + '操作成功，取消点赞')
+                            return JsonResponse({'status': 'success', 'message': '取消点赞成功', 'data': 0}, status=200)
+                        else:
+                            self.logger.error(self.request_path(request) + '请求信息：' + str(request.POST) + '操作失败')
+                            return JsonResponse({'status': 'error', 'message': '取消点赞失败', 'data': 0}, status=500)
                     else:
-                        self.logger.error(self.request_path(request) + '请求信息：' + str(request.POST) + '操作失败')
-                        return JsonResponse({'status': 'error', 'message': '点赞失败'}, status=500)
+                        # 如果不存在点赞记录，则插入新的点赞记录
+                        insert_sql = ('insert into user_like_table(userid, workid, workname, time, type) values (%s,'
+                                      '%s,%s,%s,%s)')
+                        cursor.execute(insert_sql, [userid, work_id, work_name, now, work_type])
+                        if cursor.rowcount == 1:
+                            self.logger.info(
+                                self.request_path(request) + '请求信息：' + str(request.POST) + '操作成功，新增点赞')
+                            return JsonResponse({'status': 'success', 'message': '点赞成功', 'data': 1}, status=200)
+                        else:
+                            self.logger.error(self.request_path(request) + '请求信息：' + str(request.POST) + '操作失败')
+                            return JsonResponse({'status': 'error', 'message': '点赞失败', 'data': 0}, status=500)
+
                 else:
                     self.logger.error(
                         self.request_path(request) + '请求信息：' + str(request.POST) + '错误信息：无效的操作类型')

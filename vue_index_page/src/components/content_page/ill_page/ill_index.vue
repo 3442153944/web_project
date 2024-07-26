@@ -16,12 +16,14 @@
                 </div>
             </div>
             <div class="fixed_interaction" ref="fixed_interaction">
-                <interaction></interaction>
+                <interaction :like_status="like_status" :collect_status="collect_status" @like_status="get_like_status"
+                    @collect_status="get_collect_status"></interaction>
             </div>
             <div class="float_interaction" ref="float_interaction">
-                <interaction></interaction>
+                <interaction :like_status="like_status" :collect_status="collect_status" @like_status="get_like_status"
+                    @collect_status="get_collect_status"></interaction>
             </div>
-            <work_info_box></work_info_box>
+            <work_info_box :work_data="work_data" :work_create_time="work_info.create_time"></work_info_box>
         </div>
         <div class="author_info_box" v-if="work_info">
             <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info>
@@ -53,27 +55,49 @@ let show_more_btn = ref(null)
 let fixed_interaction = ref(null)
 let float_interaction = ref(null)
 let token = cookies.get_cookie("token");
+let like_status = ref(false)
+let collect_status = ref(false)
+let work_data = ref({
+    'like': '100',
+    'collect': '100',
+    'watch': '100'
+})
+//接收子组件状态
+async function get_like_status(item) {
+    like_status.value = item
+    like_status.value = await user_interaction.like_work(work_id.value, 'add', token, 'ill', work_info.value.name) == 1 ? true : false
+}
+async function get_collect_status(item) {
+    collect_status.value = item
+    collect_status.value = await user_interaction.collect_work(
+        work_id.value, 'add', token, 'ill', work_info.value.name) == 1 ? true : false;
+}
 
 //浮动互动栏的实现
 function float_interaction_bar() {
-    if (!fixed_interaction.value || !float_interaction.value) return;
-    // 获取当前窗体高度
-    let window_height = window.innerHeight;
-    // 获取固定互动栏底部高度距离窗体底部的高度
-    let fixed_interaction_bottom = fixed_interaction.value.getBoundingClientRect().bottom;
-    // 当固定互动栏距离窗体距离为正时，隐藏浮动互动栏
-    if (fixed_interaction_bottom < window_height) {
-        float_interaction.value.style.transform = 'translateY(100%)';
-        //鼠标向上滑动时出现向下时隐藏
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 0) {
-                float_interaction.value.style.transform = 'translateY(100%)';
-            } else {
-                float_interaction.value.style.transform = 'translateY(0)';
-            }
-        });
-    } else {
-        float_interaction.value.style.transform = 'translateY(0)';
+    try {
+        if (!fixed_interaction.value || !float_interaction.value) return;
+        // 获取当前窗体高度
+        let window_height = window.innerHeight;
+        // 获取固定互动栏底部高度距离窗体底部的高度
+        let fixed_interaction_bottom = fixed_interaction.value.getBoundingClientRect().bottom;
+        // 当固定互动栏距离窗体距离为正时，隐藏浮动互动栏
+        if (fixed_interaction_bottom < window_height) {
+            float_interaction.value.style.transform = 'translateY(100%)';
+            //鼠标向上滑动时出现向下时隐藏
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 0) {
+                    float_interaction.value.style.transform = 'translateY(100%)';
+                } else {
+                    float_interaction.value.style.transform = 'translateY(0)';
+                }
+            });
+        } else {
+            float_interaction.value.style.transform = 'translateY(0)';
+        }
+    }
+    catch (e) {
+        console.log(e)
     }
 }
 
@@ -104,10 +128,27 @@ watch(() => store.getters.work_id, (newValue) => {
 onMounted(async () => {
     work_id.value = store.getters.work_id;
     await get_work_info();
-    await user_interaction.watch_work(parseInt(work_id.value,),token,'ill',work_info.value.name)
+    await user_interaction.watch_work(parseInt(work_id.value,), token, 'ill', work_info.value.name);
+    //请求点赞状态
+    like_status.value = await user_interaction.like_work(
+        work_id.value, 'search', token, 'ill', work_info.value.name) == 1 ? true : false;
+    collect_status.value = await user_interaction.collect_work(
+        work_id.value, 'search', token, 'ill', work_info.value.name) == 1 ? true : false;
+    work_data.value.watch = await user_interaction.watch_work(work_id.value, token, 'ill', work_info.value.name)
+    work_data.value.like = await user_interaction.like_work(work_id.value, 'count', token, 'ill', work_info.value.name)
+    work_data.value.collect = await user_interaction.collect_work(work_id.value, 'count', token, 'ill', work_info.value.name)
 });
 watch(work_id, async () => {
     await get_work_info();
+    await user_interaction.watch_work(parseInt(work_id.value,), token, 'ill', work_info.value.name);
+    //请求点赞状态
+    like_status.value = await user_interaction.like_work(
+        work_id.value, 'search', token, 'ill', work_info.value.name) == 1 ? true : false;
+    collect_status.value = await user_interaction.collect_work(
+        work_id.value, 'search', token, 'ill', work_info.value.name) == 1 ? true : false;
+    work_data.value.watch = await user_interaction.watch_work(work_id.value, token, 'ill', work_info.value.name)
+    work_data.value.like = await user_interaction.like_work(work_id.value, 'count', token, 'ill', work_info.value.name)
+    work_data.value.collect = await user_interaction.collect_work(work_id.value, 'count', token, 'ill', work_info.value.name)
 })
 // 使用ID请求作品信息
 async function get_work_info() {
@@ -155,50 +196,7 @@ function close_content_page() {
 //获取子组件传递的作品ID并设置在本页面
 async function get_choose_item(item) {
     work_id.value = item.work_id;
-    await user_interaction.watch_work(work_id.value,token,'ill',work_info.value.name);
-}
-//作品观看
-async function watch_work(work_id,a_token,work_type,work_name) {
-    try {
-        const res = await fetch('https://www.sunyuanling.com/api/work_interaction/Watch/', {
-            method: 'post',
-            headers: {
-                'content-type': 'application/json'
-            },
-            body: JSON.stringify({
-                token: a_token,
-                work_id: work_id,
-                work_type: work_type,
-                work_name: work_name,
-            })
-        })
-        if (res.ok) {
-            const data = await res.json()
-            if (data.status == 'success') {
-                console.log(data.message)
-            }
-            else {
-                console.log(data.message)
-            }
-        }
-        else {
-            console.log(res.status)
-        }
-    }
-    catch (e) {
-        console.log(e)
-    }
-}
-//作品点赞
-async function like_work(work_id,operate_type,token,work_type)
-{
-    try{
-        const res=await fetch('https://www.sunyuanling.com/api/work_interaction/Like/')
-    }
-    catch(e)
-    {
-        console.log(e)
-    }
+    await user_interaction.watch_work(work_id.value, token, 'ill', work_info.value.name);
 }
 
 </script>

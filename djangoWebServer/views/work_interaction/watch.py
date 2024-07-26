@@ -36,7 +36,9 @@ class Watch(View):
                 work_id = int(data.get('work_id'))
                 work_type = data.get('work_type')
                 work_name = data.get('work_name')
-                print(data)
+                sql='select count(*) from user_watch_table where type=%s and workid=%s'
+                cursor.execute(sql, [work_type, work_id])
+                count=cursor.fetchone()[0]
 
                 search_sql = 'select * from user_watch_table where userid=%s and workid=%s and type=%s'
                 cursor.execute(search_sql, [userid[0], work_id, work_type])
@@ -46,13 +48,13 @@ class Watch(View):
                     cursor.execute(sql, [now, userid[0], work_id, work_type])
                     if cursor.rowcount == 1:
                         self.logger.info(self.request_path(request) + '请求数据为：' + str(request.POST) + '操作成功')
-                        return JsonResponse({'status': 'success', 'message': '更新观看数据'}, status=200)
+                        return JsonResponse({'status': 'success', 'message': '更新观看数据','count':count}, status=200)
                 else:
                     sql = 'insert into user_watch_table (userid,workid,workname,time,type)values(%s,%s,%s,%s,%s)'
                     cursor.execute(sql, [userid[0], work_id, work_name, now, work_type])
                     if cursor.rowcount == 1:
                         self.logger.info(self.request_path(request) + '请求数据为：' + str(request.POST) + '操作成功')
-                        return JsonResponse({'status': 'success', 'message': '新增一个观看'}, status=200)
+                        return JsonResponse({'status': 'success', 'message': '新增一个观看','count':count}, status=200)
 
                 self.logger.warning(self.request_path(request) + '请求数据为：' + str(request.POST) + '操作失败')
                 return JsonResponse({'status': 'error', 'message': '新增失败'}, status=500)

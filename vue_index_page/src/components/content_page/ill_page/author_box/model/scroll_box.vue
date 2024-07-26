@@ -125,7 +125,6 @@ onMounted(async () => {
   for (let i = 0; i < props.msg_list.length; i++) {
     msg_list.value[i].work_count = await get_work_info(props.msg_list[i].Illustration_id);
   }
-  console.log(msg_list.value);
 });
 //通过ID请求作品详情，并获取数量
 async function get_work_info(work_id) {

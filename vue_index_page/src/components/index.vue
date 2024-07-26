@@ -20,7 +20,6 @@ import { useStore } from 'vuex';
 const store = useStore();
 const pageIndex = computed(() => store.getters.indexPage);
 const page_show=ref(pageIndex.value)
-console.log(store.state.pageStatus.indexPage)
 function choosePage(index) {
   store.commit('SET_INDEXPAGE', index);
   store.commit('SET_PAGESTATUS')
