@@ -15,7 +15,13 @@
                     <span @click="show_all_img()">查看全部</span>
                 </div>
             </div>
-            <interaction></interaction>
+            <div class="fixed_interaction" ref="fixed_interaction">
+                <interaction ></interaction>
+            </div>
+            <div class="float_interaction" ref="float_interaction">
+                <interaction></interaction>
+            </div>
+            <work_info_box></work_info_box>
         </div>
         <div class="author_info_box" v-if="work_info">
             <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info>
@@ -32,6 +38,7 @@ import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
 import author_info from './author_box/author_info.vue';
 import interaction from './author_box/model/interaction_bar.vue'
+import work_info_box from './author_box/model/work_info_bar.vue'
 
 const store = useStore();
 const work_id = ref('');
@@ -40,7 +47,36 @@ const img_content_page_show = ref(false);
 const item_path = ref('');
 let max_img_len = ref(1)
 let show_more_btn = ref(null)
+let fixed_interaction=ref(null)
+let float_interaction=ref(null)
 
+//浮动互动栏的实现
+function float_interaction_bar() {
+  if (!fixed_interaction.value || !float_interaction.value) return;
+  // 获取当前窗体高度
+  let window_height = window.innerHeight;
+  // 获取固定互动栏底部高度距离窗体底部的高度
+  let fixed_interaction_bottom = fixed_interaction.value.getBoundingClientRect().bottom;
+  // 当固定互动栏距离窗体距离为正时，隐藏浮动互动栏
+  if (fixed_interaction_bottom < window_height) {
+    float_interaction.value.style.transform = 'translateY(100%)';
+    //鼠标向上滑动时出现向下时隐藏
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 0) {
+        float_interaction.value.style.transform = 'translateY(100%)';
+      } else {
+        float_interaction.value.style.transform = 'translateY(0)';
+      }
+    });
+  } else {
+    float_interaction.value.style.transform = 'translateY(0)';
+  }
+}
+
+onMounted(() => {
+  float_interaction_bar(); // 初始调用
+  window.addEventListener('scroll', float_interaction_bar);
+});
 //查看更多按钮实现
 function show_all_img() {
     max_img_len.value = work_info.value.content_file_list.split(/[,，]/).length + 1;
@@ -198,5 +234,15 @@ function get_choose_item(item)
     font-weight: bold;
     z-index: 2;
     cursor: pointer;
+}
+.float_interaction{
+    position: fixed;
+    bottom: 0px;
+    width: 60%;
+    background:linear-gradient(to top,rgba(255,255,255,1),rgba(255,255,255,0));
+    height: 80px;
+    display: flex;
+    align-items: center;
+    transition: all 0.3s ease-in-out;
 }
 </style>

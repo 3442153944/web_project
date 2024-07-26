@@ -109,6 +109,7 @@ onMounted(() => {
   flex-direction: row;
   position: relative;
   justify-content: flex-end;
+  align-items: flex-end;
 }
 .item {
   width: auto;

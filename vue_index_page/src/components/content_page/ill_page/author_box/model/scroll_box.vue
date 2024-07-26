@@ -162,7 +162,8 @@ async function get_work_info(work_id) {
   min-width: 50px;
   display: flex;
   align-items: center;
-  max-height: 200px;
+  max-height: 100px;
+  margin-top: 5px;
 }
 
 .scroll_box_content {
@@ -240,6 +241,7 @@ async function get_work_info(work_id) {
   height: 100%;
   display: flex;
   align-items: center;
+  max-width: 100px;
 }
 
 .tags_item {
