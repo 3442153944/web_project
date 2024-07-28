@@ -24,6 +24,9 @@
                     @collect_status="get_collect_status"></interaction>
             </div>
             <work_info_box :work_data="work_data" :work_create_time="work_info.create_time"></work_info_box>
+            <div class="author_info_box_bottom" v-if="work_info">
+                <author_info_bottom :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info_bottom>
+            </div>
         </div>
         <div class="author_info_box" v-if="work_info">
             <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info>
@@ -39,6 +42,7 @@ import { useStore } from 'vuex';
 import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
 import author_info from './author_box/author_info.vue';
+import author_info_bottom from './author_box/model/author_info.vue'
 import interaction from './author_box/model/interaction_bar.vue'
 import work_info_box from './author_box/model/work_info_bar.vue'
 import * as cookies from '@/assets/js/cookies'
@@ -270,6 +274,11 @@ async function get_choose_item(item) {
     width: 40%;
     height: auto;
     padding-right: 10px;
+}
+.author_info_box_bottom{
+    display: flex;
+    width: 100%;
+    height: auto;
 }
 
 .show_more_btn {

@@ -1,7 +1,7 @@
 <template>
   <div class="send_msg_box">
     <div class="user_avatar">
-        <img class="avatar_img" :src="user_avatar_path">
+        <img class="avatar_img" :src="'https://www.sunyuanling.com/image/avatar_thumbnail/'+user_avatar_path">
     </div>
     <auto_textarea v-model="content"></auto_textarea>
     <div class="send_btn" @click="send_msg">
@@ -16,8 +16,9 @@ import auto_textarea from './auto_textarea.vue'
 const props =defineProps({
     user_avatar_path:{
         type:String,
-        default:'https://www.sunyuanling.com/assets/work_like.svg'
+        default:'work_like.svg'
     },
+    
 })
 const emit=defineEmits(['send_msg'])
 let content=ref('')

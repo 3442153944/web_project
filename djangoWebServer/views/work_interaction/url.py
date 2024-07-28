@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .collect import Collect
+from .comment_section import AddCommentSection, GetCommentSection
 from .like import Like
 from .watch import Watch
 
@@ -11,4 +12,8 @@ urlpatterns = [
     # 作品点赞记录
     path('Collect/',Collect.as_view(),name='Collect'),
     # 作品收藏记录
+    path('AddCommentSection/',AddCommentSection.as_view(),name='AddCommentSection'),
+    #新增评论
+    path('GetCommentSection/',GetCommentSection.as_view(),name='GetCommentSection')
+    #获取评论
 ]

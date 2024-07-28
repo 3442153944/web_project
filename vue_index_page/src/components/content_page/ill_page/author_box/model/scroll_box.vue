@@ -161,7 +161,7 @@ async function get_work_info(work_id) {
   min-width: 50px;
   display: flex;
   align-items: center;
-  max-height: 100px;
+  max-height: 200px;
   margin-top: 5px;
 }
 
