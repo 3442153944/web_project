@@ -159,7 +159,6 @@ function get_msg_info(item)
   delete item.content
   msg_info.value=item
   msg_info.value.content=temp_content
-  console.log(msg_info.value)
 }
 
 // 切换回复框的可见性
@@ -186,9 +185,7 @@ function toggleReplyBox(commentId, isMain) {
 function handleSendMsg(item) {
   // 处理发送消息的逻辑，并可能更新评论列表
   msg_content.value=item
-  console.log(item)
   msg_info.value.content=item
-  console.log(msg_info.value)
   emit('send_reply_msg',msg_info.value)
 }
 watch(msg_content,()=>{

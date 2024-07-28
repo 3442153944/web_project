@@ -44,14 +44,11 @@ let content=ref('')
     emit('msg_info',props.msg_info)
     emit('send_ready_ok',true)
     content.value=''
-    console.log(content.value)
-    console.log(props.msg_info)
 }
 watch(content,()=>{
   if(content.value!=''&&content.value){
     emit('send_msg',content.value)
     emit('msg_info',props.msg_info)
-    console.log(content.value)
   }
 })
 </script>

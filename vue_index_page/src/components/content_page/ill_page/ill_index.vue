@@ -28,7 +28,11 @@
                 <author_info_bottom :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info_bottom>
             </div>
             <div class="comment_section">
-                <comment_section></comment_section>
+                <comment_section :work_type="'ill'" :token="token" :work_id="String(work_id)" 
+                :user_avatar_path="user_avatar_path"
+                :key="work_id">
+
+                </comment_section>
             </div>
         </div>
         <div class="author_info_box" v-if="work_info">
@@ -73,6 +77,8 @@ let work_data = ref({
     'collect': '100',
     'watch': '100'
 })
+let user_avatar_path=ref(JSON.parse(cookies.get_cookie('userinfo')).user_avatar)
+console.log(user_avatar_path.value)
 //接收子组件状态
 async function get_like_status(item) {
     like_status.value = item
