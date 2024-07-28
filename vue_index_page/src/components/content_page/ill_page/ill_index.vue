@@ -27,13 +27,19 @@
             <div class="author_info_box_bottom" v-if="work_info">
                 <author_info_bottom :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info_bottom>
             </div>
+            <div class="comment_section">
+                <comment_section></comment_section>
+            </div>
         </div>
         <div class="author_info_box" v-if="work_info">
             <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info>
         </div>
+        
     </div>
     <img_content_page :item_path="item_path" v-if="img_content_page_show" @close_img_content_page="close_content_page">
     </img_content_page>
+    
+    
 </template>
 
 <script setup>
@@ -45,6 +51,7 @@ import author_info from './author_box/author_info.vue';
 import author_info_bottom from './author_box/model/author_info.vue'
 import interaction from './author_box/model/interaction_bar.vue'
 import work_info_box from './author_box/model/work_info_bar.vue'
+import comment_section from './comment_section.vue'
 import * as cookies from '@/assets/js/cookies'
 import * as user_interaction from '@/assets/js/interaction'
 
@@ -322,5 +329,9 @@ async function get_choose_item(item) {
     display: flex;
     align-items: center;
     transition: all 0.3s ease-in-out;
+}
+.comment_section{
+    width: 100%;
+    margin-top: 10px;
 }
 </style>

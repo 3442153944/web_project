@@ -104,7 +104,7 @@
 <script setup>
 import { ref, computed, defineProps,defineEmits, watch } from 'vue';
 import send_msg_box from '../send_msg_box.vue';
-import {like_comment} from '../../js/get_comment'
+import {like_comment} from '../../../../../assets/js/get_comment'
 
 const props = defineProps({
   comments: {
