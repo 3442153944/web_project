@@ -18,15 +18,42 @@ const props =defineProps({
         type:String,
         default:'work_like.svg'
     },
+    msg_info:{
+      type:Object,
+      default:()=>{
+        return {
+          work_id:'',
+          work_type:'',
+          token:'',
+          send_userid:'',
+          is_root_comment:'',
+          content:'',
+          main_userid:'',
+          main_comment_id:'',
+          reply_comment_id:''
+        }
+      }
+    }
     
 })
-const emit=defineEmits(['send_msg'])
+const emit=defineEmits(['send_msg','msg_info','send_ready_ok'])
 let content=ref('')
 //发送消息
-const send_msg=()=>{
+ const  send_msg=async ()=>{
     emit('send_msg',content.value)
+    emit('msg_info',props.msg_info)
+    emit('send_ready_ok',true)
     content.value=''
+    console.log(content.value)
+    console.log(props.msg_info)
 }
+watch(content,()=>{
+  if(content.value!=''&&content.value){
+    emit('send_msg',content.value)
+    emit('msg_info',props.msg_info)
+    console.log(content.value)
+  }
+})
 </script>
 
 <style scoped>
@@ -43,11 +70,14 @@ const send_msg=()=>{
     height: 50px;
     display: flex;
     overflow: hidden;
+    min-width: 50px;
+    min-height: 50px;
   }
   .user_avatar img{
     width: 100%;
     height: 100%;
     border-radius: 50%;
+    object-fit: cover;
   }
   .send_btn{
     width: auto;

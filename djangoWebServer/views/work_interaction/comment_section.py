@@ -5,6 +5,7 @@ from datetime import datetime
 import json
 from ..log.log import Logger
 
+
 class AddCommentSection(View):
     logger = Logger()
 
@@ -35,23 +36,38 @@ class AddCommentSection(View):
                     cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
                     result = cursor.fetchone()
                     if not result:
-                        self.logger.warning(self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'token无效')
+                        self.logger.warning(self.request_path(request) + '请求数据为：' + str(
+                            request.POST) + '，错误信息为：' + 'token无效')
                         return JsonResponse({'status': 'error', 'message': 'token无效'}, status=400)
                     user_id = result[0]
+            main_user_id=data.get('main_user_id')
+            is_root_comment=data.get('is_root_comment')
+            if is_root_comment=='1' or is_root_comment==True or is_root_comment==1:
+                main_user_id=user_id
+            else:
+                main_user_id=data.get('main_user_id')
+            content = data.get('content')
+            if not content:
+                self.logger.warning(
+                    self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'content缺失')
+                return JsonResponse({'status': 'error', 'message': '评论内容不能为空'}, status=400)
+
 
             sql = ('INSERT INTO comment (work_id, work_type, is_root_comment, send_userid, content, date, '
                    'main_userid, main_comment_id, reply_comment_id) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)')
             with connection.cursor() as cursor:
                 cursor.execute(sql, [data.get('work_id'), data.get('work_type'), data.get('is_root_comment'),
-                                    user_id, data.get('content'), now, data.get('main_userid'),
-                                    data.get('main_comment_id'), data.get('reply_comment_id')])
+                                     user_id, content, now, main_user_id,
+                                     int(data.get('main_comment_id')), int(data.get('reply_comment_id'))])
 
             return JsonResponse({'status': 'success', 'message': '评论成功'}, status=200)
 
         except json.JSONDecodeError as e:
+            print(e)
             self.logger.error(self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + str(e))
             return JsonResponse({'status': 'error', 'message': '请求数据格式错误'}, status=400)
         except Exception as e:
+            print(e)
             self.logger.error(self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + str(e))
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
 
@@ -94,7 +110,7 @@ class GetCommentSection(View):
             work_id = data.get('work_id')
             work_type = data.get('work_type')
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-            limit = int(data.get('limit', 5))
+            limit = int(data.get('limit', 10))
             offset = int(data.get('offset', 0))
 
             if token == 'sunyuanling' or key == 'sunyuanling':
@@ -199,8 +215,28 @@ class GetCommentSection(View):
                             time=self.parse_date(child['date']).strftime("%Y年%m月%d日 %H时%M分%S秒"),
                             is_main=False,
                             is_replay=child['main_userid'] != child['send_userid'],
-                            main_comment_id=child['main_comment_id']
+                            main_comment_id=child['main_comment_id'],
+                            reply_comment_id=child['reply_comment_id']
                         ) for child in child_comments_by_parent.get(row['comment_id'], [])]
+                        #查找回复的谁，用户名
+                        for reply in row['replies']:
+                            if reply['reply_comment_id']:
+                                cursor.execute('''
+                                            SELECT
+                                                u.username AS reply_username
+                                            FROM
+                                                comment c
+                                            JOIN
+                                                users u ON c.send_userid = u.userid
+                                            WHERE
+                                                c.comment_id = %s
+                                        ''', [reply['reply_comment_id']])
+
+                                result = cursor.fetchone()
+                                if result:
+                                    reply['reply_username'] = result[0]
+                                else:
+                                    reply['reply_username'] = '未知'
                         data.append(row)
 
                 return JsonResponse({
@@ -216,5 +252,3 @@ class GetCommentSection(View):
         except Exception as e:
             self.logger.error(self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + str(e))
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
-
-
