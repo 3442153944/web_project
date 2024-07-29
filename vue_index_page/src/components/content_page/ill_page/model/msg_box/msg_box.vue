@@ -26,6 +26,7 @@
             <div class="like_count">
               <span>{{item.like_comment_count}}</span>
             </div>
+           
             <span class="reply_btn" @click="toggleReplyBox(item.comment_id, true)">回复</span>
           </div>
           <div class="reply_box" v-if="replyBoxVisible[item.comment_id]">

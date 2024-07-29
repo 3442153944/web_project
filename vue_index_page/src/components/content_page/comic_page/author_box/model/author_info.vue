@@ -118,12 +118,12 @@ async function get_author_work(){
     });
     if(data.status=='success')
     {
-      author_other_work_list.value=data.data.ill;
+      author_other_work_list.value=data.data.comic;
       for(let i=0;i<author_other_work_list.value.length;i++)
     {
-      author_other_work_list_path.value.push({'item_path':'https://www.sunyuanling.com/image/thumbnail/'+
+      author_other_work_list_path.value.push({'item_path':'https://www.sunyuanling.com/image/comic/thumbnail/'+
       author_other_work_list.value[i].content_file_list.split(/[,，]/)[0],
-      'Illustration_id':author_other_work_list.value[i].Illustration_id})
+      'work_id':author_other_work_list.value[i].id})
     }
     }
   }

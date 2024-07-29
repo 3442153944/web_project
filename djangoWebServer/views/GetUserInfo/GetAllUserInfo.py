@@ -35,6 +35,7 @@ class GetAllUserInfo(View):
         try:
             with connection.cursor() as cursor:
                 data = json.loads(request.body.decode('utf-8'))
+                print(data)
                 userid=data['userid']
                 token=data.get('token')
                 if userid and token:
@@ -47,10 +48,12 @@ class GetAllUserInfo(View):
                 for row in rows:
                     del row['password']
                     del row['token']
+
             if rows:
                 self.logger.info(rows)
                 return JsonResponse({'status': 'success', 'data': rows})
             else:
+                print('没有结果')
                 self.logger.warning(data)
                 return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
         except Exception as e:

@@ -287,8 +287,8 @@ class GetCommentSection(View):
 
                 if not result:
                     self.logger.warning(
-                        self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'work_id无效')
-                    return JsonResponse({'status': 'error', 'message': 'work_id无效'}, status=400)
+                        self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + '该作品没有评论')
+                    return JsonResponse({'status': 'success', 'message': '该作品没有评论'}, status=202)
 
                 columns = [column[0] for column in cursor.description]
                 rows = [dict(zip(columns, row)) for row in result]
