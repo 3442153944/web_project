@@ -134,6 +134,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   max-height: 300px;
+  position: relative; /* 将 position 移到父容器以控制 btn_box 的位置 */
 }
 
 .scroll_box_content {
@@ -141,11 +142,7 @@ onMounted(() => {
   width: 100%;
   height: 100%;
   align-items: center;
-  overflow-x: auto;
-  scrollbar-width: none;
   white-space: nowrap;
-  transition: transform 0.3s ease;
-  position: relative;
 }
 
 .btn_box {
@@ -154,12 +151,10 @@ onMounted(() => {
   display: flex;
   align-items: center;
   position: absolute;
-  left: 0;
   top: 0;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   z-index: 5;
-  pointer-events: none;
 }
 
 .scroll_box:hover .btn_box {
@@ -176,7 +171,6 @@ onMounted(() => {
   cursor: pointer;
   position: absolute;
   pointer-events: auto;
-  /* Enable pointer events only for the buttons */
 }
 
 .left_btn {
@@ -192,56 +186,32 @@ onMounted(() => {
 .icon {
   width: 25px;
   height: 25px;
-  object-fit: cover;
 }
 
 .list {
-  width: auto;
-  height: auto;
   display: flex;
-  align-items: center;
   gap: 10px;
-  overflow-x: auto;
-  scrollbar-width: none;
   white-space: nowrap;
-  transition: transform 0.3s ease;
 }
 
 .item {
-  width: auto;
-  height: auto;
   min-height: 200px;
   display: flex;
-  align-items: center;
   flex-direction: column;
+  align-items: center;
   gap: 10px;
 }
 
-.tags_item {
-  width: auto;
-  height: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(255, 255, 255, 1);
-  cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 10px;
-}
-
 .image_item {
-  width: auto;
-  height: 200px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   border-radius: 15px;
   min-width: 150px;
-  min-height: 75px;
-  max-height: 200px;
   max-width: 280px;
-  margin: 0px 10px;
+  max-height: 200px;
+  margin: 0 10px;
   position: relative;
 }
 
@@ -252,49 +222,46 @@ onMounted(() => {
   border-radius: 15px;
 }
 
-.age_tag {
+.age_tag,
+.page_count {
   position: absolute;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: white;
+  z-index: 2;
+  padding: 3px 5px;
+}
+
+.age_tag {
   width: 40px;
   height: 20px;
   left: 5px;
   top: 5px;
   background-color: rgba(255, 0, 0, 1);
   font-size: 12px;
-  font-weight: bold;
-  color: white;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
 }
 
 .page_count {
-  position: absolute;
   width: 55px;
   height: 30px;
-  right: 0px;
+  right: 0;
   top: 5px;
   background-color: rgba(87, 85, 85, 0.8);
   font-size: 16px;
-  font-weight: bold;
-  color: white;
-  border-radius: 10px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 2;
   gap: 5px;
 }
 
 .page_count img {
   width: 25px;
   height: 25px;
-  object-fit: cover;
 }
 
 .user_info {
   display: flex;
+  align-items: center;
   width: 100%;
   margin-left: 15px;
 }
@@ -303,20 +270,18 @@ onMounted(() => {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  object-fit: cover;
   margin-right: 10px;
   overflow: hidden;
-}
-
-.username {
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .user_avatar img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
 }
+
+.username {
+  display: flex;
+  align-items: center;
+}
+
 </style>
