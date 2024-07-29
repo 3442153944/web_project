@@ -5,23 +5,8 @@
     </div>
     <div class="content">
       <div class="head_box">
-        <div class="tag_list" v-if="tag_list">
-          <div class="tag_box" v-for="(item, index) in tag_list" :key="index">
-            <div class="tag_item">
-              <span>
-                <span>{{ item }}</span>
-              </span>
-            </div>
-          </div>
-          <div class="btn_box">
-            <div class="left_btn">
-              <img class="icon" src="https://www.sunyuanling.com/assets/left.svg" alt="left_btn">
-            </div>
-            <div class="right_btn">
-              <img class="icon" src="https://www.sunyuanling.com/assets/right.svg" alt="right_btn">
-            </div>
-          </div>
-        </div>
+       
+        <scroll_box :msg_list="tag_list" v-if="tag_list"></scroll_box>
       </div>
       <div class="choose_search_target_page">
         <div class="choose_ill_page" ref="choose_ill_page" @click="switch_page(0)">
@@ -54,6 +39,7 @@ import ill_page from './page/ill_page.vue'
 import comic_page from './page/comic_page.vue'
 import novel_page from './page/novel_page.vue'
 import user_page from './page/user_page.vue'
+import scroll_box from './model/scroll_box.vue'
 export default {
   name: 'search_page_index',
   components: {
@@ -292,7 +278,7 @@ defineExpose({
   width: 80%;
   height: 80px;
   align-items: center;
-  margin: 5px auto;
+  margin: 10px auto;
 }
 
 .search_result_cover {
