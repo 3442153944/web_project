@@ -422,7 +422,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     
     position: fixed;
     top: 60px;
-    z-index: 2;
+    z-index: 15;
     transition: left 0.2s ease;
     /* 添加过渡效果 */
     transition: right 0.2s ease;
