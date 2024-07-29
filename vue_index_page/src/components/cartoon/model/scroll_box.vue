@@ -271,8 +271,8 @@ onMounted(() => {
 
 .page_count {
   position: absolute;
-  width: 65px;
-  height: 35px;
+  width: 55px;
+  height: 30px;
   right: 0px;
   top: 5px;
   background-color: rgba(87, 85, 85, 0.8);
@@ -284,6 +284,7 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   z-index: 2;
+  gap: 5px;
 }
 
 .page_count img {
