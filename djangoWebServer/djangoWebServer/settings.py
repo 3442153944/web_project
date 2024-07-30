@@ -45,7 +45,8 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost:3004',
     'https://localhost:3005',
     'https://localhost:3006',
-    'https://192.168.43.1:3002'
+    'https://192.168.43.1:3002',
+    'http://localhost:5173'
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -94,7 +95,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://localhost:3004',
     'https://localhost:3005',
     'https://localhost:3006',
-    'https://192.168.43.1:3002'
+    'https://192.168.43.1:3002',
+    'http://localhost:5173/',
 ]
 
 # Application definition

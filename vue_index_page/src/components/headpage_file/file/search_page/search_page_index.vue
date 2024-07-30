@@ -5,7 +5,7 @@
     </div>
     <div class="content">
       <div class="head_box">
-       
+
         <scroll_box :msg_list="tag_list" v-if="tag_list"></scroll_box>
       </div>
       <div class="choose_search_target_page">
@@ -71,62 +71,60 @@ let tag_background_color_list = ['rgb(129, 126, 200)', 'rgb(126, 172, 200)', 'rg
 ]
 let search_result_cover = ref('https://www.sunyuanling.com/image/thumbnail/120282888_p0.jpg')
 
-let ill_page_show=ref(true)
-let comic_page_show=ref(false)
-let novel_page_show=ref(false)
-let user_page_show=ref(false)
+let ill_page_show = ref(true)
+let comic_page_show = ref(false)
+let novel_page_show = ref(false)
+let user_page_show = ref(false)
 let choose_ill_page = ref(null)
 let choose_comic_page = ref(null)
 let choose_novel_page = ref(null)
 let choose_user_page = ref(null)
 //切换搜索结果页面
-function switch_page(index)
-{
-  switch(index)
-  {
+function switch_page(index) {
+  switch (index) {
     case 0:
       ill_page_show.value = true;
-      choose_ill_page.value.style.borderTop='4px solid rgb(0,250,250)';
-      comic_page_show.value=false;
-      choose_comic_page.value.style.borderTop='';
-      novel_page_show.value=false;
-      choose_novel_page.value.style.borderTop='';
-      user_page_show.value=false;
-      choose_user_page.value.style.borderTop='';
+      choose_ill_page.value.style.borderTop = '4px solid rgb(0,250,250)';
+      comic_page_show.value = false;
+      choose_comic_page.value.style.borderTop = '';
+      novel_page_show.value = false;
+      choose_novel_page.value.style.borderTop = '';
+      user_page_show.value = false;
+      choose_user_page.value.style.borderTop = '';
       break;
     case 1:
       ill_page_show.value = false;
-      choose_ill_page.value.style.borderTop='';
-      comic_page_show.value=true;
-      choose_comic_page.value.style.borderTop='4px solid rgb(0,250,250)';
-      novel_page_show.value=false;
-      choose_novel_page.value.style.borderTop='';
-      user_page_show.value=false;
-      choose_user_page.value.style.borderTop='';
+      choose_ill_page.value.style.borderTop = '';
+      comic_page_show.value = true;
+      choose_comic_page.value.style.borderTop = '4px solid rgb(0,250,250)';
+      novel_page_show.value = false;
+      choose_novel_page.value.style.borderTop = '';
+      user_page_show.value = false;
+      choose_user_page.value.style.borderTop = '';
       break;
     case 2:
       ill_page_show.value = false;
-      choose_ill_page.value.style.borderTop='';
-      comic_page_show.value=false;
-      choose_comic_page.value.style.borderTop='';
-      novel_page_show.value=true;
-      choose_novel_page.value.style.borderTop='4px solid rgb(0,250,250)';
-      user_page_show.value=false;
-      choose_user_page.value.style.borderTop='';
+      choose_ill_page.value.style.borderTop = '';
+      comic_page_show.value = false;
+      choose_comic_page.value.style.borderTop = '';
+      novel_page_show.value = true;
+      choose_novel_page.value.style.borderTop = '4px solid rgb(0,250,250)';
+      user_page_show.value = false;
+      choose_user_page.value.style.borderTop = '';
       break;
     case 3:
       ill_page_show.value = false;
-      choose_ill_page.value.style.borderTop='';
-      comic_page_show.value=false;
-      choose_comic_page.value.style.borderTop='';
-      novel_page_show.value=false;
-      choose_novel_page.value.style.borderTop='';
-      user_page_show.value=true;
-      choose_user_page.value.style.borderTop='4px solid rgb(0,250,250)'
+      choose_ill_page.value.style.borderTop = '';
+      comic_page_show.value = false;
+      choose_comic_page.value.style.borderTop = '';
+      novel_page_show.value = false;
+      choose_novel_page.value.style.borderTop = '';
+      user_page_show.value = true;
+      choose_user_page.value.style.borderTop = '4px solid rgb(0,250,250)'
       break;
   }
 }
-onMounted(()=>{
+onMounted(() => {
   switch_page(0);
 })
 
@@ -213,8 +211,8 @@ async function get_search_data(data) {
 }
 //阻止滚动事件传播
 function onWheel(event) {
-      event.stopPropagation();
-    }
+  event.stopPropagation();
+}
 defineExpose({
   get_search_data
 })
@@ -222,15 +220,19 @@ defineExpose({
 </script>
 
 <style scoped>
-.choose_ill_page,.choose_comic_page,.choose_novel_page,.choose_user_page{
+.choose_ill_page,
+.choose_comic_page,
+.choose_novel_page,
+.choose_user_page {
   display: flex;
-  width:auto;
+  width: auto;
   height: 100%;
-  padding:5px 10px;
+  padding: 5px 10px;
   align-items: center;
   margin-bottom: 30px;
-  cursor:default;
+  cursor: default;
 }
+
 /*倒序*/
 .search_page_index {
   position: fixed;
@@ -301,20 +303,23 @@ defineExpose({
   margin-left: auto;
   margin-right: auto;
 }
-.btn_box{
+
+.btn_box {
   width: 100%;
   height: 100%;
   display: flex;
   align-items: center;
-  position:absolute;
+  position: absolute;
   left: 0;
   opacity: 0;
 }
-.btn_box:hover{
+
+.btn_box:hover {
   cursor: pointer;
   opacity: 1;
   transition: all 0.3s ease-in-out;
 }
+
 .left_btn,
 .right_btn {
   width: 45px;
@@ -348,11 +353,12 @@ defineExpose({
   background: linear-gradient(to left, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
   opacity: 1;
 }
-.choose_search_target_page{
+
+.choose_search_target_page {
   width: 80%;
   display: flex;
   height: 35px;
   align-items: center;
-  margin:0px auto;
+  margin: 0px auto;
 }
 </style>
