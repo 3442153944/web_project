@@ -8,6 +8,7 @@ import bleach
 from django.utils.html import escape
 import re
 
+
 class GetNovelContent(View):
     logger = Logger()
 
@@ -56,7 +57,8 @@ class GetNovelContent(View):
                             # 处理每个段落，并添加首行缩进
                             paragraphs = [p.strip() for p in content.split('\n') if p.strip()]
                             formatted_content = ''.join(
-                                f'<p style="text-indent: 2em; margin: 0; padding: 0;">{escape(p)}</p>' for p in paragraphs
+                                f'<p style="text-indent: 2em; margin: 0; padding: 0;">{escape(p)}</p>' for p in
+                                paragraphs
                             )
                             # 使用 bleach 清洗 HTML 内容，允许基本标签和属性
                             allowed_tags = ['p', 'b', 'i', 'u']
@@ -74,7 +76,6 @@ class GetNovelContent(View):
                 else:
                     self.logger.warning(self.request_path(request) + '无权访问，请求数据为：' + str(data))
                     return JsonResponse({'status': 'error', 'message': '无权访问'}, status=403)
-
 
         except json.JSONDecodeError as e:
             self.logger.error(self.request_path(request) + '请求数据格式错误，错误信息为：' + str(e))

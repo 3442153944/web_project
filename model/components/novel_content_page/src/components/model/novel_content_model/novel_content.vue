@@ -61,6 +61,12 @@ const props = defineProps({
     title: {
         type: String,
         default: ''
+    },
+    directory: {
+        type: Array,
+        default: () => {
+            return []
+        }
     }
 });
 

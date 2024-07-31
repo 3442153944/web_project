@@ -3,7 +3,7 @@ import { ref ,defineProps,onMounted} from 'vue'
 import work_info from './model/work_info.vue';
 import directory_page from './model/directory_page.vue';
 import { get_workinfo,get_novel_content } from './model/js/get_workinfo';
-import novel_content_page from './model/novel_content.vue';
+import novel_content_page from './model/novel_content_model/novel_content.vue';
 let data=ref()
 let author_info=ref()
 let work_list=ref()
