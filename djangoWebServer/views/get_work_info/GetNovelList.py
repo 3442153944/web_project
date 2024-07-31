@@ -60,6 +60,7 @@ class GetNovelList(View):
                             formatted_create_time = create_time_dt.strftime('%Y年%m月%d日 %H时%M分%S秒')
                             #将转换后的时间放入原位置
                             row['create_time'] = formatted_create_time
+                            del row['content']
                         work_info['work_list'] = rows
                         belong_to_userid = rows[0]['belong_to_userid']
                         cursor.execute('SELECT * FROM users WHERE userid=%s', [belong_to_userid])

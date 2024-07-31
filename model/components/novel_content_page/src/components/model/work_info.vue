@@ -83,7 +83,7 @@ let props = defineProps({
 }
 
 .content {
-  width: 100%;
+  width: 98%;
   height: auto;
   display: flex;
   border-radius: 10px;
@@ -92,6 +92,7 @@ let props = defineProps({
   min-width: 100px;
   min-height: 30px;
   flex-direction: column;
+  margin:0px auto;
 }
 
 .work_info_item {
@@ -158,6 +159,7 @@ let props = defineProps({
 .work_data{
   width: auto;
   padding: 5px 0px;
-
+  display: flex;
+  gap: 10px;
 }
 </style>
