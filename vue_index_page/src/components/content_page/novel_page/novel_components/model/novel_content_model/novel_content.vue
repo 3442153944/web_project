@@ -1,29 +1,32 @@
 <template>
-    <div class="content" @click="closeAllMenus">
+    <div class="content" @click="closeAllMenus" v-if="work_content">
         <div class="novel_content">
             <div class="title">{{ work_title }}</div>
             <div class="content" v-html="work_content"></div>
             <div class="right_side">
                 <div class="previous_chapter align_center" @click="switch_chapter(-1)">
                     <img class="icon" src="https://www.sunyuanling.com/assets/left.svg">
-                    <span>上一章</span></div>
+                    <span>上一章</span>
+                </div>
                 <div class="next_chapter align_center" @click="switch_chapter(1)">
                     <img class="icon" src="https://www.sunyuanling.com/assets/right.svg">
-                    下一章</div>
+                    下一章
+                </div>
                 <div class="open_setting align_center" @click.stop="toggleSettings('setting')">
                     <img class="icon" src="https://www.sunyuanling.com/assets/setting.svg">
-                    <span>打开设置</span></div>
+                    <span>打开设置</span>
+                </div>
                 <div class="directory align_center" @click.stop="toggleSettings('directory')">
                     <img class="icon" src="https://www.sunyuanling.com/assets/more.svg">
-                    <span>
-                        目录</span>
+                    <span>目录</span>
                 </div>
                 <div class="set_light_mode align_center" @click="toggleLightMode">
-                    <img class="icon" :src="'https://www.sunyuanling.com/assets/'+(light_mode?'moon.svg':'sun.svg' )">
-                    <div class="light_mode" >{{ light_mode ? '夜间模式' : '日间模式' }}</div>
+                    <img class="icon"
+                        :src="'https://www.sunyuanling.com/assets/' + (light_mode ? 'moon.svg' : 'sun.svg')">
+                    <div class="light_mode">{{ light_mode ? '夜间模式' : '日间模式' }}</div>
                 </div>
-                <directory_page :work_info="work_info" v-if="directory_show" 
-                @get_chapter="get_content" @close_page="toggleSettings('close_all')"></directory_page>
+                <directory_page :work_info="work_info" v-if="directory_show" @get_chapter="get_content"
+                    @close_page="toggleSettings('close_all')"></directory_page>
                 <transition name="fade">
                     <div class="font_setting" v-if="showSettings" ref="settingsMenu">
                         <div class="title">设置</div>
@@ -54,7 +57,8 @@
                         </div>
                         <div class="item">
                             阅读页面宽度
-                            <input type="range" v-model="pageWidth" min="500" max="1200" step="100" @input="updateStyles">
+                            <input type="range" v-model="pageWidth" min="500" max="1200" step="100"
+                                @input="updateStyles">
                         </div>
                         <div class="item">
                             字体颜色
@@ -65,7 +69,12 @@
             </div>
         </div>
     </div>
+    <div class="loading" v-else-if="!work_content">
+        <div class="loading_content">加载中...</div>
+        <img src="https://www.sunyuanling.com/image/loading.gif">
+    </div>
 </template>
+
 <script setup>
 import { ref, watch, defineProps, onMounted, onUnmounted } from 'vue';
 import directory_page from './model/directory_page.vue'
@@ -158,34 +167,44 @@ const toggleLightMode = () => {
 };
 
 const updateStyles = () => {
-    document.documentElement.style.setProperty('--fontFamily', fontFamily.value);
-    document.documentElement.style.setProperty('--fontSize', fontSize.value);
-    document.documentElement.style.setProperty('--backgroundColor', light_mode.value ? '#333' : backgroundColor.value);
-    document.documentElement.style.setProperty('--fontColor', light_mode.value ? '#f5f5f5' : fontColor.value);
-    document.documentElement.style.setProperty('--pageWidth', `${pageWidth.value}px`);
+    const body = document.body;
+    const root = document.documentElement;
+    root.style.setProperty('--fontFamily', fontFamily.value);
+    root.style.setProperty('--fontSize', fontSize.value);
+    root.style.setProperty('--backgroundColor', light_mode.value ? '#333' : backgroundColor.value);
+    root.style.setProperty('--fontColor', light_mode.value ? '#f5f5f5' : fontColor.value);
+    root.style.setProperty('--pageWidth', `${pageWidth.value}px`);
+
+    body.style.backgroundColor = light_mode.value ? '#333' : backgroundColor.value;
+    body.style.color = light_mode.value ? '#f5f5f5' : fontColor.value;
 };
 
 watch([fontFamily, fontSize, backgroundColor, fontColor, pageWidth, light_mode], updateStyles, { immediate: true });
 
 onMounted(() => {
     document.addEventListener('click', closeAllMenus);
+    document.addEventListener('keydown', handleKeyDown);
 });
 
 onUnmounted(() => {
     document.removeEventListener('click', closeAllMenus);
+    document.removeEventListener('keydown', handleKeyDown);
+    // Reset body styles when component is destroyed
+    document.body.style.backgroundColor = '';
+    document.body.style.color = '';
 });
 
-document.addEventListener('keydown', (event) => {
+const handleKeyDown = (event) => {
     if (event.key === 'ArrowLeft') {
         switch_chapter(-1);
     } else if (event.key === 'ArrowRight') {
         switch_chapter(1);
     }
-});
+};
 </script>
 
 <style scoped>
-.content{
+.content {
     width: 100%;
     background-color: var(--backgroundColor, #ffffff);
     color: var(--fontColor, #000000);
@@ -193,6 +212,7 @@ document.addEventListener('keydown', (event) => {
     flex-direction: column;
     transition: background-color 0.3s, color 0.3s;
 }
+
 .novel_content {
     position: relative;
     max-width: var(--pageWidth, 800px);
@@ -216,8 +236,6 @@ document.addEventListener('keydown', (event) => {
     line-height: 2em;
     letter-spacing: 0.1em;
 }
-
-
 
 .font_setting {
     position: absolute;
@@ -277,7 +295,7 @@ document.addEventListener('keydown', (event) => {
     position: relative;
 }
 
-.align_center{
+.align_center {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -289,7 +307,8 @@ document.addEventListener('keydown', (event) => {
     flex-direction: column;
     gap: 5px;
 }
-.align_center:hover{
+
+.align_center:hover {
     background-color: rgb(209, 209, 209);
     transition: all 0.3s ease-in-out;
     transform: translateY(-2px);

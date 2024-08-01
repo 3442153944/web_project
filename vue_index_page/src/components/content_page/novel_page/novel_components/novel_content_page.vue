@@ -6,8 +6,12 @@ import { get_workinfo, get_novel_content } from './model/js/get_workinfo';
 import novel_content_page from './model/novel_content_model/novel_content.vue';
 let props = defineProps({
   work_id: {
-    type: String,
+    type: [String,Number],
     default: '10'
+  },
+  token: {
+    type: String,
+    default: ''
   }
 })
 let data = ref()
@@ -21,11 +25,11 @@ let novel_content_page_show = ref(false)
 let chapter_index=ref(0)
 
 onMounted(async () => {
-  data.value = await get_workinfo('sunyuanling', props.work_id)
+  data.value = await get_workinfo(props.token, props.work_id)
   author_info.value = data.value.author_info
   work_list.value = data.value.work_list
   word_count.value = data.value.word_count
-
+  console.log(props)
 })
 async function get_chapter(item) {
   novel_content.value = await get_novel_content('sunyuanling', item.belong_to_series_id, item.title)
@@ -40,7 +44,7 @@ async function get_chapter(item) {
 </script>
 
 <template>
-  <div class="novel_conteng_page">
+  <div class="novel_conteng_page" v-if="data">
     <div class="novel_brief_introduction" v-if="novel_brief_introduction_page">
       <div class="work_info">
         <work_info :work_info="work_list" :author_info="author_info" :word_count="word_count"></work_info>
@@ -52,6 +56,11 @@ async function get_chapter(item) {
     <div class="novel_content" v-if="novel_content_page_show">
       <novel_content_page :content="novel_content" :title="work_title" :work_info="work_list" 
       :chapter_index="chapter_index"></novel_content_page>
+    </div>
+  </div>
+  <div class="wait" v-else-if="!data">
+    <div class="wait_text">
+      <p>正在加载中</p>
     </div>
   </div>
 </template>

@@ -155,6 +155,7 @@ onMounted(() => {
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   z-index: 5;
+  pointer-events: none;
 }
 
 .scroll_box:hover .btn_box {

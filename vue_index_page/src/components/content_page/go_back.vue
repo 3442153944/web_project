@@ -39,6 +39,7 @@
     background-color: rgba(133, 133, 133, 1);
     border-radius: 50%;
     opacity: 0.6;
+    z-index: 15;
   }
   .go_back:hover {
     opacity: 1;

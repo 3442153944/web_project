@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class="index_jump_img ml">
-            <img :src="index_jump_img_src"><!--主页图片路径:H:/web_project/image/主页.png-->
+            <a href="https://localhost:3002/"><img :src="index_jump_img_src"></a>
         </div>
         <div class="input_box" ref="input_box">
             <input v-model="search_data" placeholder="搜索作品" @focus="input_box_focus">

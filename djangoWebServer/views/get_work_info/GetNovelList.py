@@ -22,6 +22,7 @@ class GetNovelList(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
+            print(data)
             token = data.get('token')
             work_id = data.get('work_id')
             if not token:
