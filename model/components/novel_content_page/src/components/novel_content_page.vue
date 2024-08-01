@@ -37,7 +37,7 @@ async function get_chapter(item)
     </div>
   </div>
   <div class="novel_content">
-    <novel_content_page :content="novel_content" :title="work_title"></novel_content_page>
+    <novel_content_page :content="novel_content" :title="work_title" :work_info="work_list"></novel_content_page>
   </div>
 </div>
 </template>

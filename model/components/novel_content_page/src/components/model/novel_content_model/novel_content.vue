@@ -1,24 +1,29 @@
 <template>
     <div class="novel_content">
-        <div class="title">{{ title }}</div>
-        <div class="content" v-html="content"></div>
+        <div class="title">{{ work_title }}</div>
+        <div class="content" v-html="work_content"></div>
         <div class="right_side">
             <div class="previous_chapter">上一章</div>
             <div class="next_chapter">下一章</div>
             <div class="open_setting" @click="toggleSettings">打开设置</div>
-            <div class="directory">目录</div>
+            <div class="directory">
+                <span @click="directory_show=!directory_show">目录</span>
+            </div>
             <div class="set_light_mode">
                 <div class="light_mode" @click="light_model=!light_model">{{light_model?'夜间模式':'日间模式'}}</div>
             </div>
+            <directory_page :work_info="work_info" v-if="directory_show" @get_chapter="get_content"></directory_page>
             <transition name="fade">
                 <div class="font_setting" v-if="showSettings">
                     <div class="title">设置</div>
+                   
                     <div class="item">
                         字体
                         <select v-model="fontFamily" @change="updateStyles">
-                            <option value="Arial">Arial</option>
-                            <option value="Georgia">Georgia</option>
-                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="微软雅黑">微软雅黑</option>
+                            <option value="黑体">黑体</option>
+                            <option value="宋体">宋体</option>
+                            <option value="楷体">楷体</option>
                             <!-- 其他字体 -->
                         </select>
                     </div>
@@ -28,6 +33,10 @@
                             <option value="14px">14px</option>
                             <option value="16px">16px</option>
                             <option value="18px">18px</option>
+                            <option value="20px">20px</option>
+                            <option value="22px">22px</option>
+                            <option value="24px">24px</option>
+                            <option value="26px">26px</option>
                             <!-- 其他字号 -->
                         </select>
                     </div>
@@ -51,8 +60,9 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
-
+import { ref, watch ,defineProps} from 'vue';
+import directory_page from './model/directory_page.vue'
+import { get_novel_content } from '../js/get_workinfo';
 const props = defineProps({
     content: {
         type: String,
@@ -62,7 +72,7 @@ const props = defineProps({
         type: String,
         default: ''
     },
-    directory: {
+    work_info: {
         type: Array,
         default: () => {
             return []
@@ -77,6 +87,14 @@ const backgroundColor = ref('#ffffff');
 const fontColor = ref('#000000');
 const pageWidth = ref(800);
 let light_model=ref(false)
+let directory_show=ref(false)
+let work_content=ref(props.content)
+let work_title=ref(props.title)
+async function get_content(item)
+{
+    work_content.value=await get_novel_content('sunyuanling',item.belong_to_series_id,item.title)
+    work_title.value=item.title
+}
 
 // Toggle settings visibility
 const toggleSettings = () => {
@@ -178,5 +196,9 @@ document.addEventListener('keydown', (event) => {
     width: auto;
     height: auto;
     padding: 5px;
+}
+.directory{
+    display: flex;
+    position: relative;
 }
 </style>
