@@ -10,29 +10,41 @@ async function update_user_back(file, token, user_data) {
             body: formdata
         });
 
-        if (res.ok) {
-            const data = await res.json();
-            if (data.status === 'success') {
-                return true;
-            } 
-             else if(data.status=='file_error')
-            {
-                alert(data.message)
-                return false;
-            }
-            else {
-                console.error('Upload failed:', data.message);
-                return false;
-            }
-        } else {
+        // Check for HTTP errors
+        if (!res.ok) {
             console.error('HTTP error:', res.status, res.statusText);
+            const data = await res.json();
+            if (data.status === 'file_error') {
+                alert(data.message);
+                console.log(data.message);
+                alert('上传失败，请重试');
+                return false;
+            }
+            return false;
+        }
+
+        // Parse JSON response
+        const data = await res.json();
+
+        // Check for response status
+        if (data.status === 'success') {
+            return true;
+        } else if (data.status === 'file_error') {
+            alert(data.message);
+            console.log(data.message);
+            alert('上传失败，请重试');
+            return false;
+        } else {
+            console.error('Upload failed:', data.message);
             return false;
         }
     } catch (e) {
+        // Handle unexpected errors
         console.error('Error:', e);
         return false;
     }
 }
+
 
 async function delete_user_back(token){
     try {

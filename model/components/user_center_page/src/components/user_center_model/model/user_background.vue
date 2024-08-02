@@ -6,7 +6,7 @@
                 <div class="edit_btn btn" @click="edit_box_show = true">
                     <img src="https://www.sunyuanling.com/assets/edit.svg" class="icon">
                 </div>
-                <div class="delete_btn btn">
+                <div class="delete_btn btn" @click="delete_user_back_img">
                     <img src="https://www.sunyuanling.com/assets/delete.svg" class="icon">
                 </div>
             </div>
@@ -18,6 +18,7 @@
 <script setup>
 import { ref, defineProps } from 'vue'
 import edit_box from './edit_box.vue';
+import { delete_user_back } from '../js/update_userinfo';
 const props = defineProps({
     user_back_img: {
         type: String,
@@ -29,6 +30,15 @@ const props = defineProps({
     }
 })
 let edit_box_show = ref(false)
+function delete_user_back_img() {
+    // 弹窗确认
+    let userConfirm = window.confirm('确定删除背景图片吗？');
+    if (!userConfirm) {
+        return;
+    }
+    delete_user_back(props.token);
+}
+
 </script>
 
 <style scoped>

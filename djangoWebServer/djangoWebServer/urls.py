@@ -29,4 +29,6 @@ urlpatterns = [
     # 作品互动的主接口
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('update/',include('views.update_userinfo.url')),
+    #更新操作接口的入口
 ]

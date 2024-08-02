@@ -43,7 +43,7 @@
                 请不要上传R-18或使用规则中禁止投稿的作品。如果您上传了相关图片，设置可能会被清除。
             </span>
             <div class="btn_box">
-                <div class="sure_btn btn">
+                <div class="sure_btn btn" @click="sure_btn()">
                     <span>同意上传</span>
                 </div>
                 <div class="cancel btn" @click="close_page()">
@@ -56,6 +56,7 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
+import { update_user_back } from '../js/update_userinfo';
 
 const props = defineProps({
     token: {
@@ -91,6 +92,18 @@ function get_img_item(e) {
         reader.readAsDataURL(file)
     }
     img_file.value=file
+}
+async function sure_btn(){
+    let user_data={
+        token: props.token,
+    }
+    let status=await update_user_back(img_file.value, props.token, user_data)
+    if(status){
+        close_page()
+    }
+    else{
+        alert('上传失败')
+    }
 }
 </script>
 
