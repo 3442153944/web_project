@@ -47,6 +47,8 @@ export default {
 </script>
 
 <script setup>
+import {useStore} from 'vuex'
+const store = new useStore()
 let ill_data = defineProps({
   ill_data: {
     type: Object,
@@ -56,9 +58,11 @@ let ill_data = defineProps({
   }
 })
 let data = ref(ill_data.ill_data)
+const emit=defineEmits(['work_count'])
 watch(() => ill_data.ill_data, async (newValue, oldValue) => {
   data.value = newValue;
   await set_avatar();
+  emit('work_count',{'type':'ill','count':data.value.length})
 })
 onMounted(async () => {
   data.value = ill_data.ill_data;
@@ -90,6 +94,13 @@ async function set_avatar() {
 function jump_to_page(id) {
   console.log(id)
   //window.location.href='https://localhost:3002/?work_id='+id+'&work_type=ill';
+  store.commit('SET_CONTENT_PAGE', {
+    key: 'ill_page',
+    value: true
+  })
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'content_index_page',value:true})
+  store.commit('SET_WORK_ID',id)
+  store.commit('SET_WORK_TYPE','ill')
 }
 </script>
 

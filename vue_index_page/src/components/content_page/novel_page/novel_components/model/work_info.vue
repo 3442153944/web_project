@@ -8,7 +8,7 @@
         <div class="author_info">
           <div class="info">
             <div class="title">
-              <span style="font-size: 24px; font-weight:bold;">{{work_info[0].title}}</span>
+              <span style="font-size: 24px; font-weight:bold;">{{work_info[0].work_name}}</span>
             </div>
             <div class="author_name" style="display: flex;gap:10px;">
               <span>作者：<b>{{author_info.username}}</b></span>

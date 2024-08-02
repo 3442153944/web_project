@@ -147,6 +147,7 @@ function go_to_illustration_page(id) {
   })
   store.commit('SET_SINGLE_PAGE_STATUS',{key:'content_index_page',value:true})
   store.commit('SET_WORK_ID',id)
+  store.commit('SET_WORK_TYPE','ill')
 }
 
 //模拟横向滚动效果

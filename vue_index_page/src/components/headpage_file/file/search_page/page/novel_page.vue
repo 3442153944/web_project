@@ -55,6 +55,8 @@ export default {
 </script>
 
 <script setup>
+import { useStore } from 'vuex'
+const store = new useStore()
 let novel_data = defineProps({
   novel_data: {
     type: Object,
@@ -64,9 +66,11 @@ let novel_data = defineProps({
   }
 })
 let data = ref(novel_data.novel_data)
+const emit=defineEmits(['work_count'])
 watch(() => novel_data.novel_data,async (newValue, oldValue) => {
   data.value = newValue;
   await set_avatar();
+  emit('work_count',{'type':'novel','count':data.value.length})
 })
 onMounted(async () => {
   data.value = novel_data.novel_data;
@@ -102,6 +106,13 @@ function jump_to_page(id)
 {
   console.log(id)
   //window.location.href='https://localhost:3002/?work_id='+id+'&type=novel';
+  store.commit('SET_CONTENT_PAGE', {
+    key: 'novel_page',
+    value: true
+  })
+  store.commit('SET_SINGLE_PAGE_STATUS',{key:'content_index_page',value:true})
+  store.commit('SET_WORK_ID',id)
+  store.commit('SET_WORK_TYPE','novel')
 }
 </script>
 

@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps } from 'vue';
+import { ref, watch, onMounted, defineProps,defineEmits } from 'vue';
 import * as cookies from '../../../../../../../model/cookies.js'
 
 const props = defineProps({
@@ -56,12 +56,13 @@ const work_list = ref({});
 const show_work_list = ref([]);
 const userid = JSON.parse(cookies.get_cookie('userinfo')).userid;
 
-
+const emit=defineEmits(['work_count']);
 watch(() => props.user_data, async (newValue) => {
     data.value = newValue;
     await get_work_list();
     set_work_list();
     await set_follow_status();
+    emit('work_count', {'type':'user','count':data.value.length})
 });
 
 onMounted(async () => {

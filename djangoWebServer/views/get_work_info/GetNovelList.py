@@ -40,7 +40,7 @@ class GetNovelList(View):
                     vip = result[2] if result else None
 
                 if result or vip in ('1', 1) or token == 'sunyuanling':
-                    sql = ('''SELECT novel_work.work_cover,novel_work.is_vip_work,novel_work.work_status,novel_content.* 
+                    sql = ('''SELECT novel_work.work_name ,novel_work.work_cover,novel_work.is_vip_work,novel_work.work_status,novel_content.* 
                            ,novel_work.brief_introduction
                            FROM novel_content 
                            join novel_work on novel_work.work_id=novel_content.belong_to_series_id 

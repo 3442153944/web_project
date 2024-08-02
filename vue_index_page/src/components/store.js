@@ -24,6 +24,7 @@ const store = createStore({
     token: cookies.get_cookie('token'),
     userinfo: {},
     work_id: '',
+    work_type:'',
     pageStack: [],
     pushTimer: null, // 添加定时器
   },
@@ -92,6 +93,10 @@ const store = createStore({
     SET_ITEM_PATH(state, path) {
       state.content_page.item_path = path;
     },
+    //设置作品类型
+    SET_WORK_TYPE(state, work_type) {
+      state.work_type = work_type;
+    },
   },
   actions: {
     goBack({ commit }) {
@@ -115,6 +120,7 @@ const store = createStore({
     content_index_page: state => state.pageStatus.content_index_page,
     pageStack: state => state.pageStack,
     item_path:state=>state.content_page.item_path,
+    work_type:state=>state.work_type,
   },
 });
 

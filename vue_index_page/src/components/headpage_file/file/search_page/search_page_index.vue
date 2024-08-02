@@ -11,21 +11,25 @@
       <div class="choose_search_target_page">
         <div class="choose_ill_page" ref="choose_ill_page" @click="switch_page(0)">
           <span>插画</span>
+          <span class="count_result">{{ill_count}}</span>
         </div>
         <div class="choose_comic_page" ref="choose_comic_page" @click="switch_page(1)">
           <span>漫画</span>
+          <span class="count_result">{{comic_count}}</span>
         </div>
         <div class="choose_novel_page" ref="choose_novel_page" @click="switch_page(2)">
           <span>小说</span>
+          <span class="count_result">{{novel_count}}</span>
         </div>
         <div class="choose_user_page" ref="choose_user_page" @click="switch_page(3)">
           <span>用户</span>
+          <span class="count_result">{{user_count}}</span>
         </div>
       </div>
-      <ill_page :ill_data="ill_list" v-if="ill_page_show"></ill_page>
-      <comic_page :comic_data='comic_list' v-if="comic_page_show"></comic_page>
-      <novel_page :novel_data="novel_list" v-if="novel_page_show"></novel_page>
-      <user_page :user_data="userinfo_list" v-if="user_page_show"></user_page>
+      <ill_page :ill_data="ill_list" v-show="ill_page_show" @work_count="set_work_count"></ill_page>
+      <comic_page :comic_data='comic_list' v-show="comic_page_show" @work_count="set_work_count"></comic_page>
+      <novel_page :novel_data="novel_list" v-show="novel_page_show" @work_count="set_work_count"></novel_page>
+      <user_page :user_data="userinfo_list" v-show="user_page_show" @work_count="set_work_count"></user_page>
     </div>
   </div>
 </template>
@@ -216,6 +220,31 @@ function onWheel(event) {
 defineExpose({
   get_search_data
 })
+//获取子页面的搜索结果数据
+let ill_count=ref()
+let comic_count=ref()
+let novel_count=ref()
+let user_count=ref()
+function set_work_count(item)
+{
+  let type=item.type;
+  let count=item.count;
+  switch(type)
+  {
+    case 'ill':
+      ill_count.value=count
+      break;
+    case 'comic':
+      comic_count.value=count
+      break;
+    case 'novel':
+      novel_count.value=count
+      break;
+    case 'user':
+      user_count.value=count
+   
+  }
+}
 
 </script>
 
@@ -360,5 +389,14 @@ defineExpose({
   height: 35px;
   align-items: center;
   margin: 0px auto;
+}
+.count_result{
+  width: auto;
+  height: auto;
+  padding: 3px;
+  margin-left: 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  color: white;
 }
 </style>
