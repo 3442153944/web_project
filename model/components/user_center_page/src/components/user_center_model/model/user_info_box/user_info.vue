@@ -24,17 +24,19 @@
                     <span>查看个人资料</span>
                 </div>
             </div>
-            <div class="edit_info_btn btn">
+            <div class="edit_info_btn btn" @click="edit_info_box_show=true">
                 <span>编辑个人资料</span>
             </div>
         </div>
         <more_info_box :user_info="user_info" v-if="more_info_box_show" @close_page="more_info_box_show=false"></more_info_box>
+        <edit_info_box :user_info="user_info" v-if="edit_info_box_show" @close_page="edit_info_box_show=false"></edit_info_box>
     </div>
 </template>
 
 <script setup>
 import { ref, defineProps } from 'vue';
 import more_info_box from './more_info_box.vue';
+import edit_info_box from './edit_info_box.vue';
 const props = defineProps({
     user_info: {
         type: Object,
@@ -44,6 +46,7 @@ const props = defineProps({
     }
 });
 let more_info_box_show=ref(false);
+let edit_info_box_show=ref(false);
 </script>
 
 <style scoped>
