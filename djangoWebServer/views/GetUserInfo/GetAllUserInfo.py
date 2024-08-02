@@ -48,6 +48,11 @@ class GetAllUserInfo(View):
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 rows = [dict(zip(columns, row)) for row in result]
+                userid=rows[0]['userid']
+                cursor.execute('select count(*) from user_fans where user_id=%s', [userid])
+                rows[0]['fans']=cursor.fetchone()[0]
+                cursor.execute('select count(*) from user_follow where user_id=%s', [userid])
+                rows[0]['follow']=cursor.fetchone()[0]
                 for row in rows:
                     del row['password']
                     del row['token']

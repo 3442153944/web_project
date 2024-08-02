@@ -13,7 +13,8 @@ import json
 class UpdateUserBack(View):
     logger = Logger()
     target_path = 'H:/web_project/image/'
-    allowed_formats = {'jpg': b'\xff\xd8\xff', 'jpeg': b'\xff\xd8\xff', 'png': b'\x89PNG\r\n', 'tiff': b'II*\x00', 'webp': b'RIFF\x00\x00\x00\x00WEBP'}
+    allowed_formats = {'jpg': b'\xff\xd8\xff', 'jpeg': b'\xff\xd8\xff', 'png': b'\x89PNG\r\n', 'tiff': b'II*\x00',
+                       'webp': b'RIFF\x00\x00\x00\x00WEBP'}
     max_file_size = 1024 * 1024 * 8  # 最大文件容量 8MB
 
     def request_path(self, request):

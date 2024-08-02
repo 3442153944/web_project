@@ -1,8 +1,8 @@
 <template>
 <div class="user_center_page" v-if="user_info">
   <div class="content">
-    用户中心
     <user_background :user_back_img="'https://www.sunyuanling.com/image/'+user_info.user_back_img" :token="token"></user_background>
+    <user_info_box :user_info="user_info"></user_info_box>
   </div>
 </div>
 </template>
@@ -10,6 +10,7 @@
 import {defineProps,ref,onMounted} from 'vue';
 import { get_userinfo } from './user_center_model/js/get_userinfo.js';
 import user_background from './user_center_model/model/user_background.vue';
+import user_info_box from './user_center_model/model/user_info_box/user_info.vue' 
 const props=defineProps({
   userid:{
     type:String,
