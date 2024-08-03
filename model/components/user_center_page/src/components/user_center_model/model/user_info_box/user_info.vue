@@ -29,7 +29,9 @@
             </div>
         </div>
         <more_info_box :user_info="user_info" v-if="more_info_box_show" @close_page="more_info_box_show=false"></more_info_box>
-        <edit_info_box :user_info="user_info" v-if="edit_info_box_show" @close_page="edit_info_box_show=false"></edit_info_box>
+        <edit_info_box :user_info="user_info" 
+        :token="token"
+        v-if="edit_info_box_show" @close_page="edit_info_box_show=false"></edit_info_box>
     </div>
 </template>
 
@@ -43,6 +45,10 @@ const props = defineProps({
         default: () => {
             return {};
         }
+    },
+    token: {
+        type: String,
+        default: ''
     }
 });
 let more_info_box_show=ref(false);

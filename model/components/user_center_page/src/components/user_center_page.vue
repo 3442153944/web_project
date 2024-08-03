@@ -2,7 +2,7 @@
 <div class="user_center_page" v-if="user_info">
   <div class="content">
     <user_background :user_back_img="'https://www.sunyuanling.com/image/'+user_info.user_back_img" :token="token"></user_background>
-    <user_info_box :user_info="user_info"></user_info_box>
+    <user_info_box :user_info="user_info" :token="token"></user_info_box>
   </div>
 </div>
 </template>

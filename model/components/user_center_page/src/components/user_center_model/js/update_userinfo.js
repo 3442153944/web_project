@@ -73,4 +73,44 @@ async function delete_user_back(token){
     }
 }
 
-export { update_user_back ,delete_user_back};
+async function update_userinfo(token,userinfo,files)
+{
+    let formdata=new FormData();
+    formdata.append('token',token);
+    formdata.append('files',files);
+    console.log(files)
+    formdata.append('data',userinfo);
+    console.log(formdata)
+    try{
+        const res=await fetch('https://www.sunyuanling.com/api/update/UpdateUserInfo/',{
+            method:'POST',
+            body:formdata
+        })
+        if(res.ok)
+        {
+            const data=await res.json();
+            if(data.status==='success')
+            {
+                alert(data.message);
+                return true;
+            }
+            else{
+                console.log(data.message);
+                return false;
+            }
+        }
+        else{
+            const data=await res.json();
+            if(data.status==='file_error')
+            {
+                alert(data.message);
+                return false;
+            }
+        }
+    }
+    catch(e){
+        console.log(e);
+    }
+}
+
+export { update_user_back ,delete_user_back,update_userinfo};
