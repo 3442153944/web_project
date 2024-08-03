@@ -50,10 +50,11 @@ let select_index_page=ref(0)
 
 <style scoped>
 .user_select_box{
-    width: 100%;
+    width: 90%;
     height: auto;
     display: flex;
     flex-direction: column;
+    margin:10px auto;
 }
 .content{
     display: flex;
