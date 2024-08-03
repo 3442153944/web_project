@@ -81,6 +81,7 @@ let edit_info_box_show=ref(false);
     width: 100px;
     height: 100px;
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .info_box {
