@@ -82,7 +82,7 @@ const props = defineProps({
     default: 'image'
   },
   msg_list: {
-    type: Array,
+    type: [Array, Object],
     default: () => []
   },
   animationDuration: {

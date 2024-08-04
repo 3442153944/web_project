@@ -145,6 +145,7 @@ function close_page() {
     display: flex;
     background-color: rgba(0, 0, 0, 0.5);
     overflow: auto;
+    z-index: 15;
 }
 
 .user_background {

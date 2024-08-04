@@ -34,7 +34,7 @@ class GetNovelInfo(View):
                 result = cursor.fetchall()
                 if not result:
                     self.logger.info(self.request_path(request) + '获取失败，请求数据为：' + str(request.body))
-                    return JsonResponse({'status': 'error', 'message': '获取失败'}, status=404)
+                    return JsonResponse({'status': 'error', 'message': '获取失败'}, status=403)
                 columns = [desc[0] for desc in cursor.description]
                 rows = [dict(zip(columns, row)) for row in result]
                 cursor.execute(get_novel_count, (work_id,))
