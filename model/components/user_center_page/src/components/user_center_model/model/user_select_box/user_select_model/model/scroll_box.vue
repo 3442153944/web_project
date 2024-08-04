@@ -11,21 +11,54 @@
       </div>
       <div class="list" ref="list">
         <div class="item" v-for="(item, index) in props.msg_list" :key="index">
-          <div v-if="props.msg_type === 'tags'" class="tags_item" ref="tags_item" @click="chose_item(item)">
-            <span>{{ item }}</span>
-          </div>
           <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item)">
-            <img :src="item" class="image">
-            <div class="work_info_ill" v-if="work_type=='ill'">
-
+            <div class="work_info_ill" v-if="item.work_type == 'ill'">
+              <div class="work_info_box">
+                <span>插画作品</span>
+                <div class="work_info">
+                  <img :src="'https://www.sunyuanling.com/image/content_thumbnail/' +
+                    item.work_info[0].content_file_list.split(/[,，]/)[0]" class="image"
+                    @click="chose_item({ 'work_type': 'ill', 'work_id': item.work_id })">
+                  <div class="info_box">
+                    <span style="font-size: 18px;font-weight:bold;">{{ item.work_info[0].name }}</span>
+                    <span>{{ item.work_info[0].brief_introduction }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="work_info_comic" v-if="work_type=='comic'">
-
+            <div class="work_info_comic" v-if="item.work_type == 'comic'">
+              <div class="work_info_box">
+                <span>漫画作品</span>
+                <div class="work_info">
+                  <img :src="'https://www.sunyuanling.com/image/comic/content_thumbnail/' +
+                    item.work_info[0].content_file_list.split(/[,，]/)[0]"
+                    @click="chose_item({ 'work_type': 'comic', 'work_id': item.work_id })">
+                  <div class="info_box">
+                    <span style="font-size: 18px;font-weight:bold;">{{ item.work_info[0].work_name }}</span>
+                    <span>{{ item.work_info[0].brief_introduction }}</span>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="work_info_novel" v-if="work_type=='novel'">
-
+            <div class="work_info_novel" v-if="item.work_type == 'novel'">
+              <div class="work_info_box">
+                <span>小说作品</span>
+                <div class="work_info">
+                  <img :src="'https://www.sunyuanling.com/image/novel/thumbnail/' + item.work_info[0].work_cover"
+                    @click="chose_item({ 'work_type': 'novel', 'work_id': item.work_id })">
+                  <div class="info_box">
+                    <span style="font-size: 18px;font-weight:bold;">{{ item.work_info[0].work_name }}</span>
+                    <span>{{ item.work_info[0].brief_introduction }}</span>
+                    <span>{{item.work_info[0].work_count}}字&nbsp;&nbsp;{{Math.ceil(item.work_info[0].work_count/500)}}分钟</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
+        </div>
+        <div class="add_select" @click="open_select_box()">
+          <img src="https://www.sunyuanling.com/assets/add.svg">
+            <span>新增精选</span>
         </div>
       </div>
     </div>
@@ -60,9 +93,9 @@ const props = defineProps({
     type: Number,
     default: 400 // Default scroll distance in px
   },
-  work_type:{
-    type:String,
-    default:'ill'
+  work_type: {
+    type: String,
+    default: 'ill'
   }
 });
 
@@ -82,11 +115,15 @@ const set_tag_color = () => {
   }
 };
 
-const emit = defineEmits(['chose_item']);
+const emit = defineEmits(['chose_item','open_select_box']);
 const chose_item = (item) => {
   emit('chose_item', item);
+  console.log(item);
 };
 
+function open_select_box(){
+  emit('open_select_box',true);
+}
 // Easing function for smooth animation
 const easeInOutQuad = (t) => {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
@@ -132,7 +169,7 @@ onMounted(() => {
   min-width: 50px;
   display: flex;
   align-items: center;
-  max-height: 200px;
+  max-height: 300px;
 }
 
 .scroll_box_content {
@@ -165,7 +202,8 @@ onMounted(() => {
   opacity: 1;
 }
 
-.left_btn, .right_btn {
+.left_btn,
+.right_btn {
   width: 60px;
   height: 100%;
   display: flex;
@@ -173,7 +211,8 @@ onMounted(() => {
   justify-content: center;
   cursor: pointer;
   position: absolute;
-  pointer-events: auto; /* Enable pointer events only for the buttons */
+  pointer-events: auto;
+  /* Enable pointer events only for the buttons */
 }
 
 .left_btn {
@@ -194,7 +233,7 @@ onMounted(() => {
 
 .list {
   width: auto;
-  height: 200px;
+  height: 300px;
   display: flex;
   align-items: center;
   gap: 10px;
@@ -206,7 +245,7 @@ onMounted(() => {
 
 .item {
   width: auto;
-  height: 200px;
+  height: 280px;
   display: flex;
   align-items: center;
 }
@@ -225,7 +264,7 @@ onMounted(() => {
 
 .image_item {
   width: auto;
-  height: 200px;
+  height: 240px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -233,15 +272,78 @@ onMounted(() => {
   border-radius: 15px;
   min-width: 150px;
   min-height: 75px;
-  max-height: 100px;
-  max-width: 200px;
   margin: 0px 10px;
 }
 
 .image_item img {
   width: 100%;
-  height: 200px;
+  height: 240px;
   object-fit: cover;
   border-radius: 15px;
+}
+
+.work_info_box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.work_info_box span {
+  font-size: 14px;
+  color: rgba(88, 88, 88, 1);
+  align-self: flex-start;
+}
+
+.work_info_box img {
+  width: 200px;
+  height: 240px;
+}
+
+.work_info {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.info_box {
+  width: auto;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 10px;
+  white-space: break-spaces;
+  min-width: 150px;
+  cursor: auto;
+}
+
+.info_box span {
+  color: rgba(0, 0, 0, 1);
+  align-self: flex-start;
+}
+.add_select{
+  width: 200px;
+  min-width: 200px;
+  height: 200px;
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  cursor: pointer;
+  background-color: rgba(88, 88, 88, 0.5);
+  border-radius: 15px;
+  margin:auto 10px;
+}
+.add_select img{
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  margin-bottom: 20px;
 }
 </style>
