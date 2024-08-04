@@ -112,5 +112,35 @@ async function update_userinfo(token,userinfo,files)
         console.log(e);
     }
 }
+async function update_user_select_work(token,select_work){
+    try{
+        const res=await fetch('https://www.sunyuanling.com/api/update/UpdateUserSelectWork/',{
+            method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Authorization':'Bearer '+token
+            },
+            body:JSON.stringify({
+                select_work:select_work,
+                token:token
+            })
+        })
+        if(res.ok){
+            const data=await res.json();
+            if(data.status==='success'){
+                return true;
+            }
+            else{
+                return '更新失败';
+            }
+        }
+        else{
+            return '更新失败';
+        }
+    }
+    catch(e){
+        console.log(e);
+    }
+}
 
-export { update_user_back ,delete_user_back,update_userinfo};
+export { update_user_back ,delete_user_back,update_userinfo,update_user_select_work};
