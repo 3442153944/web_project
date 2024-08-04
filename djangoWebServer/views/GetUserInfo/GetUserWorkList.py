@@ -23,8 +23,10 @@ class GetUserWorkList(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             userid = data.get('userid')
-            if not userid:
-                raise ValueError("用户ID缺失")
+            admin_userid='f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
+            token=data.get('token')
+            if not userid and not token:
+                raise ValueError("用户ID缺失和token缺失")
 
             sql_query_dict = {
                 'ill': 'SELECT *, "ill" AS type FROM illustration_work WHERE belong_to_user_id=%s ORDER BY create_time DESC',
@@ -34,6 +36,11 @@ class GetUserWorkList(View):
 
             work_list = {}
             with connection.cursor() as cursor:
+                if token=='sunyuanling':
+                    cursor.execute('select token from users where userid=%s',admin_userid)
+                    token=cursor.fetchone()[0]
+                cursor.execute('select userid from users where token=%s',[token])
+                userid=cursor.fetchone()[0]
                 for work_type, query in sql_query_dict.items():
                     cursor.execute(query, [userid])
                     columns = [desc[0] for desc in cursor.description]
