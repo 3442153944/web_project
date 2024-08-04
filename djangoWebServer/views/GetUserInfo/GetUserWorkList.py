@@ -23,8 +23,8 @@ class GetUserWorkList(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             userid = data.get('userid')
-            admin_userid='f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-            token=data.get('token')
+            admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
+            token = data.get('token')
             if not userid and not token:
                 raise ValueError("用户ID缺失和token缺失")
 
@@ -36,11 +36,21 @@ class GetUserWorkList(View):
 
             work_list = {}
             with connection.cursor() as cursor:
-                if token=='sunyuanling':
-                    cursor.execute('select token from users where userid=%s',admin_userid)
-                    token=cursor.fetchone()[0]
-                cursor.execute('select userid from users where token=%s',[token])
-                userid=cursor.fetchone()[0]
+                if token == 'sunyuanling':
+                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
+                    token_row = cursor.fetchone()
+                    if token_row is not None:
+                        token = token_row[0]
+                    else:
+                        raise ValueError("管理员用户ID未找到")
+
+                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                result = cursor.fetchone()
+                if result is not None:
+                    userid = result[0]
+                else:
+                    raise ValueError("无效的token")
+
                 for work_type, query in sql_query_dict.items():
                     cursor.execute(query, [userid])
                     columns = [desc[0] for desc in cursor.description]
@@ -48,17 +58,27 @@ class GetUserWorkList(View):
                     rows = [dict(zip(columns, row)) for row in result]
                     work_list[work_type] = rows
 
-            self.logger.info(str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + '请求成功')
+            self.logger.info(
+                str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + '请求成功')
             return JsonResponse({'status': 'success', 'data': work_list})
 
         except json.JSONDecodeError as e:
-            self.logger.error(str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + ' JSON 解码错误: ' + str(e))
+            print(e)
+            self.logger.error(str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(
+                request.body) + ' JSON 解码错误: ' + str(e))
             return JsonResponse({'status': 'error', 'message': '请求数据格式错误'}, status=400)
 
         except ValueError as e:
-            self.logger.error(str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + ' 参数错误: ' + str(e))
+            print(e)
+            self.logger.error(
+                str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + ' 参数错误: ' + str(
+                    e))
             return JsonResponse({'status': 'error', 'message': str(e)}, status=400)
 
         except Exception as e:
-            self.logger.error(str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + ' 服务器错误: ' + str(e))
+            print(e)
+            self.logger.error(
+                str(self.request_path(request)) + '请求方式：POST，请求信息：' + str(request.body) + ' 服务器错误: ' + str(
+                    e))
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
+

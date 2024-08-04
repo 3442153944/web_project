@@ -46,7 +46,7 @@ urlpatterns = [
     path('GetSearch/', GetSearch.as_view(), name='GetSearch'),
     # 作品查询/搜索
     path('GetUserWorkList/', GetUserWorkList.as_view(), name='GetUserWorkList'),
-    # 获取用户的作品列表
+    # 获取用户所有的作品列表
     path('GetUserFollowList/', GetUserFollowList.as_view(), name='GetUserFollowList'),
     # 获取用户关注的用户用户列表
     path('UserAddFollow/', UserAddFollow.as_view(), name='UserAddFollow'),

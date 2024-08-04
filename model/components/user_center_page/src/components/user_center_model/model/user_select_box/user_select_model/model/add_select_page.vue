@@ -8,12 +8,35 @@
                 <img class="icon" src="https://www.sunyuanling.com/assets/close.svg">
             </div>
         </div>
+        <div class="choose_item">
+            <div class="item" @click="item_index=0" :class="item_index==0?'choose_status':''">
+                <span>插画·漫画</span>
+            </div>
+            <div class="item" @click="item_index=1" :class="item_index==1?'choose_status':''">
+                <span>小说</span>
+            </div>
+            <div class="item" @click="item_index=2" :class="item_index==2?'choose_status':''">
+                <span>约稿</span>
+            </div>
+        </div>
+        <div class="item_page">
+            <div class="item_page_ill" v-if="item_index==0">
+                <span>选择插画或者漫画作品</span>
+            </div>
+            <div class="item_page_novel" v-if="item_index==1">
+                <span>选择小说作品</span>
+            </div>
+            <div class="item_page_contract" v-if="item_index==2">
+                <span>选择完成的约稿作品</span>
+            </div>
+        </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, defineProps, onMounted ,defineEmits} from 'vue';
+import {get_user_all_worklist} from '../../../../js/get_workinfo.js'
 
 const props = defineProps({
   user_info: {
@@ -29,6 +52,13 @@ const emit=defineEmits(['close_page'])
 function close_btn() {
   emit('close_page',false)
 }
+let work_list=ref()
+let item_index=ref(0)
+
+onMounted(async ()=>{
+    work_list.value=await get_user_all_worklist(props.token)
+    console.log(work_list.value)
+})
 </script>
 
 <style scoped>
@@ -51,7 +81,7 @@ function close_btn() {
     height: auto;
     display: flex;
     flex-direction: column;
-    min-width: 300px;
+    min-width: 450px;
     min-height: 100px;
     background-color: white;
     border-radius: 15px;
@@ -88,5 +118,31 @@ function close_btn() {
     transition: all 0.2s ease-in-out;
     background-color: rgba(133, 133, 133, 0.5);
     border-radius: 50%;
+}
+.choose_item{
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+}
+.item{
+    width: auto;
+    height: auto;
+    flex:1;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+.choose_status{
+    border-bottom: 3px solid rgba(0,150,250,1);
+    color: rgba(0,150,250,1);
+    transform: translateY(-2px);
+    transform: scale(1.1);
+    transition: all 0.2s;
+    font-weight: bold;
 }
 </style>

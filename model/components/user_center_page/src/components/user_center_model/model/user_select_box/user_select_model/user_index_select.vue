@@ -6,7 +6,8 @@
         <div class="content">
             <scroll_box :msg_list="msg_list" @open_select_box="add_select_page_show=true"></scroll_box>
         </div>
-        <add_select_page v-if="add_select_page_show" @close_page="add_select_page_show=false"></add_select_page>
+        <add_select_page v-if="add_select_page_show" @close_page="add_select_page_show=false" 
+        :user_info="user_info" :token="token"></add_select_page>
     </div>
 </template>
 

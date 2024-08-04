@@ -100,6 +100,7 @@ onMounted(() => {
     background-color: rgba(0, 0, 0, 0.5);
     align-items: center;
     justify-content: center;
+    z-index: 15;
 }
 
 .content {

@@ -63,4 +63,35 @@ async function get_workinfo(token, work_list) {
         throw err;  // 可以重新抛出错误以供调用方处理
     }
 }
-export{get_workinfo}
+
+async function get_user_all_worklist(token)
+{
+    try{
+        const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkList/',
+            {
+                method:'POST',
+                body:JSON.stringify({
+                    token:token
+                })
+            }
+        )
+        if(res.ok)
+        {
+            const data=await res.json();
+            if (data.status==='success'){
+                return data.data;
+            }
+            else{
+                return data.message;
+            }
+        }
+        else{
+            console.log('Error:',res.status);
+        }
+    }
+    catch(e)
+    {
+        console.error('获取工作信息时发生错误:', e);
+    }
+}
+export{get_workinfo,get_user_all_worklist}
