@@ -64,8 +64,30 @@ class GetUserCollect(View):
                 collect_list = cursor.fetchall()
                 columns = [column[0] for column in cursor.description]
                 rows = [dict(zip(columns, row)) for row in collect_list]
-                temp_rows = []
 
+                # 获取作品基本信息
+                work_info_dict = {}
+                for row in rows:
+                    work_id = row.get('workid')
+                    work_type = row.get('type')
+
+                    if work_type == 'ill':
+                        cursor.execute('SELECT * FROM illustration_work WHERE Illustration_id=%s', [work_id])
+                    elif work_type == 'comic':
+                        cursor.execute('SELECT * FROM comic WHERE id=%s', [work_id])
+                    elif work_type == 'novel':
+                        cursor.execute('SELECT * FROM novel_work WHERE work_id=%s', [work_id])
+                    else:
+                        continue
+
+                    work_details = cursor.fetchone()
+                    if work_details:
+                        temp_columns = [column[0] for column in cursor.description]
+                        work_data = dict(zip(temp_columns, work_details))
+                        work_info_dict[work_id] = work_data
+
+                # 获取作者信息
+                temp_rows = []
                 for row in rows:
                     work_id = row.get('workid')
                     work_type = row.get('type')
@@ -83,8 +105,10 @@ class GetUserCollect(View):
                     author_id = author_id[0] if author_id else None
                     if not author_id:
                         row['tips'] = '该作品已被删除或被管理员隐藏或者用户隐藏'
+                        row['work_status']='deleted'
                     else:
                         row['tips'] = '作品状态正常'
+                        row['work_status']='normal'
                         cursor.execute('SELECT * FROM users WHERE userid=%s', [author_id])
                         userinfo = cursor.fetchone()
 
@@ -96,10 +120,15 @@ class GetUserCollect(View):
                             row['authorinfo'] = temp_row
                         else:
                             row['authorinfo'] = {}
+                    row['work_info'] = work_info_dict.get(work_id, {})
                     temp_rows.append(row)
                 rows = temp_rows
 
-                return JsonResponse({'status': 'success', 'message': '获取收藏列表成功', 'data': rows})
+                return JsonResponse({
+                    'status': 'success',
+                    'message': '获取收藏列表成功',
+                    'data': rows
+                })
 
         except json.JSONDecodeError as e:
             self.logger.error(self.request_path(request) + ' JSON 解码错误：请求数据为：' + str(request.body) + ' 错误信息：' + str(e))
