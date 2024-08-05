@@ -1,10 +1,11 @@
 import { createStore } from 'vuex';
 import * as cookies from 'H:/web_project/model/cookies.js';
 
-const MAX_STACK_DEPTH = 500; // 设置栈的最大深度
+const MAX_STACK_DEPTH = 500; // 设置页面状态栈的最大深度
 
 const store = createStore({
   state: {
+    // 页面状态，控制不同页面的显示状态
     pageStatus: {
       upload_work: false,
       upload_work_type: '',
@@ -13,32 +14,46 @@ const store = createStore({
       search_page: false,
       chat_page: false,
       content_index_page: false,
-      user_center_page:false,
+      user_center_page: false,
     },
+    // 内容页面状态，用于控制内容相关页面的显示状态
     content_page: {
       ill_page: false,
       comic_page: false,
       novel_page: false,
       img_content_page: false,
-      item_path:'',
+      item_path: '',
     },
+    // 用户信息和认证相关状态
     token: '',
     userinfo: {},
     work_id: '',
-    work_type:'',
+    work_type: '',
+    // 页面状态栈，用于实现页面回退功能
     pageStack: [],
-    pushTimer: null, // 添加定时器
+    // 定时器，用于页面状态管理
+    pushTimer: null,
   },
   mutations: {
+    // 设置用户信息
     SET_USERINFO(state, userinfo) { state.userinfo = userinfo; },
+    // 设置认证 token
     SET_TOKEN(state, token) { state.token = token; },
+    // 更新页面状态
     SET_PAGESTATUS(state, pageStatus) { state.pageStatus = { ...state.pageStatus, ...pageStatus }; },
+    // 设置上传作品的状态
     SET_UPLOAD_WORK(state, upload_work) { state.pageStatus.upload_work = upload_work; },
+    // 设置上传作品类型
     SET_UPLOAD_WORK_TYPE(state, upload_work_type) { state.pageStatus.upload_work_type = upload_work_type; },
+    // 设置首页状态
     SET_INDEX_PAGE(state, index_page) { state.pageStatus.index_page = index_page; },
+    // 设置任意页面状态
     SET_KEY(state, { key, value }) { state.pageStatus[key] = value; },
+    // 设置索引页
     SET_INDEXPAGE(state, value) { state.pageStatus.indexPage = value; },
+    // 设置搜索页状态
     SET_SEARCH_PAGE(state, search_page) { state.pageStatus.search_page = search_page; },
+    // 设置单一页面状态并控制所有页面状态的显示
     SET_SINGLE_PAGE_STATUS(state, { key, value }) {
       if (key === 'all') {
         for (const k in state.pageStatus) {
@@ -59,6 +74,7 @@ const store = createStore({
         state.pageStatus.index_page = true;
       }
     },
+    // 设置内容页面状态
     SET_CONTENT_PAGE(state, { key, value }) {
       for (const k in state.content_page) {
         if (Object.prototype.hasOwnProperty.call(state.content_page, k) && typeof state.content_page[k] === 'boolean') {
@@ -67,18 +83,19 @@ const store = createStore({
       }
       state.content_page[key] = value;
     },
+    // 设置作品 ID
     SET_WORK_ID(state, work_id) { state.work_id = work_id; },
-    // 将当前页面状态压入栈
+    // 将当前页面状态压入栈，以便后退时恢复
     PUSH_PAGE_STATE(state) {
       if (state.pageStack.length >= MAX_STACK_DEPTH) {
         state.pageStack.shift(); // 删除最早的记录
       }
       state.pageStack.push({
-        pageStatus: JSON.parse(JSON.stringify(state.pageStatus)),
-        content_page: JSON.parse(JSON.stringify(state.content_page)),
+        pageStatus: JSON.parse(JSON.stringify(state.pageStatus)), // 深拷贝页面状态
+        content_page: JSON.parse(JSON.stringify(state.content_page)), // 深拷贝内容页面状态
       });
     },
-    // 返回上一级时弹出栈并恢复状态
+    // 恢复上一个页面状态
     POP_PAGE_STATE(state) {
       if (state.pageStack.length > 0) {
         const previousState = state.pageStack.pop();
@@ -86,34 +103,41 @@ const store = createStore({
         state.content_page = previousState.content_page;
       }
     },
-    // 重置页面栈
+    // 重置页面状态栈和定时器
     RESET_PAGE_STACK(state) {
       state.pageStack = [];
       state.pushTimer = null; // 清除定时器
     },
+    // 设置内容页面的路径
     SET_ITEM_PATH(state, path) {
       state.content_page.item_path = path;
     },
-    //设置作品类型
+    // 设置作品类型
     SET_WORK_TYPE(state, work_type) {
       state.work_type = work_type;
     },
-
   },
   actions: {
+    // 页面回退
     goBack({ commit }) {
       commit('POP_PAGE_STATE'); // 恢复上一个状态
     }
   },
   getters: {
+    // 获取用户信息
     userinfo: state => state.userinfo,
+    // 获取认证 token
     token: state => state.token,
+    // 获取上传作品状态
     upload_work: state => state.pageStatus.upload_work,
     upload_work_type: state => state.pageStatus.upload_work_type,
+    // 获取首页状态
     index_page: state => state.pageStatus.index_page,
     indexPage: state => state.pageStatus.indexPage,
+    // 获取搜索页状态
     search_page: state => state.pageStatus.search_page,
     chat_page: state => state.pageStatus.chat_page,
+    // 获取内容页面状态
     ill_page: state => state.content_page.ill_page,
     comic_page: state => state.content_page.comic_page,
     novel_page: state => state.content_page.novel_page,
@@ -121,9 +145,9 @@ const store = createStore({
     img_content_page: state => state.content_page.img_content_page,
     content_index_page: state => state.pageStatus.content_index_page,
     pageStack: state => state.pageStack,
-    item_path:state=>state.content_page.item_path,
-    work_type:state=>state.work_type,
-    user_center_page:state=>state.pageStatus.user_center_page,
+    item_path: state => state.content_page.item_path,
+    work_type: state => state.work_type,
+    user_center_page: state => state.pageStatus.user_center_page,
   },
 });
 
