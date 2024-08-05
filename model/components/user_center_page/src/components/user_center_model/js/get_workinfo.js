@@ -94,4 +94,31 @@ async function get_user_all_worklist(token)
         console.error('获取工作信息时发生错误:', e);
     }
 }
-export{get_workinfo,get_user_all_worklist}
+async function get_user_collect_worklist(token){
+    try{
+        const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserCollect/',{
+            method:'POST',
+            body:JSON.stringify({
+                token:token
+            })
+        })
+        if (res.ok)
+        {
+            const data=await res.json();
+            if (data.status==='success'){
+                return data.data;
+            }
+            else{
+                return data.message;
+            }
+        }
+        else{
+            console.log('Error:',res.status);
+        }
+    }
+    catch(e)
+    {
+        console.log(e)
+    }
+}
+export{get_workinfo,get_user_all_worklist,get_user_collect_worklist}

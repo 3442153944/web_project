@@ -2,6 +2,7 @@ from django.urls import path
 
 from .DeleteUserBack import DeleteUserBack
 from .UpdateUserBack import UpdateUserBack
+from .UpdateUserCollect import UpdateUserCollect
 from .UpdateUserInfo import UpdateUserInfo
 from .UpdateUserSelectWork import UpdateUserSelectWork
 
@@ -14,4 +15,6 @@ urlpatterns=[
  #更新用户的信息
  path('UpdateUserSelectWork/',UpdateUserSelectWork.as_view(),name='UpdateUserSelectWork'),
  #更新用户选择的作品
+ path('UpdateUserCollect/',UpdateUserCollect.as_view(),name='UpdateUserCollect'),
+ #更新用户收藏的作品状态或者删除收藏
 ]

@@ -116,10 +116,12 @@ async function get_userinfo() {
         } else {
             console.log('网络错误');
             cookies.clearAllCookies();
+            window.location.href = 'https://localhost:3000';
         }
     } catch (err) {
         console.log('获取用户信息失败:', err);
         cookies.clearAllCookies();
+        window.location.href = 'https://localhost:3000';
     }
 }
 

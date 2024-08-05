@@ -5,7 +5,6 @@ from ..log.log import Logger
 from datetime import datetime
 import json
 
-
 class GetUserCollect(View):
     logger = Logger()
 
@@ -23,35 +22,87 @@ class GetUserCollect(View):
         try:
             data = json.loads(request.body.decode("utf-8"))
             token = data.get('token')
+            userid = data.get('userid')
 
-            if not token:
-                self.logger.warning(self.request_path(request) + ' token 为空，请求数据为：' + str(data))
-                return JsonResponse({'status': 'error', 'message': 'token 为空'}, status=403)
+            if not token and not userid:
+                self.logger.warning(self.request_path(request) + ' token 和 userid 均为空，请求数据为：' + str(data))
+                return JsonResponse({'status': 'error', 'message': 'token 和 userid 均为空'}, status=403)
 
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
+            userid = None
+
             with connection.cursor() as cursor:
-                # 检查 token 是否为 'sunyuanling' 并进行覆盖
                 if token == 'sunyuanling':
                     cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
-                    token = cursor.fetchone()[0]
-
-                # 根据 token 获取用户 ID
-                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                user_id_result = cursor.fetchone()
-                if user_id_result:
-                    userid = user_id_result[0]
-                    # 根据用户 ID 获取收藏列表
-                    cursor.execute('SELECT * FROM user_collection_table WHERE userid=%s', [userid])
-                    collect_list = cursor.fetchall()
-                    columns = [column[0] for column in cursor.description]
-                    rows = [dict(zip(columns, row)) for row in collect_list]
-                    return JsonResponse({'status': 'success', 'message': '获取收藏列表成功', 'data': rows})
+                    admin_token = cursor.fetchone()
+                    if admin_token:
+                        token = admin_token[0]
+                        userid = admin_userid
+                    else:
+                        self.logger.error(self.request_path(request) + ' 无法获取管理员 token')
+                        return JsonResponse({'status': 'error', 'message': '管理员 token 获取失败'}, status=500)
                 else:
-                    self.logger.warning(self.request_path(request) + ' 根据 token 找不到用户：' + str(token))
-                    return JsonResponse({'status': 'error', 'message': '用户不存在'}, status=404)
+                    if token:
+                        cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                        result = cursor.fetchone()
+                        if result:
+                            userid = result[0]
+                        else:
+                            self.logger.warning(self.request_path(request) + ' 使用 token 获取用户 ID 失败')
 
-        except json.JSONDecodeError:
-            self.logger.error(self.request_path(request) + ' JSON 解码错误：请求数据为：' + str(request.body))
+                    if not userid and userid:
+                        cursor.execute('SELECT userid FROM users WHERE userid=%s', [userid])
+                        result = cursor.fetchone()
+                        if result:
+                            userid = result[0]
+
+                    if not userid:
+                        self.logger.warning(self.request_path(request) + ' 无法找到有效的用户 ID')
+                        return JsonResponse({'status': 'error', 'message': '无效的 token 和 userid'}, status=403)
+
+                cursor.execute('SELECT * FROM user_collection_table WHERE userid=%s', [userid])
+                collect_list = cursor.fetchall()
+                columns = [column[0] for column in cursor.description]
+                rows = [dict(zip(columns, row)) for row in collect_list]
+                temp_rows = []
+
+                for row in rows:
+                    work_id = row.get('workid')
+                    work_type = row.get('type')
+
+                    if work_type == 'ill':
+                        cursor.execute('SELECT belong_to_user_id FROM illustration_work WHERE Illustration_id=%s', [work_id])
+                    elif work_type == 'comic':
+                        cursor.execute('SELECT belong_to_userid FROM comic WHERE id=%s', [work_id])
+                    elif work_type == 'novel':
+                        cursor.execute('SELECT belong_to_userid FROM novel_work WHERE work_id=%s', [work_id])
+                    else:
+                        continue
+
+                    author_id = cursor.fetchone()
+                    author_id = author_id[0] if author_id else None
+                    if not author_id:
+                        row['tips'] = '该作品已被删除或被管理员隐藏或者用户隐藏'
+                    else:
+                        row['tips'] = '作品状态正常'
+                        cursor.execute('SELECT * FROM users WHERE userid=%s', [author_id])
+                        userinfo = cursor.fetchone()
+
+                        if userinfo:
+                            temp_columns = [column[0] for column in cursor.description]
+                            temp_row = dict(zip(temp_columns, userinfo))
+                            temp_row.pop('password', None)
+                            temp_row.pop('token', None)
+                            row['authorinfo'] = temp_row
+                        else:
+                            row['authorinfo'] = {}
+                    temp_rows.append(row)
+                rows = temp_rows
+
+                return JsonResponse({'status': 'success', 'message': '获取收藏列表成功', 'data': rows})
+
+        except json.JSONDecodeError as e:
+            self.logger.error(self.request_path(request) + ' JSON 解码错误：请求数据为：' + str(request.body) + ' 错误信息：' + str(e))
             return JsonResponse({'status': 'error', 'message': 'JSON 格式错误'}, status=400)
 
         except Exception as e:

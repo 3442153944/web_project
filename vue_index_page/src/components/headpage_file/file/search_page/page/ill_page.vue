@@ -187,6 +187,10 @@ function jump_to_page(id) {
   justify-content: center;
   cursor: pointer;
   border-radius: 10px;
+  max-width: 200px;
+  max-height: 200px;
+  min-width: 200px;
+  min-height: 200px;
 }
 
 .author_info {

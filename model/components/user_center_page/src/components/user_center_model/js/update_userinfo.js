@@ -1,7 +1,7 @@
 async function update_user_back(file, token, user_data) {
     let formdata = new FormData();
-    formdata.append('files', file); 
-    formdata.append('data', JSON.stringify(user_data)); 
+    formdata.append('files', file);
+    formdata.append('data', JSON.stringify(user_data));
     formdata.append('token', token);
 
     try {
@@ -46,7 +46,7 @@ async function update_user_back(file, token, user_data) {
 }
 
 
-async function delete_user_back(token){
+async function delete_user_back(token) {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/update/DeleteUserBack/', {
             method: 'POST',
@@ -73,74 +73,107 @@ async function delete_user_back(token){
     }
 }
 
-async function update_userinfo(token,userinfo,files)
-{
-    let formdata=new FormData();
-    formdata.append('token',token);
-    formdata.append('files',files);
+async function update_userinfo(token, userinfo, files) {
+    let formdata = new FormData();
+    formdata.append('token', token);
+    formdata.append('files', files);
     console.log(files)
-    formdata.append('data',userinfo);
+    formdata.append('data', userinfo);
     console.log(formdata)
-    try{
-        const res=await fetch('https://www.sunyuanling.com/api/update/UpdateUserInfo/',{
-            method:'POST',
-            body:formdata
+    try {
+        const res = await fetch('https://www.sunyuanling.com/api/update/UpdateUserInfo/', {
+            method: 'POST',
+            body: formdata
         })
-        if(res.ok)
-        {
-            const data=await res.json();
-            if(data.status==='success')
-            {
+        if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'success') {
                 alert(data.message);
                 return true;
             }
-            else{
+            else {
                 console.log(data.message);
                 return false;
             }
         }
-        else{
-            const data=await res.json();
-            if(data.status==='file_error')
-            {
+        else {
+            const data = await res.json();
+            if (data.status === 'file_error') {
                 alert(data.message);
                 return false;
             }
         }
     }
-    catch(e){
+    catch (e) {
         console.log(e);
     }
 }
-async function update_user_select_work(token,select_work){
-    try{
-        const res=await fetch('https://www.sunyuanling.com/api/update/UpdateUserSelectWork/',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json',
-                'Authorization':'Bearer '+token
+async function update_user_select_work(token, select_work) {
+    try {
+        const res = await fetch('https://www.sunyuanling.com/api/update/UpdateUserSelectWork/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
             },
-            body:JSON.stringify({
-                select_work:select_work,
-                token:token
+            body: JSON.stringify({
+                select_work: select_work,
+                token: token
             })
         })
-        if(res.ok){
-            const data=await res.json();
-            if(data.status==='success'){
+        if (res.ok) {
+            const data = await res.json();
+            if (data.status === 'success') {
                 return true;
             }
-            else{
+            else {
                 return '更新失败';
             }
         }
-        else{
+        else {
             return '更新失败';
         }
     }
-    catch(e){
+    catch (e) {
         console.log(e);
     }
 }
 
-export { update_user_back ,delete_user_back,update_userinfo,update_user_select_work};
+async function update_user_collect_work(token, collect_id, work_type, operate, open_operate) {
+    try {
+        const res = await fetch('https://www.sunyuanling.com/api/update/UpdateUserCollect/',
+            {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    'token': token,
+                    'collect_id': collect_id,
+                    'work_type': work_type,
+                    'operate': operate,
+                    'open_operate': open_operate
+                })
+            }
+        )
+        if (res.ok) {
+            const data = res.json()
+            if (data.status == 'success') {
+                console.log(data.message);
+            }
+            else {
+                console.log(data.message);
+            }
+        }
+        else {
+            console.log(res.status);
+            const data = res.json()
+            return data.message;
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
+}
+export { update_user_back, delete_user_back, update_userinfo, update_user_select_work ,update_user_collect_work};

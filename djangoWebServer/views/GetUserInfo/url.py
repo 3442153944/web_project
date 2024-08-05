@@ -4,6 +4,7 @@ from django.urls import path
 from .GetFriendList import GetFriendList
 from .GetGroupList import GetGroupList, GroupControlInfo, GetGroupInfo
 from .GetSearch import GetSearch
+from .GetUserCollect import GetUserCollect
 from .GetUserFans import GetUserFans
 from .GetUserFollow import GetUserFollow
 from .GetUserFollowList import GetUserFollowList, UserAddFollow
@@ -53,4 +54,6 @@ urlpatterns = [
     # 用户关注
     path('GetUserWorkSeries/', GetUserWorkSeries.as_view(), name='GetUserWorkSeries'),
     # 获取用户的作品系列
+    path('GetUserCollect/',GetUserCollect.as_view(),name='GetUserCollect'),
+    # 获取用户的收藏列表及其作者信息
 ]
