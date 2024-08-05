@@ -5,6 +5,7 @@ from ..log.log import Logger
 from datetime import datetime
 import json
 
+
 class UpdateUserCollect(View):
     logger = Logger()
 
@@ -46,8 +47,8 @@ class UpdateUserCollect(View):
                 with transaction.atomic():
                     if operate == 'delete':
                         cursor.execute(
-                            'DELETE FROM user_collection_table WHERE id=%s AND userid=%s AND type=%s',
-                            [collect_id, userid, work_type]
+                            'update user_collection_table set is_collection=%s WHERE id=%s AND userid=%s AND type=%s',
+                            [0, collect_id, userid, work_type]
                         )
                         if cursor.rowcount > 0:
                             return JsonResponse({'status': 'success', 'message': '取消收藏成功'})
@@ -55,6 +56,8 @@ class UpdateUserCollect(View):
                             return JsonResponse({'status': 'error', 'message': '收藏项不存在'}, status=404)
 
                     elif operate == 'set_open':
+                        if open_operate not in [0, 1, '0', '1']:
+                            return JsonResponse({'status': 'error', 'message': '无效操作'}, status=400)
                         cursor.execute(
                             'UPDATE user_collection_table SET is_open=%s WHERE id=%s AND userid=%s AND type=%s',
                             [open_operate, collect_id, userid, work_type]
@@ -62,13 +65,15 @@ class UpdateUserCollect(View):
                         if cursor.rowcount > 0:
                             return JsonResponse({'status': 'success', 'message': '更新收藏状态成功'})
                         else:
+                            print(data)
                             return JsonResponse({'status': 'error', 'message': '收藏项不存在'}, status=404)
 
                     else:
                         return JsonResponse({'status': 'error', 'message': '无效操作'}, status=400)
 
         except json.JSONDecodeError as e:
-            self.logger.warning(self.request_path(request) + ' 数据格式错误：请求数据为：' + str(request.body) + ' 错误信息为：' + str(e))
+            self.logger.warning(
+                self.request_path(request) + ' 数据格式错误：请求数据为：' + str(request.body) + ' 错误信息为：' + str(e))
             return JsonResponse({'status': 'error', 'message': '数据格式错误'}, status=400)
         except Exception as e:
             self.logger.error(self.request_path(request) + ' 错误信息：' + str(e))

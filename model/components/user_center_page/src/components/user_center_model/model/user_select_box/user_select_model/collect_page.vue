@@ -3,8 +3,10 @@
     <div class="content">
       <div class="is_open">
         <div class="switch_work_type">
-          <span @click="work_show_type = 'all'" :class="work_show_type == 'all' ? 'switch_work_type_choose' : ''">所有作品</span>
-          <span @click="work_show_type = 'ill'" :class="work_show_type == 'ill' ? 'switch_work_type_choose' : ''">插画</span>
+          <span @click="work_show_type = 'all'"
+            :class="work_show_type == 'all' ? 'switch_work_type_choose' : ''">所有作品</span>
+          <span @click="work_show_type = 'ill'"
+            :class="work_show_type == 'ill' ? 'switch_work_type_choose' : ''">插画</span>
           <span @click="work_show_type = 'comic'"
             :class="work_show_type == 'comic' ? 'switch_work_type_choose' : ''">漫画</span>
           <span @click="work_show_type = 'novel'"
@@ -25,13 +27,13 @@
         <div class="control_item" @click="choose_all_collect_work()">
           <span>全选</span>
         </div>
-        <div class="control_item">
+        <div class="control_item" @click="delete_select_collect_work()">
           <span>取消收藏</span>
         </div>
-        <div class="control_item" v-if="open_work_show_status == 1">
+        <div class="control_item" v-if="open_work_show_status == 1" @click="set_select_collect_work_open_status(0)">
           <span>设置为不公开</span>
         </div>
-        <div class="control_item" v-if="open_work_show_status == 0">
+        <div class="control_item" v-if="open_work_show_status == 0" @click="set_select_collect_work_open_status(1)">
           <span>设置为公开</span>
         </div>
         <div class="control_item" @click="collect_control_box_show = false"
@@ -56,7 +58,8 @@
                 </div>
                 <div class="choose_work_box" v-if="collect_control_box_show"
                   @click="toggle_choose_collect_work_list(item)">
-                  <div class="choose_box" :style="{ backgroundColor: choose_collect_work_list.includes(item) ? 'rgba(0,150,250,1)' : '' }">
+                  <div class="choose_box"
+                    :style="{ backgroundColor: choose_collect_work_list.includes(item) ? 'rgba(0,150,250,1)' : '' }">
                     <img class="icon" src="https://www.sunyuanling.com/assets/correct.svg">
                   </div>
                 </div>
@@ -87,6 +90,7 @@
 <script setup>
 import { ref, defineProps, onMounted, computed, watch } from 'vue'
 import { get_user_collect_worklist } from '../../../js/get_workinfo'
+import { update_user_collect_work } from '../../../js/update_userinfo'
 
 const props = defineProps({
   user_info: {
@@ -113,6 +117,41 @@ function toggle_choose_collect_work_list(item) {
     choose_collect_work_list.value.push(item)
   }
   console.log(choose_collect_work_list.value)
+}
+
+//删除收藏作品
+async function delete_select_collect_work() {
+  let message_status = []
+  for (let i = 0; i < choose_collect_work_list.value.length; i++) {
+    message_status.push(await update_user_collect_work(props.token, choose_collect_work_list.value[i].id, choose_collect_work_list.value[i].type,
+      'delete', null
+    ))
+  }
+  if (message_status.includes(false)) {
+    alert('删除失败')
+  } else {
+    alert('删除成功')
+    collect_worklist.value = await get_user_collect_worklist(props.token)
+  }
+  //清除选择的列表
+  choose_collect_work_list.value = []
+}
+//设置收藏作品公开状态
+async function set_select_collect_work_open_status(open_status) {
+  let message_status = []
+  for (let i = 0; i < choose_collect_work_list.value.length; i++) {
+    message_status.push(await update_user_collect_work(props.token, choose_collect_work_list.value[i].id, choose_collect_work_list.value[i].type,
+      'set_open', open_status
+    ))
+  }
+  if (message_status.includes(false)) {
+    alert('设置失败')
+  } else {
+    alert('设置成功')
+    collect_worklist.value = await get_user_collect_worklist(props.token)
+  }
+  //清空选择列表
+  choose_collect_work_list.value = []
 }
 
 function choose_all_collect_work() {
@@ -331,8 +370,8 @@ function get_file_count(item) {
   top: 0px;
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.2);
-  overflow: hidden; /* 防止伪元素超出边界 */
-  transition: background-color 0.3s; /* 背景颜色渐变 */
+  overflow: hidden;
+  transition: all 0.3s;
   border-radius: 15px;
 }
 
@@ -350,7 +389,8 @@ function get_file_count(item) {
   background: rgba(0, 0, 0, 0.5);
   border-radius: 50%;
   transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.5s; /* 扩散效果渐变 */
+  transition: transform 0.5s;
+  /* 扩散效果渐变 */
 }
 
 .choose_work_box:hover::after {

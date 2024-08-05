@@ -13,6 +13,7 @@ const store = createStore({
       search_page: false,
       chat_page: false,
       content_index_page: false,
+      user_center_page:false,
     },
     content_page: {
       ill_page: false,
@@ -21,7 +22,7 @@ const store = createStore({
       img_content_page: false,
       item_path:'',
     },
-    token: cookies.get_cookie('token'),
+    token: '',
     userinfo: {},
     work_id: '',
     work_type:'',
@@ -97,6 +98,7 @@ const store = createStore({
     SET_WORK_TYPE(state, work_type) {
       state.work_type = work_type;
     },
+
   },
   actions: {
     goBack({ commit }) {
@@ -121,6 +123,7 @@ const store = createStore({
     pageStack: state => state.pageStack,
     item_path:state=>state.content_page.item_path,
     work_type:state=>state.work_type,
+    user_center_page:state=>state.pageStatus.user_center_page,
   },
 });
 

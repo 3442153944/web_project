@@ -47,6 +47,8 @@ export default {
 </script>
 
 <script setup>
+import { useStore } from 'vuex';
+const store = useStore();
 
 let header_box_background_src = ref("https://www.sunyuanling.com/image/97165605_p0.jpg")
 let header_box_avatar_src = ref("https://www.sunyuanling.com/image/87328997_p0.jpg")
@@ -163,6 +165,7 @@ onMounted(() => {
 function jump_usercenter() {
     console.log("用户中心跳转");
     //window.location.href="https://localhost:8888/usercenter";
+    store.commit('SET_SINGLE_PAGE_STATUS',{'key':'user_center_page','value':true})
 }
 //退出登录
 function logout() {

@@ -60,7 +60,7 @@ class GetUserCollect(View):
                         self.logger.warning(self.request_path(request) + ' 无法找到有效的用户 ID')
                         return JsonResponse({'status': 'error', 'message': '无效的 token 和 userid'}, status=403)
 
-                cursor.execute('SELECT * FROM user_collection_table WHERE userid=%s', [userid])
+                cursor.execute('SELECT * FROM user_collection_table WHERE userid=%s and is_collection=%s', [userid,1])
                 collect_list = cursor.fetchall()
                 columns = [column[0] for column in cursor.description]
                 rows = [dict(zip(columns, row)) for row in collect_list]

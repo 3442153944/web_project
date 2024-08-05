@@ -158,17 +158,19 @@ async function update_user_collect_work(token, collect_id, work_type, operate, o
             }
         )
         if (res.ok) {
-            const data = res.json()
+            const data =await res.json()
             if (data.status == 'success') {
                 console.log(data.message);
+                return true;
             }
             else {
                 console.log(data.message);
+                return false;
             }
         }
         else {
             console.log(res.status);
-            const data = res.json()
+            const data =await res.json()
             return data.message;
         }
     }

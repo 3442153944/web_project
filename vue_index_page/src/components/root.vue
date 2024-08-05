@@ -12,6 +12,7 @@
     </div>
     <upload_page v-if="upload_page_show" />
     <content_index_page v-if="content_index_page_show"/>
+    <user_center_page :token="token" v-if="user_center_page_show"></user_center_page>
   </div>
 </template>
 
@@ -29,11 +30,12 @@ export default {
 </script>
 
 <script setup>
-import * as cookies from '../../../model/cookies.js';
+import * as cookies from '../assets/js/cookies';
 // eslint-disable-next-line no-unused-vars
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import { useStore } from 'vuex'
 import content_index_page from './content_page/content_index_page.vue';
+import user_center_page from './user_center_page/user_center_page.vue';
 const store = useStore()
 let cursor_top = ref(0);
 let cursor_left = ref(0);
@@ -43,7 +45,8 @@ let load_reading = ref(false);
 let upload_page_show=computed(()=>store.getters.upload_work)
 let index_page_show=computed(()=>store.getters.index_page)
 let content_index_page_show=computed(()=>store.getters.content_index_page)
-
+let user_center_page_show=computed(()=>store.getters.user_center_page)
+let token=computed(()=>store.getters.token)
 
 // 读取URL参数设置cookie并清除URL中的token参数
 function setTokenFromURL() {
@@ -143,6 +146,7 @@ async function load_login() {
             const data = await res.json();
             if (data.status == 'success') {
                 cookies.set_cookie('token', data.token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+                store.commit('SET_TOKEN',data.token)
             }
         }
     } catch (err) {

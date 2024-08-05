@@ -36,35 +36,40 @@ class GetAllUserInfo(View):
             with connection.cursor() as cursor:
                 data = json.loads(request.body.decode('utf-8'))
                 print(data)
-                userid=data.get('userid')
-                token=data.get('token')
-                admin_userid='f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-                if userid and token:
-                    return JsonResponse({'status':'fail','message':'请输入userid或token'},status=400)
-                sql = 'SELECT * FROM users WHERE userid = %s or token=%s'
-                if token=='sunyuanling':
-                    userid=admin_userid
-                cursor.execute(sql, [userid,token])
+                userid = data.get('userid')
+                token = data.get('token')
+                admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
+
+                if not userid and not token:
+                    return JsonResponse({'status': 'fail', 'message': 'Please provide userid or token'}, status=400)
+
+                if token == 'sunyuanling':
+                    userid = admin_userid
+
+                sql = 'SELECT * FROM users WHERE userid = %s OR token = %s'
+                cursor.execute(sql, [userid, token])
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()
                 rows = [dict(zip(columns, row)) for row in result]
-                userid=rows[0]['userid']
-                cursor.execute('select count(*) from user_fans where user_id=%s', [userid])
-                rows[0]['fans']=cursor.fetchone()[0]
-                cursor.execute('select count(*) from user_follow where user_id=%s', [userid])
-                rows[0]['follow']=cursor.fetchone()[0]
-                for row in rows:
-                    del row['password']
-                    del row['token']
+                print('获取的用户信息：',rows)
+                if rows:
+                    user_id = rows[0].get('userid')
+                    if user_id:
+                        cursor.execute('SELECT COUNT(*) FROM user_fans WHERE user_id = %s', [user_id])
+                        rows[0]['fans'] = cursor.fetchone()[0]
+                        cursor.execute('SELECT COUNT(*) FROM user_follow WHERE user_id = %s', [user_id])
+                        rows[0]['follow'] = cursor.fetchone()[0]
 
-            if rows:
-                self.logger.info(rows)
-                return JsonResponse({'status': 'success', 'data': rows})
-            else:
-                print('没有结果')
-                self.logger.warning(data)
-                return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
+                    for row in rows:
+                        row.pop('password', None)
+                        row.pop('token', None)
+
+                    self.logger.info(f'POST request success: {rows}')
+                    return JsonResponse({'status': 'success', 'data': rows})
+                else:
+                    self.logger.warning(f'No data found for request: {data}')
+                    return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
         except Exception as e:
             print(e)
-            self.logger.error(e)
-            return JsonResponse({'status': 'error', 'message': '服务器异常'}, status=500)
+            self.logger.error(f'POST request error: {e}')
+            return JsonResponse({'status': 'error', 'message': 'Server error'}, status=500)

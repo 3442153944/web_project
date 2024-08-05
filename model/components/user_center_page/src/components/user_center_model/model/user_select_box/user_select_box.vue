@@ -1,8 +1,6 @@
 <template>
   <div class="user_select_box" v-if="user_info">
     <div class="content">
-        用户精选作品
-        {{ select_list }}
         <div class="select_page">
             <div class="page_item" @click="select_index_page=0" :class="select_index_page==0?'choose_item':''">
                 主页
