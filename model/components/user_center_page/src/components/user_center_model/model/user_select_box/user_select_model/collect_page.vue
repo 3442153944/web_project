@@ -2,37 +2,72 @@
   <div class="collect_page">
     <div class="content">
       <div class="is_open">
+        <div class="switch_work_type">
+          <span @click="work_show_type = 'all'" :class="work_show_type == 'all' ? 'switch_work_type_choose' : ''">所有作品</span>
+          <span @click="work_show_type = 'ill'" :class="work_show_type == 'ill' ? 'switch_work_type_choose' : ''">插画</span>
+          <span @click="work_show_type = 'comic'"
+            :class="work_show_type == 'comic' ? 'switch_work_type_choose' : ''">漫画</span>
+          <span @click="work_show_type = 'novel'"
+            :class="work_show_type == 'novel' ? 'switch_work_type_choose' : ''">小说</span>
+        </div>
         <div class="switch_open_status">
-          <span>公开</span>
-          <span>不公开</span>
+          <span @click="open_work_show_status = 1"
+            :class="open_work_show_status == 1 ? 'switch_work_type_choose' : ''">公开</span>
+          <span @click="open_work_show_status = 0"
+            :class="open_work_show_status == 0 ? 'switch_work_type_choose' : ''">不公开</span>
         </div>
       </div>
       <div class="title">
         <span>作品</span>
-        <span>管理收藏</span>
+        <span style="cursor: pointer;" @click="collect_control_box_show = !collect_control_box_show">管理收藏</span>
       </div>
-      <div class="collect_list" v-if="collect_worklist.length">
-        <div class="collect_item" v-for="(item, index) in collect_worklist" :key="index">
+      <div class="collect_control_box" v-if="collect_control_box_show">
+        <div class="control_item" @click="choose_all_collect_work()">
+          <span>全选</span>
+        </div>
+        <div class="control_item">
+          <span>取消收藏</span>
+        </div>
+        <div class="control_item" v-if="open_work_show_status == 1">
+          <span>设置为不公开</span>
+        </div>
+        <div class="control_item" v-if="open_work_show_status == 0">
+          <span>设置为公开</span>
+        </div>
+        <div class="control_item" @click="collect_control_box_show = false"
+          style="align-self: flex-end;position: absolute;right: 10px;">
+          <span>结束</span>
+        </div>
+      </div>
+      <div class="collect_list" v-if="filteredCollectWorklist.length">
+        <div class="collect_item" v-for="(item, index) in filteredCollectWorklist" :key="index">
           <div class="item_box" v-if="item.work_status === 'normal'">
             <div class="work_type">
-              <span>{{ getWorkType(item.type) }}</span>
+              <span>{{ get_work_type(item.type) }}</span>
             </div>
             <div class="work_item">
               <div class="image_container">
-                <img :src="getImageSrc(item)" alt="作品封面">
+                <img :src="get_image_src(item)" alt="作品封面">
                 <div class="age_tag" v-if="item.work_info.age_classification && item.work_info.age_classification > 18">
                   <span class="age_num">{{ item.work_info.age_classification }}</span>
                 </div>
-                <div class="work_count" v-if="getFileCount(item) > 1">
-                  <span class="work_num">{{ getFileCount(item) }}</span>
+                <div class="work_count" v-if="get_file_count(item) > 1">
+                  <span class="work_num">{{ get_file_count(item) }}</span>
+                </div>
+                <div class="choose_work_box" v-if="collect_control_box_show"
+                  @click="toggle_choose_collect_work_list(item)">
+                  <div class="choose_box" :style="{ backgroundColor: choose_collect_work_list.includes(item) ? 'rgba(0,150,250,1)' : '' }">
+                    <img class="icon" src="https://www.sunyuanling.com/assets/correct.svg">
+                  </div>
                 </div>
               </div>
               <div class="work_name">
-                <span>{{ item.work_info.work_name }}</span>
+                <span>{{ item.type === 'ill' ? item.work_info.name : item.work_info.work_name }}</span>
               </div>
               <div class="author_info">
                 <div class="author_avatar">
-                  <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.authorinfo.user_avatar" alt="作者头像">
+                  <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.authorinfo.user_avatar"
+                    alt="作者头像">
                 </div>
                 <div class="author_name">
                   <span>{{ item.authorinfo.username }}</span>
@@ -40,17 +75,17 @@
               </div>
             </div>
           </div>
-          <div class="item_box_deleted" v-else-if="item.work_status === 'deleted'">
-            <div class="item_box_deleted_text">作品已删除或者被管理员或者作者隐藏</div>
-          </div>
         </div>
+      </div>
+      <div class="if_all_none" v-if="filteredCollectWorklist.length <= 1 || !filteredCollectWorklist">
+        <span>这里空空如也什么也没有</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted } from 'vue'
+import { ref, defineProps, onMounted, computed, watch } from 'vue'
 import { get_user_collect_worklist } from '../../../js/get_workinfo'
 
 const props = defineProps({
@@ -65,13 +100,45 @@ const props = defineProps({
 })
 
 const collect_worklist = ref([])
+const open_work_show_status = ref(1)
+const work_show_type = ref('all')
+const collect_control_box_show = ref(false)
+const choose_collect_work_list = ref([])
+
+function toggle_choose_collect_work_list(item) {
+  const index = choose_collect_work_list.value.indexOf(item)
+  if (index > -1) {
+    choose_collect_work_list.value.splice(index, 1)
+  } else {
+    choose_collect_work_list.value.push(item)
+  }
+  console.log(choose_collect_work_list.value)
+}
+
+function choose_all_collect_work() {
+  choose_collect_work_list.value = [...filteredCollectWorklist.value]
+}
+
+watch(collect_control_box_show, () => {
+  if (collect_control_box_show.value == false) {
+    choose_collect_work_list.value = []
+  }
+})
 
 onMounted(async () => {
   collect_worklist.value = await get_user_collect_worklist(props.token)
   console.log(collect_worklist.value)
 })
 
-function getWorkType(type) {
+const filteredCollectWorklist = computed(() => {
+  return collect_worklist.value.filter(item => {
+    const matchesOpenStatus = item.is_open == open_work_show_status.value
+    const matchesWorkType = work_show_type.value === 'all' || item.type === work_show_type.value
+    return matchesOpenStatus && matchesWorkType
+  })
+})
+
+function get_work_type(type) {
   switch (type) {
     case 'novel':
       return '小说'
@@ -84,7 +151,7 @@ function getWorkType(type) {
   }
 }
 
-function getImageSrc(item) {
+function get_image_src(item) {
   const { type, work_info } = item
   const baseUrl = 'https://www.sunyuanling.com/image/'
   if (type === 'novel') {
@@ -97,7 +164,7 @@ function getImageSrc(item) {
   return ''
 }
 
-function getFileCount(item) {
+function get_file_count(item) {
   const { content_file_list } = item.work_info
   if (content_file_list) {
     const files = content_file_list.split(/[,，]/)
@@ -106,6 +173,8 @@ function getFileCount(item) {
   return 0
 }
 </script>
+
+
 
 <style scoped>
 .collect_page {
@@ -120,6 +189,85 @@ function getFileCount(item) {
   gap: 20px;
 }
 
+.is_open {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.switch_work_type,
+.switch_open_status {
+  display: flex;
+  gap: 10px;
+}
+
+.switch_work_type span,
+.switch_open_status span {
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+.switch_work_type span:hover,
+.switch_open_status span:hover {
+  opacity: 0.8;
+  background-color: rgba(0, 150, 250, 1);
+  transform: scale(1.1);
+  transform: translateY(-2px);
+  color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+.switch_work_type_choose {
+  background-color: rgba(0, 150, 250, 1);
+  color: white;
+}
+
+.switch_open_status {
+  margin-top: 10px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: bold;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.collect_control_box {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  margin-top: 10px;
+  height: auto;
+  position: relative;
+  padding: 5px 10px;
+}
+
+.control_item {
+  display: flex;
+  width: auto;
+  height: auto;
+  justify-content: center;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: rgba(61, 61, 61, 0.5);
+  color: white;
+}
+
+.control_item:hover {
+  background-color: rgba(61, 61, 61, 0.8);
+  transition: all 0.2s ease-in-out;
+  transform: scale(1.1);
+  transform: translateY(-2px);
+}
+
 .collect_list {
   display: flex;
   flex-wrap: wrap;
@@ -130,40 +278,110 @@ function getFileCount(item) {
 }
 
 .collect_item {
-  flex: 1 1 calc(33.333% - 20px);
   box-sizing: border-box;
-  max-width: 220px;
-  max-height: 300px;
-  min-width: 200px;
-  min-height: 300px;
   display: flex;
-  overflow: hidden;
-  margin:10px;
 }
 
 .item_box {
   position: relative;
   display: flex;
   flex-direction: column;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background: #fff;
   width: 100%;
   height: 100%;
+  margin: auto;
+  gap: 5px;
+  max-width: 220px;
+  max-height: 350px;
+  min-width: 200px;
+  min-height: 350px;
 }
 
 .work_type {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  background: #f1f1f1;
   padding: 4px 8px;
   border-radius: 4px;
+  width: 100%;
+  height: auto;
 }
 
 .image_container {
   position: relative;
+  width: 200px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image_container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 15px;
+}
+
+.choose_work_box {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  cursor: pointer;
+  background-color: rgba(0, 0, 0, 0.2);
+  overflow: hidden; /* 防止伪元素超出边界 */
+  transition: background-color 0.3s; /* 背景颜色渐变 */
+  border-radius: 15px;
+}
+
+.choose_work_box:hover {
+  background-color: rgba(0, 0, 0, 0.35);
+}
+
+.choose_work_box::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 100%;
+  width: 314%;
+  height: 314%;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.5s; /* 扩散效果渐变 */
+}
+
+.choose_work_box:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+
+.choose_box {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 2;
+}
+
+.choose_box img {
+  width: 25px;
+  height: 25px;
+  object-fit: cover;
+}
+
+.icon {
+  width: 25px;
+  height: 25px;
+  object-fit: cover;
 }
 
 .age_tag {
@@ -212,20 +430,29 @@ function getFileCount(item) {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  object-fit: cover;
 }
 
 .item_box_deleted {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%;
+  height: 200px;
+  width: 200px;
   background: #f8d7da;
   color: #721c24;
   padding: 20px;
-  border-radius: 8px;
+  border-radius: 10px;
+  margin: auto;
 }
 
 .item_box_deleted_text {
   text-align: center;
+}
+
+.if_all_none {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
 }
 </style>
