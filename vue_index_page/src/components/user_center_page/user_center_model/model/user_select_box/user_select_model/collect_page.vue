@@ -48,7 +48,7 @@
               <span>{{ get_work_type(item.type) }}</span>
             </div>
             <div class="work_item">
-              <div class="image_container">
+              <div class="image_container" @click="choose_item({'work_id':item.id,'work_type':item.type,'item':item})">
                 <img :src="get_image_src(item)" alt="作品封面">
                 <div class="age_tag" v-if="item.work_info.age_classification && item.work_info.age_classification > 18">
                   <span class="age_num">{{ item.work_info.age_classification }}</span>
@@ -91,6 +91,43 @@
 import { ref, defineProps, onMounted, computed, watch } from 'vue'
 import { get_user_collect_worklist } from '../../../js/get_workinfo'
 import { update_user_collect_work } from '../../../js/update_userinfo'
+import {useStore} from 'vuex'
+const store = useStore()
+
+//选择作品
+function choose_item(item)
+{
+  console.log(item)
+  if (item.work_type == 'ill') {
+        store.commit('SET_CONTENT_PAGE', {
+            key: 'ill_page',
+            value: true
+        })
+        store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+        store.commit('SET_WORK_ID', item.item.workid)
+        store.commit('SET_WORK_TYPE', item.work_type)
+    }
+    else if(item.work_type=='comic')
+    {
+        store.commit('SET_CONTENT_PAGE', {
+            key: 'comic_page',
+            value: true
+        })
+        store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+        store.commit('SET_WORK_ID', item.item.workid)
+        store.commit('SET_WORK_TYPE', item.work_type)
+    }
+    else if(item.work_type=='novel')
+    {
+        store.commit('SET_CONTENT_PAGE', {
+            key: 'novel_page',
+            value: true
+        })
+        store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+        store.commit('SET_WORK_ID', item.item.workid)
+        store.commit('SET_WORK_TYPE', item.work_type)
+    }
+}
 
 const props = defineProps({
   user_info: {
@@ -352,6 +389,7 @@ function get_file_count(item) {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 
 .image_container img {

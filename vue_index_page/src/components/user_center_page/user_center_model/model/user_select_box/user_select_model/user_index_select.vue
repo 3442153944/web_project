@@ -4,10 +4,12 @@
             <span><b>精选</b></span>
         </div>
         <div class="content">
-            <scroll_box :msg_list="msg_list" @open_select_box="add_select_page_show=true"></scroll_box>
+            <scroll_box :msg_list="msg_list" @open_select_box="add_select_page_show = true"
+                @chose_item="get_choose_item">
+            </scroll_box>
         </div>
-        <add_select_page v-if="add_select_page_show" @close_page="add_select_page_show=false" 
-        :user_info="user_info" :token="token"></add_select_page>
+        <add_select_page v-if="add_select_page_show" @close_page="add_select_page_show = false" :user_info="user_info"
+            :token="token"></add_select_page>
     </div>
 </template>
 
@@ -16,6 +18,8 @@ import { ref, defineProps, onMounted } from 'vue';
 import scroll_box from './model/scroll_box.vue';
 import { get_workinfo } from '../../../js/get_workinfo';
 import add_select_page from './model/add_select_page.vue';
+import { useStore } from 'vuex'
+const store = useStore()
 const props = defineProps({
     user_info: {
         type: Object,
@@ -42,9 +46,43 @@ function get_msg_list() {
     return result;
 }
 
+//获取用户点击的内容
+function get_choose_item(item) {
+    console.log(item);
+    if (item.work_type == 'ill') {
+        store.commit('SET_CONTENT_PAGE', {
+            key: 'ill_page',
+            value: true
+        })
+        store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+        store.commit('SET_WORK_ID', item.work_id)
+        store.commit('SET_WORK_TYPE', item.work_type)
+    }
+    else if(item.work_type=='comic')
+    {
+        store.commit('SET_CONTENT_PAGE', {
+            key: 'comic_page',
+            value: true
+        })
+        store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+        store.commit('SET_WORK_ID', item.work_id)
+        store.commit('SET_WORK_TYPE', item.work_type)
+    }
+    else if(item.work_type=='novel')
+    {
+        store.commit('SET_CONTENT_PAGE', {
+            key: 'novel_page',
+            value: true
+        })
+        store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+        store.commit('SET_WORK_ID', item.work_id)
+        store.commit('SET_WORK_TYPE', item.work_type)
+    }
+}
+
 onMounted(async () => {
     get_msg_list();
-    msg_list.value=await get_workinfo(props.token,get_msg_list());
+    msg_list.value = await get_workinfo(props.token, get_msg_list());
     console.log(msg_list.value);
 });
 </script>

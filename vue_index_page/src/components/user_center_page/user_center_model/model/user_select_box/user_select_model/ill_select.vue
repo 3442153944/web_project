@@ -11,7 +11,8 @@
     <div class="work_item_list">
       <div class="work_item" v-for="(item, index) in all_work_list" :key="index">
         <img :src="'https://www.sunyuanling.com/image/thumbnail/' + item.content_file_list.split(/[，,]/)[0]"
-         alt="Work Thumbnail" class="thumbnail" @click="chose_item({ 'work_type': 'ill', 'work_id': item.Illustration_id})">
+          alt="Work Thumbnail" class="thumbnail"
+          @click="chose_item({ 'work_type': 'ill', 'work_id': item.Illustration_id })">
         <span class="work_name">{{ item.name }}</span>
       </div>
     </div>
@@ -19,9 +20,11 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted,defineEmits } from 'vue'
+import { ref, defineProps, onMounted, defineEmits } from 'vue'
 import { get_workinfo, get_user_all_worklist } from '../../../js/get_workinfo'
 import scroll_box_copy from './model/scroll_box_copy.vue';
+import { useStore } from 'vuex'
+const store = useStore()
 
 const props = defineProps({
   user_info: {
@@ -34,12 +37,16 @@ const props = defineProps({
   }
 })
 
-const emit=defineEmits(['choose_item'])
+const emit = defineEmits(['choose_item'])
 
-function chose_item(item)
-{
-  console.log(item);
-  emit('choose_item', item);
+function chose_item(item) {
+  store.commit('SET_CONTENT_PAGE', {
+    key: 'ill_page',
+    value: true
+  })
+  store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+  store.commit('SET_WORK_ID', item.work_id)
+  store.commit('SET_WORK_TYPE', item.work_type)
 }
 
 const select_work = ref(JSON.parse(props.user_info.select_work).ill || []);
@@ -52,7 +59,7 @@ async function set_select_work(select_work) {
     work_id,
     work_type: 'ill'
   }));
-  
+
   ill_work_list.value = await get_workinfo(props.token, temp_dict);
   console.log(ill_work_list.value);
 }
@@ -110,7 +117,7 @@ onMounted(async () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   font-size: 1rem;
   color: #333;
-  position:absolute;
+  position: absolute;
   right: -80px;
 }
 
@@ -127,7 +134,8 @@ onMounted(async () => {
   max-width: 200px;
   text-align: center;
 }
-.work_item img{
+
+.work_item img {
   width: 200px;
   height: 200px;
   object-fit: cover;

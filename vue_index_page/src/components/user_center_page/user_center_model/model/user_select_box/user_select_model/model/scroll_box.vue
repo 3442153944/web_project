@@ -16,7 +16,7 @@
               <div class="work_info_box">
                 <span>插画作品</span>
                 <div class="work_info">
-                  <img :src="'https://www.sunyuanling.com/image/content_thumbnail/' +
+                  <img :src="'https://www.sunyuanling.com/image/thumbnail/' +
                     item.work_info[0].content_file_list.split(/[,，]/)[0]" class="image"
                     @click="chose_item({ 'work_type': 'ill', 'work_id': item.work_id })">
                   <div class="info_box">
@@ -30,7 +30,7 @@
               <div class="work_info_box">
                 <span>漫画作品</span>
                 <div class="work_info">
-                  <img :src="'https://www.sunyuanling.com/image/comic/content_thumbnail/' +
+                  <img :src="'https://www.sunyuanling.com/image/comic/thumbnail/' +
                     item.work_info[0].content_file_list.split(/[,，]/)[0]"
                     @click="chose_item({ 'work_type': 'comic', 'work_id': item.work_id })">
                   <div class="info_box">
@@ -298,7 +298,7 @@ onMounted(() => {
 
 .work_info_box img {
   width: 200px;
-  height: 240px;
+  height: 200px;
 }
 
 .work_info {
