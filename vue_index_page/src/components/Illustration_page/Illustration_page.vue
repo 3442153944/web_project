@@ -23,27 +23,8 @@ export default {
 import { useStore } from 'vuex';
 import scroll_box from './model/scroll_box.vue'
 const store = useStore()
-let work_id=ref('')
-//喜欢状态
-let love_svg_path = ref('https://www.sunyuanling.com/assets/love.svg')
 
-let no_love_svg_path = ref('https://www.sunyuanling.com/assets/no_love.svg')
-let left_svg_path = ref('https://www.sunyuanling.com/assets/left.svg')
-let right_svg_path = ref('https://www.sunyuanling.com/assets/right.svg')
-let page_count_svg_path = ref('https://www.sunyuanling.com/assets/page_count.svg')
-let love_svg = ref(null)
 let user_info = ref(JSON.parse(cookies.get_cookie('userinfo')))
-let temp_svg = ref('https://www.sunyuanling.com/assets/love.svg')
-let like = ref(null)
-//切换喜欢状态
-function switch_love_status(index) {
-  if (like.value[index].src == love_svg_path.value) {
-    like.value[index].src = no_love_svg_path.value
-  }
-  else {
-    like.value[index].src = love_svg_path.value
-  }
-}
 
 //获取用户关注用户的插画作品列表
 let follow_illustrations_list = ref([])

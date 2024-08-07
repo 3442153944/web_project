@@ -13,7 +13,7 @@
           <div class="novel_title  mt">
             <span>{{item.work_name}}</span>
           </div>
-          <div class="novel_userinfo  mt">
+          <div class="novel_userinfo  mt" @click="jump_to_other_user_center(item.belong_to_userid,item)">
             <div class="novel_useravatar">
               <img :src="'https://www.sunyuanling.com/image/'+item.belong_to_avatar">
             </div>
@@ -59,6 +59,13 @@ export default {
 import * as cookies from '../../../../model/cookies.js'
 import { useStore } from 'vuex';
 const store=useStore();
+//进入指定用户的用户中心
+function jump_to_other_user_center(userid,item)
+{
+  store.commit('SET_OTHER_USERID',userid)
+  store.commit('SET_SINGLE_PAGE_STATUS',{'key':'other_user_center_page','value':true})
+  console.log(userid)
+}
 let word_count=ref('1111');
 let read_time=ref('12');
 let like_count=ref('45');
@@ -198,6 +205,7 @@ function open_novel_page(id)
   width: 100%;
   height: 35px;
   align-items: center;
+  cursor: pointer;
  }
  .novel_useravatar{
   display: flex;

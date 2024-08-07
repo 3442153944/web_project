@@ -56,7 +56,7 @@ function chose_item(item) {
   store.commit('SET_WORK_TYPE', item.work_type)
 }
 
-const select_work = ref(JSON.parse(props.user_info.select_work).ill || []);
+//const select_work = ref(JSON.parse(props.user_info.select_work).ill || []);
 const ill_work_list = ref([]);
 const work_tags = ref([]);
 const all_work_list = ref([]);
@@ -84,7 +84,7 @@ function set_work_tags() {
 }
 
 onMounted(async () => {
-  await set_select_work(select_work.value);
+ // await set_select_work(select_work.value);
   all_work_list.value = await get_user_all_worklist(props.token,props.userid);
   all_work_list.value = all_work_list.value.ill || [];
   console.log(all_work_list.value);
