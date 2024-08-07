@@ -42,6 +42,7 @@ class NoticeOperations(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
+            print('公告：',data)
             operate_type = data.get('operate_type')
             userid = ''
             username = ''

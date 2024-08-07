@@ -4,12 +4,7 @@
     <div class="title" v-if="user_info">
         <div class="show_more">
             <div class="show_more_icon" @click="switch_show_sidebar">
-                <svg t="1713665000311" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="6457" width="200" height="200">
-                    <path
-                        d="M947.2 204.8H76.8c-23.893 0-42.667-18.773-42.667-42.667s18.774-42.666 42.667-42.666h872.107c22.186 0 40.96 18.773 40.96 42.666S971.093 204.8 947.2 204.8z m0 699.733H76.8c-23.893 0-42.667-18.773-42.667-42.666S52.907 819.2 76.8 819.2h872.107c23.893 0 42.666 18.773 42.666 42.667-1.706 23.893-20.48 42.666-44.373 42.666z m0-349.866H76.8c-23.893 0-42.667-18.774-42.667-42.667s18.774-42.667 42.667-42.667h872.107c23.893 0 42.666 18.774 42.666 42.667s-20.48 42.667-44.373 42.667z"
-                        p-id="6458"></path>
-                </svg>
+                <img src="https://www.sunyuanling.com/assets/more.svg" class="icon">
             </div>
             <div class="sidebar" id="sidebar" v-show="show_sidebar" :style="action_left">
                 <sidebar></sidebar>
@@ -21,12 +16,7 @@
         <div class="input_box" ref="input_box">
             <input v-model="search_data" placeholder="搜索作品" @focus="input_box_focus">
             <div class="search_icon" @click="search_data_updata">
-                <svg t="1713666425341" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="7531" width="200" height="200">
-                    <path
-                        d="M964.266667 942.933333l-221.866667-238.933333c64-72.533333 106.666667-166.4 106.666667-273.066667 0-226.133333-183.466667-409.6-409.6-409.6S29.866667 204.8 29.866667 430.933333s183.466667 409.6 409.6 409.6c89.6 0 170.666667-29.866667 238.933333-76.8l221.866667 238.933334c8.533333 8.533333 21.333333 12.8 29.866666 12.8 8.533333 0 21.333333-4.266667 29.866667-12.8 21.333333-17.066667 21.333333-42.666667 4.266667-59.733334z m-844.8-512c0-179.2 145.066667-324.266667 324.266666-324.266666S768 251.733333 768 430.933333s-145.066667 324.266667-324.266667 324.266667-324.266667-149.333333-324.266666-324.266667z"
-                        fill="#999999" p-id="7532"></path>
-                </svg>
+               <img class="icon" src="https://www.sunyuanling.com/assets/search.svg">
             </div>
         </div>
         <div class="join_vip ml mr">
@@ -34,12 +24,7 @@
         </div>
         <div class="submission ml mr" @click="submission_work_box_show_btn">
             <div class="submission_icon mr">
-                <svg t="1713667310491" class="icon" viewBox="0 0 1664 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="8530" width="200" height="200">
-                    <path
-                        d="M790.656 946.688c2.048 1.024 3.84 2.816 5.76 3.584a94.848 94.848 0 0 0 110.592-19.2l666.88-705.28a95.872 95.872 0 0 0-139.264-131.84L836.096 727.04 228.864 96.512A95.744 95.744 0 0 0 90.88 229.12l673.28 698.88c1.28 1.152 3.328 1.664 4.608 3.2 1.024 0.896 1.664 1.92 2.688 3.2 5.76 5.76 12.8 8.448 19.2 12.16z"
-                        fill="#666666" p-id="8531"></path>
-                </svg>
+              <img class="icon" src="https://www.sunyuanling.com/assets/drop_down.svg">
             </div>
             <div class="submission_text"><span>{{ submission_text }}</span></div>
             <div class="submission_work_box" v-show="submission_work_box_show">
@@ -49,23 +34,12 @@
         </div>
         <div class="message ml mr">
             <div class="message_icon" @click="chat_page_show_click()">
-                <svg t="1713667475510" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="9553" width="200" height="200">
-                    <path
-                        d="M56.888889 823.46666633v-568.888889l429.511111 315.733334c5.688889 5.688889 17.066667 11.377778 25.6 11.377778 8.533333 0 19.911111-2.844444 25.6-11.377778L967.111111 254.57777733v568.888889H56.888889z m455.111111-312.888889L85.333333 197.68888933h853.333334l-426.666667 312.888888z m-455.111111 369.777778h910.222222c17.066667 0 56.888889-5.688889 56.888889-56.888889v-625.777777c0-17.066667-14.222222-56.888889-56.888889-56.888889H56.888889c-51.2 0-56.888889 36.977778-56.888889 56.888889v625.777777c0 39.822222 14.222222 56.888889 56.888889 56.888889z"
-                        fill="#545E68" p-id="9554"></path>
-                </svg>
+                <img class="icon" src="https://www.sunyuanling.com/assets/message.svg">
             </div>
-            
         </div>
         <div class="notice ml mr" @click="show_notice()" @blur="notice_box_blur" ref="notice_box">
             <div class="notice_icon">
-                <svg t="1713667792090" class="icon" viewBox="0 0 1024 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="10588" width="200" height="200">
-                    <path
-                        d="M832 725.33333334V469.33333334a320 320 0 0 0-192-294.4 128 128 0 1 0-256 0A320 320 0 0 0 192 469.33333334v256l-64 128h768zM448 149.33333334a64 64 0 0 1 128 0 59.52 59.52 0 0 1 0 6.4 314.24 314.24 0 0 0-128 0A59.52 59.52 0 0 1 448 149.33333334zM231.68 789.33333334l17.92-35.2 6.4-13.44V469.33333334a256 256 0 0 1 512 0v271.36l7.04 13.44 17.92 35.2zM320 917.33333334h384v64H320z"
-                        p-id="10589"></path>
-                </svg>
+                <img class="icon" src="https://www.sunyuanling.com/assets/notice.svg">
             </div>
             <div class="notice_box" v-if="notice_info&&show_notice_box" @click="get_notice_info()">
                 <div class="notice_item" v-for="(item,index) in notice_info" :key="index">
@@ -80,12 +54,7 @@
                 <img :src="avatar_img_src">
             </div>
             <div class="useravatar_icon ml">
-                <svg t="1713667310491" class="icon" viewBox="0 0 1664 1024" version="1.1"
-                    xmlns="http://www.w3.org/2000/svg" p-id="8530" width="200" height="200">
-                    <path
-                        d="M790.656 946.688c2.048 1.024 3.84 2.816 5.76 3.584a94.848 94.848 0 0 0 110.592-19.2l666.88-705.28a95.872 95.872 0 0 0-139.264-131.84L836.096 727.04 228.864 96.512A95.744 95.744 0 0 0 90.88 229.12l673.28 698.88c1.28 1.152 3.328 1.664 4.608 3.2 1.024 0.896 1.664 1.92 2.688 3.2 5.76 5.76 12.8 8.448 19.2 12.16z"
-                        fill="#666666" p-id="8531"></path>
-                </svg>
+               <img class="icon" src="https://www.sunyuanling.com/assets/drop_down.svg">
             </div>
         </div>
         <chat_page class="chat_page" v-if="chat_page_show" @close_page="close_chat_page"></chat_page>
@@ -97,7 +66,9 @@
     </div>
 </template>
 
-<script>
+<script setup>
+import {useStore} from 'vuex'
+import {get_notice_info} from '@/assets/js/get_notice'
 import { onMounted, ref,watch,computed } from 'vue'
 import sidebar from './sidebar/sidebar.vue'
 import submission_work_box from './submission_work_box/submission_work_box.vue'
@@ -105,21 +76,12 @@ import header_box from './header_box/header_box.vue'
 import chat_page from './chat_page/chat_page.vue'
 import * as cookies from '../../../../../model/cookies.js'
 import search_page_index from './search_page/search_page_index.vue'
-export default {
-    // eslint-disable-next-line vue/multi-word-component-names
-    name: 'head_title',
-    // eslint-disable-next-line vue/no-unused-components
-    components: { sidebar, submission_work_box, header_box,chat_page,search_page_index}
-}
-</script>
-<script setup>
-import {useStore} from 'vuex'
 const store = useStore()
 
 let index_jump_img_src = ref('https://www.sunyuanling.com/image/主页.png')
 let submission_text = ref('投稿作品')
 let avatar_img_src = ref('https://www.sunyuanling.com/image/avatar_thumbnail/87328997_p0.jpg')
-let join_vip_text = ref('加入ILLWeb高级会员')
+let join_vip_text = ref('加入ILLWeb会员')
 let show_sidebar = ref(false)
 let action_left = ref('left:0px;')
 let submission_work_box_show = ref(false)
@@ -128,49 +90,14 @@ let chat_page_show=computed(()=>store.getters.chat_page)
 let user_info=ref([])
 let search_data=ref()//搜索数据
 user_info.value=JSON.parse(cookies.get_cookie('userinfo'))
-//avatar_img_src.value="https://www.sunyuanling.com/image/avatar_thumbnail/"+user_info.value.user_avatar;
 let search_show_status=computed(()=>store.getters.search_page);
 let input_box=ref(null)
 let search_page_click=ref(null)
 let notice_box=ref(null)
 let notice_info=ref()
-//获取公告信息
-async function get_notice_info(){
-    try{
-        const res=await fetch('https://www.sunyuanling.com/api/notice_control/NoticeOperations/',
-            {
-                method:'post',
-                headers:{
-                    'Content-Type':'application/json'
-                },
-                body:JSON.stringify({
-                    operate_type:'search',
-                    token:cookies.get_cookie('token'),
-                })
-            }
-        )
-        if(res.ok)
-        {
-            const data=await res.json()
-            if(data.status=='success')
-            {
-                notice_info.value=data.data;
-            }
-            else{
-                console.log(data.message)
-            }
-        }
-        else{
-            console.log(res.status)
-        
-        }
-    }
-    catch(error){
-        console.log(error)
-    }
-}
 onMounted(async()=>{
     await get_notice_info()
+    notice_info.value=await get_notice_info(cookies.get_cookie('token'),'search')
 })
 //公告信息框的显示和隐藏
 let show_notice_box=ref(false)
@@ -211,9 +138,6 @@ async function search_data_updata(){
 function input_box_focus(){
    // search_show_status.value=true;
     store.commit('SET_SINGLE_PAGE_STATUS',{key:'search_page',value:true})
-}
-function input_box_blur(){
-    search_show_status.value=false;
 }
 
 //接收搜索页面的关闭消息
@@ -259,10 +183,7 @@ function submission_work_box_show_btn() {
     });
     if (submission_work_box_show.value == false) {
         submission_work_box_show.value = true;
-    }/*
-    else {
-        submission_work_box_show.value = false;
-    }*/
+    }
 }
 
 function switch_show_sidebar() {
@@ -327,9 +248,6 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     }
 
 }
-
-
-
 </script>
 
 <style scoped>
@@ -437,6 +355,10 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     justify-content: center;
     font-weight: bold;
     cursor: pointer;
+    display: flex;
+    white-space: pre;
+    width: auto;
+    height: auto;
 }
 
 /*用户头像样式*/
@@ -475,7 +397,7 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     align-self: center;
 }
 
-.useravatar_icon svg {
+.useravatar_icon img {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -513,15 +435,18 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 
 .message_icon,
 .notice_icon {
-    width: 80%;
-    height: 80%;
-    overflow: hidden;
-}
-
-.message_icon svg,
-.notice_icon svg {
     width: 100%;
     height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.message_icon img,
+.notice_icon img{
+    width: 25px;
+    height: 25px;
     object-fit: cover;
 }
 
@@ -561,11 +486,6 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     cursor: pointer;
 }
 
-.show_more_icon svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
 
 /*主页按钮图片*/
 .index_jump_img {
@@ -614,24 +534,26 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     align-items: center;
     align-self: center;
     cursor: pointer;
-}
-
-.search_icon svg {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    display: flex;
+    padding: 5px;
 }
 
 .submission {
     display: flex;
-    width: 100px;
-    height: 80%;
+    width: auto;
+    height: auto;
     background-color: rgba(211, 211, 211, 1);
     align-items: center;
     align-self: center;
     border-radius: 15px;
     justify-content: center;
     position: relative;
+    gap: 5px;
+    padding: 8px 10px;
+    font-size: 12px;
+    cursor: pointer;
+    /*禁止换行*/
+    white-space: nowrap;
 }
 
 .submission:hover {
@@ -641,14 +563,24 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 }
 
 .submission_icon {
-    width: 15%;
-    height: 100%;
-    overflow: hidden;
+   width: auto;
+   height: auto;
+   display: flex;
+}
+.submission_icon img{
+    width: 20px;
+    height: 20px;
+    object-fit: cover;
 }
 
-.submission_icon svg {
+.submission_icon svg img{
     width: 100%;
     height: 100%;
+    object-fit: cover;
+}
+.icon{
+    width: 30px;
+    height: 30px;
     object-fit: cover;
 }
 </style>

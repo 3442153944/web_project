@@ -34,7 +34,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineProps, defineEmits } from 'vue';
+import { ref, onMounted, defineProps, defineEmits,watch } from 'vue';
 
 const props = defineProps({
   left_btn: {
@@ -159,6 +159,11 @@ const scrollRight = () => {
 };
 
 onMounted(() => {
+  set_tag_color();
+});
+watch(() => props.msg_list, (newList) => {
+  // 更新 tags_item 引用
+  tags_item.value = list.value.querySelectorAll('.tags_item');
   set_tag_color();
 });
 </script>
