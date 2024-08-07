@@ -1,9 +1,11 @@
 <template>
 <div class="user_center_page" v-if="user_info">
   <div class="content">
-    <user_background :user_back_img="'https://www.sunyuanling.com/image/content_thumbnail/'+user_info.user_back_img" :token="token"></user_background>
+    <user_background 
+    :user_back_img="'https://www.sunyuanling.com/image/content_thumbnail/'+(user_info.user_back_img?user_info.user_back_img:'20240525174916_f4f4acc7280f4eabb9fc1712929c3ccc.png')" 
+    :token="token"></user_background>
     <user_info_box :user_info="user_info" :token="token"></user_info_box>
-    <user_select_box :user_info="user_info" :token="token"></user_select_box>
+    <user_select_box :user_info="user_info" :token="token" :userid="userid"></user_select_box>
   </div>
 </div>
 <go_back></go_back>
@@ -18,16 +20,16 @@ import go_back from './user_center_model/go_back.vue'
 const props=defineProps({
   userid:{
     type:String,
-    default:''
+    default:'10086'
   },
   token:{
     type:String,
-    default:'sunyuanling'
+    default:''
   }
 })
 let user_info=ref()
 onMounted(async()=>{
-  user_info.value=await get_userinfo(props.token)
+  user_info.value=await get_userinfo(props.token,props.userid)
   user_info.value=user_info.value[0]
   console.log(user_info.value)
 })

@@ -25,6 +25,7 @@ class GetAllUserInfo(View):
             token = data.get('token')
             userid = data.get('userid')
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
+            print(data)
 
             if not userid and not token:
                 return JsonResponse({'status': 'fail', 'message': 'Please provide userid or token'}, status=400)

@@ -15,6 +15,7 @@ const store = createStore({
       chat_page: false,
       content_index_page: false,
       user_center_page: false,
+      other_user_center_page:false,
     },
     // 内容页面状态，用于控制内容相关页面的显示状态
     content_page: {
@@ -29,6 +30,7 @@ const store = createStore({
     userinfo: {},
     work_id: '',
     work_type: '',
+    other_userid:'',
     // 页面状态栈，用于实现页面回退功能
     pageStack: [],
     // 定时器，用于页面状态管理
@@ -116,6 +118,10 @@ const store = createStore({
     SET_WORK_TYPE(state, work_type) {
       state.work_type = work_type;
     },
+    //设置其他用户ID
+    SET_OTHER_USERID(state, userid) {
+      state.other_userid = userid;
+    },
   },
   actions: {
     // 页面回退
@@ -148,6 +154,8 @@ const store = createStore({
     item_path: state => state.content_page.item_path,
     work_type: state => state.work_type,
     user_center_page: state => state.pageStatus.user_center_page,
+    other_user_center_page:state=>state.pageStatus.other_user_center_page,
+    other_userid:state=>state.other_userid,
   },
 });
 

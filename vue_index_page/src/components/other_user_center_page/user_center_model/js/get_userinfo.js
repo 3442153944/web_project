@@ -1,4 +1,4 @@
-async function get_userinfo(token) {
+async function get_userinfo(token=null,userid=null) {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
             method: 'post',
@@ -7,7 +7,8 @@ async function get_userinfo(token) {
                 'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify({
-                'token': token
+                'token': token,
+                'userid':userid
             })
         })
         if (res.ok) {

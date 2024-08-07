@@ -12,34 +12,9 @@
           <span @click="work_show_type = 'novel'"
             :class="work_show_type == 'novel' ? 'switch_work_type_choose' : ''">小说</span>
         </div>
-        <div class="switch_open_status">
-          <span @click="open_work_show_status = 1"
-            :class="open_work_show_status == 1 ? 'switch_work_type_choose' : ''">公开</span>
-          <span @click="open_work_show_status = 0"
-            :class="open_work_show_status == 0 ? 'switch_work_type_choose' : ''">不公开</span>
-        </div>
       </div>
       <div class="title">
         <span>作品</span>
-        <span style="cursor: pointer;" @click="collect_control_box_show = !collect_control_box_show">管理收藏</span>
-      </div>
-      <div class="collect_control_box" v-if="collect_control_box_show">
-        <div class="control_item" @click="choose_all_collect_work()">
-          <span>全选</span>
-        </div>
-        <div class="control_item" @click="delete_select_collect_work()">
-          <span>取消收藏</span>
-        </div>
-        <div class="control_item" v-if="open_work_show_status == 1" @click="set_select_collect_work_open_status(0)">
-          <span>设置为不公开</span>
-        </div>
-        <div class="control_item" v-if="open_work_show_status == 0" @click="set_select_collect_work_open_status(1)">
-          <span>设置为公开</span>
-        </div>
-        <div class="control_item" @click="collect_control_box_show = false"
-          style="align-self: flex-end;position: absolute;right: 10px;">
-          <span>结束</span>
-        </div>
       </div>
       <div class="collect_list" v-if="filteredCollectWorklist.length">
         <div class="collect_item" v-for="(item, index) in filteredCollectWorklist" :key="index">
@@ -137,6 +112,10 @@ const props = defineProps({
   token: {
     type: String,
     default: ''
+  },
+  userid:{
+    type: String,
+    default: ''
   }
 })
 
@@ -156,45 +135,6 @@ function toggle_choose_collect_work_list(item) {
   console.log(choose_collect_work_list.value)
 }
 
-//删除收藏作品
-async function delete_select_collect_work() {
-  let message_status = []
-  for (let i = 0; i < choose_collect_work_list.value.length; i++) {
-    message_status.push(await update_user_collect_work(props.token, choose_collect_work_list.value[i].id, choose_collect_work_list.value[i].type,
-      'delete', null
-    ))
-  }
-  if (message_status.includes(false)) {
-    alert('删除失败')
-  } else {
-    alert('删除成功')
-    collect_worklist.value = await get_user_collect_worklist(props.token)
-  }
-  //清除选择的列表
-  choose_collect_work_list.value = []
-}
-//设置收藏作品公开状态
-async function set_select_collect_work_open_status(open_status) {
-  let message_status = []
-  for (let i = 0; i < choose_collect_work_list.value.length; i++) {
-    message_status.push(await update_user_collect_work(props.token, choose_collect_work_list.value[i].id, choose_collect_work_list.value[i].type,
-      'set_open', open_status
-    ))
-  }
-  if (message_status.includes(false)) {
-    alert('设置失败')
-  } else {
-    alert('设置成功')
-    collect_worklist.value = await get_user_collect_worklist(props.token)
-  }
-  //清空选择列表
-  choose_collect_work_list.value = []
-}
-
-function choose_all_collect_work() {
-  choose_collect_work_list.value = [...filteredCollectWorklist.value]
-}
-
 watch(collect_control_box_show, () => {
   if (collect_control_box_show.value == false) {
     choose_collect_work_list.value = []
@@ -202,7 +142,7 @@ watch(collect_control_box_show, () => {
 })
 
 onMounted(async () => {
-  collect_worklist.value = await get_user_collect_worklist(props.token)
+  collect_worklist.value = await get_user_collect_worklist(props.token,props.userid)
   console.log(collect_worklist.value)
 })
 

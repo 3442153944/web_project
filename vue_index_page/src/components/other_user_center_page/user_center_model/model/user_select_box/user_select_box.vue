@@ -15,10 +15,10 @@
                 收藏
             </div>
         </div>
-        <user_index_select :user_info="user_info" :token="token" v-if="select_index_page==0"></user_index_select>
-        <ill_select :user_info="user_info" :token="token" v-if="select_index_page==1"></ill_select>
-        <novel_select :user_info="user_info" :token="token" v-if="select_index_page==2"></novel_select>
-        <collect_page :user_info="user_info" :token="token" v-if="select_index_page==3"></collect_page>
+        <user_index_select :user_info="user_info" :token="token" :userid="userid" v-if="select_index_page==0"></user_index_select>
+        <ill_select :user_info="user_info" :token="token" :userid="userid" v-if="select_index_page==1"></ill_select>
+        <novel_select :user_info="user_info" :token="token" :userid="userid" v-if="select_index_page==2"></novel_select>
+        <collect_page :user_info="user_info" :token="token" :userid="userid" v-if="select_index_page==3"></collect_page>
     </div>
   </div>
 </template>
@@ -37,6 +37,10 @@ let props=defineProps({
         }
     },
     token:{
+        type:String,
+        default:''
+    },
+    userid:{
         type:String,
         default:''
     }

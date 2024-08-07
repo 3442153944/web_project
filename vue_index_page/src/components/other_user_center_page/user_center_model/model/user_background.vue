@@ -1,23 +1,13 @@
 <template>
     <div class="user_background">
         <div class="content">
-            <img :src="user_back_img" class="user_background_img">
-            <div class="edit_btn_box">
-                <div class="edit_btn btn" @click="edit_box_show = true">
-                    <img src="https://www.sunyuanling.com/assets/edit.svg" class="icon">
-                </div>
-                <div class="delete_btn btn" @click="delete_user_back_img">
-                    <img src="https://www.sunyuanling.com/assets/delete.svg" class="icon">
-                </div>
-            </div>
+            <img :src="user_back_img" class="user_background_img" v-if="user_back_img">
         </div>
-        <edit_box :user_back_img="user_back_img" :token="token" v-if="edit_box_show" @close_page="edit_box_show = false"></edit_box>
     </div>
 </template>
 
 <script setup>
 import { ref, defineProps } from 'vue'
-import edit_box from './edit_box.vue';
 import { delete_user_back } from '../js/update_userinfo';
 const props = defineProps({
     user_back_img: {
@@ -29,15 +19,7 @@ const props = defineProps({
         default: ''
     }
 })
-let edit_box_show = ref(false)
-function delete_user_back_img() {
-    // 弹窗确认
-    let userConfirm = window.confirm('确定删除背景图片吗？');
-    if (!userConfirm) {
-        return;
-    }
-    delete_user_back(props.token);
-}
+
 
 </script>
 

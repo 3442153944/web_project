@@ -23,7 +23,7 @@
           <div class="cartoon_title" style="width: 100%;margin-left:15px;">
             <span>{{ item.work_name }}</span>
           </div>
-          <div class="user_info">
+          <div class="user_info" @click="jump_to_other_user_center(item.belong_to_user_id,item)">
             <div class="user_avatar">
               <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.user_avatar">
             </div>
@@ -39,6 +39,8 @@
 
 <script setup>
 import { ref, onMounted, defineProps, defineEmits } from 'vue';
+import { useStore } from 'vuex';
+const store = useStore();
 
 const props = defineProps({
   left_btn: {
@@ -119,6 +121,14 @@ const scrollLeft = () => {
 const scrollRight = () => {
   smoothScroll(props.scrollDistance, props.animationDuration);
 };
+
+//用户详情页跳转
+function jump_to_other_user_center(userid,item)
+{
+  store.commit('SET_OTHER_USERID',userid)
+  store.commit('SET_SINGLE_PAGE_STATUS',{'key':'other_user_center_page','value':true})
+  console.log(userid)
+}
 
 onMounted(() => {
   set_tag_color();
@@ -280,6 +290,7 @@ onMounted(() => {
   align-items: center;
   width: 100%;
   margin-left: 15px;
+  cursor: pointer;
 }
 
 .user_avatar {

@@ -1,4 +1,4 @@
-async function get_workinfo(token, work_list) {
+async function get_workinfo(token, userid=null,work_list) {
     const server_url = 'https://www.sunyuanling.com/api/get_work_info/';
     
     try {
@@ -17,7 +17,8 @@ async function get_workinfo(token, work_list) {
                     },
                     body: JSON.stringify({
                         token: token,
-                        work_id: workId
+                        work_id: workId,
+                        userid:userid,
                     })
                 };
 
@@ -64,14 +65,15 @@ async function get_workinfo(token, work_list) {
     }
 }
 
-async function get_user_all_worklist(token)
+async function get_user_all_worklist(token,userid)
 {
     try{
         const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkList/',
             {
                 method:'POST',
                 body:JSON.stringify({
-                    token:token
+                    token:token,
+                    userid:userid,
                 })
             }
         )
@@ -94,12 +96,13 @@ async function get_user_all_worklist(token)
         console.error('获取工作信息时发生错误:', e);
     }
 }
-async function get_user_collect_worklist(token){
+async function get_user_collect_worklist(token,userid){
     try{
         const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserCollect/',{
             method:'POST',
             body:JSON.stringify({
-                token:token
+                token:token,
+                userid:userid,
             })
         })
         if (res.ok)

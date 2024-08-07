@@ -22,12 +22,12 @@
         <div class="join_vip ml mr">
             <span>{{ join_vip_text }}</span>
         </div>
-        <div class="submission ml mr" @click="submission_work_box_show_btn">
+        <div class="submission ml mr" @click="submission_work_box_show=!submission_work_box_show">
             <div class="submission_icon mr">
               <img class="icon" src="https://www.sunyuanling.com/assets/drop_down.svg">
             </div>
             <div class="submission_text"><span>{{ submission_text }}</span></div>
-            <div class="submission_work_box" v-show="submission_work_box_show">
+            <div class="submission_work_box"  :class="submission_work_box_show?'submission_work_box_drop':''">
                 <submission_work_box></submission_work_box>
             </div>
 
@@ -69,6 +69,7 @@
 <script setup>
 import {useStore} from 'vuex'
 import {get_notice_info} from '@/assets/js/get_notice'
+import {get_userinfo} from '@/assets/js/get_userinfo'
 import { onMounted, ref,watch,computed } from 'vue'
 import sidebar from './sidebar/sidebar.vue'
 import submission_work_box from './submission_work_box/submission_work_box.vue'
@@ -98,6 +99,10 @@ let notice_info=ref()
 onMounted(async()=>{
     await get_notice_info()
     notice_info.value=await get_notice_info(cookies.get_cookie('token'),'search')
+    let temp=''
+    temp=await get_userinfo(cookies.get_cookie('token'))
+    console.log(temp)
+    avatar_img_src.value='https://www.sunyuanling.com/image/avatar_thumbnail/'+temp[0].user_avatar
 })
 //公告信息框的显示和隐藏
 let show_notice_box=ref(false)
@@ -117,6 +122,12 @@ function notice_box_click(e)
 }
 onMounted(()=>{
     document.addEventListener('click',notice_box_click);
+    var mainpage = document.querySelector('.submission');
+    document.addEventListener('click', function (event) {
+        if (!mainpage.contains(event.target)) {
+            submission_work_box_show.value = false;
+        }
+    });
 })
 //搜索实现
 watch(search_data,(newValue,oldValue)=>{
@@ -175,12 +186,8 @@ function useravatar_show_btn(){
 }
 
 function submission_work_box_show_btn() {
-    var mainpage = document.querySelector('.submission');
-    document.addEventListener('click', function (event) {
-        if (!mainpage.contains(event.target)) {
-            submission_work_box_show.value = false;
-        }
-    });
+    
+   
     if (submission_work_box_show.value == false) {
         submission_work_box_show.value = true;
     }
@@ -320,13 +327,17 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
     width: 200px;
     min-height: 150px;
     height: auto;
-    
     position: absolute;
     top: 50px;
     overflow: hidden;
     background-color: rgba(211, 211, 211, 1);
     border-radius: 15px;
     z-index: 10;
+    transition: all 0.3s ease-in-out;
+    transform: translateY(-150%);
+}
+.submission_work_box_drop{
+    transform: translateY(0px);
 }
 
 .submission_work_box:hover {
@@ -474,9 +485,12 @@ function animation_sidebar(startlo, endlo, step_len, step, do_time) {
 }
 
 .show_more_icon {
-    width: 80%;
-    height: 80%;
+    width: 100%;
+    height: 100%;
     overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .show_more_icon:hover {

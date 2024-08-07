@@ -1,5 +1,5 @@
 <template>
-    <div class="user_index_select" v-if="msg_list">
+    <div class="user_index_select" v-if="msg_list && msg_list.length > 0">
         <div class="title">
             <span><b>精选</b></span>
         </div>
@@ -8,16 +8,16 @@
                 @chose_item="get_choose_item">
             </scroll_box>
         </div>
-        <add_select_page v-if="add_select_page_show" @close_page="add_select_page_show = false" :user_info="user_info"
-            :token="token"></add_select_page>
     </div>
+    <div class="if_all_none" v-else>
+        <span>这里空空如也什么也没有</span>
+      </div>
 </template>
 
 <script setup>
 import { ref, defineProps, onMounted } from 'vue';
 import scroll_box from './model/scroll_box.vue';
 import { get_workinfo } from '../../../js/get_workinfo';
-import add_select_page from './model/add_select_page.vue';
 import { useStore } from 'vuex'
 const store = useStore()
 const props = defineProps({
@@ -28,7 +28,11 @@ const props = defineProps({
     token: {
         type: String,
         default: ''
-    }
+    },
+    userid:{
+        type: String,
+        default: ''
+    },
 });
 
 // 构建滚动盒子所需的数据结构
@@ -82,11 +86,17 @@ function get_choose_item(item) {
 
 onMounted(async () => {
     get_msg_list();
-    msg_list.value = await get_workinfo(props.token, get_msg_list());
+    msg_list.value = await get_workinfo(props.token, props.userid,get_msg_list());
     console.log(msg_list.value);
 });
 </script>
 
 
 
-<style scoped></style>
+<style scoped>
+.if_all_none {
+    text-align: center;
+    font-size: 18px;
+    color: #888;
+  } 
+</style>

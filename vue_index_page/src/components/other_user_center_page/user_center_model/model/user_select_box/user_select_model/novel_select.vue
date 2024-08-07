@@ -1,5 +1,5 @@
 <template>
-  <div class="ill_select">
+  <div class="ill_select" v-if="all_work_list">
     <div class="header">
       <h2 class="title">小说作品标签
         <div class="work_count_box">
@@ -15,6 +15,9 @@
         <span class="work_name">{{ item.work_name }}</span>
       </div>
     </div>
+  </div>
+  <div class="if_all_none" v-else>
+    <span>这里空空如也什么也没有</span>
   </div>
 </template>
 
@@ -32,6 +35,10 @@ const props = defineProps({
     default: () => ({})
   },
   token: {
+    type: String,
+    default: ''
+  },
+  userid:{
     type: String,
     default: ''
   }
@@ -68,7 +75,7 @@ function set_work_tags() {
 
 onMounted(async () => {
   //await set_select_work(select_work.value);
-  all_work_list.value = await get_user_all_worklist(props.token);
+  all_work_list.value = await get_user_all_worklist(props.token,props.userid);
   all_work_list.value = all_work_list.value.novel || [];
   console.log(all_work_list.value);
   set_work_tags();
@@ -144,5 +151,10 @@ onMounted(async () => {
   margin-top: 10px;
   font-size: 1rem;
   color: #555;
+}
+.if_all_none {
+  text-align: center;
+  font-size: 18px;
+  color: #888;
 }
 </style>

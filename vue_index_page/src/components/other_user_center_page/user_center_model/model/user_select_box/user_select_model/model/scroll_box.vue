@@ -56,10 +56,6 @@
             </div>
           </div>
         </div>
-        <div class="add_select" @click="open_select_box()">
-          <img src="https://www.sunyuanling.com/assets/add.svg">
-            <span>新增精选</span>
-        </div>
       </div>
     </div>
   </div>
@@ -121,9 +117,6 @@ const chose_item = (item) => {
   console.log(item);
 };
 
-function open_select_box(){
-  emit('open_select_box',true);
-}
 // Easing function for smooth animation
 const easeInOutQuad = (t) => {
   return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
