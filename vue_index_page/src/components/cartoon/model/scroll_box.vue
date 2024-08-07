@@ -136,6 +136,9 @@ onMounted(() => {
   max-height: 300px;
   position: relative; /* 将 position 移到父容器以控制 btn_box 的位置 */
 }
+img{
+  object-fit: cover;
+}
 
 .scroll_box_content {
   display: flex;
@@ -143,6 +146,7 @@ onMounted(() => {
   height: 100%;
   align-items: center;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .btn_box {
@@ -193,6 +197,8 @@ onMounted(() => {
   display: flex;
   gap: 10px;
   white-space: nowrap;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .item {

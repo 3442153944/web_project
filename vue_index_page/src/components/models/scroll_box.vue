@@ -271,8 +271,8 @@ onMounted(() => {
   justify-content: center;
   color: rgba(255, 255, 255, 1);
   cursor: pointer;
-  padding: 5px 10px;
-  border-radius: 10px;
+  padding: 10px 20px;
+  border-radius: 15px;
 }
 
 .image_item {

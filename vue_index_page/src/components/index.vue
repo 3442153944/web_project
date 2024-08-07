@@ -1,5 +1,7 @@
 <template>
-  <work_tags></work_tags>
+  <div class="tag_box">
+    <scroll_box :msg_type="'tags'" :msg_list="tags_list.data" v-if="tags_list.data.length > 0"></scroll_box>
+  </div>
   <div class="switch_page">
     <span class="active" @click="choosePage(0)">插画</span>
     <span class="active" @click="choosePage(1)">漫画</span>
@@ -16,19 +18,23 @@ import work_tags from './work_tags/work_tags.vue';
 import illustration_page from './Illustration_page/Illustration_page.vue';
 import cartoon_page from './cartoon/cartoon_page.vue';
 import novel_page from './novel_page/novel_page.vue';
+import scroll_box from './models/scroll_box.vue'
 import { useStore } from 'vuex';
+import {get_user_follow_work_tags} from '@/assets/js/get_userinfo'
+import * as cookies from '@/assets/js/cookies'
 const store = useStore();
 const pageIndex = computed(() => store.getters.indexPage);
-const page_show=ref(pageIndex.value)
+const page_show = ref(pageIndex.value)
+let tags_list=ref([])
 function choosePage(index) {
   store.commit('SET_INDEXPAGE', index);
   store.commit('SET_PAGESTATUS')
-  page_show.value=index
+  page_show.value = index
   updateButtonStyles(index);
 }
-watch(()=>store.getters.indexPage,(newValue,oldValue)=>{
-    page_show.value=newValue
-    updateButtonStyles(page_show.value);
+watch(() => store.getters.indexPage, (newValue, oldValue) => {
+  page_show.value = newValue
+  updateButtonStyles(page_show.value);
 })
 
 function updateButtonStyles(index) {
@@ -48,9 +54,12 @@ function updateButtonStyles(index) {
   });
 }
 
-onMounted(() => {
+onMounted(async () => {
   choosePage(pageIndex.value);
   choosePage(store.getters.indexPage)
+  console.log(store.getters.token)
+  tags_list.value=await get_user_follow_work_tags(cookies.get_cookie('token'))
+  console.log(tags_list.value)
 });
 </script>
 
@@ -61,6 +70,7 @@ onMounted(() => {
   margin: 0 auto;
   margin-top: 20px;
 }
+
 .active {
   margin-left: 10px;
   padding: 5px;
@@ -69,11 +79,18 @@ onMounted(() => {
   cursor: pointer;
   font-weight: bold;
 }
+
 /* 图像抗锯齿处理 */
 img {
   image-rendering: -moz-crisp-edges;
   image-rendering: crisp-edges;
   -ms-interpolation-mode: nearest-neighbor;
   image-rendering: smooth;
+}
+.tag_box{
+  width: 80%;
+  margin: 5px auto;
+  display: flex;
+  height: 60px;
 }
 </style>

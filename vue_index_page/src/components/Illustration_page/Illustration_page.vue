@@ -1,41 +1,7 @@
 <template>
   <div class="illustration_page">
     <h3>用户关注的作品</h3>
-    <div class="follow_list" v-if="follow_illustrations_list">
-      <div class="follow_work" v-for="(item, index) in follow_illustrations_list" :key="index">
-        <div class="follow_work_item">
-          <div class="age_tag" v-if="item.age_classification >= 18">
-            <span>R-{{ item.age_classification }}</span>
-          </div>
-          <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length > 1">
-            <img :src="page_count_svg_path">
-            <span>{{ item.content_file_list.split(/[,，]/).length }}</span>
-          </div>
-          <div class="like">
-            <img :src="temp_svg" ref="like" @click="switch_love_status(index)">
-          </div>
-          <img :src="'https://www.sunyuanling.com/image/thumbnail/' + item.content_file_list.split(/[,，]/)[0]"
-            @click="go_to_illustration_page(item.Illustration_id)">
-        </div>
-        <div class="work_name">
-          <span>{{ item.name }}</span>
-        </div>
-        <div class="userinfo">
-          <div class="user_avatar">
-            <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.belong_to_user_avatar">
-          </div>
-          <div class="username">
-            <span>{{ item.belong_to_user }}</span>
-          </div>
-        </div>
-      </div>
-      <div class="left_btn" @click="scrollTabs(-400)">
-        <img :src="left_svg_path">
-      </div>
-      <div class="right_btn" @click="scrollTabs(400)">
-        <img :src="right_svg_path">
-      </div>
-    </div>
+    <scroll_box v-if="follow_illustrations_list" :msg_list="follow_illustrations_list" @chose_item="go_to_illustration_page"></scroll_box>
     <recommendation></recommendation>
     <ranking></ranking>
   </div>
@@ -55,6 +21,7 @@ export default {
 
 <script setup>
 import { useStore } from 'vuex';
+import scroll_box from './model/scroll_box.vue'
 const store = useStore()
 let work_id=ref('')
 //喜欢状态
@@ -179,6 +146,9 @@ function scrollTabs(scrollAmount) {
   display: flex;
   flex-direction: column;
   position: relative;
+}
+.illustration_page::-webkit-scrollbar{
+  display: none;
 }
 
 .follow_list {

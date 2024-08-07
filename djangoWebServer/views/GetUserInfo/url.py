@@ -11,6 +11,7 @@ from .GetUserFollowList import GetUserFollowList, UserAddFollow
 from .GetUserFollowNovel import GetUserFollowNovel
 from .GetUserFollowToComic import GetUserFollowToComic
 from .GetUserFollowToIll import GetUserFollowToIll
+from .GetUserFollowWorkTags import GetUserFollowWorkTags
 from .GetUserHistoryMsg import GetUserHistoryMsg
 from .GetUserWorkList import GetUserWorkList
 from .GetUserWorkSeries import GetUserWorkSeries
@@ -56,4 +57,6 @@ urlpatterns = [
     # 获取用户的作品系列
     path('GetUserCollect/',GetUserCollect.as_view(),name='GetUserCollect'),
     # 获取用户的收藏列表及其作者信息
+    path('GetUserFollowWorkTags/',GetUserFollowWorkTags.as_view(),name='GetUserFollowWorkTags'),
+    # 获取用户关注的用户的作品标签
 ]

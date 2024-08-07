@@ -22,7 +22,11 @@ class GetIllInfo(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            sql = 'select * from illustration_work where Illustration_id=%s'
+            sql = '''
+            SELECT illustration_work.*,users.user_avatar as author_avatar 
+            FROM illustration_work left join  users on illustration_work.belong_to_user_id=users.userid 
+            where Illustration_id=%s
+            '''
             work_id = data.get('work_id')
             with connection.cursor() as cursor:
                 cursor.execute(sql, (work_id,))

@@ -14,7 +14,10 @@ class GetUserFollowToIll(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            userid = data['userid']
+            userid = data.get('userid')
+
+            if not userid:
+                return JsonResponse({'status': 'error', 'message': 'userid is required'}, status=400)
 
             with connection.cursor() as cursor:
                 # 获取关注列表
@@ -23,21 +26,29 @@ class GetUserFollowToIll(View):
                 follow_user_ids = [row[0] for row in cursor.fetchall()]
 
                 if not follow_user_ids:
-                    self.logger.warning(data)
+                    self.logger.warning(f'No followers found for user ID: {userid}')
                     return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
 
                 # 获取插画信息并按照时间排序
-                sql = ('SELECT * FROM illustration_work WHERE belong_to_user_id IN %s '
-                       'ORDER BY create_time DESC')
+                sql = ('''
+                    SELECT illustration_work.*, users.user_avatar
+                    FROM illustration_work
+                    LEFT JOIN users ON illustration_work.belong_to_user_id = users.userid
+                    WHERE illustration_work.belong_to_user_id IN %s
+                    ORDER BY illustration_work.create_time DESC
+                ''')
                 cursor.execute(sql, [tuple(follow_user_ids)])
                 columns = [desc[0] for desc in cursor.description]
                 ill_result = cursor.fetchall()
                 ill_list = [dict(zip(columns, row)) for row in ill_result]
 
-                self.logger.info(ill_list)
-                #获取作品列表
+                self.logger.info(f'Fetched illustrations: {ill_list}')
                 return JsonResponse({'status': 'success', 'data': ill_list})
 
+        except json.JSONDecodeError as e:
+            self.logger.error(f'JSON decode error: {e}')
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON format'}, status=400)
+
         except Exception as e:
-            self.logger.error(e)
+            self.logger.error(f'Error occurred: {e}')
             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
