@@ -23,16 +23,10 @@
         </div>
     </div>
 </template>
-<script lang="ts">
- // eslint-disable-next-line no-unused-vars
- import {ref,onMounted,onUnmounted} from 'vue';
 
-export default{
-    name:'login',
-}
-</script>
 <script setup lang="ts">   
-import * as cookies from '../../../model/cookies.js'
+// eslint-disable-next-line no-unused-vars
+import {ref,} from 'vue';
 let username_in = ref('');  
 let password_in = ref('');  
 let get_message = ref('');
@@ -53,7 +47,8 @@ function login() {
                 console.log(data.data)
                 //cookies.set_cookie('userinfo',JSON.stringify(data.data))
                 //console.log(JSON.parse(cookies.get_cookie('userinfo')))
-                window.location.href='https://localhost:3002'+'?token='+data.token;
+                //window.location.href='https://www.sunyuanling.com/index_page/dist/index.html'+'?token='+data.token;
+                window.location.href='https://localhost:3002/'+"?token="+data.token
                 return;
             } else {  
                 // 登录失败的处理逻辑  

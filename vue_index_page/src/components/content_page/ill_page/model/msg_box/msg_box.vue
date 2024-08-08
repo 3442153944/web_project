@@ -107,6 +107,17 @@ import { ref, computed, defineProps,defineEmits, watch } from 'vue';
 import send_msg_box from '../send_msg_box.vue';
 import {like_comment} from '../../../../../assets/js/get_comment'
 
+import { useStore } from 'vuex';
+const store = useStore();
+//进入指定用户的用户中心
+function jump_to_other_user_center(userid,item)
+{
+  store.commit('SET_OTHER_USERID',userid)
+  store.commit('SET_SINGLE_PAGE_STATUS',{'key':'other_user_center_page','value':true})
+  console.log(userid)
+  console.log(item)
+}
+
 const props = defineProps({
   comments: {
     type: Array,
@@ -221,6 +232,7 @@ function visibleReplies(replies) {
 //通过评论ID进入用户主页接口准备
 function enter_user_home(userid) {
   console.log(userid)
+  jump_to_other_user_center(userid,'')
 }
 </script>
   

@@ -1,10 +1,15 @@
+// src/main.ts
 import { createApp } from 'vue';
 import App from './App.vue';
 import VueLazyload from 'vue-lazyload';
 import store from './components/store.js';
+import { RootState, Mutation } from './components/store.d';
+
+// 设置延迟执行的时间
+const DEBOUNCE_TIME = 50;
 
 const app = createApp(App);
-const DEBOUNCE_TIME = 50; // 设置延迟执行的时间
+
 app.use(VueLazyload, {
   preLoad: 1.3,
   error: 'https://www.sunyuanling.com/assets/default_avatar.svg',
@@ -13,7 +18,7 @@ app.use(VueLazyload, {
 });
 
 // 订阅器，用于监听页面状态的变化
-store.subscribe((mutation, state) => {
+store.subscribe((mutation: Mutation, state: RootState) => {
   if (mutation.type === 'SET_PAGESTATUS' || 
       mutation.type === 'SET_CONTENT_PAGE' || 
       mutation.type === 'SET_SINGLE_PAGE_STATUS' ||
@@ -30,5 +35,4 @@ store.subscribe((mutation, state) => {
 });
 
 app.use(store);
-
 app.mount('#app');

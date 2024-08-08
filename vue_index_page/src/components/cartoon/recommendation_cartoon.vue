@@ -32,13 +32,10 @@
         </div>
     </div>
 </template>
-<script>
-import {ref,onMounted,onUnmounted,watch} from 'vue';
-export default{
-    name:'recommendation_cartoon',
-}
-</script>
+
 <script setup>
+// eslint-disable-next-line no-unused-vars
+import {ref,onMounted,onUnmounted,watch} from 'vue';
 let img_path = ref('https://www.sunyuanling.com/image/thumbnail/82181448_p0(1).jpg');
 let age_tag = ref('R-18');
 let page_count = ref('12');

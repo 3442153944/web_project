@@ -1,7 +1,7 @@
 <template>
-  <div class="author_info" v-if="props.author_id && author_info">
+  <div class="author_info_page" v-if="props.author_id && author_info">
     <div class="content">
-      <div class="author_info">
+      <div class="author_info" @click="jump_to_other_user_center(author_info.userid,author_info)">
         <div class="author_avatar">
           <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + author_info.user_avatar">
         </div>
@@ -27,6 +27,17 @@
 import { ref, defineProps, onMounted ,defineEmits} from 'vue';
 import * as cookies from "@/assets/js/cookies";
 import scroll_box from './scroll_box_bottom.vue';
+
+import { useStore } from 'vuex';
+const store = useStore();
+//进入指定用户的用户中心
+function jump_to_other_user_center(userid,item)
+{
+  store.commit('SET_OTHER_USERID',userid)
+  store.commit('SET_SINGLE_PAGE_STATUS',{'key':'other_user_center_page','value':true})
+  console.log(userid)
+  console.log(item)
+}
 
 const token = cookies.get_cookie("token");
 const props = defineProps({
@@ -146,7 +157,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.author_info {
+.author_info_page {
   display: flex;
   width: 100%;
   height: auto;
@@ -167,6 +178,7 @@ onMounted(async () => {
   display: flex;
   flex-direction: row;
   gap: 10px;
+  cursor: pointer;
 }
 
 .author_avatar {
