@@ -1,5 +1,6 @@
-import pymysql
 import re
+
+import pymysql
 
 
 class IllRecommendation:
@@ -14,7 +15,7 @@ class IllRecommendation:
         )
         self.cursor = self.connection.cursor()
 
-    def get_userid(self, userid):
+    def get_userid(self, userid, offset=0, limit=9):
         # SQL 查询语句
         watch_sql = 'SELECT * FROM user_watch_table WHERE userid=%s AND type=%s'
         like_sql = 'SELECT * FROM user_like_table WHERE userid=%s AND type=%s'
@@ -50,7 +51,20 @@ class IllRecommendation:
         # 基于标签频率推荐作品
         recommendations = self.recommend_works(all_works, tag_frequency)
 
-        return recommendations
+        # 实现分页并处理循环
+        total_works = len(recommendations)
+        if total_works == 0:
+            return []  # 如果没有推荐的作品，返回空列表
+
+        # 计算偏移量并循环
+        start_index = offset % total_works
+        end_index = start_index + limit
+        paginated_recommendations = recommendations[start_index:end_index]
+
+        if end_index > total_works:
+            paginated_recommendations.extend(recommendations[:end_index % total_works])
+
+        return paginated_recommendations
 
     def get_weighted_tags(self, work_ids, weight):
         # 获取带权重的标签
@@ -132,8 +146,9 @@ class IllRecommendation:
         self.connection.close()
 
 
-# 示例用法
+'''
 recommender = IllRecommendation()
-recommended_work_info = recommender.get_userid('f575b4d3-0683-11ef-adf4-00ffc6b98bdb')  # 传入有效的用户 ID
+recommended_work_info = recommender.get_userid('f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 0, 9)  # 传入有效的用户 ID
 print(f'Recommended Work Info: {recommended_work_info}')
 recommender.close()
+'''

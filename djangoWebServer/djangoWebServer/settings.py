@@ -119,6 +119,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'views.update_userinfo',
     'views.work_interaction',
+    'views.recommend',
 ]
 
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'

@@ -31,4 +31,5 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('update/',include('views.update_userinfo.url')),
     #更新操作接口的入口
+    path('recommend/',include('views.recommend.url'))
 ]
