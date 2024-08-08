@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.views import View
 
+from .models.comic_recommend import ComicRecommendation
 from .models.ill_recommend import IllRecommendation
 from ..log.log import Logger
 from datetime import datetime
@@ -13,6 +14,7 @@ from django.http import JsonResponse
 class recommend(View):
     logger = Logger()
     ill_recommend=IllRecommendation()
+    comic_recommend=ComicRecommendation()
 
     def request_path(self,request):
         request_path=request.path
@@ -46,7 +48,13 @@ class recommend(View):
                     return JsonResponse({'status':'error','message':'用户不存在'},status=400)
                 if work_type=='ill':
                     work_info_list=self.ill_recommend.get_userid(userid,work_offset,work_limit)
+                    self.ill_recommend.close()
                     return JsonResponse({'status':'success','data':work_info_list},status=200)
+                if work_type=='comic':
+                    work_info_list=self.comic_recommend.get_userid(userid,work_offset,work_limit)
+                    self.comic_recommend.close()
+                    return JsonResponse({'status':'success','data':work_info_list},status=200)
+
 
 
         except Exception as e:

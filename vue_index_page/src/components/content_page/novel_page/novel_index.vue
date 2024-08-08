@@ -7,12 +7,13 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted ,defineProps} from 'vue';
 import { useStore } from 'vuex';
 import novel_content_page from './novel_components/novel_content_page.vue';
 import * as cookies from '@/assets/js/cookies.js';
 import go_back from '../go_back.vue';
 import comment_section from './comment_section.vue';
+
 
 const token = cookies.get_cookie('token');
 const store = useStore();

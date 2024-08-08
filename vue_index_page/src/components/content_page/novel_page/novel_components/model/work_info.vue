@@ -47,7 +47,17 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+// eslint-disable-next-line no-unused-vars
+import { ref, defineProps,onMounted } from 'vue'
+import {watch_work} from '@/assets/js/interaction.js'
+import * as cookies from '@/assets/js/cookies.js'
+let token=cookies.get_cookie('token')
+
+onMounted(async ()=>{
+  await watch_work(props.work_info[0].belong_to_series_id,token,'novel',props.work_info[0].work_name)
+  console.log(props.work_info)
+})
+
 let props = defineProps({
   work_info: {
     type: Array,

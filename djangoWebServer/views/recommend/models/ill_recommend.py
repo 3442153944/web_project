@@ -1,10 +1,12 @@
 import re
-
 import pymysql
-
+from ..log.log import Logger
 
 class IllRecommendation:
     def __init__(self):
+        # 初始化 Logger
+        self.logger = Logger()
+
         # 连接到数据库
         self.connection = pymysql.connect(
             host='localhost',
@@ -17,54 +19,73 @@ class IllRecommendation:
 
     def get_userid(self, userid, offset=0, limit=9):
         # SQL 查询语句
-        watch_sql = 'SELECT * FROM user_watch_table WHERE userid=%s AND type=%s'
-        like_sql = 'SELECT * FROM user_like_table WHERE userid=%s AND type=%s'
-        collect_sql = 'SELECT * FROM user_collection_table WHERE userid=%s AND type=%s'
+        watch_sql = 'SELECT * FROM user_watch_table WHERE userid=%s AND type=%s LIMIT %s OFFSET %s'
+        like_sql = 'SELECT * FROM user_like_table WHERE userid=%s AND type=%s LIMIT %s OFFSET %s'
+        collect_sql = 'SELECT * FROM user_collection_table WHERE userid=%s AND type=%s LIMIT %s OFFSET %s'
 
-        # 提取用户行为数据
-        self.cursor.execute(watch_sql, (userid, 'ill'))
-        watch_list = self.cursor.fetchall()
-        watch_id_list = [watch['workid'] for watch in watch_list]
+        try:
+            # 提取用户行为数据
+            watch_id_list = self.query_work_ids(watch_sql, userid, offset, limit)
+            like_id_list = self.query_work_ids(like_sql, userid, offset, limit)
+            collect_id_list = self.query_work_ids(collect_sql, userid, offset, limit)
 
-        self.cursor.execute(like_sql, (userid, 'ill'))
-        like_list = self.cursor.fetchall()
-        like_id_list = [like['workid'] for like in like_list]
+            # 合并并加权标签
+            all_tags = self.get_weighted_tags(watch_id_list, 1) + \
+                       self.get_weighted_tags(like_id_list, 2) + \
+                       self.get_weighted_tags(collect_id_list, 3)
 
-        self.cursor.execute(collect_sql, (userid, 'ill'))
-        collect_list = self.cursor.fetchall()
-        collect_id_list = [collect['workid'] for collect in collect_list]
+            # 记录加权后的标签
+            tags_str = ', '.join(all_tags)
+            self.logger.info('加权后的标签: %s' % tags_str)
 
-        # 合并并加权标签
-        all_tags = self.get_weighted_tags(watch_id_list, 1) + \
-                   self.get_weighted_tags(like_id_list, 2) + \
-                   self.get_weighted_tags(collect_id_list, 3)
+            # 统计标签频率
+            tag_frequency = self.count_tag_frequency(all_tags)
 
-        print('加权后的标签:', all_tags)
+            # 从插画信息表中获取所有作品
+            all_works = self.query_works(offset, limit)
 
-        # 统计标签频率
-        tag_frequency = self.count_tag_frequency(all_tags)
+            # 基于标签频率推荐作品
+            recommendations = self.recommend_works(all_works, tag_frequency)
 
-        # 从插画信息表中获取所有作品
-        self.cursor.execute("SELECT * FROM illustration_work")
-        all_works = self.cursor.fetchall()
+            # 实现分页并处理循环
+            total_works = len(recommendations)
+            if total_works == 0:
+                self.logger.info('没有推荐的作品')
+                return []  # 如果没有推荐的作品，返回空列表
 
-        # 基于标签频率推荐作品
-        recommendations = self.recommend_works(all_works, tag_frequency)
+            # 计算偏移量并循环
+            start_index = offset % total_works
+            end_index = start_index + limit
+            paginated_recommendations = recommendations[start_index:end_index]
 
-        # 实现分页并处理循环
-        total_works = len(recommendations)
-        if total_works == 0:
-            return []  # 如果没有推荐的作品，返回空列表
+            if end_index > total_works:
+                paginated_recommendations.extend(recommendations[:end_index % total_works])
 
-        # 计算偏移量并循环
-        start_index = offset % total_works
-        end_index = start_index + limit
-        paginated_recommendations = recommendations[start_index:end_index]
+            return paginated_recommendations
 
-        if end_index > total_works:
-            paginated_recommendations.extend(recommendations[:end_index % total_works])
+        except Exception as e:
+            self.logger.error('获取用户推荐时发生错误: %s' % str(e))
+            return []
 
-        return paginated_recommendations
+    def query_work_ids(self, sql, userid, offset, limit):
+        """执行 SQL 查询并返回 work_ids 列表"""
+        try:
+            self.cursor.execute(sql, (userid, 'ill', limit, offset))
+            results = self.cursor.fetchall()
+            return [item['workid'] for item in results]
+        except Exception as e:
+            self.logger.error('执行查询时发生错误: %s' % str(e))
+            return []
+
+    def query_works(self, offset, limit):
+        """从插画信息表中获取作品，考虑分页"""
+        sql = 'SELECT * FROM illustration_work LIMIT %s OFFSET %s'
+        try:
+            self.cursor.execute(sql, (limit, offset))
+            return self.cursor.fetchall()
+        except Exception as e:
+            self.logger.error('获取作品信息时发生错误: %s' % str(e))
+            return []
 
     def get_weighted_tags(self, work_ids, weight):
         # 获取带权重的标签
@@ -76,11 +97,14 @@ class IllRecommendation:
 
     def set_tag_list(self, work_id):
         sql = 'SELECT work_tags FROM illustration_work WHERE Illustration_id=%s'
-        self.cursor.execute(sql, (work_id,))
-        result = self.cursor.fetchone()
-        if result:
-            tags_str = result.get('work_tags', '')
-            return self.split_tags(tags_str)
+        try:
+            self.cursor.execute(sql, (work_id,))
+            result = self.cursor.fetchone()
+            if result:
+                tags_str = result.get('work_tags', '')
+                return self.split_tags(tags_str)
+        except Exception as e:
+            self.logger.error('获取标签列表时发生错误: %s' % str(e))
         return []
 
     def split_tags(self, tags_str):
@@ -120,35 +144,33 @@ class IllRecommendation:
         sql = 'SELECT * FROM illustration_work WHERE Illustration_id=%s'
         get_author_info = 'SELECT * FROM users WHERE userid=%s'
 
-        # 查询作品信息
-        self.cursor.execute(sql, (work_id,))
-        result = self.cursor.fetchone()
+        try:
+            # 查询作品信息
+            self.cursor.execute(sql, (work_id,))
+            result = self.cursor.fetchone()
 
-        if result:
-            userid = result.get('belong_to_user_id')
-            if userid:
-                # 查询作者信息
-                self.cursor.execute(get_author_info, (userid,))
-                author_info = self.cursor.fetchone()
+            if result:
+                userid = result.get('belong_to_user_id')
+                if userid:
+                    # 查询作者信息
+                    self.cursor.execute(get_author_info, (userid,))
+                    author_info = self.cursor.fetchone()
 
-                # 删除不需要的字段
-                author_info.pop('password', None)
-                author_info.pop('token', None)
+                    # 删除不需要的字段
+                    if author_info:
+                        author_info.pop('password', None)
+                        author_info.pop('token', None)
 
-                # 将作者信息添加到作品信息中
-                result['author_info'] = author_info
+                        # 将作者信息添加到作品信息中
+                        result['author_info'] = author_info
 
-        return result
+            return result
+
+        except Exception as e:
+            self.logger.error('获取作品信息时发生错误: %s' % str(e))
+            return None
 
     def close(self):
         # 关闭游标和连接
         self.cursor.close()
         self.connection.close()
-
-
-'''
-recommender = IllRecommendation()
-recommended_work_info = recommender.get_userid('f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 0, 9)  # 传入有效的用户 ID
-print(f'Recommended Work Info: {recommended_work_info}')
-recommender.close()
-'''
