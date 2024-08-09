@@ -47,7 +47,7 @@ async function get_chapter(item) {
   <div class="novel_conteng_page" v-if="data">
     <div class="novel_brief_introduction" v-if="novel_brief_introduction_page">
       <div class="work_info">
-        <work_info :work_info="work_list" :author_info="author_info" :word_count="word_count"></work_info>
+        <work_info :work_info="work_list" :author_info="author_info" :word_count="word_count" :work_info_dict="data"></work_info>
       </div>
       <div class="directory_page">
         <directory_page :work_info="work_list" @get_chapter="get_chapter"></directory_page>

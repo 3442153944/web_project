@@ -28,8 +28,9 @@
             </div>
             <div class="work_data">
               <span>{{ (Math.round((word_count / 10000) * 100) / 100).toFixed(2) }}&nbsp;<b>万字</b></span>
-              <span>点赞</span>
-              <span>收藏</span>
+              <span><img class="icon" src="https://www.sunyuanling.com/assets/show.svg">{{work_info_dict.watch_count}}观看</span>
+              <span><img class="icon" src="https://www.sunyuanling.com/assets/work_like.svg">{{work_info_dict.like_count}}点赞</span>
+              <span><img class="icon" src="https://www.sunyuanling.com/assets/love.svg">{{work_info_dict.collect_count}}收藏</span>
             </div>
           </div>
         </div>
@@ -74,7 +75,13 @@ let props = defineProps({
   word_count: {
     type: [Number, String],
     default: 0
-  }
+  },
+  work_info_dict:{
+    type: Object,
+    default: () => {
+      return null
+    }
+  },
 })
 
 </script>
@@ -171,5 +178,12 @@ let props = defineProps({
   padding: 5px 0px;
   display: flex;
   gap: 10px;
+}
+.icon{
+  width: 15px;
+  height: 15px;
+  object-fit: cover;
+  align-self: center;
+  margin:auto 2px;
 }
 </style>

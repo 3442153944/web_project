@@ -76,9 +76,22 @@ class GetNovelList(View):
                             sql = 'SELECT SUM(CHAR_LENGTH(content)) AS work_count FROM novel_content WHERE belong_to_series_id=%s'
                             cursor.execute(sql, [work_id])
                             result = cursor.fetchone()
-                            print(result)
                             if result:
                                 work_info['word_count'] = result[0] if result[0] else 0
+
+                            watch_sql='select count(*) from user_watch_table where type=%s and workid=%s'
+                            cursor.execute(watch_sql,['novel',work_id])
+                            result=cursor.fetchone()[0]
+                            work_info['watch_count']=result
+                            like_sql='select count(*) from user_like_table where type=%s and workid=%s'
+                            cursor.execute(like_sql,['novel',work_id])
+                            result=cursor.fetchone()[0]
+                            work_info['like_count']=result
+                            collect_sql='select count(*) from user_collection_table where type=%s and workid=%s'
+                            cursor.execute(collect_sql,['novel',work_id])
+                            result=cursor.fetchone()[0]
+                            work_info['collect_count']=result
+                            print(work_info)
                             return JsonResponse({'status': 'success', 'message': '数据获取成功', 'data': work_info},
                                                 status=200)
 
