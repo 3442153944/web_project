@@ -1,21 +1,11 @@
 import re
-import pymysql
+from django.db import connection
 from ..log.log import Logger
 
 class IllRecommendation:
     def __init__(self):
         # 初始化 Logger
         self.logger = Logger()
-
-        # 连接到数据库
-        self.connection = pymysql.connect(
-            host='localhost',
-            user='admin',
-            password='123456',
-            database='admin',
-            cursorclass=pymysql.cursors.DictCursor  # 使用字典游标
-        )
-        self.cursor = self.connection.cursor()
 
     def get_userid(self, userid, offset=0, limit=9):
         # SQL 查询语句
@@ -69,23 +59,30 @@ class IllRecommendation:
 
     def query_work_ids(self, sql, userid, offset, limit):
         """执行 SQL 查询并返回 work_ids 列表"""
-        try:
-            self.cursor.execute(sql, (userid, 'ill', limit, offset))
-            results = self.cursor.fetchall()
-            return [item['workid'] for item in results]
-        except Exception as e:
-            self.logger.error('执行查询时发生错误: %s' % str(e))
-            return []
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(sql, [userid, 'ill', limit, offset])
+                results = cursor.fetchall()
+                # 转换结果为字典格式
+                results_dict = [self.convert_tuple_to_dict(cursor.description, row) for row in results]
+                return [item['workid'] for item in results_dict]
+            except Exception as e:
+                self.logger.error('执行查询时发生错误: %s' % str(e))
+                return []
 
     def query_works(self, offset, limit):
         """从插画信息表中获取作品，考虑分页"""
         sql = 'SELECT * FROM illustration_work LIMIT %s OFFSET %s'
-        try:
-            self.cursor.execute(sql, (limit, offset))
-            return self.cursor.fetchall()
-        except Exception as e:
-            self.logger.error('获取作品信息时发生错误: %s' % str(e))
-            return []
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(sql, [limit, offset])
+                results = cursor.fetchall()
+                # 转换结果为字典格式
+                results_dict = [self.convert_tuple_to_dict(cursor.description, row) for row in results]
+                return results_dict
+            except Exception as e:
+                self.logger.error('获取作品信息时发生错误: %s' % str(e))
+                return []
 
     def get_weighted_tags(self, work_ids, weight):
         # 获取带权重的标签
@@ -97,14 +94,17 @@ class IllRecommendation:
 
     def set_tag_list(self, work_id):
         sql = 'SELECT work_tags FROM illustration_work WHERE Illustration_id=%s'
-        try:
-            self.cursor.execute(sql, (work_id,))
-            result = self.cursor.fetchone()
-            if result:
-                tags_str = result.get('work_tags', '')
-                return self.split_tags(tags_str)
-        except Exception as e:
-            self.logger.error('获取标签列表时发生错误: %s' % str(e))
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(sql, [work_id])
+                result = cursor.fetchone()
+                # 转换结果为字典格式
+                if result:
+                    result_dict = self.convert_tuple_to_dict(cursor.description, result)
+                    tags_str = result_dict.get('work_tags', '')
+                    return self.split_tags(tags_str)
+            except Exception as e:
+                self.logger.error('获取标签列表时发生错误: %s' % str(e))
         return []
 
     def split_tags(self, tags_str):
@@ -144,33 +144,38 @@ class IllRecommendation:
         sql = 'SELECT * FROM illustration_work WHERE Illustration_id=%s'
         get_author_info = 'SELECT * FROM users WHERE userid=%s'
 
-        try:
-            # 查询作品信息
-            self.cursor.execute(sql, (work_id,))
-            result = self.cursor.fetchone()
+        with connection.cursor() as cursor:
+            try:
+                # 查询作品信息
+                cursor.execute(sql, [work_id])
+                result = cursor.fetchone()
+                # 转换结果为字典格式
+                if result:
+                    result_dict = self.convert_tuple_to_dict(cursor.description, result)
+                    userid = result_dict.get('belong_to_user_id')
+                    if userid:
+                        # 查询作者信息
+                        cursor.execute(get_author_info, [userid])
+                        author_info = cursor.fetchone()
+                        # 转换结果为字典格式
+                        if author_info:
+                            author_info_dict = self.convert_tuple_to_dict(cursor.description, author_info)
+                            # 删除不需要的字段
+                            author_info_dict.pop('password', None)
+                            author_info_dict.pop('token', None)
+                            # 将作者信息添加到作品信息中
+                            result_dict['author_info'] = author_info_dict
 
-            if result:
-                userid = result.get('belong_to_user_id')
-                if userid:
-                    # 查询作者信息
-                    self.cursor.execute(get_author_info, (userid,))
-                    author_info = self.cursor.fetchone()
+                return result_dict
 
-                    # 删除不需要的字段
-                    if author_info:
-                        author_info.pop('password', None)
-                        author_info.pop('token', None)
+            except Exception as e:
+                self.logger.error('获取作品信息时发生错误: %s' % str(e))
+                return None
 
-                        # 将作者信息添加到作品信息中
-                        result['author_info'] = author_info
-
-            return result
-
-        except Exception as e:
-            self.logger.error('获取作品信息时发生错误: %s' % str(e))
-            return None
+    def convert_tuple_to_dict(self, description, row):
+        """将元组结果转换为字典"""
+        return dict(zip([col[0] for col in description], row))
 
     def close(self):
-        # 关闭游标和连接
-        self.cursor.close()
-        self.connection.close()
+        # Django的连接管理自动处理关闭
+        pass

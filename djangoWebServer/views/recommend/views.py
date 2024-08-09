@@ -31,12 +31,14 @@ class recommend(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
+            print(data)
             token = data.get('token')
             work_type = data.get('work_type')
             work_offset = data.get('work_offset')
             work_limit = data.get('work_limit')
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
             if not token:
+                print('token为空')
                 self.logger.warning(self.request_path(request) + 'token为空')
                 return JsonResponse({'status': 'error', 'message': 'token为空'}, status=400)
 
@@ -47,24 +49,28 @@ class recommend(View):
                 cursor.execute('select userid from users where token=%s', [token])
                 userid = cursor.fetchone()[0]
                 if not userid:
+                    print('用户不存在')
                     self.logger.warning(self.request_path(request) + '用户不存在')
                     return JsonResponse({'status': 'error', 'message': '用户不存在'}, status=400)
                 if work_type == 'ill':
                     work_info_list = self.ill_recommend.get_userid(userid, work_offset, work_limit)
-                    self.ill_recommend.close()
+                    #self.ill_recommend.close()
                     return JsonResponse({'status': 'success', 'data': work_info_list}, status=200)
                 if work_type == 'comic':
                     work_info_list = self.comic_recommend.get_userid(userid, work_offset, work_limit)
-                    self.comic_recommend.close()
+                    #self.comic_recommend.close()
                     return JsonResponse({'status': 'success', 'data': work_info_list}, status=200)
                 if work_type == 'novel':
                     work_info_list = self.novel_recommend.get_userid(userid, work_offset, work_limit)
-                    self.novel_recommend.close()
+                    #self.novel_recommend.close()
                     return JsonResponse({'status': 'success', 'data': work_info_list}, status=200)
 
         except json.JSONDecodeError as e:
+            print(e)
             self.logger.error(self.request_path(request) + '请求数据格式错误：' + str(e))
             return JsonResponse({'status': 'error', 'message': '请求数据格式错误'}, status=400)
         except Exception as e:
+            print(e)
             self.logger.error(self.request_path(request) + '服务器错误：' + str(e))
-            return render(request, '500.html', status=500)
+            return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
+
