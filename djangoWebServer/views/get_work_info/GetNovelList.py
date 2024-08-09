@@ -41,7 +41,7 @@ class GetNovelList(View):
 
                 if result or vip in ('1', 1) or token == 'sunyuanling':
                     sql = ('''SELECT novel_work.work_name ,novel_work.work_cover,novel_work.is_vip_work,novel_work.work_status,novel_content.* 
-                           ,novel_work.brief_introduction
+                           ,novel_work.brief_introduction,novel_work.work_id
                            FROM novel_content 
                            join novel_work on novel_work.work_id=novel_content.belong_to_series_id 
                            WHERE belong_to_series_id=%s order by novel_content.create_time''')
@@ -78,16 +78,32 @@ class GetNovelList(View):
                             result = cursor.fetchone()
                             if result:
                                 work_info['word_count'] = result[0] if result[0] else 0
+                            get_userid_sql='select userid from users where token=%s'
+                            cursor.execute(get_userid_sql,[token])
+                            result=cursor.fetchone()[0]
+                            userid=result
 
                             watch_sql='select count(*) from user_watch_table where type=%s and workid=%s'
                             cursor.execute(watch_sql,['novel',work_id])
                             result=cursor.fetchone()[0]
                             work_info['watch_count']=result
                             like_sql='select count(*) from user_like_table where type=%s and workid=%s'
+                            is_like_sql='select * from user_like_table where  type=%s and workid=%s and userid=%s'
+                            cursor.execute(is_like_sql,['novel',work_id,userid])
+                            if cursor.fetchone():
+                                work_info['is_like']=True
+                            else:
+                                work_info['is_like']=False
                             cursor.execute(like_sql,['novel',work_id])
                             result=cursor.fetchone()[0]
                             work_info['like_count']=result
                             collect_sql='select count(*) from user_collection_table where type=%s and workid=%s'
+                            is_collect_sql='select * from user_collection_table where  type=%s and workid=%s and userid=%s'
+                            cursor.execute(is_collect_sql,['novel',work_id,userid])
+                            if cursor.fetchone():
+                                work_info['is_collect']=True
+                            else:
+                                work_info['is_collect']=False
                             cursor.execute(collect_sql,['novel',work_id])
                             result=cursor.fetchone()[0]
                             work_info['collect_count']=result
