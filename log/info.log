@@ -55,3 +55,13 @@
 2024-06-24 21:29:45 - [{'id': 1, 'username': 'admin', 'user_self_introduction': 'è¿™æ˜¯ä¸€ä¸ªè‡ªæˆ‘ä»‹ç»', 'user_self_website': 'https://127.0.0.1:4434', 'user_address': 'å››å·æ³¸å·', 'birthday': '2002å¹´9æœˆ17æ—¥', 'occupation': 'ITå·¥ç¨‹å¸ˆ123', 'userid': 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb', 'user_avatar': '87328997_p0.jpg', 'user_back_img': '20240525180208_e94dd6fb14414ad49679b062b92ec1a3.jpg', 'sex': 'å¥³', 'email': 'sunfujiaihaonv@gmail.com', 'phone': '18982494924', 'user_following': 'user1,user2,user3,admin', 'user_fans': 'user4,user5,user6', 'password': '123456', 'collected_ill_work': None, 'collected_ill_work_id': '1,2,3', 'collected_novel_works': None, 'collected_novel_works_id': 1, 'like_novel_works': None, 'like_novel_works_id': 1, 'watch_novel_list': None, 'watch_novel_list_id': '1,2,3', 'select_work': '{"ill_id": ["1", "2"], "work_id": ["1"]}'}]
 2024-08-08 19:23:31,343 - INFO - ¼ÓÈ¨ºóµÄ±êÇ©: tag1, ±êÇ©2, tag2, tag3, tag1, tag2, tag3, tag1, tag1, tag2, tag3, tag1, tag2, tag3, ÂÜÀò, °×¿ãÍà, ¿ãÍà, °×¿ãÍà, ²ğ·Ö, tag2, tag3, tag1, tag2, tag3, tag1, tag1, ±êÇ©2, tag1, ±êÇ©2, tag1, ±êÇ©2, tag1, ±êÇ©2, tag1, ±êÇ©2, tag2, tag3, tag1, tag2, tag3, tag1, tag2, tag3, tag1
 2024-08-08 19:23:31
+2024-08-08 19:49:12,798 - INFO - ¼ÓÈ¨ºóµÄ±êÇ©: ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ
+2024-08-08 19:49:12
+2024-08-08 19:49:12,800 - ERROR - »ñÈ¡ÓÃ»§ÍÆ¼öÊ±·¢Éú´íÎó: 'id'
+2024-08-08 19:49:12
+2024-08-08 19:49:45,646 - INFO - ¼ÓÈ¨ºóµÄ±êÇ©: ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ, ¿Æ»Ã, µ¥Å®Ö÷, °ÙºÏ, Ó²¿Æ»Ã, ÎŞµĞ
+2024-08-08 19:49:45
+2024-08-08 19:49:45,648 - ERROR - »ñÈ¡ÓÃ»§ÍÆ¼öÊ±·¢Éú´íÎó: 'id'
+2024-08-08 19:49:45
+2024-08-08 19:51:34,808 - ERROR - »ñÈ¡ÓÃ»§ÍÆ¼öÊ±·¢Éú´íÎó: 'id'
+2024-08-08 19:51:34

@@ -36,7 +36,7 @@ class ComicRecommendation:
 
             # 记录加权后的标签
             tags_str = ', '.join(all_tags)
-            self.logger.info('加权后的标签: %s' % tags_str)
+            print('加权后的标签: %s' % tags_str)
 
             # 统计标签频率
             tag_frequency = self.count_tag_frequency(all_tags)
@@ -150,7 +150,7 @@ class ComicRecommendation:
             result = self.cursor.fetchone()
 
             if result:
-                userid = result.get('belong_to_user_id')
+                userid = result.get('belong_to_userid')
                 if userid:
                     # 查询作者信息
                     self.cursor.execute(get_author_info, (userid,))
