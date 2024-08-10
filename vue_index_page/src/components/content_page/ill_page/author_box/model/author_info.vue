@@ -24,90 +24,84 @@
 </template>
 
 <script setup>
-import { ref, defineProps, onMounted ,defineEmits} from 'vue';
+import { ref, defineProps, onMounted ,defineEmits,watch} from 'vue';
 import * as cookies from "@/assets/js/cookies";
 import scroll_box from './scroll_box_bottom.vue';
 
 import { useStore } from 'vuex';
 const store = useStore();
-//进入指定用户的用户中心
-function jump_to_other_user_center(userid,item)
-{
-  store.commit('SET_OTHER_USERID',userid)
-  store.commit('SET_SINGLE_PAGE_STATUS',{'key':'other_user_center_page','value':true})
-  console.log(userid)
-  console.log(item)
-}
-
-const token = cookies.get_cookie("token");
 const props = defineProps({
   author_id: {
     type: String,
     default: '10086'
   }
 });
+
 const author_info = ref(null);
 const follow_info = ref([]);
 const follow_status = ref('关注');
-let author_other_work_list=ref()
-let author_other_work_list_path=ref([])
-let work_id=ref()
-let emit=defineEmits(['chose_item'])
+const author_other_work_list_path = ref([]);
+const token = cookies.get_cookie("token");
+const emit = defineEmits(['chose_item']);
 
-// 通用请求函数
+watch(() => props.author_id, async () => {
+  await fetchAuthorData();
+});
+
 async function fetchData(url, data) {
   try {
-    const res = await fetch(url, {
+    const response = await fetch(url, {
       method: 'post',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
     });
-    if (res.ok) {
-      return await res.json();
+    if (response.ok) {
+      return await response.json();
     } else {
-      console.error(`HTTP error: ${res.status}`);
+      console.error(`HTTP error: ${response.status}`);
       return { status: 'error', message: 'Request failed' };
     }
-  } catch (e) {
-    console.error(`Fetch error: ${e}`);
+  } catch (error) {
+    console.error(`Fetch error: ${error}`);
     return { status: 'error', message: 'Fetch error' };
   }
 }
 
-// 获取作者信息
-async function get_author_info() {
-  const data = await fetchData('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
-    userid: props.author_id
-  });
-  if (data.status === 'success') {
-    author_info.value = data.data[0];
-  } else {
-    console.error(data.message);
-  }
-}
+async function fetchAuthorData() {
+  const [authorInfo, followInfo, authorWork] = await Promise.all([
+    fetchData('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', { userid: props.author_id }),
+    fetchData('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollow/', { token: token }),
+    fetchData('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkList/', { userid: props.author_id }),
+  ]);
 
-// 获取关注信息
-async function get_follow_info() {
-  const data = await fetchData('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollow/', {
-    token: token
-  });
-  if (data.status === 'success') {
-    follow_info.value = data.data;
+  if (authorInfo.status === 'success') {
+    author_info.value = authorInfo.data[0];
+  } else {
+    console.error(authorInfo.message);
+  }
+
+  if (followInfo.status === 'success') {
+    follow_info.value = followInfo.data;
     is_follow();
   } else {
-    console.error(data.message);
+    console.error(followInfo.message);
+  }
+
+  if (authorWork.status === 'success') {
+    author_other_work_list_path.value = authorWork.data.ill.map(item => ({
+      item_path: 'https://www.sunyuanling.com/image/thumbnail/' + item.content_file_list.split(/[,，]/)[0],
+      Illustration_id: item.Illustration_id
+    }));
+  } else {
+    console.error(authorWork.message);
   }
 }
 
-// 判断是否关注
 function is_follow() {
   const isFollowing = follow_info.value.some(item => item.follow_user_id === props.author_id);
   follow_status.value = isFollowing ? '已关注' : '关注';
 }
 
-// 关注或取消关注
 async function follow_author() {
   const data = await fetchData('https://www.sunyuanling.com/api/GetUserInfo/UserAddFollow/', {
     token: token,
@@ -121,38 +115,18 @@ async function follow_author() {
     alert(data.message);
   }
 }
-//获取作者作品列表
-async function get_author_work(){
-  try{
-    const data=await fetchData('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkList/',{
-      userid:props.author_id,
-    });
-    if(data.status=='success')
-    {
-      author_other_work_list.value=data.data.ill;
-      for(let i=0;i<author_other_work_list.value.length;i++)
-    {
-      author_other_work_list_path.value.push({'item_path':'https://www.sunyuanling.com/image/thumbnail/'+
-      author_other_work_list.value[i].content_file_list.split(/[,，]/)[0],
-      'Illustration_id':author_other_work_list.value[i].Illustration_id})
-    }
-    }
-  }
-  catch(e)
-  {
-    console.error(e);
-  }
+
+function get_choose_item(item) {
+  emit('chose_item', { work_id: item.work_id });
 }
-//获取作着其他作品的路径
-function get_choose_item(item)
-{
-  work_id.value=item.work_id;
-  emit('chose_item',{'work_id':work_id.value})
+
+function jump_to_other_user_center(userid, item) {
+  store.commit('SET_OTHER_USERID', userid);
+  store.commit('SET_SINGLE_PAGE_STATUS', { key: 'other_user_center_page', value: true });
 }
-onMounted(async () => {
-  await get_author_info();
-  await get_follow_info();
-  await get_author_work();
+
+onMounted(() => {
+  fetchAuthorData();
 });
 </script>
 

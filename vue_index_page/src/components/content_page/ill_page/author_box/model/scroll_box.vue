@@ -241,6 +241,8 @@ async function get_work_info(work_id) {
   display: flex;
   align-items: center;
   max-width: 100px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .tags_item {
@@ -263,7 +265,7 @@ async function get_work_info(work_id) {
   justify-content: center;
   cursor: pointer;
   border-radius: 10px;
-  min-width: 50px;
+  min-width: 100px;
   min-height: 100px;
   max-height: 100px;
   max-width: 200px;

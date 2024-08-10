@@ -1,22 +1,22 @@
 <template>
-    <div class="comic_recommend">
+    <div class="ill_recommend">
         <div class="content">
             <div class="item" v-for="(item, index) in work_info" :key="index">
-                <div class="work_cover" @click="choose_item(item.id)">
+                <div class="work_cover" @click="choose_item(item.Illustration_id)">
                     <img class="cover_img"
-                        :src="'https://www.sunyuanling.com/image/comic/thumbnail/' + item.content_file_list.split(/[,，]/)[0]">
+                        :src="'https://www.sunyuanling.com/image/thumbnail/' + item.content_file_list.split(/[,，]/)[0]">
                     <div class="page_count" v-if="item.content_file_list.split(/[,，]/).length > 1">
                         <img class="icon" src="https://www.sunyuanling.com/assets/page_count.svg">
-                       {{ item.content_file_list.split(/[,，]/).length }}
+                        {{ item.content_file_list.split(/[,，]/).length }}
                     </div>
-                    <div class="age_tag" v-if="item.age_classification!=16">
+                    <div class="age_tag" v-if="item.age_classification != 16">
                         R-{{ item.age_classification }}
                     </div>
                 </div>
                 <div class="work_info">
                     <span>{{ item.name }}</span>
                 </div>
-                <div class="author_info" @click="choose_user(item.author_info.userid)">
+                <div class="author_info" @click="choose_user(item.author_info.userid)" v-if="item.author_info">
                     <div class="author_avatar">
                         <img class="author_avatar"
                             :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.author_info.user_avatar">
@@ -32,10 +32,12 @@
 
 <script setup>
 // eslint-disable-next-line no-unused-vars
-import { ref, defineProps, defineEmits, computed } from 'vue'
+import { ref, defineProps, defineEmits, computed, onMounted } from 'vue'
+import { useStore } from 'vuex';
+const store = useStore();
 const props = defineProps({
     work_info: {
-        type: Array,
+        type: [Array, Object],
         default: () => {
             return []
         }
@@ -45,17 +47,23 @@ const emit = defineEmits(['choose_item', 'choose_user'])
 function choose_item(item) {
     console.log(item)
     emit('choose_item', item)
+    store.commit('SET_CONTENT_PAGE', { key: 'ill_page', value: true })
+    store.commit('SET_SINGLE_PAGE_STATUS', { key: 'content_index_page', value: true })
+    store.commit('SET_WORK_ID', item)
 }
 function choose_user(item) {
     console.log(item)
     emit('choose_user', item)
+    store.commit('SET_OTHER_USERID', item)
+    store.commit('SET_SINGLE_PAGE_STATUS', { 'key': 'other_user_center_page', 'value': true })
 }
 // eslint-disable-next-line no-unused-vars
 let work_cover = computed(() => props.work_info)
+
 </script>
 
 <style scoped>
-.comic_recommend {
+.ill_recommend {
     width: 100%;
     height: auto;
     display: flex;
@@ -71,13 +79,16 @@ let work_cover = computed(() => props.work_info)
 }
 
 .item {
-    width: 200px;
+    width: 220px;
     height: auto;
     margin: 10px;
     display: flex;
     flex-direction: column;
     gap: 5px;
     justify-content: flex-start;
+    background-color: rgba(255,255,255,1);
+    border-radius: 10px;
+    padding:10px;
 }
 
 .work_cover {
@@ -90,12 +101,9 @@ let work_cover = computed(() => props.work_info)
 .cover_img {
     width: 100%;
     height: 100%;
+    min-height: 200px;
     object-fit: cover;
     border-radius: 10px;
-    min-height: 200px;
-    max-height: 200px;
-    max-width: 200px;
-    min-width: 200px;
 }
 
 .page_count {
@@ -153,7 +161,8 @@ let work_cover = computed(() => props.work_info)
 .author_name {
     font-size: 14px;
 }
-.icon{
+
+.icon {
     width: 15px;
     height: 15px;
     object-fit: cover;

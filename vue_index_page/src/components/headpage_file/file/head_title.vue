@@ -96,9 +96,19 @@ let input_box=ref(null)
 let search_page_click=ref(null)
 let notice_box=ref(null)
 let notice_info=ref()
+let store_token=computed(()=>store.getters.token)
+let token=store_token.value
 onMounted(async()=>{
     await get_notice_info()
-    notice_info.value=await get_notice_info(cookies.get_cookie('token'),'search')
+    notice_info.value=await get_notice_info(token,'search')
+    let temp=''
+    temp=await get_userinfo(cookies.get_cookie('token'))
+    console.log(temp)
+    avatar_img_src.value='https://www.sunyuanling.com/image/avatar_thumbnail/'+temp[0].user_avatar
+})
+watch(()=>store.getters.token,async ()=>{
+    await get_notice_info()
+    notice_info.value=await get_notice_info(token,'search')
     let temp=''
     temp=await get_userinfo(cookies.get_cookie('token'))
     console.log(temp)
@@ -107,7 +117,11 @@ onMounted(async()=>{
 //公告信息框的显示和隐藏
 let show_notice_box=ref(false)
 function show_notice(){
-    show_notice_box.value=!show_notice_box.value;
+    if(token!=undefined&&token!=''){
+        
+        show_notice_box.value=!show_notice_box.value;
+    }
+   
 }
 function notice_box_blur()
 {

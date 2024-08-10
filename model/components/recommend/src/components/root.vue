@@ -1,5 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
+// eslint-disable-next-line no-unused-vars
 import { ref,defineProps} from 'vue'
 import index_page from './modle/index.vue'
 
@@ -10,7 +11,7 @@ defineProps({
   },
   work_type:{
     type:String,
-    default:'novel'
+    default:'ill'
   }
 })
 

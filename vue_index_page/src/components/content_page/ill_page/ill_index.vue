@@ -25,7 +25,7 @@
             </div>
             <work_info_box :work_data="work_data" :work_create_time="work_info.create_time"></work_info_box>
             <div class="author_info_box_bottom" v-if="work_info">
-                <author_info_bottom :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info_bottom>
+                <author_info_bottom :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item" :key="work_id"></author_info_bottom>
             </div>
             <div class="comment_section">
                 <comment_section :work_type="'ill'" :token="token" :work_id="String(work_id)" 
@@ -34,10 +34,14 @@
 
                 </comment_section>
             </div>
+            <div class="recommend_page">
+                <recommend :work_type="'ill'" :token="store_token"></recommend>
+            </div>
         </div>
         <div class="author_info_box" v-if="work_info">
-            <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item"></author_info>
+            <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item" :key="work_id"></author_info>
         </div>
+       
         
     </div>
     <img_content_page :item_path="item_path" v-if="img_content_page_show" @close_img_content_page="close_content_page">
@@ -47,7 +51,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps,onUnmounted,nextTick } from 'vue';
+import { ref, watch, onMounted, defineProps,onUnmounted,nextTick,computed } from 'vue';
 import { useStore } from 'vuex';
 import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
@@ -58,6 +62,7 @@ import work_info_box from './author_box/model/work_info_bar.vue'
 import comment_section from './comment_section.vue'
 import * as cookies from '@/assets/js/cookies'
 import * as user_interaction from '@/assets/js/interaction'
+import recommend from '@/assets/model/recommend_page/modle/index.vue'
 
 
 const store = useStore();
@@ -69,7 +74,8 @@ let max_img_len = ref(1)
 let show_more_btn = ref(null)
 let fixed_interaction = ref(null)
 let float_interaction = ref(null)
-let token = cookies.get_cookie("token");
+let store_token = computed(()=>store.getters.token)
+let token=store_token.value
 let like_status = ref(false)
 let collect_status = ref(false)
 let work_data = ref({
@@ -78,6 +84,7 @@ let work_data = ref({
     'watch': '100'
 })
 let user_avatar_path=ref(JSON.parse(cookies.get_cookie('userinfo')).user_avatar)
+
 console.log(user_avatar_path.value)
 //接收子组件状态
 async function get_like_status(item) {
@@ -130,9 +137,18 @@ function handleScroll() {
     }
 }
 
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // 或 'auto'
+    });
+}
+
 onMounted(() => {
     float_interaction_bar(true); // 初始调用
     window.addEventListener('scroll', handleScroll);
+    //加载时自动滚动到最上方
+    scrollToTop();
 });
 
 onUnmounted(() => {
@@ -152,12 +168,16 @@ const props = defineProps({
     }
 });
 
-watch(() => props.work_id, (newValue) => {
+watch( () => props.work_id,async (newValue) => {
     work_id.value = newValue;
+    scrollToTop();
+    await get_work_info();
 });
 
-watch(() => store.getters.work_id, (newValue) => {
+watch(() => store.getters.work_id,async (newValue) => {
     work_id.value = newValue;
+    scrollToTop();
+    await get_work_info();
 });
 
 onMounted(async () => {
@@ -249,7 +269,7 @@ async function get_choose_item(item) {
 .content {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 70%;
     height: 100%;
     position: relative;
     gap: 10px;
@@ -284,9 +304,11 @@ async function get_choose_item(item) {
 
 .author_info_box {
     display: flex;
-    width: 40%;
+    width: 30%;
     height: auto;
     padding-right: 10px;
+    max-width: 30%;
+    min-width: 30%;
 }
 .author_info_box_bottom{
     display: flex;
@@ -339,5 +361,10 @@ async function get_choose_item(item) {
 .comment_section{
     width: 100%;
     margin-top: 10px;
+}
+.recommend_page{
+    width: 85vw;
+    display: flex;
+    margin:5px auto;
 }
 </style>

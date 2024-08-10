@@ -31,10 +31,11 @@
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits, computed } from 'vue'
+// eslint-disable-next-line no-unused-vars
+import { ref, defineProps, defineEmits, computed ,onMounted} from 'vue'
 const props = defineProps({
     work_info: {
-        type: Array,
+        type: [Array,Object],
         default: () => {
             return []
         }
@@ -49,7 +50,9 @@ function choose_user(item) {
     console.log(item)
     emit('choose_user', item)
 }
+// eslint-disable-next-line no-unused-vars
 let work_cover = computed(() => props.work_info)
+
 </script>
 
 <style scoped>

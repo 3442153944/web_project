@@ -1,13 +1,11 @@
 from django.shortcuts import render
 from django.views import View
-
 from .models.comic_recommend import ComicRecommendation
 from .models.ill_recommend import IllRecommendation
 from .models.novel_recommend import NovelRecommendation
 from ..log.log import Logger
 from datetime import datetime
 import json
-from django.shortcuts import render
 from django.db import connection
 from django.http import JsonResponse
 
@@ -44,25 +42,30 @@ class recommend(View):
 
             with connection.cursor() as cursor:
                 if token == 'sunyuanling':
-                    cursor.execute('select token from users where userid=%s', [admin_userid])
-                    token = cursor.fetchone()[0]
-                cursor.execute('select userid from users where token=%s', [token])
-                userid = cursor.fetchone()[0]
-                if not userid:
+                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
+                    result = cursor.fetchone()
+                    if result:
+                        token = result[0]
+                    else:
+                        return JsonResponse({'status': 'error', 'message': '未找到管理员用户'}, status=400)
+
+                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                result = cursor.fetchone()
+                if result:
+                    userid = result[0]
+                else:
                     print('用户不存在')
                     self.logger.warning(self.request_path(request) + '用户不存在')
                     return JsonResponse({'status': 'error', 'message': '用户不存在'}, status=400)
+
                 if work_type == 'ill':
                     work_info_list = self.ill_recommend.get_userid(userid, work_offset, work_limit)
-                    #self.ill_recommend.close()
                     return JsonResponse({'status': 'success', 'data': work_info_list}, status=200)
                 if work_type == 'comic':
                     work_info_list = self.comic_recommend.get_userid(userid, work_offset, work_limit)
-                    #self.comic_recommend.close()
                     return JsonResponse({'status': 'success', 'data': work_info_list}, status=200)
                 if work_type == 'novel':
                     work_info_list = self.novel_recommend.get_userid(userid, work_offset, work_limit)
-                    #self.novel_recommend.close()
                     return JsonResponse({'status': 'success', 'data': work_info_list}, status=200)
 
         except json.JSONDecodeError as e:
@@ -73,4 +76,3 @@ class recommend(View):
             print(e)
             self.logger.error(self.request_path(request) + '服务器错误：' + str(e))
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
-

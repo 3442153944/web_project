@@ -2,14 +2,16 @@
   <div class="illustration_page">
     <h3>用户关注的作品</h3>
     <scroll_box v-if="follow_illustrations_list" :msg_list="follow_illustrations_list" @chose_item="go_to_illustration_page"></scroll_box>
-    <recommendation></recommendation>
+    <h4>推荐的作品</h4>
+    <div style="max-height: 900px; overflow:hidden;"><recommendation :token="token" :work_type="'ill'" v-if="token"></recommendation></div>
+    
     <ranking></ranking>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import recommendation from './recommendation.vue';
 import ranking from './ranking.vue';
 import * as cookies from '../../../../model/cookies.js'
@@ -25,6 +27,7 @@ import scroll_box from './model/scroll_box.vue'
 const store = useStore()
 
 let user_info = ref(JSON.parse(cookies.get_cookie('userinfo')))
+let token = computed(() => store.getters.token);
 
 //获取用户关注用户的插画作品列表
 let follow_illustrations_list = ref([])
