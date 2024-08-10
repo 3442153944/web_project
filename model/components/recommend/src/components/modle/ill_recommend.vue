@@ -16,7 +16,7 @@
                 <div class="work_info">
                     <span>{{ item.name }}</span>
                 </div>
-                <div class="author_info" @click="choose_user(item.author_info.userid)">
+                <div class="author_info" @click="choose_user(item.author_info.userid)" v-if="item.author_info">
                     <div class="author_avatar">
                         <img class="author_avatar"
                             :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + item.author_info.user_avatar">
@@ -88,6 +88,7 @@ let work_cover = computed(() => props.work_info)
 .cover_img {
     width: 100%;
     height: 100%;
+    min-height: 200px;
     object-fit: cover;
     border-radius: 10px;
 }

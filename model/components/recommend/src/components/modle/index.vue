@@ -27,9 +27,10 @@ const props=defineProps({
 
 let work_list=ref()
 let work_offset=ref(0)
-let work_limit=ref(3)
+let work_limit=ref(111)
 onMounted(async()=>{
     work_list.value=await get_recommend(props.token,props.work_type,work_offset.value,work_limit.value)
+    console.log(work_list.value)
 })
 </script>
 

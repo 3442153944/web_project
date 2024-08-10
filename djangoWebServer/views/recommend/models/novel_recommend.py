@@ -1,3 +1,4 @@
+import random
 import re
 from django.db import connection
 from ..log.log import Logger
@@ -31,20 +32,30 @@ class NovelRecommendation:
             # 统计标签频率
             tag_frequency = self.count_tag_frequency(all_tags)
 
-            # 从小说信息表中获取所有作品
+            # 从插画信息表中获取所有作品
             all_works = self.query_works(offset, limit)
 
             # 基于标签频率推荐作品
             recommendations = self.recommend_works(all_works, tag_frequency)
 
+            # 确保列表长度达到 limit
+            total_recommendations = len(recommendations)
+            if total_recommendations < limit:
+                # 获取额外的作品
+                additional_count = limit - total_recommendations
+                additional_works = self.query_additional_works(additional_count)
+                # 仅对额外的作品进行随机
+                recommendations.extend(additional_works)
+                # 随机打乱补充的作品顺序
+                additional_works.sort(key=lambda x: x.get('score', 0), reverse=True)  # 保持原有排序
+                random.shuffle(recommendations[total_recommendations:])
+
             # 实现分页并处理循环
             total_works = len(recommendations)
             if total_works == 0:
-                print('没有推荐作品')
                 self.logger.info('没有推荐的作品')
                 return []  # 如果没有推荐的作品，返回空列表
 
-            # 计算偏移量并循环
             start_index = offset % total_works
             end_index = start_index + limit
             paginated_recommendations = recommendations[start_index:end_index]
@@ -55,7 +66,6 @@ class NovelRecommendation:
             return paginated_recommendations
 
         except Exception as e:
-            print(e)
             self.logger.error('获取用户推荐时发生错误: %s' % str(e))
             return []
 
@@ -179,6 +189,28 @@ class NovelRecommendation:
         """将元组结果转换为字典"""
         return dict(zip([col[0] for col in description], row))
 
-    def close(self):
-        # Django 的连接管理自动处理关闭
-        pass
+    def query_additional_works(self, additional_count):
+        """获取额外的作品以填充到指定数量"""
+        sql = 'SELECT * FROM novel_work'
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute(sql)
+                all_works = cursor.fetchall()
+                # 转换结果为字典格式
+                all_works_dict = [self.convert_tuple_to_dict(cursor.description, row) for row in all_works]
+
+                # 随机选择额外作品
+                selected_work_ids = random.choices([work['work_id'] for work in all_works_dict],
+                                                   k=additional_count)
+
+                # 获取每个作品的详细信息
+                additional_works = []
+                for work_id in selected_work_ids:
+                    work_info = self.get_work_info(work_id)
+                    if work_info:
+                        additional_works.append(work_info)
+
+                return additional_works
+            except Exception as e:
+                self.logger.error('获取额外作品时发生错误: %s' % str(e))
+                return []

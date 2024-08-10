@@ -10,7 +10,7 @@ defineProps({
   },
   work_type:{
     type:String,
-    default:'ill'
+    default:'novel'
   }
 })
 
