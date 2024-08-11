@@ -83,6 +83,7 @@ let work_cover = computed(() => props.work_info)
     margin-bottom: 20px;
     gap: 10px;
     max-width: 35vw;
+    min-width: 35vw;
 }
 
 .work_cover {

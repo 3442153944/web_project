@@ -1,8 +1,10 @@
 <template>
     <div class="novel_index">
         <go_back></go_back>
-        <novel_content_page :work_id="work_id" :token="token"></novel_content_page>
-        <comment_section :work_id="work_id.toString()" :token="token" :work_type="'novel'" :user_avatar_path="user_avatar_path"></comment_section>
+        <novel_content_page :work_id="work_id" :token="token" :key="work_id"></novel_content_page>
+        <comment_section :work_id="work_id.toString()" :token="token" :work_type="'novel'"
+         :user_avatar_path="user_avatar_path"
+         :key="work_id"></comment_section>
         <h3>推荐小说作品</h3>
         <div class="recommend_page">
           <novel_recommend :token="store_token" :work_type="'novel'"></novel_recommend>

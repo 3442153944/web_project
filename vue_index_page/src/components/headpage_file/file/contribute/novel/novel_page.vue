@@ -46,7 +46,7 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 export default {
   name: 'novel_page',
 }
@@ -57,7 +57,12 @@ import re_select from '../../../../models/select.vue'
 import auto_textarea from '../../../../models/auto_textarea.vue'
 import create_new_series from './create_new_series.vue';
 import * as cookies from '@/assets/js/cookies'
+import {useStore} from 'vuex'
+const store=useStore()
+
 let token = cookies.get_cookie('token');
+token=computed(()=>store.getters.token)
+token=token.value
 let select_title = ref('新建系列')
 let select_list = ref([
   '新建系列',
