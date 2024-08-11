@@ -2,7 +2,11 @@
   <div class="cartoon_page">
     <h3>已关注用户作品</h3>
     <scroll_box :msg_list="comic_list" v-if="comic_list" @chose_item="open_comic_page"></scroll_box>
-      <recommendation_cartoon></recommendation_cartoon>
+    <h4>推荐作品</h4>
+    <div class="recommend_page" style="max-height: 900px; overflow:hidden;">
+      <recommendation_cartoon :token="token" :work_type="'comic'"></recommendation_cartoon>
+    </div>
+      
       <ranking></ranking>
   </div>
 
@@ -10,7 +14,7 @@
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import recommendation_cartoon from './recommendation_cartoon.vue';
 import ranking from './ranking.vue';
 export default {
@@ -26,6 +30,8 @@ const store = useStore()
 let userinfo=ref(JSON.parse(cookies.get_cookie('userinfo')))
 console.log(userinfo.value)
 let comic_list=ref([])
+
+let token = computed(() => store.getters.token);
 //获取用户关注的漫画作品列表
 async function get_comic_list(){
   try{
@@ -126,6 +132,7 @@ function open_comic_page(id)
   margin: 0 auto;
   margin-top: 20px;
   position: relative;
+  gap: 20px;
 }
 
 

@@ -26,6 +26,9 @@
 import { ref, defineProps, onMounted, defineEmits } from 'vue';
 import * as cookies from "@/assets/js/cookies.js";
 import scroll_box from './model/scroll_box.vue';
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 const token = cookies.get_cookie("token");
 const props = defineProps({

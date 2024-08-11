@@ -39,14 +39,17 @@
         </div>
       </div>
     </div>
-    <recommendation_novel></recommendation_novel>
+    <h4>推荐的小说作品</h4>
+    <div class="recommend_page" style="max-height: 1200px; overflow:hidden;">
+      <recommendation_novel :token="token" :work_type="'novel'"></recommendation_novel>
+    </div>
     <ranking></ranking>
   </div>
 </template>
 
 <script>
 // eslint-disable-next-line no-unused-vars
-import { ref, reactive, toRefs, watch, onMounted, onUnmounted } from 'vue';
+import { ref, reactive, toRefs, watch, onMounted, onUnmounted ,computed} from 'vue';
 import recommendation_novel from './recommendation_novel.vue';
 import ranking from './ranking.vue';
 export default {
@@ -59,6 +62,7 @@ export default {
 import * as cookies from '../../../../model/cookies.js'
 import { useStore } from 'vuex';
 const store=useStore();
+let token=computed(()=>store.getters.token)
 //进入指定用户的用户中心
 function jump_to_other_user_center(userid,item)
 {
