@@ -12,6 +12,9 @@
       <div class="list" ref="list">
         <div class="item" v-for="(item, index) in props.msg_list" :key="index">
           <div v-if="props.msg_type === 'image'" class="image_item" @click="chose_item(item.work_info.Illustration_id)">
+            <div class="ranking">
+              {{ index+1 }}
+            </div>
             <img :src="'https://www.sunyuanling.com/image/thumbnail/' + item.work_info.content_file_list.split(/[,，]/)[0]"
               class="image">
             <div class="age_tag" v-if="item.work_info.age_classification >= 17">R-{{ item.work_info.age_classification }}</div>
@@ -318,5 +321,19 @@ onMounted(() => {
   display: flex;
   align-items: center;
 }
-
+.ranking{
+  display: flex;
+  width: 25px;
+  height: 25px;
+  position:absolute;
+  border-radius: 50%;
+  color: white;
+  font-size: 12px;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(255, 195, 65);
+  z-index: 2;
+  bottom: 5px;
+  right: 5px;
+}
 </style>
