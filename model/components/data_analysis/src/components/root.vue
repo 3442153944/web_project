@@ -1,14 +1,21 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import { ref } from 'vue'
-import drawing_index_page from './model/drawing_index_page.vue';
-const count = ref(0)
+import { ref,defineProps } from 'vue'
+import index from './model/index.vue';
+
+const props=defineProps({
+  token:{
+    type:String,
+    default:'sunyuanling'
+  },
+})
+
 </script>
 
 <template>
 <div class="root">
   <h1>作品数据分析</h1>
-  <drawing_index_page></drawing_index_page>
+  <index :token="props.token"></index>
 </div>
 </template>
 

@@ -33,6 +33,8 @@ urlpatterns = [
     #更新操作接口的入口
     path('recommend/',include('views.recommend.url')),
     #推荐系统
-    path('rank_list/',include('views.rankling_list.url'))
+    path('rank_list/',include('views.rankling_list.url')),
     #排行榜
+    path('data_analysis/',include('views.data_analysis.url')),
+    #数据分析
 ]

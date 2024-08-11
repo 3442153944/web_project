@@ -120,7 +120,8 @@ INSTALLED_APPS = [
     'views.update_userinfo',
     'views.work_interaction',
     'views.recommend',
-    'views.rankling_list'
+    'views.rankling_list',
+    'views.data_analysis',
 ]
 
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'
