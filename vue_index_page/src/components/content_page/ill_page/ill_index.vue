@@ -34,6 +34,7 @@
 
                 </comment_section>
             </div>
+            <h3>推荐插画作品</h3>
             <div class="recommend_page">
                 <recommend :work_type="'ill'" :token="store_token"></recommend>
             </div>
@@ -150,11 +151,7 @@ onMounted(() => {
     //加载时自动滚动到最上方
     scrollToTop();
 });
-watch( () => props.work_id,async (newValue) => {
-    work_id.value = newValue;
-    scrollToTop();
-    await get_work_info();
-});
+
 
 watch(() => store.getters.work_id,async (newValue) => {
     work_id.value = newValue;

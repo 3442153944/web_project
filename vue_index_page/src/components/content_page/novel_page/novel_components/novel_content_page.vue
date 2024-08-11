@@ -71,6 +71,9 @@ async function get_chapter(item) {
   height: auto;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
+}
+.directory_page{
+  margin-top:20px;
 }
 </style>

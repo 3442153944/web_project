@@ -34,6 +34,7 @@
 
                 </comment_section>
             </div>
+            <h3>推荐漫画作品</h3>
             <recommend :token="store_token" :work_type="'comic'"></recommend>
         </div>
         <div class="author_info_box" v-if="work_info">
