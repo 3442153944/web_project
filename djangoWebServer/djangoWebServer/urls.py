@@ -31,5 +31,8 @@ urlpatterns = [
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('update/',include('views.update_userinfo.url')),
     #更新操作接口的入口
-    path('recommend/',include('views.recommend.url'))
+    path('recommend/',include('views.recommend.url')),
+    #推荐系统
+    path('rank_list/',include('views.rankling_list.url'))
+    #排行榜
 ]

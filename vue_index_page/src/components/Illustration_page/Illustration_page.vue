@@ -4,7 +4,7 @@
     <scroll_box v-if="follow_illustrations_list" :msg_list="follow_illustrations_list" @chose_item="go_to_illustration_page"></scroll_box>
     <h4>推荐的作品</h4>
     <div style="max-height: 900px; overflow:hidden;"><recommendation :token="token" :work_type="'ill'" v-if="token"></recommendation></div>
-    
+    <h4>排行榜</h4>
     <ranking></ranking>
   </div>
 </template>

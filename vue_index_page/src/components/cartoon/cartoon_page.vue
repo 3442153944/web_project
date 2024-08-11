@@ -6,7 +6,7 @@
     <div class="recommend_page" style="max-height: 900px; overflow:hidden;">
       <recommendation_cartoon :token="token" :work_type="'comic'"></recommendation_cartoon>
     </div>
-      
+      <h4>排行榜</h4>
       <ranking></ranking>
   </div>
 

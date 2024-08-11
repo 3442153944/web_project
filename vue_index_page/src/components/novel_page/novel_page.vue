@@ -43,6 +43,7 @@
     <div class="recommend_page" style="max-height: 1200px; overflow:hidden;">
       <recommendation_novel :token="token" :work_type="'novel'"></recommendation_novel>
     </div>
+    <h4>小说排行榜</h4>
     <ranking></ranking>
   </div>
 </template>
