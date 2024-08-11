@@ -123,13 +123,13 @@ onMounted(async () => {
   set_tag_color();
   msg_list.value = props.msg_list;
   for (let i = 0; i < props.msg_list.length; i++) {
-    msg_list.value[i].work_count = await get_work_info(props.msg_list[i].Illustration_id);
+    msg_list.value[i].work_count = await get_work_info(props.msg_list[i].work_id);
   }
 });
 //通过ID请求作品详情，并获取数量
 async function get_work_info(work_id) {
   try {
-    const res = await fetch('https://www.sunyuanling.com/api/get_work_info/GetIllInfo/',
+    const res = await fetch('https://www.sunyuanling.com/api/get_work_info/GetComicinfo/',
       {
         method: 'post',
         headers: {

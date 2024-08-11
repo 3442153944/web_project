@@ -150,6 +150,17 @@ onMounted(() => {
     //加载时自动滚动到最上方
     scrollToTop();
 });
+watch( () => props.work_id,async (newValue) => {
+    work_id.value = newValue;
+    scrollToTop();
+    await get_work_info();
+});
+
+watch(() => store.getters.work_id,async (newValue) => {
+    work_id.value = newValue;
+    scrollToTop();
+    await get_work_info();
+});
 
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
@@ -168,17 +179,7 @@ const props = defineProps({
     }
 });
 
-watch( () => props.work_id,async (newValue) => {
-    work_id.value = newValue;
-    scrollToTop();
-    await get_work_info();
-});
 
-watch(() => store.getters.work_id,async (newValue) => {
-    work_id.value = newValue;
-    scrollToTop();
-    await get_work_info();
-});
 
 onMounted(async () => {
     work_id.value = store.getters.work_id;

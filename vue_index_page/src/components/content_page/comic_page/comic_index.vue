@@ -34,6 +34,7 @@
 
                 </comment_section>
             </div>
+            <recommend :token="store_token" :work_type="'comic'"></recommend>
         </div>
         <div class="author_info_box" v-if="work_info">
             <author_info :author_id="work_info.belong_to_userid" @chose_item="get_choose_item"></author_info>
@@ -47,7 +48,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, defineProps,onUnmounted,nextTick } from 'vue';
+import { ref, watch, onMounted, defineProps,onUnmounted,nextTick ,computed} from 'vue';
 import { useStore } from 'vuex';
 import go_back from '../go_back.vue';
 import img_content_page from '../img_content_page/img_content_page.vue';
@@ -58,6 +59,7 @@ import work_info_box from './author_box/model/work_info_bar.vue'
 import comment_section from './comment_section.vue'
 import * as cookies from '@/assets/js/cookies'
 import * as user_interaction from '@/assets/js/interaction'
+import recommend from '@/assets/model/recommend_page/modle/index.vue'
 
 
 const store = useStore();
@@ -70,6 +72,7 @@ let show_more_btn = ref(null)
 let fixed_interaction = ref(null)
 let float_interaction = ref(null)
 let token = cookies.get_cookie("token");
+let store_token=computed(()=>store.getters.token)
 let like_status = ref(false)
 let collect_status = ref(false)
 let work_data = ref({
@@ -138,6 +141,18 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll);
     float_interaction_bar(false); // 清理状态
+});
+function scrollToTop() {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth' // 或 'auto'
+    });
+}
+
+watch(() => store.getters.work_id,async (newValue) => {
+    work_id.value = newValue;
+    scrollToTop();
+    await get_work_info();
 });
 
 //查看更多按钮实现
