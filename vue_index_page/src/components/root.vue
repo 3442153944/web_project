@@ -14,6 +14,7 @@
     <content_index_page v-if="content_index_page_show"/>
     <user_center_page :token="token" v-if="user_center_page_show"></user_center_page>
     <other_user_center_page v-if="other_user_center_page_show" :userid="other_userid"></other_user_center_page>
+    <data_analysis :token="token" v-if="data_analysis_page"/>
   </div>
 </template>
 
@@ -38,6 +39,7 @@ import { useStore } from 'vuex'
 import content_index_page from './content_page/content_index_page.vue';
 import user_center_page from './user_center_page/user_center_page.vue';
 import other_user_center_page from './other_user_center_page/user_center_page.vue'
+import data_analysis from '@/assets/model/data_analysis/components/root.vue'
 const store = useStore()
 let cursor_top = ref(0);
 let cursor_left = ref(0);
@@ -51,6 +53,7 @@ let user_center_page_show=computed(()=>store.getters.user_center_page)
 let token=computed(()=>store.getters.token)
 let other_user_center_page_show=computed(()=>store.getters.other_user_center_page)
 let other_userid=computed(()=>store.getters.other_userid)
+let data_analysis_page=computed(()=>store.getters.data_analysis_page)
 
 
 // 读取URL参数设置cookie并清除URL中的token参数

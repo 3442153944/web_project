@@ -36,7 +36,7 @@ class GetAllWorkData(View):
                 ago_days = 7
 
             target_date = (datetime.now() - timedelta(days=int(ago_days))).strftime('%Y-%m-%dT%H:%M:%S')
-            history_date = (datetime.now() - timedelta(days=int(ago_days) + 7)).strftime('%Y-%m-%dT%H:%M:%S')
+            history_date = datetime(1900, 1, 1).strftime('%Y-%m-%dT%H:%M:%S')
 
             with connection.cursor() as cursor:
                 # 验证管理员 token

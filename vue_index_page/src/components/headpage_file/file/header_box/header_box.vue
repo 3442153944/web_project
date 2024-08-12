@@ -21,7 +21,7 @@
             </div>
         </div>
         <br>
-        <div class="data_analysis mt hv"><span>数据分析</span></div>
+        <div class="data_analysis mt hv" @click="open_data_analysis()"><span>数据分析</span></div>
         <div class="my_works mt hv"><span>我的作品</span></div>
         <div class="appointment_management mt hv"><span>约稿管理</span></div>
         <br>
@@ -167,6 +167,11 @@ function jump_usercenter() {
     //window.location.href="https://localhost:8888/usercenter";
     store.commit('SET_SINGLE_PAGE_STATUS',{'key':'user_center_page','value':true})
 }
+
+function open_data_analysis(){
+    console.log("数据分析跳转");
+    store.commit('SET_SINGLE_PAGE_STATUS',{'key':'data_analysis_page','value':true})
+}
 //退出登录
 function logout() {
     console.log("退出登录");
@@ -243,7 +248,7 @@ function clearAllCookies() {
     overflow-y: auto;
     padding: 5px;
     border-radius: 15px;
-    z-index: 3;
+    z-index: 6;
 }
 
 .header_box_back {
