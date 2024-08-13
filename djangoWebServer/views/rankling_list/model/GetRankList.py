@@ -21,7 +21,7 @@ class GetRankList(View):
 
     def post(self, request, *args, **kwargs):
         now = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
-        last_day = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%dT%H:%M:%S')
+        last_day = (datetime.now() - timedelta(days=10086)).strftime('%Y-%m-%dT%H:%M:%S')
 
         try:
             data = json.loads(request.body.decode('utf-8'))
