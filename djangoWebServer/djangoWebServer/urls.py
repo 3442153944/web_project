@@ -37,4 +37,6 @@ urlpatterns = [
     #排行榜
     path('data_analysis/',include('views.data_analysis.url')),
     #数据分析
+    path('admin_control/',include('views.background_control.url')),
+    #管理员后台管理
 ]
