@@ -30,22 +30,26 @@ class AdminLogin(View):
             token = data.get('token')
             userid = data.get('userid')
             password = data.get('password')
+            print(data)
 
-            if not token or (not userid and not password):
+            if not token and (not userid or not password):
                 self.logger.warning(f"{self._request_path(request)} 缺少 token 或 userid 和 password")
                 return JsonResponse({'status': 'error', 'message': '参数错误'}, status=400)
 
             new_token = self.authentication.authenticate_user(token=token, userid=userid, password=password)
-            if new_token:
-                self.logger.info(f"{self._request_path(request)} 登录成功，返回 token 为：{new_token}")
-                return JsonResponse({'status': 'success', 'token': new_token})
+            print(new_token)
+            if new_token[0]==1:
+                self.logger.info(f"{self._request_path(request)} 登录成功，返回 token 为：{new_token[1]}")
+                return JsonResponse({'status': 'success', 'token': new_token[1]})
             else:
                 self.logger.warning(f"{self._request_path(request)} 登录失败，返回 token 为：{new_token}")
-                return JsonResponse({'status': 'error', 'message': '用户名或密码错误或者权限不足，token 失效，请联系管理员'}, status=401)
+                return JsonResponse({'status': 'error', 'message': f'{new_token}，token 失效，请联系管理员'}, status=401)
 
-        except json.JSONDecodeError:
+        except json.JSONDecodeError as e :
+            print(e)
             self.logger.error(f"{self._request_path(request)} 请求数据解析失败，数据为：{request.body.decode('utf-8')}")
             return JsonResponse({'status': 'error', 'message': '请求数据解析失败'}, status=400)
         except Exception as e:
+            print(e)
             self.logger.error(f"{self._request_path(request)} 请求数据为：{request.body.decode('utf-8')}，错误信息为：{e}")
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)

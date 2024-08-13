@@ -82,8 +82,29 @@ class Authentication(View):
         """用户认证方法"""
         try:
             with connection.cursor() as cursor:
-                if token:
-                    # 基于 token 的认证
+                # 优先使用 ID 和密码进行认证
+                if userid and password:
+                    if self._is_blocked(userid):
+                        return '登录锁定，稍后再试'
+
+                    # 基于 ID 和密码的认证
+                    get_user_sql = '''
+                        SELECT account_permissions FROM users WHERE userid=%s AND password=%s
+                    '''
+                    if not self._record_attempt(userid):
+                        return '操作过频繁，请稍后再试'
+
+                    row = self._fetch_user(cursor, get_user_sql, (str(userid), str(password)))
+                    if row and row[0] in ['1', '2']:
+                        new_token = create_uuid()
+                        self._update_token(cursor, userid, new_token)
+                        return [1, new_token]
+                    else:
+                        self._record_failed_attempt(userid)
+                        return '用户名或密码错误，请稍后再试'
+
+                # 如果 ID 和密码认证失败，则使用 token 进行认证
+                elif token:
                     get_user_sql = '''
                         SELECT userid, account_permissions FROM users WHERE token=%s
                     '''
@@ -94,32 +115,11 @@ class Authentication(View):
                         self._update_token(cursor, userid, new_token)
                         return new_token
                     else:
-                        return False
-
-                elif userid and password:
-                    # 检查用户是否被锁定
-                    if self._is_blocked(userid):
-                        return False
-
-                    # 基于 ID 和密码的认证
-                    get_user_sql = '''
-                        SELECT account_permissions FROM users WHERE userid=%s AND password=%s
-                    '''
-                    if not self._record_attempt(userid):
-                        return False
-
-                    row = self._fetch_user(cursor, get_user_sql, (userid, password))
-                    if row and row[0] in ['1', '2']:
-                        new_token = create_uuid()
-                        self._update_token(cursor, userid, new_token)
-                        return new_token
-                    else:
-                        self._record_failed_attempt(userid)
-                        return False
+                        return 'token失效，重新登录'
 
                 else:
-                    return False
+                    return '提供必要参数'
 
         except Exception as e:
             self.logger.error(f"认证过程中出错: {e}")
-            return False
+            return '服务器错误'

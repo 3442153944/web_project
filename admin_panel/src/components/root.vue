@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import { ref, defineProps, computed } from 'vue'
+import { ref, defineProps, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 import login_page from './model/login_page.vue';
 import user_control_page from './model/user_control.vue'
@@ -19,7 +19,16 @@ let comic_control_page_show = computed(() => store.getters.root_page.comic_contr
 let novel_control_page_show = computed(() => store.getters.root_page.novel_control_page)
 let login_page_show = computed(() => store.getters.root_page.login_page)
 let commection_control_page_show = computed(() => store.getters.root_page.commection_control_page)
-let store_token_show = computed(() => store.getters.root_data.token)
+let store_token = computed(() => store.getters.root_data.token)
+
+
+onMounted(() => {
+  if (store_token.value == '' && store_token.value == null) {
+    //token为空
+    store.commit('change_page', { 'page_key': 'login_page', 'page_value': true })
+  }
+})
+
 
 </script>
 
@@ -27,11 +36,11 @@ let store_token_show = computed(() => store.getters.root_data.token)
   <div class="root">
 
     <div class="content">
-      <div class="header">
+      <div class="header" v-if="!login_page_show">
         <header_page></header_page>
       </div>
 
-      <div class="main_item">
+      <div class="main_item" v-if="!login_page_show">
         <div class="sidebar_item">
           <div class="sidebar">
             <sidebar></sidebar>
@@ -89,10 +98,11 @@ let store_token_show = computed(() => store.getters.root_data.token)
   height: auto;
   margin-left: 5px;
 }
-.page_item{
+
+.page_item {
   width: auto;
   flex-grow: 1;
-  flex:1;
+  flex: 1;
   margin-left: 10px;
 }
 </style>
