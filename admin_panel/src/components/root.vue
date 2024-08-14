@@ -10,6 +10,7 @@ import novel_control_page from './model/novel_control.vue'
 import header_page from './model/header_page.vue';
 import sidebar from './model/sidebar.vue'
 import commection_control from './model/commection_control.vue';
+import { admin_login } from './model/js/login';
 
 let token = ref('')
 const store = useStore()
@@ -22,11 +23,26 @@ let commection_control_page_show = computed(() => store.getters.root_page.commec
 let store_token = computed(() => store.getters.root_data.token)
 
 
-onMounted(() => {
-  if (store_token.value == '' && store_token.value == null) {
+
+onMounted(async () => {
+  //获取所有cookies的信息
+  let cookies = document.cookie.split(';')
+  let cookies_value=[]
+  let data=await admin_login(store_token.value,null,null)
+  console.log(data)
+  for (let i = 0; i < cookies.length; i++) {
+    let cookie = cookies[i].trim()
+    cookies_value.push(cookie)
+  }
+  console.log(cookies)
+  if (data.is_login!=1) {
     //token为空
     store.commit('change_page', { 'page_key': 'login_page', 'page_value': true })
+    return 
   }
+  
+  console.log(data)
+
 })
 
 

@@ -1,4 +1,3 @@
-from django.db import connection
 from django.http import JsonResponse
 from django.views import View
 from datetime import datetime
@@ -6,6 +5,7 @@ from .log.log import Logger
 import json
 from .authentication import Authentication
 from django.shortcuts import render
+
 
 class AdminLogin(View):
     logger = Logger()
@@ -27,26 +27,21 @@ class AdminLogin(View):
         """处理 POST 请求，进行用户登录认证"""
         try:
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
-            userid = data.get('userid')
-            password = data.get('password')
-            print(data)
+            token = data.get('token', None)
+            userid = data.get('userid', None)
+            password = data.get('password', None)
+            auth_token = request.COOKIES.get('auth_token', None)
 
-            if not token and (not userid or not password):
+            if not token and (not userid or not password) and not auth_token:
                 self.logger.warning(f"{self._request_path(request)} 缺少 token 或 userid 和 password")
                 return JsonResponse({'status': 'error', 'message': '参数错误'}, status=400)
 
-            new_token = self.authentication.authenticate_user(token=token, userid=userid, password=password)
-            print(new_token)
-            if new_token[0]==1:
-                self.logger.info(f"{self._request_path(request)} 登录成功，返回 token 为：{new_token[1]}")
-                return JsonResponse({'status': 'success', 'token': new_token[1]})
-            else:
-                self.logger.warning(f"{self._request_path(request)} 登录失败，返回 token 为：{new_token}")
-                return JsonResponse({'status': 'error', 'message': f'{new_token}，token 失效，请联系管理员'}, status=401)
+            # Set request for Authentication instance
+            self.authentication.set_request(request)
+            response = self.authentication.authenticate_user(token=auth_token, userid=userid, password=password)
+            return response
 
-        except json.JSONDecodeError as e :
-            print(e)
+        except json.JSONDecodeError as e:
             self.logger.error(f"{self._request_path(request)} 请求数据解析失败，数据为：{request.body.decode('utf-8')}")
             return JsonResponse({'status': 'error', 'message': '请求数据解析失败'}, status=400)
         except Exception as e:

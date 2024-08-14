@@ -1,5 +1,7 @@
+import json
+
 from django.db import connection
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.views import View
 from .log.log import Logger
 import uuid
@@ -14,12 +16,19 @@ def create_uuid():
 
 class Authentication(View):
     logger = Logger()
-    MAX_ATTEMPTS = 3
-    BLOCK_TIME = 30  # 秒
-    RATE_LIMIT = 2  # 每秒允许的最大尝试次数
+    MAX_ATTEMPTS = 100
+    BLOCK_TIME = 1  # 秒
+    RATE_LIMIT = 20  # 每秒允许的最大尝试次数
+    TOKEN_EXPIRY = 3600  # token 有效期（秒）
+    data = {}
+    response = None
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.request = None  # Initialize request attribute
+
+    def set_request(self, request):
+        self.request = request
 
     def _is_blocked(self, userid):
         """检查用户是否被锁定"""
@@ -74,52 +83,100 @@ class Authentication(View):
     def _update_token(self, cursor, userid, new_token):
         """更新数据库中的用户 token"""
         update_token_sql = '''
-            UPDATE users SET token=%s WHERE userid=%s
+            UPDATE users SET token=%s, token_expiry=%s WHERE userid=%s
         '''
-        cursor.execute(update_token_sql, (new_token, userid))
+        expiry_time = datetime.now() + timedelta(seconds=self.TOKEN_EXPIRY)
+        cursor.execute(update_token_sql, (new_token, expiry_time.strftime('%Y-%m-%d %H:%M:%S'), userid))
+
+    def _is_token_valid(self, cursor, token):
+        """检查 token 是否有效"""
+        check_token_sql = '''
+            SELECT token_expiry FROM users WHERE token=%s
+        '''
+        cursor.execute(check_token_sql, (token,))
+        row = cursor.fetchone()
+        if row:
+            token_expiry = datetime.strptime(row[0], '%Y-%m-%d %H:%M:%S')
+            return datetime.now() < token_expiry
+        return False
+
+    def app_end_msg(self, data):
+        """返回可直接给客户端使用的数据"""
+        self.data = data
 
     def authenticate_user(self, token=None, userid=None, password=None):
         """用户认证方法"""
         try:
             with connection.cursor() as cursor:
-                # 优先使用 ID 和密码进行认证
                 if userid and password:
                     if self._is_blocked(userid):
-                        return '登录锁定，稍后再试'
+                        return HttpResponse('登录锁定，稍后再试', status=403)
 
                     # 基于 ID 和密码的认证
                     get_user_sql = '''
                         SELECT account_permissions FROM users WHERE userid=%s AND password=%s
                     '''
                     if not self._record_attempt(userid):
-                        return '操作过频繁，请稍后再试'
+                        return HttpResponse('操作过频繁，请稍后再试', status=429)
 
                     row = self._fetch_user(cursor, get_user_sql, (str(userid), str(password)))
                     if row and row[0] in ['1', '2']:
                         new_token = create_uuid()
                         self._update_token(cursor, userid, new_token)
-                        return [1, new_token]
+                        self.request.session['auth_response_data'] = {'status': 'success', 'is_login': 1,
+                                                                      'token': new_token}
+                        self.response = JsonResponse(
+                            {'status': 'success', 'is_login': 1, 'token': new_token, 'data': self.data}, status=200)
+                        self.response.set_cookie('auth_token', new_token, max_age=self.TOKEN_EXPIRY, samesite='None',
+                                                 secure=True, httponly=True)
+                        return self.response
                     else:
                         self._record_failed_attempt(userid)
-                        return '用户名或密码错误，请稍后再试'
+                        return JsonResponse(
+                            {'status': 'error', 'is_login': '0', 'message': '用户名或密码错误，请稍后再试'}, status=401)
 
-                # 如果 ID 和密码认证失败，则使用 token 进行认证
                 elif token:
+                    if not self._is_token_valid(cursor, token):
+                        return JsonResponse({'status': 'error', 'is_login': '0', 'message': 'token失效，请重试'},
+                                            status=401)
+
+                    # 如果 token 有效，只更新 token 的有效期
                     get_user_sql = '''
                         SELECT userid, account_permissions FROM users WHERE token=%s
                     '''
                     row = self._fetch_user(cursor, get_user_sql, (token,))
                     if row and row[1] in ['1', '2']:
                         userid = row[0]
-                        new_token = create_uuid()
-                        self._update_token(cursor, userid, new_token)
-                        return new_token
+                        #new_token = create_uuid()
+                        #self._update_token(cursor, userid, new_token)
+                        get_token_sql="select token from users where userid=%s"
+                        cursor.execute(get_token_sql,(userid,))
+                        new_token=cursor.fetchone()[0]
+                        #更新过期时间
+                        expiry_time = datetime.now() + timedelta(seconds=self.TOKEN_EXPIRY)
+                        update_token_sql = '''
+                            UPDATE users SET token_expiry=%s WHERE userid=%s
+                        '''
+                        cursor.execute(update_token_sql, (expiry_time.strftime('%Y-%m-%d %H:%M:%S'), userid))
+
+                        self.request.session['auth_response_data'] = {'status': 'success', 'is_login': 1,
+                                                                      'token': new_token}
+                        self.response = JsonResponse(
+                            {'status': 'success', 'is_login': 1, 'token': new_token, 'data': self.data}, status=200)
+                        self.response.set_cookie('auth_token', new_token, max_age=self.TOKEN_EXPIRY, samesite='None',
+                                                 secure=True, httponly=True)
+                        return self.response
                     else:
-                        return 'token失效，重新登录'
+                        return JsonResponse({'status': 'error', 'is_login': '0', 'message': 'token失效，请重试'},
+                                            status=401)
 
                 else:
-                    return '提供必要参数'
+                    return JsonResponse({'status': 'error', 'is_login': '0', 'message': '缺少认证信息'}, status=400)
 
         except Exception as e:
+            print(e)
             self.logger.error(f"认证过程中出错: {e}")
-            return '服务器错误'
+            return JsonResponse({'status': 'error', 'is_login': '0', 'message': '认证过程中出错'}, status=500)
+
+
+

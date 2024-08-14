@@ -10,7 +10,6 @@ STATICFILES_DIRS = [
     'C:/Python/Lib/site-packages/drf_yasg/static',
 ]
 
-
 SECRET_KEY = 'django-insecure-ypu2=#s5wqperumf6kmmi=eb4)u=#sror+nsa*kq$dfkhm7-a-'
 PORT = 2233
 
@@ -25,8 +24,6 @@ CORS_ORIGIN_ALLOW_ALL = False  # 改为 False
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://localhost',
-    'http://localhost:*',
-    'http://127.0.0.1:*',
     'http://127.0.0.1',
     'http://localhost:3002',
     'http://localhost:3001',
@@ -36,8 +33,6 @@ CORS_ALLOWED_ORIGINS = [
     'http://localhost:3006',
     'https://localhost:3000',
     'https://localhost',
-    'https://localhost:*',
-    'https://127.0.0.1:*',
     'https://127.0.0.1',
     'https://localhost:3002',
     'https://localhost:3001',
@@ -46,7 +41,9 @@ CORS_ALLOWED_ORIGINS = [
     'https://localhost:3005',
     'https://localhost:3006',
     'https://192.168.43.1:3002',
-    'http://localhost:5173'
+    'http://localhost:5173',
+    'https://localhost:2000',
+    'http://localhost:2000',
 ]
 CORS_ALLOW_METHODS = [
     'DELETE',
@@ -74,20 +71,14 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost',
     'http://127.0.0.1',
     'http://localhost:3002',
-    'http://127.0.0.1:*',
-    'http://localhost:*',
     'http://localhost:3001',
     'http://localhost:3003',
     'http://localhost:3004',
     'http://localhost:3005',
     'http://localhost:3006',
     'http://localhost:3000',
-    'http://localhost:*',
-    'http://127.0.0.1:*',
     'https://localhost:3000',
     'https://localhost',
-    'https://localhost:*',
-    'https://127.0.0.1:*',
     'https://127.0.0.1',
     'https://localhost:3002',
     'https://localhost:3001',
@@ -97,6 +88,8 @@ CSRF_TRUSTED_ORIGINS = [
     'https://localhost:3006',
     'https://192.168.43.1:3002',
     'http://localhost:5173/',
+    'https://localhost:2000',
+    'http://localhost:2000',
 ]
 
 # Application definition
@@ -158,7 +151,6 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = 'djangoWebServer.wsgi.application'
 
 DATABASES = {
@@ -198,3 +190,9 @@ USE_TZ = True
 STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# 设置 session 的有效期为 60 分钟
+SESSION_COOKIE_AGE = 60 * 60  # 30 分钟 = 1800 秒
+
+# 如果需要在浏览器关闭时过期
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
