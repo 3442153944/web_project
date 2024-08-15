@@ -26,12 +26,16 @@ function choose_page(page_name){
 
 <style scoped>
   .sidebar{
-    width:100%;
+    width:150px;
     height: auto;
     background-color:rgba(100, 100, 100, 0.5);
     display: flex;
     flex-direction: column;
     border-radius: 10px;
+    position: fixed;
+    top:80px;
+    left: 10px;
+    z-index:5;
   }
   .content{
     width: 100%;

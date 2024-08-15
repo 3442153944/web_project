@@ -80,7 +80,7 @@ onMounted(async () => {
 <style scoped>
 .root {
   width: 100vw;
-  height: 100vh;
+  height: auto;
   background-color: rgba(243, 243, 243, 1);
   position: relative;
   display: flex;
@@ -98,6 +98,7 @@ onMounted(async () => {
   left: 0;
   width: 95%;
   margin: 0px auto;
+  z-index: 5;
 }
 
 .main_item {
@@ -113,6 +114,7 @@ onMounted(async () => {
   width: 20%;
   height: auto;
   margin-left: 5px;
+  z-index:5;
 }
 
 .page_item {
