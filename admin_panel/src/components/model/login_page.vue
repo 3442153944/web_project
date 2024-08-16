@@ -35,6 +35,7 @@ const handleLogin = async () => {
         store.commit('set_root_data', { 'key': 'token', 'value': result })
         store.commit('change_page',{'page_key':'login_page','value':false})
         store.commit('change_page',{'page_key':'ill_control_page','value':true})
+        store.commit('set_root_data',{'key':'user_info','value':result.user_info})
     }
     else{
         alert(result.message)

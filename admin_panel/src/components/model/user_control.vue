@@ -28,7 +28,6 @@
                     </select>
                 </div>
                 <div class="item_show" @click="choose_user(item)">查看详细信息</div>
-                <div class="item_sure">更新</div>
                 <div class="item_delete" @click="deleteUser(index)">删除</div>
             </div>
         </div>
@@ -40,6 +39,7 @@
 import { get_user_list } from './js/get_user_list';
 import { ref, onMounted, computed } from 'vue';
 import user_infomation from './user_infomation.vue';
+import { edit_userinfo } from './js/edit_userinfo';
 
 const user_infomation_show = ref(false);
 const user_list = ref([]);

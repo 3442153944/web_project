@@ -25,22 +25,15 @@ let store_token = computed(() => store.getters.root_data.token)
 
 
 onMounted(async () => {
-  //获取所有cookies的信息
-  let cookies = document.cookie.split(';')
-  let cookies_value=[]
+  
   let data=await admin_login(store_token.value,null,null)
   console.log(data)
-  for (let i = 0; i < cookies.length; i++) {
-    let cookie = cookies[i].trim()
-    cookies_value.push(cookie)
-  }
-  console.log(cookies)
   if (data.is_login!=1) {
     //token为空
     store.commit('change_page', { 'page_key': 'login_page', 'page_value': true })
     return 
   }
-  
+  store.commit('set_root_data',{'key':'user_info','value':data.user_info})
   console.log(data)
 
 })

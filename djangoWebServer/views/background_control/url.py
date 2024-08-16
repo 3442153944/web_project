@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .model.admin_login import AdminLogin
+from .model.edit_user_info import EditUserInfo
 from .model.get_userlist import GetUserList
 
 urlpatterns = [
@@ -8,4 +9,6 @@ urlpatterns = [
     #管理员登录
     path('GetUserList/',GetUserList.as_view(),name='GetUserList'),
     #获取用户列表
+    path('EditUserInfo/',EditUserInfo.as_view(),name='EditUserInfo'),
+    #编辑用户信息
 ]

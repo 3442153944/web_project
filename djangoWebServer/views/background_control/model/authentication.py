@@ -125,8 +125,14 @@ class Authentication(View):
                         self._update_token(cursor, userid, new_token)
                         self.request.session['auth_response_data'] = {'status': 'success', 'is_login': 1,
                                                                       'token': new_token}
+                        #获取登录用户的信息，返回给客户端
+                        cursor.execute("select * from users where userid=%s", [userid])
+                        user_info = cursor.fetchone()
+                        columns = [desc[0] for desc in cursor.description]
+                        user_info = dict(zip(columns, user_info))
                         self.response = JsonResponse(
-                            {'status': 'success', 'is_login': 1, 'token': new_token, 'data': self.data}, status=200)
+                            {'status': 'success', 'is_login': 1, 'token': new_token,'user_info':user_info,
+                             'data': self.data}, status=200)
                         self.response.set_cookie('auth_token', new_token, max_age=self.TOKEN_EXPIRY, samesite='None',
                                                  secure=True, httponly=True)
                         return self.response
@@ -158,13 +164,21 @@ class Authentication(View):
                             UPDATE users SET token_expiry=%s WHERE userid=%s
                         '''
                         cursor.execute(update_token_sql, (expiry_time.strftime('%Y-%m-%d %H:%M:%S'), userid))
+                        #获取登录用户的信息，返回给客户端
+                        cursor.execute("select * from users where userid=%s", [userid])
+                        user_info = cursor.fetchone()
+                        columns = [desc[0] for desc in cursor.description]
+                        user_info = dict(zip(columns, user_info))
 
                         self.request.session['auth_response_data'] = {'status': 'success', 'is_login': 1,
                                                                       'token': new_token}
                         self.response = JsonResponse(
-                            {'status': 'success', 'is_login': 1, 'token': new_token, 'data': self.data}, status=200)
+                            {'status': 'success', 'is_login': 1, 'token': new_token,'user_info':user_info,
+                             'data': self.data}, status=200)
                         self.response.set_cookie('auth_token', new_token, max_age=self.TOKEN_EXPIRY, samesite='None',
                                                  secure=True, httponly=True)
+                        self.response.set_cookie('userid', userid, max_age=self.TOKEN_EXPIRY, samesite='None',
+                                                 secure=True,httponly=True)
                         return self.response
                     else:
                         return JsonResponse({'status': 'error', 'is_login': '0', 'message': 'token失效，请重试'},

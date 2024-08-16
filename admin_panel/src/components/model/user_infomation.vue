@@ -29,7 +29,7 @@
                     </div>
                     <div class="info_item">
                         <label>用户ID：</label>
-                        <input v-model="user_info.userid" type="text">
+                        <input v-model="user_info.userid" type="text" readonly>
                     </div>
                     <div class="info_item">
                         <label>密码：</label>
@@ -77,7 +77,11 @@
                     </div>
                     <div class="info_item">
                         <label>账号权限：</label>
-                        <input v-model="user_info.account_permissions" type="text">
+                        <select v-model="user_info.account_permissions" :disabled="account_permissions_edit">
+                            <option value="0">无特殊权限</option>
+                            <option value="1">管理员</option>
+                            <option value="2">超级管理员</option>
+                        </select>
                     </div>
                     <div class="info_item">
                         <label>注册时间：</label>
@@ -99,12 +103,16 @@
             </div>
         </div>
     </div>
-    <search_img v-if="search_img_show" :img_src="search_src" @close_page="search_img_show=false"></search_img> 
+    <search_img v-if="search_img_show" :img_src="search_src" @close_page="search_img_show = false"></search_img>
 </template>
 
 <script setup>
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref, defineProps, defineEmits, computed } from 'vue';
 import search_img from './search_img.vue'
+import { edit_userinfo } from './js/edit_userinfo';
+import { useStore } from 'vuex';
+
+const store = useStore();
 
 const props = defineProps({
     user_info: {
@@ -115,21 +123,23 @@ const props = defineProps({
 
 const user_info = ref(props.user_info);
 const emit = defineEmits(['close_page']);
-const search_src=ref('')
-const search_img_show=ref(false)
+const search_src = ref('')
+const search_img_show = ref(false)
+const account_permissions_edit = computed(() =>store.getters.root_data.user_info.account_permissions=='2'?false:true)
+console.log(store.getters.root_data.user_info.account_permissions)
 
-function show_img(src){
-    search_src.value=src
-    search_img_show.value=true
+function show_img(src) {
+    search_src.value = src
+    search_img_show.value = true
 }
 
 function close_page() {
     emit('close_page');
 }
 
-function confirm_action() {
+async function confirm_action() {
     // Add confirmation logic if needed
-    console.log('Confirmed');
+    console.log(user_info.value);
 }
 </script>
 
@@ -256,12 +266,13 @@ function confirm_action() {
 .cancel:hover {
     background-color: #c82333;
 }
-.serach_img_btn{
-    width:auto;
+
+.serach_img_btn {
+    width: auto;
     height: auto;
     padding: 5px;
     cursor: pointer;
-    background-color: rgba(0,150,250);
+    background-color: rgba(0, 150, 250);
     color: white;
     max-width: 100px;
     font-weight: bold;
@@ -270,8 +281,9 @@ function confirm_action() {
     text-align: center;
     border-radius: 5px;
 }
-.serach_img_btn:hover{
-    background-color: rgba(0,150,250,0.8);
+
+.serach_img_btn:hover {
+    background-color: rgba(0, 150, 250, 0.8);
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
 }

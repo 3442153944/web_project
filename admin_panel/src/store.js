@@ -11,7 +11,8 @@ const store = createStore({
             commection_control_page: false,
         },
         root_data: {
-            token: ''
+            token: '',
+            user_info:{},//登录的用户所有信息
         },
     },
     mutations: {
