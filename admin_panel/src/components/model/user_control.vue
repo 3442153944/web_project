@@ -6,13 +6,21 @@
                 <input type="text" placeholder="搜索用户" v-model="search_type" />
             </div>
             <div class="item" v-for="(item, index) in filteredUserData" :key="index">
+                <h5>用户名</h5>
                 <div class="item_name" contenteditable="true">{{ item.username }}</div>
+                <h5>用户ID</h5>
                 <div class="item_userid">{{ item.userid }}</div>
+                <h5>用户性别</h5>
                 <div class="item_sex" contenteditable="true">{{ item.sex }}</div>
+                <h5>用户密码</h5>
                 <div class="item_password" contenteditable="true">{{ item.password }}</div>
+                <h5>用户邮箱</h5>
                 <div class="item_email" contenteditable="true">{{ item.email }}</div>
+                <h5>用户电话</h5>
                 <div class="item_phone" contenteditable="true">{{ item.phone }}</div>
-                <div class="item_vip" contenteditable="true">{{ item.vip }}</div>
+                <h5>用户vip状态</h5>
+                <div class="item_vip" contenteditable="true">{{ (item.vip==1?'VIP用户':'普通用户') }}</div>
+                <h5>用户账号状态</h5>
                 <div class="item_account_status">
                     <select v-model="item.account_status">
                         <option value="0">封禁</option>
@@ -20,6 +28,7 @@
                         <option value="2">禁言</option>
                     </select>
                 </div>
+                <h5>用户权限</h5>
                 <div class="item_account_permission">
                     <select v-model="item.account_permissions">
                         <option value="0">普通用户</option>
@@ -37,9 +46,8 @@
 
 <script setup>
 import { get_user_list } from './js/get_user_list';
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import user_infomation from './user_infomation.vue';
-import { edit_userinfo } from './js/edit_userinfo';
 
 const user_infomation_show = ref(false);
 const user_list = ref([]);
@@ -72,7 +80,17 @@ function choose_user(item) {
 function close_user_info_page() {
     user_infomation_show.value = false;
 }
+
+// 监听 user_infomation_show 的变化
+watch(user_infomation_show, (newVal) => {
+    if (newVal) {
+        document.body.style.overflow = 'hidden';
+    } else {
+        document.body.style.overflow = '';
+    }
+});
 </script>
+
 
 <style scoped>
 .user_control {

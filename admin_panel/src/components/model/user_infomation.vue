@@ -11,15 +11,25 @@
                 <div class="user_back">
                     用户背景图像文件名：
                     <input v-model="user_info.user_back_img" type="text">
-                    <div class="serach_img_btn" @click="show_img(user_info.user_back_img)">
-                        <span>搜索图片</span>
+                    <div class="btn_box">
+                        <div class="serach_img_btn" @click="show_img(user_info.user_back_img)">
+                            <span>搜索图片</span>
+                        </div>
+                        <div class="reset_default" @click="set_default_back_img()">
+                            <span>重置为默认背景</span>
+                        </div>
                     </div>
                 </div>
                 <div class="user_avatar">
                     用户头像图像文件名：
                     <input v-model="user_info.user_avatar" type="text">
-                    <div class="serach_img_btn" @click="show_img(user_info.user_avatar)">
-                        <span>搜索图片</span>
+                    <div class="btn_box">
+                        <div class="serach_img_btn" @click="show_img(user_info.user_avatar)">
+                            <span>搜索图片</span>
+                        </div>
+                        <div class="reset_default" @click="set_default_avatar()">
+                            <span>重置为默认头像</span>
+                        </div>
                     </div>
                 </div>
                 <div class="base_info">
@@ -125,8 +135,18 @@ const user_info = ref(props.user_info);
 const emit = defineEmits(['close_page']);
 const search_src = ref('')
 const search_img_show = ref(false)
-const account_permissions_edit = computed(() =>store.getters.root_data.user_info.account_permissions=='2'?false:true)
+const account_permissions_edit = computed(() => store.getters.root_data.user_info.account_permissions == '2' ? false : true)
 console.log(store.getters.root_data.user_info.account_permissions)
+const default_avatar = '65014220_p0.jpg'
+const default_back_img = '20240525174916_f4f4acc7280f4eabb9fc1712929c3ccc.png'
+
+function set_default_avatar() {
+    user_info.value.user_avatar = default_avatar
+}
+
+function set_default_back_img() {
+    user_info.value.user_back_img = default_back_img
+}
 
 function show_img(src) {
     search_src.value = src
@@ -139,7 +159,30 @@ function close_page() {
 
 async function confirm_action() {
     // Add confirmation logic if needed
+    let userid = user_info.value.userid
+    let username = user_info.value.username
+    let user_avatar = user_info.value.user_avatar
+    let user_address = user_info.value.user_address
+    let password = user_info.value.password
+    let user_back_img = user_info.value.user_back_img
+    let phone = user_info.value.phone
+    let email = user_info.value.email
+    let user_self_website = user_info.value.user_self_website
+    let sex = user_info.value.sex
+    let select_work = user_info.value.select_work
+    let occupation = user_info.value.occupation
+    let birthday = user_info.value.birthday
+    let vip = user_info.value.vip
+    let account_status = user_info.value.account_status
+    let account_permissions = user_info.value.account_permissions
     console.log(user_info.value);
+    let data = await edit_userinfo({
+        'userid': userid, 'username': username, 'user_avatar': user_avatar,
+        'user_address': user_address, 'password': password, 'user_back_img': user_back_img, 'phone': phone,
+        'email': email, 'user_self_website': user_self_website, 'sex': sex, 'select_work': select_work,
+        'occupation': occupation, 'birthday': birthday, 'vip': vip, 'account_status': account_status, 'account_permissions': account_permissions
+    })
+    console.log(data)
 }
 </script>
 
@@ -284,6 +327,31 @@ async function confirm_action() {
 
 .serach_img_btn:hover {
     background-color: rgba(0, 150, 250, 0.8);
+    transform: scale(1.02);
+    transition: all 0.2s ease-in-out;
+}
+.btn_box{
+    width:auto;
+    height: auto;
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+    align-items: center;
+}
+.reset_default{
+    width:auto;
+    height: auto;
+    background-color: rgb(192, 158, 119);
+    cursor: pointer;
+    color: white;
+    padding:5px 10px;
+    border-radius: 10px;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+}
+.reset_default:hover{
+    background-color: rgb(192, 158, 119,0.8);
     transform: scale(1.02);
     transition: all 0.2s ease-in-out;
 }

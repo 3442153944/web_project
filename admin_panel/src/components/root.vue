@@ -1,45 +1,58 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup>
-import { ref, defineProps, computed, onMounted } from 'vue'
-import { useStore } from 'vuex'
+import { ref, defineProps, computed, onMounted, onBeforeUnmount } from 'vue';
+import { useStore } from 'vuex';
 import login_page from './model/login_page.vue';
-import user_control_page from './model/user_control.vue'
-import ill_control_page from './model/ill_control.vue'
-import comic_control_page from './model/comic_control.vue'
-import novel_control_page from './model/novel_control.vue'
+import user_control_page from './model/user_control.vue';
+import ill_control_page from './model/ill_control.vue';
+import comic_control_page from './model/comic_control.vue';
+import novel_control_page from './model/novel_control.vue';
 import header_page from './model/header_page.vue';
-import sidebar from './model/sidebar.vue'
+import sidebar from './model/sidebar.vue';
 import commection_control from './model/commection_control.vue';
 import { admin_login } from './model/js/login';
 
-let token = ref('')
-const store = useStore()
-let user_control_page_show = computed(() => store.getters.root_page.user_control_page)
-let ill_control_page_show = computed(() => store.getters.root_page.ill_control_page)
-let comic_control_page_show = computed(() => store.getters.root_page.comic_control_page)
-let novel_control_page_show = computed(() => store.getters.root_page.novel_control_page)
-let login_page_show = computed(() => store.getters.root_page.login_page)
-let commection_control_page_show = computed(() => store.getters.root_page.commection_control_page)
-let store_token = computed(() => store.getters.root_data.token)
+const store = useStore();
+const store_token = computed(() => store.getters.root_data.token);
 
+let intervalId;
 
+let user_control_page_show = computed(() => store.getters.root_page.user_control_page);
+let ill_control_page_show = computed(() => store.getters.root_page.ill_control_page);
+let comic_control_page_show = computed(() => store.getters.root_page.comic_control_page);
+let novel_control_page_show = computed(() => store.getters.root_page.novel_control_page);
+let login_page_show = computed(() => store.getters.root_page.login_page);
+let commection_control_page_show = computed(() => store.getters.root_page.commection_control_page);
 
 onMounted(async () => {
-  
-  let data=await admin_login(store_token.value,null,null)
-  console.log(data)
-  if (data.is_login!=1) {
-    //token为空
-    store.commit('change_page', { 'page_key': 'login_page', 'page_value': true })
-    return 
+  let data = await admin_login(store_token.value, null, null);
+  console.log(data);
+  if (data.is_login != 1) {
+    store.commit('change_page', { 'page_key': 'login_page', 'page_value': true });
+    return;
   }
-  store.commit('set_root_data',{'key':'user_info','value':data.user_info})
-  console.log(data)
+  store.commit('set_root_data', { 'key': 'user_info', 'value': data.user_info });
 
-})
+  // 定时每60秒验证一次
+  intervalId = setInterval(async () => {
+    data = await admin_login(store_token.value, null, null);
+    if (data.is_login != 1) {
+      store.commit('change_page', { 'page_key': 'login_page', 'page_value': true });
+      clearInterval(intervalId);  // 取消定时器，避免多次跳转
+      return;
+    }
+    store.commit('set_root_data', { 'key': 'user_info', 'value': data.user_info });
+    console.log(data);
+  }, 60 * 1000);
+});
 
-
+onBeforeUnmount(() => {
+  if (intervalId) {
+    clearInterval(intervalId); // 组件卸载时清除定时器
+  }
+});
 </script>
+
 
 <template>
   <div class="root">
@@ -107,7 +120,7 @@ onMounted(async () => {
   width: 20%;
   height: auto;
   margin-left: 5px;
-  z-index:5;
+  z-index: 5;
 }
 
 .page_item {

@@ -38,7 +38,7 @@ class EditUserInfo(View):
         row = cursor.fetchone()
         return dict(zip(columns, row)) if row else None
 
-    def _update_user_info(self, cursor, user_data, userid, is_super_admin):
+    def _update_user_info(self, cursor, user_data, userid, is_super_admin, target_user_permissions):
         update_fields = '''
             username = %(username)s, user_avatar = %(user_avatar)s, user_address = %(user_address)s, 
             password = %(password)s, user_back_img = %(user_back_img)s, phone = %(phone)s, 
@@ -46,11 +46,12 @@ class EditUserInfo(View):
             select_work = %(select_work)s, occupation = %(occupation)s, birthday = %(birthday)s, 
             vip = %(vip)s, account_status = %(account_status)s
         '''
-        if is_super_admin:
+
+        # 只有在操作者为超级管理员且目标用户权限低于操作者时才允许更新权限字段
+        if is_super_admin and target_user_permissions < 2:
             update_fields += ', account_permissions = %(account_permissions)s'
 
         update_sql = f'UPDATE users SET {update_fields} WHERE userid = %(userid)s'
-
         cursor.execute(update_sql, user_data)
 
     def get(self, request):
@@ -70,8 +71,9 @@ class EditUserInfo(View):
                 return self._log_and_return(request, 'warning', '缺少操作用户的userid')
 
             with connection.cursor() as cursor:
+                # 获取操作者的权限
                 cursor.execute('SELECT account_permissions FROM users WHERE userid=%s', (operate_userid,))
-                account_permissions = cursor.fetchone()
+                account_permissions = cursor.fetchone()[0]
                 if not account_permissions:
                     return self._log_and_return(request, 'warning', '操作用户不存在')
 
@@ -85,14 +87,21 @@ class EditUserInfo(View):
             userid = data.get('userid')
             if not userid:
                 return self._log_and_return(request, 'warning', '缺少被操作用户的userid')
-
-            if account_permissions[0] not in [1, 2]:
+            print(account_permissions)
+            # 检查是否允许修改权限
+            if account_permissions[0] not in [1, 2, '1', '2']:
                 return self._log_and_return(request, 'warning', '权限不足，无法修改用户信息')
 
             with connection.cursor() as cursor:
                 user_info = self._get_user_info(cursor, userid)
                 if not user_info:
                     return self._log_and_return(request, 'warning', '用户不存在')
+
+                target_user_permissions = user_info['account_permissions']
+
+                # 防止用户修改自己的权限
+                if operate_userid == userid or (account_permissions[0] == 2 and target_user_permissions == 2):
+                    data['account_permissions'] = target_user_permissions
 
                 update_data = {
                     'userid': userid,
@@ -110,12 +119,13 @@ class EditUserInfo(View):
                     'birthday': data.get('birthday', user_info['birthday']),
                     'vip': data.get('vip', user_info['vip']),
                     'account_status': data.get('account_status', user_info['account_status']),
-                    'account_permissions': data.get('account_permissions', user_info['account_permissions'])
+                    'account_permissions': data.get('account_permissions', user_info['account_permissions']),
+                    'current_userid': operate_userid  # 添加当前操作用户ID
                 }
 
                 is_super_admin = account_permissions[0] == 2
 
-                self._update_user_info(cursor, update_data, userid, is_super_admin)
+                self._update_user_info(cursor, update_data, userid, is_super_admin, target_user_permissions)
 
                 if is_super_admin:
                     self.logger.info(self._request_path(request) + '超级管理员修改用户信息，请求数据为：' + str(data))
