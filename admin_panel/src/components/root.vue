@@ -38,7 +38,7 @@ onMounted(async () => {
 
   // 定时每60秒验证一次
   intervalId = setInterval(async () => {
-    data = await admin_login(store_token.value, null, null);
+    data = await admin_login(localStorage.getItem('token'), null, null);
     if (data.is_login != 1) {
       store.commit('change_page', { 'page_key': 'login_page', 'page_value': true });
       clearInterval(intervalId);  // 取消定时器，避免多次跳转
