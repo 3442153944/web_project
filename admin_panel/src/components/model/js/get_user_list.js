@@ -4,6 +4,7 @@ async function get_user_list(){
             method:'post',
             headers:{
                 'Content-Type':'application/json',
+                'Authorization':`Bearer ${localStorage.getItem('token')}`
             },
             credentials:'include',
             body:JSON.stringify({
@@ -13,6 +14,7 @@ async function get_user_list(){
         if (res.ok)
         {
             const data=await res.json();
+            console.log(data);
             return data;
         }
     }

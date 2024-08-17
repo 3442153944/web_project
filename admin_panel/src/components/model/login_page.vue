@@ -31,8 +31,10 @@ const password = ref('');
 const handleLogin = async () => {
     // 登录处理逻辑待定
     let result = await admin_login(null, username.value, password.value)
+    localStorage.setItem('token', result.token);
+    console.log(result)
     if (result.token) {
-        store.commit('set_root_data', { 'key': 'token', 'value': result })
+        store.commit('set_root_data', { 'key': 'token', 'value': result.token })
         store.commit('change_page',{'page_key':'login_page','value':false})
         store.commit('change_page',{'page_key':'ill_control_page','value':true})
         store.commit('set_root_data',{'key':'user_info','value':result.user_info})

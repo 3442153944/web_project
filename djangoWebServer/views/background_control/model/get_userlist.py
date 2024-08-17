@@ -24,29 +24,39 @@ class GetUserList(View):
     def post(self, request, *args, **kwargs):
         try:
             authentication = Authentication()
-            authentication.set_request(request)
             data = json.loads(request.body.decode('utf-8'))
-            auth_token = request.COOKIES.get('auth_token')
-            print(auth_token)
-            authentication.authenticate_user(token=auth_token)
-            auth_data = request.session.get('auth_response_data',None)
-            print('服务器数据',auth_data)
-            if auth_data.get('is_login') == 1 and auth_data:
+            # 从请求头获取 Authorization 头部
+            auth_header = request.headers.get('Authorization')
+
+            token = None
+            if auth_header and auth_header.startswith("Bearer "):
+                try:
+                    parts = auth_header.split(" ")
+                    if len(parts) == 2 and parts[1] not in [None, 'null', '']:
+                        token = parts[1]
+                        print('解析token成功', token)
+                    else:
+                        print('\n解析token失败')
+                except Exception as e:
+                    print('\n解析token错误', e)
+            result = json.loads(authentication.authenticate_user(token=token))
+            print('\n验证结果', result.get('status'))
+            if result.get('status') == 'success':
                 sql = '''select * from users'''
                 cursor = connection.cursor()
                 cursor.execute(sql)
                 columns = [col[0] for col in cursor.description]
                 rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                authentication.app_end_msg(data={'user_list': rows})
-                return_data=authentication.authenticate_user(token=auth_token)
-                auth_data = request.session.get('auth_response_data', None)
-                print(auth_data)
-                return return_data
+                # 这里直接在 result 字典中更新 data 键
+                result['data'] = {'user_list': rows}
+                print('最后的结果：', result)
+                return JsonResponse(result, status=result.get('status_code') if result.get('status_code') else 404)
             else:
-                return_data = authentication.authenticate_user(token=auth_token)
-                return JsonResponse({'status':'error','message':'用户未登录！'})
+                return JsonResponse({'status': 'error', 'message': '用户未登录！'},
+                                    status=result.get('status_code') if result.get('status_code') else 404)
         except Exception as e:
             print(e)
             self.logger.error(f'{self._request_path(request)}请求失败，错误信息为：{str(e)}')
-            return_data =JsonResponse({'status':'error','message':'服务器错误！'})
+            return_data = JsonResponse({'status': 'error', 'message': '服务器错误！'})
             return return_data
+

@@ -25,8 +25,11 @@ let login_page_show = computed(() => store.getters.root_page.login_page);
 let commection_control_page_show = computed(() => store.getters.root_page.commection_control_page);
 
 onMounted(async () => {
-  let data = await admin_login(store_token.value, null, null);
+  let data = await admin_login(localStorage.getItem('token'), null, null);
   console.log(data);
+  //设置localStrong的token属性
+  localStorage.setItem('token', data.token);
+  // 判断是否登录
   if (data.is_login != 1) {
     store.commit('change_page', { 'page_key': 'login_page', 'page_value': true });
     return;

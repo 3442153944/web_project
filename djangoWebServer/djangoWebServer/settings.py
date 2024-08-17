@@ -110,13 +110,15 @@ INSTALLED_APPS = [
     'views.notice_control',
     'views.novel',
     'views.get_work_info',
-    'rest_framework',
     'views.update_userinfo',
     'views.work_interaction',
     'views.recommend',
     'views.rankling_list',
     'views.data_analysis',
+    'rest_framework',  # 确保只添加一次
+    'rest_framework_simplejwt',
 ]
+
 
 ASGI_APPLICATION = 'djangoWebServer.asgi.application'
 
@@ -180,8 +182,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# 添加 rest_framework
-INSTALLED_APPS += ['rest_framework', 'rest_framework_simplejwt']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
