@@ -61,27 +61,32 @@ class EditUserInfo(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            auth_token = request.COOKIES.get('auth_token')
-            operate_userid = request.COOKIES.get('userid', None)
+            auth_header = request.headers.get('Authorization')
 
-            if not auth_token:
-                return self._log_and_return(request, 'warning', '缺少auth_token')
+            token = None
+            if auth_header and auth_header.startswith("Bearer "):
+                try:
+                    parts = auth_header.split(" ")
+                    if len(parts) == 2 and parts[1] not in [None, 'null', '']:
+                        token = parts[1]
+                        print('解析token成功', token)
+                    else:
+                        print('\n解析token失败')
+                except Exception as e:
+                    print('\n解析token错误', e)
+            result = json.loads(self.authentication.authenticate_user(token=token))
 
-            if not operate_userid:
-                return self._log_and_return(request, 'warning', '缺少操作用户的userid')
+            operate_userid=result['user_info']['userid']
 
             with connection.cursor() as cursor:
                 # 获取操作者的权限
-                cursor.execute('SELECT account_permissions FROM users WHERE userid=%s', (operate_userid,))
+                cursor.execute('SELECT account_permissions FROM users WHERE userid=%s', (result['user_info']['userid']))
                 account_permissions = cursor.fetchone()[0]
                 if not account_permissions:
                     return self._log_and_return(request, 'warning', '操作用户不存在')
 
-            self.authentication.set_request(request)
-            self.authentication.authenticate_user(token=auth_token)
-            auth_data = request.session.get('auth_response_data', None)
 
-            if not (auth_data and auth_data.get('is_login') == 1):
+            if not (result and result.get('is_login') == 1):
                 return self._log_and_return(request, 'warning', '用户未登录')
 
             userid = data.get('userid')
@@ -100,7 +105,7 @@ class EditUserInfo(View):
                 target_user_permissions = user_info['account_permissions']
 
                 # 防止用户修改自己的权限
-                if operate_userid == userid or (account_permissions[0] == 2 and target_user_permissions == 2):
+                if result['user_info']['userid'] == userid or (account_permissions[0] == 2 and target_user_permissions == 2):
                     data['account_permissions'] = target_user_permissions
 
                 update_data = {
