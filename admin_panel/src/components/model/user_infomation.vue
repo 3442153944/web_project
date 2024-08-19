@@ -83,7 +83,11 @@
                     </div>
                     <div class="info_item">
                         <label>账号状态：</label>
-                        <input v-model="user_info.account_status" type="text">
+                        <select v-model="user_info.account_status" :disabled="account_permissions_edit">
+                            <option value="1">正常</option>
+                            <option value="0">封禁</option>
+                            <option value="2">禁言</option>
+                        </select>
                     </div>
                     <div class="info_item">
                         <label>账号权限：</label>
@@ -182,7 +186,13 @@ async function confirm_action() {
         'email': email, 'user_self_website': user_self_website, 'sex': sex, 'select_work': select_work,
         'occupation': occupation, 'birthday': birthday, 'vip': vip, 'account_status': account_status, 'account_permissions': account_permissions
     })
-    console.log(data)
+    if(data.status=='error')
+    {
+        alert(data.message)
+    }
+    else{
+        console.log(data)
+    }
 }
 </script>
 

@@ -128,69 +128,91 @@ class Authentication(View):
                     try:
                         if self._is_blocked(userid):
                             return json.dumps({'status': 'error', 'message': '用户已被锁定，请稍后再试',
-                                               'token': '','status_code': 429})
+                                               'token': '', 'status_code': 429})
 
                         # 基于 ID 和密码的认证
                         get_user_sql = '''
                             SELECT userid, account_permissions FROM users WHERE userid=%s AND password=%s
                         '''
                         if not self._record_attempt(userid):
-                            return json.dumps({'status':'error','message':'操作过于频繁，请稍后再试','token':'','status_code':429})
+                            return json.dumps({'status': 'error', 'message': '操作过于频繁，请稍后再试', 'token': '',
+                                               'status_code': 429})
 
                         row = self._fetch_user(cursor, get_user_sql, (str(userid), str(password)))
+
+                        if not row:
+                            self._record_failed_attempt(userid)
+                            return json.dumps({'status': 'error', 'message': '用户名或密码错误',
+                                               'token': '', 'status_code': 401})
+
                         if row and row[1] in ['1', '2']:
                             # 生成 JWT Token 并加密
                             userid = row[0]  # 获取用户对象
                             new_token = create_jwt_token(userid)
                             encrypted_token = encrypt_token(new_token)
-                            account_permissions=row[1]
-                            #获取登录用户信息
-                            get_userinfo_sql='select * from users where userid=%s'
-                            cursor.execute(get_userinfo_sql,(userid,))
-                            user_info=cursor.fetchone()
-                            columns=[desc[0] for desc in cursor.description]
-                            user_info=dict(zip(columns,user_info))
+                            account_permissions = row[1]
+                            # 获取登录用户信息
+                            get_userinfo_sql = 'SELECT * FROM users WHERE userid=%s'
+                            cursor.execute(get_userinfo_sql, (userid,))
+                            user_info = cursor.fetchone()
+                            columns = [desc[0] for desc in cursor.description]
+                            user_info = dict(zip(columns, user_info))
                             return json.dumps({'status': 'success', 'token': encrypted_token,
-                                               'status_code': 200,'is_login':1,'account_permissions':account_permissions,
-                                               'user_info':user_info})
+                                               'status_code': 200, 'is_login': 1,
+                                               'account_permissions': account_permissions,
+                                               'user_info': user_info})
                         else:
                             self._record_failed_attempt(userid)
-                            return json.dumps({'status': 'error', 'message': '用户名或密码错误，请稍后再试',
-                                               'token': '','status_code':400})
+                            return json.dumps({'status': 'error', 'message': '非授权用户，请联系管理员',
+                                               'token': '', 'status_code': 403})
                     except Exception as e:
                         print('\n用户认证错误：', e)
                         self.logger.error('用户认证错误：' + str(e))
-                        return json.dumps({'status': 'error', 'message': '服务器错误','token':'',
-                                           'status_code':500})
+                        return json.dumps({'status': 'error', 'message': '服务器错误', 'token': '',
+                                           'status_code': 500})
 
                 if token is not None and token != '':
                     # 验证 JWT Token
-                    decrypted_token = decrypt_token(token)
-                    payload = decode_jwt_token(decrypted_token)
-                    userid = payload.get('userid')
-                    #获取用户权限
-                    get_user_sql = '''
-                        SELECT account_permissions FROM users WHERE userid=%s
-                    '''
-                    #获取登录用户信息
-                    get_userinfo_sql = 'select * from users where userid=%s'
-                    cursor.execute(get_userinfo_sql, (str(userid),))
-                    user_info = cursor.fetchone()
-                    columns = [desc[0] for desc in cursor.description]
-                    user_info = dict(zip(columns, user_info))
-                    cursor.execute(get_user_sql, (str(userid),))
-                    account_permissions = cursor.fetchone()[0]
-                    # 生成新的 Token
-                    new_token = create_jwt_token(userid)
-                    encrypted_new_token = encrypt_token(new_token)
-                    print('新token:', new_token)
-                    return json.dumps({'status': 'success', 'token': encrypted_new_token,'status_code':200,
-                                       'data':'','is_login':1,'account_permissions':account_permissions,
-                                       'user_info':user_info})
+                    try:
+                        decrypted_token = decrypt_token(token)
+                        payload = decode_jwt_token(decrypted_token)
+                        userid = payload.get('userid')
+
+                        # 获取用户权限
+                        get_user_sql = '''
+                            SELECT account_permissions FROM users WHERE userid=%s
+                        '''
+                        # 获取登录用户信息
+                        get_userinfo_sql = 'SELECT * FROM users WHERE userid=%s'
+                        cursor.execute(get_userinfo_sql, (str(userid),))
+                        user_info = cursor.fetchone()
+                        columns = [desc[0] for desc in cursor.description]
+                        user_info = dict(zip(columns, user_info))
+                        cursor.execute(get_user_sql, (str(userid),))
+                        account_permissions = cursor.fetchone()[0]
+
+                        # 生成新的 Token
+                        new_token = create_jwt_token(userid)
+                        encrypted_new_token = encrypt_token(new_token)
+                        return json.dumps({'status': 'success', 'token': encrypted_new_token, 'status_code': 200,
+                                           'data': '', 'is_login': 1, 'account_permissions': account_permissions,
+                                           'user_info': user_info})
+                    except jwt.ExpiredSignatureError:
+                        return json.dumps({'status': 'error', 'message': 'Token 已过期', 'token': '',
+                                           'status_code': 401, 'is_login': 0})
+                    except jwt.InvalidTokenError:
+                        return json.dumps({'status': 'error', 'message': '无效的 Token', 'token': '',
+                                           'status_code': 400, 'is_login': 0})
+                    except Exception as e:
+                        print('\n', e)
+                        self.logger.error(f"Token 验证错误: {e}")
+                        return json.dumps({'status': 'error', 'message': '服务器错误', 'token': '',
+                                           'status_code': 500, 'is_login': 0})
+
                 else:
-                    return json.dumps({'status': 'error', 'message': '缺少认证信息','status_code':400})
+                    return json.dumps({'status': 'error', 'message': '缺少认证信息', 'status_code': 400})
 
         except Exception as e:
             print('\n', e)
             self.logger.error(f"认证过程中出错: {e}")
-            return json.dumps({'status': 'error', 'message': '认证过程中出错','status_code':'500'})
+            return json.dumps({'status': 'error', 'message': '认证过程中出错', 'status_code': 500})

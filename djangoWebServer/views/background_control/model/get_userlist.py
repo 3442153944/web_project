@@ -23,37 +23,40 @@ class GetUserList(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            authentication = Authentication()
             data = json.loads(request.body.decode('utf-8'))
-            # 从请求头获取 Authorization 头部
-            auth_header = request.headers.get('Authorization')
-
-            token = None
-            if auth_header and auth_header.startswith("Bearer "):
-                try:
-                    parts = auth_header.split(" ")
-                    if len(parts) == 2 and parts[1] not in [None, 'null', '']:
-                        token = parts[1]
-                        print('解析token成功', token)
-                    else:
-                        print('\n解析token失败')
-                except Exception as e:
-                    print('\n解析token错误', e)
-            result = json.loads(authentication.authenticate_user(token=token))
-            print('\n验证结果', result.get('status'))
-            if result.get('status') == 'success':
-                sql = '''select * from users'''
-                cursor = connection.cursor()
-                cursor.execute(sql)
-                columns = [col[0] for col in cursor.description]
-                rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
-                # 这里直接在 result 字典中更新 data 键
-                result['data'] = {'user_list': rows}
-                print('最后的结果：', result)
-                return JsonResponse(result, status=result.get('status_code') if result.get('status_code') else 404)
+            userid = str(getattr(request, 'userid', None))
+            is_authenticated = getattr(request, 'is_authenticated', None)
+            if is_authenticated:
+                with connection.cursor() as cursor:
+                    sql = '''select account_permissions from users where userid=%s'''
+                    cursor.execute(sql, (userid,))
+                    account_permissions = cursor.fetchone()[0]
+                if account_permissions in ['1', '2', 1, 2]:
+                    offset = data.get('offset',0)
+                    limit = data.get('limit',10)
+                    sql = '''select * from users limit %s offset %s'''
+                    cursor = connection.cursor()
+                    cursor.execute(sql,[limit,offset])
+                    columns = [col[0] for col in cursor.description]
+                    rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                    return JsonResponse({
+                        'status': 'success',
+                        'message': '获取用户列表成功！',
+                        'status_code': 200,
+                        'data': {'user_list':rows}
+                    },status=200)
+                else:
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': '用户权限不足！',
+                        'status_code': 403
+                    },status=403)
             else:
-                return JsonResponse({'status': 'error', 'message': '用户未登录！'},
-                                    status=result.get('status_code') if result.get('status_code') else 404)
+                return JsonResponse({
+                    'status': 'error',
+                    'message': '用户未登录！',
+                    'status_code': 401
+                },status=401)
         except Exception as e:
             print(e)
             self.logger.error(f'{self._request_path(request)}请求失败，错误信息为：{str(e)}')

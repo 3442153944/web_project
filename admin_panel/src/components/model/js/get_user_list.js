@@ -1,4 +1,4 @@
-async function get_user_list(){
+async function get_user_list(offset=0,limit=10){
     try{
         const res=await fetch('https://www.sunyuanling.com/api/admin_control/GetUserList/',{
             method:'post',
@@ -8,7 +8,8 @@ async function get_user_list(){
             },
             credentials:'include',
             body:JSON.stringify({
-                
+                offset:offset,
+                limit:limit
             })
         })
         if (res.ok)

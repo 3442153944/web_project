@@ -42,6 +42,7 @@ onMounted(async () => {
     if (data.is_login != 1) {
       store.commit('change_page', { 'page_key': 'login_page', 'page_value': true });
       clearInterval(intervalId);  // 取消定时器，避免多次跳转
+      alert(data.message)
       return;
     }
     store.commit('set_root_data', { 'key': 'user_info', 'value': data.user_info });

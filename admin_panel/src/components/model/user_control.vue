@@ -1,5 +1,5 @@
 <template>
-    <div class="user_control">
+    <div class="user_control" @scroll="handle_scroll">
         <h1>用户管理</h1>
         <div class="content" v-if="user_data">
             <div class="search_user">
@@ -19,7 +19,7 @@
                 <h5>用户电话</h5>
                 <div class="item_phone" contenteditable="true">{{ item.phone }}</div>
                 <h5>用户vip状态</h5>
-                <div class="item_vip" contenteditable="true">{{ (item.vip==1?'VIP用户':'普通用户') }}</div>
+                <div class="item_vip" contenteditable="true">{{ item.vip === 1 ? 'VIP用户' : '普通用户' }}</div>
                 <h5>用户账号状态</h5>
                 <div class="item_account_status">
                     <select v-model="item.account_status">
@@ -36,9 +36,10 @@
                         <option value="2">超级管理员</option>
                     </select>
                 </div>
-                <div class="item_show" @click="choose_user(item)">查看详细信息</div>
+                <div class="item_show" @click="choose_user(item)">查看详细信息（修改）</div>
                 <div class="item_delete" @click="deleteUser(index)">删除</div>
             </div>
+            <div v-if="loadingMore" class="loading">加载中...</div>
         </div>
     </div>
     <user_infomation v-if="user_infomation_show" :user_info="user_data_info" @close_page="close_user_info_page"></user_infomation>
@@ -46,7 +47,7 @@
 
 <script setup>
 import { get_user_list } from './js/get_user_list';
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, computed, watch, onUnmounted } from 'vue';
 import user_infomation from './user_infomation.vue';
 
 const user_infomation_show = ref(false);
@@ -54,10 +55,13 @@ const user_list = ref([]);
 const user_data = ref([]);
 const search_type = ref('');
 const user_data_info = ref({});
+const offset = ref(0);
+const limit = ref(3);
+const loadingMore = ref(false);
 
 onMounted(async () => {
-    user_list.value = await get_user_list();
-    user_data.value = user_list.value.data.user_list;
+    await loadMoreUsers();
+    window.addEventListener('scroll', handle_scroll);
 });
 
 const filteredUserData = computed(() => {
@@ -68,9 +72,28 @@ const filteredUserData = computed(() => {
     );
 });
 
-const deleteUser = (index) => {
+async function loadMoreUsers() {
+    if (loadingMore.value) return;
+    
+    loadingMore.value = true;
+    try {
+        const response = await get_user_list(offset.value, limit.value);
+        const newUsers = response.data.user_list;
+        if (newUsers.length > 0) {
+            user_data.value = [...user_data.value, ...newUsers];
+            offset.value += limit.value;
+        }
+    } catch (error) {
+        console.error('加载用户列表出错:', error);
+    } finally {
+        loadingMore.value = false;
+    }
+}
+
+
+function deleteUser(index) {
     user_data.value.splice(index, 1);
-};
+}
 
 function choose_user(item) {
     user_data_info.value = item;
@@ -81,15 +104,21 @@ function close_user_info_page() {
     user_infomation_show.value = false;
 }
 
-// 监听 user_infomation_show 的变化
-watch(user_infomation_show, (newVal) => {
-    if (newVal) {
-        document.body.style.overflow = 'hidden';
-    } else {
-        document.body.style.overflow = '';
+function handle_scroll() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+
+    if (scrollTop + windowHeight >= documentHeight - 10) {
+        loadMoreUsers();
     }
+}
+
+onUnmounted(() => {
+    window.removeEventListener('scroll', handle_scroll);
 });
 </script>
+
 
 
 <style scoped>

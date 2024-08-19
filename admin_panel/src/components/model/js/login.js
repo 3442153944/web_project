@@ -10,7 +10,8 @@ async function admin_login(jwtToken=10086, userid = 10086, password = 10086) {
             credentials: 'include', // 确保 cookies 被包含在请求中
             body: JSON.stringify({
                 userid: userid,
-                password: password
+                password: password,
+                login_type:'back_end'
             })
         });
 

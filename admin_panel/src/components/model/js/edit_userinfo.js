@@ -20,7 +20,8 @@ async function edit_userinfo({
         const res = await fetch("https://www.sunyuanling.com/api/admin_control/EditUserInfo/", {
             method: "POST",
             headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "Authorization": "Bearer " + localStorage.getItem("token"),
             },
             credentials: "include",
             body: JSON.stringify({

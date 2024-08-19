@@ -26,14 +26,14 @@ class EditUserInfo(View):
         return JsonResponse({'status': 'error', 'message': message}, status=status)
 
     def _get_user_info(self, cursor, userid):
-        get_user_sql = '''
+        sql = '''
             SELECT username, user_avatar, user_address, password, user_back_img,
                    phone, email, user_self_website, sex, select_work, occupation,
                    birthday, vip, account_status, account_permissions
             FROM users
             WHERE userid = %s
         '''
-        cursor.execute(get_user_sql, (userid,))
+        cursor.execute(sql, (userid,))
         columns = [column[0] for column in cursor.description]
         row = cursor.fetchone()
         return dict(zip(columns, row)) if row else None
@@ -46,13 +46,12 @@ class EditUserInfo(View):
             select_work = %(select_work)s, occupation = %(occupation)s, birthday = %(birthday)s, 
             vip = %(vip)s, account_status = %(account_status)s
         '''
-
         # 只有在操作者为超级管理员且目标用户权限低于操作者时才允许更新权限字段
         if is_super_admin and target_user_permissions < 2:
             update_fields += ', account_permissions = %(account_permissions)s'
 
-        update_sql = f'UPDATE users SET {update_fields} WHERE userid = %(userid)s'
-        cursor.execute(update_sql, user_data)
+        sql = f'UPDATE users SET {update_fields} WHERE userid = %(userid)s'
+        cursor.execute(sql, user_data)
 
     def get(self, request):
         self.logger.warning(self._request_path(request) + '非法GET请求，请求数据为：' + str(request.GET))
@@ -61,52 +60,47 @@ class EditUserInfo(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            auth_header = request.headers.get('Authorization')
+            operate_userid = str(getattr(request, 'userid', None))
+            is_authenticated = getattr(request, 'is_authenticated', None)
 
-            token = None
-            if auth_header and auth_header.startswith("Bearer "):
-                try:
-                    parts = auth_header.split(" ")
-                    if len(parts) == 2 and parts[1] not in [None, 'null', '']:
-                        token = parts[1]
-                        print('解析token成功', token)
-                    else:
-                        print('\n解析token失败')
-                except Exception as e:
-                    print('\n解析token错误', e)
-            result = json.loads(self.authentication.authenticate_user(token=token))
-
-            operate_userid=result['user_info']['userid']
+            if is_authenticated is False:
+                return JsonResponse({'status':'error','message':'用户未登录'},status=401)
 
             with connection.cursor() as cursor:
                 # 获取操作者的权限
-                cursor.execute('SELECT account_permissions FROM users WHERE userid=%s', (result['user_info']['userid']))
-                account_permissions = cursor.fetchone()[0]
-                if not account_permissions:
+                cursor.execute('SELECT account_permissions FROM users WHERE userid=%s', (operate_userid,))
+                account_permissions = int(cursor.fetchone()[0])
+
+                if account_permissions is None:
                     return self._log_and_return(request, 'warning', '操作用户不存在')
 
+                # 权值为0的用户直接返回权限不足
+                if account_permissions == 0:
+                    return self._log_and_return(request, 'warning', '权限不足', status=403)
 
-            if not (result and result.get('is_login') == 1):
-                return self._log_and_return(request, 'warning', '用户未登录')
+                userid = data.get('userid')
+                if not userid:
+                    return self._log_and_return(request, 'warning', '缺少被操作用户的userid')
 
-            userid = data.get('userid')
-            if not userid:
-                return self._log_and_return(request, 'warning', '缺少被操作用户的userid')
-            print(account_permissions)
-            # 检查是否允许修改权限
-            if account_permissions[0] not in [1, 2, '1', '2']:
-                return self._log_and_return(request, 'warning', '权限不足，无法修改用户信息')
-
-            with connection.cursor() as cursor:
                 user_info = self._get_user_info(cursor, userid)
                 if not user_info:
                     return self._log_and_return(request, 'warning', '用户不存在')
 
-                target_user_permissions = user_info['account_permissions']
+                target_user_permissions = int(user_info['account_permissions'])
+
+                # 权限检查：普通管理员不能操作比自己权限高或同级的用户
+                if account_permissions == 1 and target_user_permissions >= account_permissions:
+                    return self._log_and_return(request, 'warning', '权限不足，无法修改此用户的信息', status=403)
 
                 # 防止用户修改自己的权限
-                if result['user_info']['userid'] == userid or (account_permissions[0] == 2 and target_user_permissions == 2):
+                if operate_userid == userid or (account_permissions == 2 and target_user_permissions == 2):
                     data['account_permissions'] = target_user_permissions
+
+                # 根据条件设置 account_permissions
+                if int(data.get('account_permissions', target_user_permissions)) < 2:
+                    data['account_permissions'] = data.get('account_permissions', target_user_permissions)
+                else:
+                    data['account_permissions'] = 0
 
                 update_data = {
                     'userid': userid,
@@ -124,13 +118,16 @@ class EditUserInfo(View):
                     'birthday': data.get('birthday', user_info['birthday']),
                     'vip': data.get('vip', user_info['vip']),
                     'account_status': data.get('account_status', user_info['account_status']),
-                    'account_permissions': data.get('account_permissions', user_info['account_permissions']),
-                    'current_userid': operate_userid  # 添加当前操作用户ID
+                    'account_permissions': data['account_permissions'],
+                    'current_userid': operate_userid
                 }
 
-                is_super_admin = account_permissions[0] == 2
+                is_super_admin = account_permissions == 2
 
-                self._update_user_info(cursor, update_data, userid, is_super_admin, target_user_permissions)
+                if account_permissions>target_user_permissions:
+                    self._update_user_info(cursor, update_data, userid, is_super_admin, target_user_permissions)
+                else:
+                    self._log_and_return(request, 'warning', '权限不足，无法修改此用户的信息', status=403)
 
                 if is_super_admin:
                     self.logger.info(self._request_path(request) + '超级管理员修改用户信息，请求数据为：' + str(data))
@@ -140,6 +137,9 @@ class EditUserInfo(View):
 
                 if cursor.rowcount >= 1:
                     return JsonResponse({'status': 'success', 'message': '修改成功'})
+                else:
+                    return self._log_and_return(request, 'warning', '没有修改任何信息', data)
 
         except Exception as e:
+            print(e)
             return self._log_and_return(request, 'error', '服务器发生错误', str(e), status=500)

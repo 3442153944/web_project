@@ -2,6 +2,8 @@ import os
 from datetime import timedelta
 from pathlib import Path
 
+from cryptography.fernet import Fernet
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # 配置静态网页的代理
@@ -12,6 +14,11 @@ STATICFILES_DIRS = [
 ]
 
 SECRET_KEY = 'django-insecure-ypu2=#s5wqperumf6kmmi=eb4)u=#sror+nsa*kq$dfkhm7-a-'
+
+# token对称加密秘钥
+# 秘钥，用于加密和解密前端的 Token
+token_SECRET_KEY = b'lgYdcCA1tc5odYAkri_fYg2UuAlhhInFzTUSnSRpPzY='  # 必须为 32 字节
+
 PORT = 2233
 
 DEBUG = True
@@ -131,6 +138,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #密码认证中间件
+    'views.middleware.password_auth_middleware.PasswordAuthMiddleware',
+    #token认证中间件
+    'views.middleware.token_auth_middleware.TokenAuthMiddleware',
+    #临时认证中间件
+    'views.middleware.temp_auth_middleware.TempAuthMiddleware',
 ]
 
 ROOT_URLCONF = 'djangoWebServer.urls'
@@ -212,3 +225,5 @@ SESSION_COOKIE_AGE = 60 * 60  # 30 分钟 = 1800 秒
 
 # 如果需要在浏览器关闭时过期
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
+
