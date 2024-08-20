@@ -19,12 +19,13 @@ cipher_suite = Fernet(token_secret)
 logger = Logger()
 TOKEN_EXPIRY=3600
 
-def create_jwt_token(userid):
+def create_jwt_token(userid, role='front_end'):
     """生成并签名 JWT Token，设置自定义过期时间"""
     try:
         payload = {
             'userid': userid,
-            'exp': timezone.now() + timedelta(seconds=TOKEN_EXPIRY)  # 使用 timezone.now()
+            'exp': timezone.now() + timedelta(seconds=TOKEN_EXPIRY),  # 使用 timezone.now()
+            'role': role  # 添加 role 字段以区分前后台
         }
         # 使用 SECRET_KEY 进行编码
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
@@ -97,13 +98,13 @@ class PasswordAuthMiddleware:
         else:
             cache.set(attempts_key, failed_attempts + 1)
 
-    def _authenticate_user(self, userid, password, login_type, username=None, email=None):
+    def _authenticate_user(self, userid, password, login_type, username=None, email=None, role='front_end'):
         """根据登录类型选择 SQL 查询语句并执行"""
         if login_type == 'front_end':
             query = '''SELECT * FROM users WHERE (userid=%s OR username=%s OR email=%s) AND password=%s'''
             params = (userid, username, email, password)
         elif login_type == 'back_end':
-            query = '''SELECT * FROM users WHERE userid=%s AND password=%s'''
+            query = '''SELECT * FROM users WHERE userid=%s AND password=%s AND (role='super_admin' OR role='admin') '''
             params = (userid, password)
         else:
             return None, None
@@ -116,8 +117,9 @@ class PasswordAuthMiddleware:
                     columns = [desc[0] for desc in cursor.description]
                     user_info = dict(zip(columns, user_data))
                     # 过滤用户信息
+                    userid = user_info['userid']
                     filtered_user_info = filter_user_info(user_info)
-                    return filtered_user_info, create_jwt_token(userid)
+                    return filtered_user_info, create_jwt_token(userid, role)
                 else:
                     return None, None
         except Exception as e:
@@ -150,16 +152,18 @@ class PasswordAuthMiddleware:
         if not self._record_attempt(userid):
             return JsonResponse({'status': 'error', 'message': '操作过于频繁，请稍后再试'}, status=429)
 
-        user_info, token = self._authenticate_user(userid, password, login_type, username, email)
-        e_token=encrypt_token(token)
+        user_info, token = self._authenticate_user(userid, password, login_type, username, email, login_type)
+        e_token = encrypt_token(token)
         if user_info:
             request.userinfo = json.dumps(user_info)
             request.userid = userid
             request.token = e_token
             request.is_authenticated = True
+            request.role = login_type
             return None
         else:
             self._record_failed_attempt(userid)
+            logger.warning(f'认证失败: 用户 {userid}, 登录类型 {login_type}')
             return JsonResponse({'status': 'error', 'message': '认证失败'}, status=401)
 
     def __call__(self, request):
@@ -168,3 +172,4 @@ class PasswordAuthMiddleware:
             if response:
                 return response
         return self.get_response(request)
+

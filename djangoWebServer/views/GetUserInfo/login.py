@@ -27,7 +27,16 @@ class Login(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            data = json.loads(request.body.decode('utf-8'))
+            token=getattr(request, 'token', None)
+            if token:
+                print('从请求头中获取的token'+str(token))
+                return JsonResponse({'status': 'success', 'message': '登录成功', 'token': token}, status=200)
+            else:
+                print('从请求头中获取的token为空')
+                return JsonResponse({'status': 'failed', 'message': 'token为空'}, status=400)
+        except Exception as e:
+            print(e)
+            '''data = json.loads(request.body.decode('utf-8'))
             userid = data.get('userid')
             username=data.get('username')
             password = data.get('password')
@@ -103,3 +112,4 @@ class Login(View):
                 f'{self.request_path(request)} - 访问失败：Exception {str(e)}，请求数据：{str(request.body)}')
             print(e)
             return JsonResponse({'status': 'failed', 'message': '服务器内部错误'}, status=500)
+            '''

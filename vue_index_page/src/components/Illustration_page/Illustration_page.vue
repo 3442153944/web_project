@@ -36,7 +36,8 @@ async function get_follow_illustrations_list() {
     const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowToIll/', {
       method: 'post',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer '+localStorage.getItem('token')
       },
       body: JSON.stringify({
         userid: user_info.value.userid,
@@ -64,7 +65,8 @@ async function get_author_avatar(userid) {
     const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
       method: 'post',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization':'Bearer '+localStorage.getItem('token')
       },
       body: JSON.stringify({
         userid: userid,

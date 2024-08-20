@@ -25,15 +25,18 @@ class Like(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
+            userid=getattr(request, 'userid', None)
+            if not userid:
+                with connection.cursor() as cursor:
+                    if token:
+                        cursor.execute('select userid from users where token=%s', [token])
+                        result = cursor.fetchone()
+                        if not result:
+                            self.logger.error(
+                                self.request_path(request) + '请求信息：' + str(request.POST) + '错误信息：无效的token')
+                            return JsonResponse({'status': 'error', 'message': '无效的token'}, status=403)
+                        userid = result[0]  # 只有在 result 不为 None 时才会赋值
             with connection.cursor() as cursor:
-                cursor.execute('select userid from users where token=%s', [token])
-                result = cursor.fetchone()
-                if not result:
-                    self.logger.error(
-                        self.request_path(request) + '请求信息：' + str(request.POST) + '错误信息：无效的token')
-                    return JsonResponse({'status': 'error', 'message': '无效的token'}, status=403)
-
-                userid = result[0]
                 operate_type = data.get('operate_type')
                 work_id = int(data.get('work_id'))
                 work_type = data.get('work_type')

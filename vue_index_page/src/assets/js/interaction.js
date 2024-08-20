@@ -3,7 +3,8 @@ async function watch_work(work_id,a_token,work_type,work_name) {
         const res = await fetch('https://www.sunyuanling.com/api/work_interaction/Watch/', {
             method: 'post',
             headers: {
-                'Content-type': 'application/json'
+                'Content-type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body: JSON.stringify({
                 token: a_token,
@@ -35,7 +36,8 @@ async function like_work(work_id, operate_type, token, work_type, work_name) {
         const res = await fetch('https://www.sunyuanling.com/api/work_interaction/Like/', {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body: JSON.stringify({
                 work_id: work_id,
@@ -68,7 +70,8 @@ async function collect_work(work_id, operate_type, token, work_type, work_name) 
         const res = await fetch('https://www.sunyuanling.com/api/work_interaction/Collect/', {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body: JSON.stringify({
                 work_id: work_id,

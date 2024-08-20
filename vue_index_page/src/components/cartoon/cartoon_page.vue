@@ -38,7 +38,8 @@ async function get_comic_list(){
     const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowToComic/',{
       method:'post',
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
       body:JSON.stringify({
         userid:userinfo.value.userid,
@@ -68,7 +69,8 @@ async function get_author_avatar(userid) {
     const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
       method: 'post',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token'),
       },
       body: JSON.stringify({
         userid: userid,

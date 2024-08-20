@@ -4,7 +4,7 @@ async function get_user_follow_work_tags(token) {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+                'Authorization':'Bearer '+localStorage.getItem('token')
             },
             body: JSON.stringify({
                 token: token
@@ -16,6 +16,8 @@ async function get_user_follow_work_tags(token) {
         }
         else {
             console.log('获取关注作品标签失败');
+            const data= await res.json();
+            console.log(data);
             return false;
         }
     }
@@ -28,6 +30,10 @@ async function get_userinfo(token = null, userid = null) {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
             method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization':'Bearer '+localStorage.getItem('token')
+            },
             body: JSON.stringify({
                 token: token,
                 userid: userid

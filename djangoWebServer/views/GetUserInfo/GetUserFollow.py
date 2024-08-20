@@ -15,24 +15,24 @@ class GetUserFollow(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
-            userid = None
+            userid = getattr(request, 'userid', None)
+            if not userid:
+                if token:
+                    with connection.cursor() as cursor:
+                        sql = 'SELECT userid FROM users WHERE token=%s'
+                        cursor.execute(sql, [token])
+                        result = cursor.fetchone()
+                        if result:
+                            userid = result[0]
+                        else:
+                            # Handle case where token is not found
+                            return JsonResponse({'status': 'failure', 'message': 'Invalid token'}, status=400)
 
-            if token:
-                with connection.cursor() as cursor:
-                    sql = 'SELECT userid FROM users WHERE token=%s'
-                    cursor.execute(sql, [token])
-                    result = cursor.fetchone()
-                    if result:
-                        userid = result[0]
-                    else:
-                        # Handle case where token is not found
-                        return JsonResponse({'status': 'failure', 'message': 'Invalid token'}, status=400)
-
-            # If token is not provided, fallback to userid from the request
-            if userid is None:
-                userid = data.get('userid')
-                if not userid:
-                    return JsonResponse({'status': 'failure', 'message': 'User ID is required'}, status=400)
+                # If token is not provided, fallback to userid from the request
+                if userid is None:
+                    userid = data.get('userid')
+                    if not userid:
+                        return JsonResponse({'status': 'failure', 'message': 'User ID is required'}, status=400)
 
             with connection.cursor() as cursor:
                 sql = 'SELECT * FROM user_follow WHERE user_id=%s'

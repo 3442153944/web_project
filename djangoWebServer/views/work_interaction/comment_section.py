@@ -25,21 +25,22 @@ class AddCommentSection(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
+            user_id=getattr(request,'userid',None)
             key = data.get('key')
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-
-            if token == 'sunyuanling' or key == 'sunyuanling':
-                # 使用管理员信息进行插入操作
-                user_id = admin_userid
-            else:
-                with connection.cursor() as cursor:
-                    cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                    result = cursor.fetchone()
-                    if not result:
-                        self.logger.warning(self.request_path(request) + '请求数据为：' + str(
-                            request.POST) + '，错误信息为：' + 'token无效')
-                        return JsonResponse({'status': 'error', 'message': 'token无效'}, status=400)
-                    user_id = result[0]
+            if not user_id:
+                if token == 'sunyuanling' or key == 'sunyuanling':
+                    # 使用管理员信息进行插入操作
+                    user_id = admin_userid
+                else:
+                    with connection.cursor() as cursor:
+                        cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                        result = cursor.fetchone()
+                        if not result:
+                            self.logger.warning(self.request_path(request) + '请求数据为：' + str(
+                                request.POST) + '，错误信息为：' + 'token无效')
+                            return JsonResponse({'status': 'error', 'message': 'token无效'}, status=400)
+                        user_id = result[0]
             main_user_id = data.get('main_user_id')
             is_root_comment = data.get('is_root_comment')
             if is_root_comment == '1' or is_root_comment == True or is_root_comment == 1:
@@ -106,26 +107,29 @@ class LikeComment(View):
             print(data)
             operate = data.get('operate')
             token = data.get('token')
+            userid=getattr(request,'userid',None)
             print(token)
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-            if not token:
-                print('token错误')
-                self.logger.error(
-                    self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + '没有token')
-                return JsonResponse({'status': 'error', 'message': '没有token'}, status=400)
-            if token == 'sunyuanling':
-                userid = admin_userid
-            with connection.cursor() as cursor:
-                cursor.execute('select userid,username from users where token=%s or userid=%s', [token,admin_userid])
-                result = cursor.fetchone()
-                if result:
-                    userid = result[0]
-                    username = result[1]
-                else:
-                    print('admin info error and user info error')
+            if not userid:
+                if token:
+                    print('token错误')
                     self.logger.error(
-                        self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'token错误')
-                    return JsonResponse({'status': 'error', 'message': 'token错误'}, status=400)
+                        self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + '没有token')
+                    return JsonResponse({'status': 'error', 'message': '没有token'}, status=400)
+                if token == 'sunyuanling':
+                    userid = admin_userid
+                with connection.cursor() as cursor:
+                    cursor.execute('select userid,username from users where token=%s or userid=%s', [token,admin_userid])
+                    result = cursor.fetchone()
+                    if result:
+                        userid = result[0]
+                        username = result[1]
+                    else:
+                        print('admin info error and user info error')
+                        self.logger.error(
+                            self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'token错误')
+                        return JsonResponse({'status': 'error', 'message': 'token错误'}, status=400)
+            with connection.cursor() as cursor:
                 if operate == 'like':
                     try:
                         comment_id = data.get('comment_id')
@@ -187,6 +191,7 @@ class LikeComment(View):
                                             status=200)
                     else:
                         return JsonResponse({'status': 'error', 'message': '查询失败'}, status=400)
+                return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)
 
         except Exception as e:
             print(e)
@@ -246,24 +251,25 @@ class GetCommentSection(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
+            user_id=getattr(request, 'userid', None)
             key = data.get('key')
             work_id = data.get('work_id')
             work_type = data.get('work_type')
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
             limit = int(data.get('limit', 10))
             offset = int(data.get('offset', 0))
-
-            if token == 'sunyuanling' or key == 'sunyuanling':
-                user_id = admin_userid
-            else:
-                with connection.cursor() as cursor:
-                    cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                    result = cursor.fetchone()
-                    if not result:
-                        self.logger.warning(self.request_path(request) + '请求数据为：' + str(
-                            request.POST) + '，错误信息为：' + 'token无效')
-                        return JsonResponse({'status': 'error', 'message': 'token无效'}, status=400)
-                    user_id = result[0]
+            if not user_id:
+                if token == 'sunyuanling' or key == 'sunyuanling':
+                    user_id = admin_userid
+                else:
+                    with connection.cursor() as cursor:
+                        cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                        result = cursor.fetchone()
+                        if not result:
+                            self.logger.warning(self.request_path(request) + '请求数据为：' + str(
+                                request.POST) + '，错误信息为：' + 'token无效')
+                            return JsonResponse({'status': 'error', 'message': 'token无效'}, status=400)
+                        user_id = result[0]
 
             if not work_id:
                 self.logger.warning(

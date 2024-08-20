@@ -5,7 +5,7 @@ async function get_recommend(token,work_type,work_offset,work_limit)
             method:'POST',
             headers:{
                 'Content-Type':'application/json',
-                'Authorization':'Bearer '+token
+                'Authorization':'Bearer '+localStorage.getItem('token')
             },
             body:JSON.stringify({
                 token:token,

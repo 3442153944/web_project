@@ -44,39 +44,20 @@ class NoticeOperations(View):
             data = json.loads(request.body.decode('utf-8'))
             print('公告：',data)
             operate_type = data.get('operate_type')
-            userid = ''
-            username = ''
-            token = data.get('token')
-            if token:
-                sql = 'select * from users where token=%s'
+            userid = getattr(request,'userid',None)
+            username=''
+            if userid:
                 with connection.cursor() as cursor:
-                    cursor.execute(sql, [token])
-                    result = cursor.fetchall();
-                    if result:
-                        columns = [desc[0] for desc in cursor.description]
-                        rows = [dict(zip(columns, row)) for row in result]
-                        if rows:
-                            userid = rows[0]['userid']
-                            username = rows[0]['username']
-                        else:
-                            self.logger.warning(
-                                f'{self.get_request_info(request)} - 访问失败：token无效 {str(request.body)}')
-                            return JsonResponse({'status': 'failed', 'message': 'token无效'}, status=403)
-                    else:
-                        self.logger.warning(
-                            f'{self.get_request_info(request)} - 访问失败：token无效 {str(request.body)}')
-                        return JsonResponse({'status': 'failed', 'message': 'token无效'}, status=403)
-            else:
-                self.logger.warning(f'{self.get_request_info(request)} - 访问失败：缺少参数token {str(request.body)}')
-                return JsonResponse({'status': 'failed', 'message': '缺少参数token'}, status=400)
+                    cursor.execute('SELECT username FROM users WHERE userid = %s', [userid])
+                    username = cursor.fetchone()[0]
+                    if not username:
+                        self.logger.warning(f'{self.get_request_info(request)} - 访问失败：用户不存在 {str(request.body)}')
+                        return JsonResponse({'status': 'failed', 'message': '用户不存在'}, status=404)
+
 
             if not userid:
                 self.logger.warning(f'{self.get_request_info(request)} - 访问失败：缺少参数userid {str(request.body)}')
                 return JsonResponse({'status': 'failed', 'message': '缺少参数userid'}, status=400)
-
-            if userid != 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb':
-                self.logger.warning(f'{self.get_request_info(request)} - 访问失败：权限不足 {str(request.body)}')
-                return JsonResponse({'status': 'failed', 'message': '权限不足'}, status=403)
 
             if not operate_type:
                 self.logger.warning(
@@ -84,6 +65,10 @@ class NoticeOperations(View):
                 return JsonResponse({'status': 'failed', 'message': '缺少参数operate_type'}, status=400)
 
             if operate_type == 'add':
+
+                if userid != 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb':
+                    self.logger.warning(f'{self.get_request_info(request)} - 访问失败：权限不足 {str(request.body)}')
+                    return JsonResponse({'status': 'failed', 'message': '权限不足'}, status=403)
 
                 with connection.cursor() as cursor:
                     cursor.execute(self.sql_dict['add'], [
@@ -96,6 +81,9 @@ class NoticeOperations(View):
                 return JsonResponse({'status': 'success', 'message': '公告添加成功'}, status=201)
 
             elif operate_type == 'delete':
+                if userid != 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb':
+                    self.logger.warning(f'{self.get_request_info(request)} - 访问失败：权限不足 {str(request.body)}')
+                    return JsonResponse({'status': 'failed', 'message': '权限不足'}, status=403)
                 notice_id = data.get('id')
                 if not notice_id:
                     self.logger.warning(f'{self.get_request_info(request)} - 访问失败：缺少参数id {str(request.body)}')
@@ -111,6 +99,9 @@ class NoticeOperations(View):
                 return JsonResponse({'status': 'success', 'message': '公告删除成功'}, status=200)
 
             elif operate_type == 'update':
+                if userid != 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb':
+                    self.logger.warning(f'{self.get_request_info(request)} - 访问失败：权限不足 {str(request.body)}')
+                    return JsonResponse({'status': 'failed', 'message': '权限不足'}, status=403)
                 id = data.get('id')
 
                 with connection.cursor() as cursor:
@@ -156,11 +147,12 @@ class NoticeOperations(View):
                 return JsonResponse({'status': 'failed', 'message': '无效的操作类型'}, status=400)
 
         except json.JSONDecodeError as e:
+            print(e)
             self.logger.error(f'{self.get_request_info(request)} - 访问失败：JSONDecodeError {str(e)}')
             return JsonResponse({'status': 'failed', 'message': '请求数据格式错误'}, status=400)
         except Exception as e:
             self.logger.error(f'{self.get_request_info(request)} - 访问失败：Exception {str(e)}')
-            print(str(e))
+            print(e)
             return JsonResponse({'status': 'failed', 'message': '服务器内部错误'}, status=500)
 
 
@@ -290,6 +282,7 @@ class UserInfoByToken(View):
             self.logger.error(f'{self.request_path(request)} - 访问失败：JSONDecodeError {str(e)}')
             return JsonResponse({'status': 'failed', 'message': '请求数据格式错误'}, status=400)
         except Exception as e:
+            print(e)
             self.logger.error(
                 f'{self.request_path(request)} - 访问失败：Exception {str(e)}，请求数据：{str(request.body)}')
             return JsonResponse({'status': 'fail', 'message': '服务器错误'}, status=500)

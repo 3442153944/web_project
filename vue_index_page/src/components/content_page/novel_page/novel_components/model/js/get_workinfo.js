@@ -4,7 +4,8 @@ async function get_workinfo(token,work_id)
         const res=await fetch('https://www.sunyuanling.com/api/get_work_info/GetNovelList/',{
             method:'post',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body:JSON.stringify({
                 token:token,
@@ -39,7 +40,8 @@ async function get_novel_content(token,work_id,title)
         const res=await fetch('https://www.sunyuanling.com/api/get_work_info/GetNovelContent/',{
             method:'post',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body:JSON.stringify({
                 token:token,

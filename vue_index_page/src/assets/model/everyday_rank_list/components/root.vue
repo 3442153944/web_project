@@ -15,7 +15,7 @@ const props=defineProps({
 let rank_list=ref()
 
 onMounted(async ()=>{
-  rank_list.value=await get_rank_list(props.work_type)
+  rank_list.value=await get_rank_list(props.work_type,localStorage.getItem('token'))
   console.log(rank_list.value)
 })
 </script>

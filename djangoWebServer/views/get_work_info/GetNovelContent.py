@@ -26,12 +26,13 @@ class GetNovelContent(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
-            if not token:
+            userid=getattr(request, 'userid', None)
+            if not token and not userid:
                 self.logger.warning(self.request_path(request) + 'token缺失，请求数据为：' + str(data))
-                return JsonResponse({'status': 'error', 'message': 'token缺失'}, status=400)
+                return JsonResponse({'status': 'error', 'message': 'token缺失或者用户未登录'}, status=400)
 
             with connection.cursor() as cursor:
-                cursor.execute('SELECT vip FROM users WHERE token=%s', [token])
+                cursor.execute('SELECT vip FROM users WHERE token=%s or userid=%s', [token,userid])
                 result = cursor.fetchone()
 
                 if result:

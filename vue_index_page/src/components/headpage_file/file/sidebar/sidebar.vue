@@ -183,7 +183,8 @@ async function get_notice() {
         const res = await fetch('https://www.sunyuanling.com/api/notice_control/NoticeOperations/', {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body: JSON.stringify({
                 operate_type: 'search',
@@ -200,7 +201,9 @@ async function get_notice() {
             }
         }
         else {
+            const data=await res.json()
             console.log(res.status)
+            console.log(data.message)
         }
     }
     catch (error) {

@@ -25,15 +25,18 @@ class Watch(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             print(data)
+            userid=getattr(request,'userid',None)
             token = data.get('token')
+            if not userid:
+                with connection.cursor() as cursor:
+                    if token:
+                        cursor.execute('select userid from users where token=%s', [token])
+                        userid = cursor.fetchone()
+                        if not userid:
+                            self.logger.info(
+                                self.request_path(request) + '请求数据为：' + str(request.POST) + '错误信息为：token无效')
+                            return JsonResponse({'status': 'error', 'message': 'token无效'}, status=403)
             with connection.cursor() as cursor:
-                cursor.execute('select userid from users where token=%s', [token])
-                userid = cursor.fetchone()
-                if not userid:
-                    self.logger.info(
-                        self.request_path(request) + '请求数据为：' + str(request.POST) + '错误信息为：token无效')
-                    return JsonResponse({'status': 'error', 'message': 'token无效'}, status=403)
-
                 work_id = int(data.get('work_id'))
                 work_type = data.get('work_type')
                 work_name = data.get('work_name')

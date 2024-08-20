@@ -25,15 +25,18 @@ class Collect(View):
         try:
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
-            with connection.cursor() as cursor:
-                cursor.execute('select userid from users where token=%s', [token])
-                result = cursor.fetchone()
-                if not result:
-                    self.logger.error(
-                        self.request_path(request) + '请求信息：' + str(request.POST) + '错误信息：无效的token')
-                    return JsonResponse({'status': 'error', 'message': '无效的token'}, status=403)
+            userid=getattr(request,'userid',None)
 
-                userid = result[0]
+            if not userid:
+                with connection.cursor() as cursor:
+                    cursor.execute('select userid from users where token=%s', [token])
+                    result = cursor.fetchone()
+                    userid = result[0] if result else None
+                    if not result:
+                        self.logger.error(
+                            self.request_path(request) + '请求信息：' + str(request.POST) + '错误信息：无效的token')
+                        return JsonResponse({'status': 'error', 'message': '无效的token'}, status=403)
+            with connection.cursor() as cursor:
                 operate_type = data.get('operate_type')
                 work_id = int(data.get('work_id'))
                 work_type = data.get('work_type')

@@ -17,14 +17,15 @@ token_key_path = os.path.join('H:/web_project/djangoWebServer', 'token_key.txt')
 token_secret = open(token_key_path, 'rb').read()
 cipher_suite = Fernet(token_secret)
 
-TOKEN_EXPIRY=3600
+TOKEN_EXPIRY=3600*24
 
-def create_jwt_token(userid):
+def create_jwt_token(userid,role='front_end'):
     """生成并签名 JWT Token，设置自定义过期时间"""
     try:
         payload = {
             'userid': userid,
-            'exp': timezone.now() + timedelta(seconds=TOKEN_EXPIRY)  # 使用 timezone.now()
+            'exp': timezone.now() + timedelta(seconds=TOKEN_EXPIRY),  # 使用 timezone.now()
+            'role': role
         }
         # 使用 SECRET_KEY 进行编码
         token = jwt.encode(payload, settings.SECRET_KEY, algorithm='HS256')
@@ -67,6 +68,7 @@ class TokenAuthMiddleware:
     def token_auth(self, request):
         """Token 认证逻辑"""
         try:
+            # 如果请求已经附带了用户信息和 token，直接返回
             if hasattr(request, 'userinfo') and hasattr(request, 'token') and hasattr(request, 'is_authenticated'):
                 request.userinfo = json.loads(request.userinfo)
                 return None
@@ -74,18 +76,22 @@ class TokenAuthMiddleware:
             auth_header = request.headers.get('Authorization')
             if auth_header and auth_header.startswith('Bearer '):
                 token = auth_header.split(' ')[1]
-                print('原始Token:', token)
-                decrypted_token = decrypt_token(token)  # 先解密
-                print('解密后的Token:', decrypted_token)
-                decoded_token = decode_jwt_token(decrypted_token)  # 然后解码JWT
-                print('解码后的Token:', decoded_token)
+                # 解密 Token
+                decrypted_token = decrypt_token(token)
+                # 解码 JWT
+                decoded_token = decode_jwt_token(decrypted_token)
                 if decoded_token:
                     userid = decoded_token['userid']
-                    new_token = create_jwt_token(userid)
-                    c_token=encrypt_token(new_token)
+                    role = decoded_token.get('role', 'front_end')
+                    # 每次重新生成一个新 token
+                    new_token = create_jwt_token(userid, role)
+                    encrypted_new_token = encrypt_token(new_token)
+                    # 更新 request 对象
                     request.userid = userid
-                    request.token = c_token  # 直接使用新生成的token，不再额外加密
+                    request.role = role
+                    request.token = encrypted_new_token  # 使用新生成并加密的 token
                     request.is_authenticated = True
+
                     return None
                 else:
                     return JsonResponse({'status': 'error', 'message': 'Token 无效或已过期'}, status=401)

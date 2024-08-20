@@ -3,7 +3,8 @@ async function get_comment(work_id,work_type,token,limit=5,offset=0){
         const res=await fetch('https://www.sunyuanling.com/api/work_interaction/GetCommentSection/',{
             method:'POST',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body:JSON.stringify({
                 work_id:work_id,
@@ -42,7 +43,8 @@ async function add_comment(work_id,work_type,token,send_userid,is_root_comment,c
         const res=await fetch('https://www.sunyuanling.com/api/work_interaction/AddCommentSection/',{
             method:'POST',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body:JSON.stringify({
                 work_id:work_id,
@@ -83,7 +85,8 @@ async function like_comment(comment_id,operate,token,work_type,work_id){
         const res=await fetch('https://www.sunyuanling.com/api/work_interaction/LikeComment/',{
             method:'POST',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body:JSON.stringify({
                 comment_id:comment_id,

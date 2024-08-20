@@ -77,7 +77,7 @@ async function connServer() {
             body: JSON.stringify({  
                 username: username_in.value,  
                 password: password_in.value,
-                token:null,
+                login_type:'front_end'
             })  
         });
   

@@ -56,8 +56,9 @@
     const url = new URL(window.location.href);
     const token = url.searchParams.get('token');
   
-    if (token && (!cookies.get_cookie('token') || cookies.get_cookie('token') === '')) {
-      cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+    if (token && (localStorage.getItem('token') !== token)) {
+      //cookies.set_cookie('token', token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+      localStorage.setItem('token', token);
       
       // 移除 URL 中的所有参数，只保留基本路径
       const newUrl = url.origin + url.pathname;
@@ -73,31 +74,32 @@
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${cookies.get_cookie('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token') }`
         },
         body: JSON.stringify({
           userid: null,
-          token: cookies.get_cookie('token')
+          token: localStorage.getItem('token')
         })
       });
       if (res.ok) {
         const data = await res.json();
         if (data.status === 'success') {
           cookies.set_cookie('userinfo', JSON.stringify(data.data[0]), { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+          localStorage.setItem('userinfo',JSON.stringify(data.data[0]))
           load_reading.value = true;
         } else {
           console.log('用户未登录');
-          window.location.href = 'https://localhost:3000';
+          //window.location.href = 'https://localhost:3000';
         }
       } else {
         console.log('网络错误');
         cookies.clearAllCookies();
-        window.location.href = 'https://localhost:3000';
+        //window.location.href = 'https://localhost:3000';
       }
     } catch (err) {
       console.log('获取用户信息失败:', err);
       cookies.clearAllCookies();
-      window.location.href = 'https://localhost:3000';
+      //window.location.href = 'https://localhost:3000';
     }
   }
   
@@ -107,17 +109,18 @@
         method: 'post',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${cookies.get_cookie('token')}`
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
         },
         body: JSON.stringify({
           userid: null,
-          token: cookies.get_cookie('token')
+          token: localStorage.getItem('token')
         })
       });
       if (res.ok) {
         const data = await res.json();
         if (data.status === 'success') {
-          cookies.set_cookie('token', data.token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+          //cookies.set_cookie('token', data.token, { secure: true, 'max-age': 3600, path: '/', HttpOnly: true });
+          localStorage.setItem('token', data.token);
           store.commit('SET_TOKEN', data.token);
         }
       }

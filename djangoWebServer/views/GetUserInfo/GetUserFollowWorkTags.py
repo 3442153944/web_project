@@ -23,27 +23,28 @@ class GetUserFollowWorkTags(View):
             data = json.loads(request.body.decode('utf-8'))
             token = data.get('token')
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-            print(data)
-
-            if not token:
-                self.logger.warning(self.request_path(request) + ' token为空')
-                return JsonResponse({'status': 'error', 'message': 'token为空'}, status=400)
-
+            userid=getattr(request,'userid',None)
             with connection.cursor() as cursor:
-                # Token验证逻辑
-                if token == 'sunyuanling':
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
-                    result = cursor.fetchone()
-                    if result:
-                        token = result[0]
+                if not userid:
+                    if not token:
+                        self.logger.warning(self.request_path(request) + ' token为空')
+                        return JsonResponse({'status': 'error', 'message': 'token为空'}, status=400)
 
-                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                userid_row = cursor.fetchone()
-                if not userid_row:
-                    self.logger.warning(self.request_path(request) + ' token错误，请求数据为：' + str(request.body))
-                    return JsonResponse({'status': 'error', 'message': 'token错误'}, status=401)
+                    # Token验证逻辑
+                    if token == 'sunyuanling':
+                        cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
+                        result = cursor.fetchone()
+                        if result:
+                            token = result[0]
 
-                userid = userid_row[0]
+                    cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                    userid_row = cursor.fetchone()
+                    if not userid_row:
+                        self.logger.warning(self.request_path(request) + ' token错误，请求数据为：' + str(request.body))
+                        return JsonResponse({'status': 'error', 'message': 'token错误'}, status=401)
+
+                    userid = userid_row[0]
+
                 follow_list = []
                 sql = 'SELECT follow_user_id FROM user_follow WHERE user_id=%s'
                 cursor.execute(sql, [userid])
@@ -87,9 +88,9 @@ class GetUserFollowWorkTags(View):
                 # 将去重后的所有标签从集合中转换回列表
                 all_tags_list = list(all_tags_set)
 
-                return JsonResponse({'status': 'success', 'data': all_tags_list})
+            return JsonResponse({'status': 'success', 'data': all_tags_list})
 
         except Exception as e:
-            print(e)
+            print('获取关注作品标签错误：',e)
             self.logger.error(self.request_path(request) + ' 错误信息：' + str(e) + ' 请求数据为：' + str(request.body))
             return JsonResponse({'status': 'error', 'message': '服务器错误'}, status=500)

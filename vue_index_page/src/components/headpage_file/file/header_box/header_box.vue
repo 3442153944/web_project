@@ -70,7 +70,8 @@ async function getUserInfo() {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
             method: "post",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body: JSON.stringify({
                 userid: user_info.value.userid,
@@ -96,7 +97,8 @@ async function getFansList() {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFans/', {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body: JSON.stringify({
                 userid: user_info.value.userid
@@ -125,7 +127,8 @@ async function getFollowList(){
         const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollow/',{
             method:'post',
             headers:{
-                'Content-Type':'application/json'
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token'),
             },
             body:JSON.stringify({
                 userid:user_info.value.userid

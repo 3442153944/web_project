@@ -1,10 +1,11 @@
-async function get_notice_info(token,operate_type){
+async function get_notice_info(token,operate_type='search'){
     try{
         const res=await fetch('https://www.sunyuanling.com/api/notice_control/NoticeOperations/',
             {
                 method:'post',
                 headers:{
-                    'Content-Type':'application/json'
+                    'Content-Type':'application/json',
+                    'Authorization':'Bearer '+localStorage.getItem('token'),
                 },
                 body:JSON.stringify({
                     operate_type:operate_type,
@@ -25,7 +26,8 @@ async function get_notice_info(token,operate_type){
         }
         else{
             console.log(res.status)
-        
+            const data=await res.json()
+            console.log(data.message)
         }
     }
     catch(error){
