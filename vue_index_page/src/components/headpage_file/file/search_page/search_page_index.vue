@@ -191,7 +191,8 @@ async function get_search_data(data) {
     const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetSearch/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       },
       body: JSON.stringify({
         'search_key': data

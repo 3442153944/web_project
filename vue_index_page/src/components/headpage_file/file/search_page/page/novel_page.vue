@@ -80,6 +80,10 @@ onMounted(async () => {
 async function get_author_avatar(userid){
   const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/',{
     method:'POST',
+    headers:{
+      'Content-Type':'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
+    },
     body:JSON.stringify({
       userid:userid
     })

@@ -190,7 +190,8 @@ async function get_user_friend_list(id) {
       const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetFriendList/', {
         method: 'post',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({
           userid: userId
@@ -237,7 +238,8 @@ async function get_user_group_list(id) {
         {
           method:'post',
           headers:{
-            'Content-Type':'application/json'
+            'Content-Type':'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem('token')
           },
           body:JSON.stringify({
             userid:userId
@@ -280,7 +282,8 @@ async function get_user_info_by_id(type, userid) {
       const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetAllUserInfo/', {
         method: 'post',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({
           userid: userid
@@ -373,7 +376,8 @@ async function get_group_info_by_id(group_id)
     const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetGroupInfo/',{
       method:'post',
       headers:{
-        'Content-Type':'application/json'
+        'Content-Type':'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       },
       body:JSON.stringify({
         group_id:group_id,
@@ -461,7 +465,8 @@ async function get_history_msg(type, userid, to_user_id = null, group_id = null)
       const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserHistoryMsg/', {
         method: 'post',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({
           msg_type: 'friend',
@@ -489,7 +494,8 @@ async function get_history_msg(type, userid, to_user_id = null, group_id = null)
       const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserHistoryMsg/', {
         method: 'post',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.getItem('token')
         },
         body: JSON.stringify({
           msg_type: 'group',

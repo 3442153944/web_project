@@ -22,12 +22,10 @@ class GetUserWorkList(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            userid = data.get('userid')
-            token = data.get('token')
-            admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
+            userid = getattr(request, 'userid', None)
 
-            if not userid and not token:
-                raise ValueError("用户ID缺失和token缺失")
+            if not userid:
+                raise ValueError("用户ID缺失")
 
             sql_query_dict = {
                 'ill': 'SELECT *, "ill" AS type FROM illustration_work WHERE belong_to_user_id=%s ORDER BY create_time DESC',
@@ -37,32 +35,8 @@ class GetUserWorkList(View):
 
             work_list = {}
             with connection.cursor() as cursor:
-                if token == 'sunyuanling':
-                    # 特殊管理员 token 处理
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
-                    token_row = cursor.fetchone()
-                    if token_row:
-                        token = token_row[0]
-                else:
-                    # 普通用户
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', [userid])
-                    token_row = cursor.fetchone()
-                    if token_row:
-                        token = token_row[0]
-
-                if not token:
-                    # 如果 token 为空，使用 userid
-                    userid_query = userid
-                else:
-                    cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                    result = cursor.fetchone()
-                    if result:
-                        userid_query = result[0]
-                    else:
-                        raise ValueError("无效的token")
-
                 for work_type, query in sql_query_dict.items():
-                    cursor.execute(query, [userid_query])
+                    cursor.execute(query, [userid])
                     columns = [desc[0] for desc in cursor.description]
                     result = cursor.fetchall()
                     rows = [dict(zip(columns, row)) for row in result]

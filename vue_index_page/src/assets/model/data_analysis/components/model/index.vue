@@ -49,7 +49,6 @@ import drawing_index_page from './drawing_index_page.vue'
 
 const props = defineProps({
     token: {
-        type: String,
         default: ''
     }
 })

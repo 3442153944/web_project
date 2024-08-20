@@ -24,37 +24,23 @@ class GetAppointWorkData(View):
         try:
             now = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
-            ago_days = int(data.get('ago_date', 7))  # 默认值为 7
+            userid = getattr(request, 'userid', None)  # 从 request 中获取 userid
+            ago_days = int(data.get('ago_date', 7))  # 默认值为 7 天
             work_id = data.get('work_id')
             work_type = data.get('work_type')
-            print(data)
 
-            if not token:
-                self.logger.warning(self.request_path(request) + ' token 为空')
-                return JsonResponse({'status': 'error', 'message': 'token 为空'}, status=401)
+            if not userid:
+                self.logger.warning(self.request_path(request) + ' 用户ID 为空')
+                return JsonResponse({'status': 'error', 'message': '用户ID 为空'}, status=401)
+
+            if not work_id or not work_type:
+                self.logger.warning(self.request_path(request) + ' 缺少作品ID或类型')
+                return JsonResponse({'status': 'error', 'message': '缺少作品ID或类型'}, status=400)
 
             target_date = (datetime.now() - timedelta(days=ago_days)).strftime('%Y-%m-%dT%H:%M:%S')
             history_date = datetime(1900, 1, 1).strftime('%Y-%m-%dT%H:%M:%S')
 
             with connection.cursor() as cursor:
-                # 验证管理员 token
-                if token == 'sunyuanling':
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', ['f575b4d3-0683-11ef-adf4-00ffc6b98bdb'])
-                    admin_token = cursor.fetchone()
-                    if admin_token:
-                        token = admin_token[0]
-                    else:
-                        return JsonResponse({'status': 'error', 'message': '管理员信息不存在'}, status=401)
-
-                # 获取用户 ID
-                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                user_id_row = cursor.fetchone()
-                if not user_id_row:
-                    return JsonResponse({'status': 'error', 'message': '用户信息不存在'}, status=401)
-
-                user_id = user_id_row[0]
-
                 # 定义 SQL 查询
                 get_appoint_work_data_sql_dict = {
                     'watch': '''

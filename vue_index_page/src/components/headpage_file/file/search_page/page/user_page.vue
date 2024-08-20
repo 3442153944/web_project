@@ -76,7 +76,8 @@ async function get_work_info(userid) {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkList/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({ userid })
         });
@@ -117,7 +118,8 @@ async function get_follow_list(id, target_id) {
         const res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserFollowList/', {
             method: 'post',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
                 userid: userid,
@@ -193,6 +195,10 @@ async function follow(target_username,target_id)
 {
     const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/UserAddFollow/',{
         method:'POST',
+        headers:{
+            'Content-Type':'application/json',
+            'Authorization':'Bearer '+localStorage.getItem('token')
+        },
         body:JSON.stringify({
             target_username:target_username,
             target_id:target_id,

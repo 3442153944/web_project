@@ -6,7 +6,6 @@ import go_back from '../../go_back.vue'
 
 const props=defineProps({
   token:{
-    type:String,
     default:'sunyuanling'
   },
 })

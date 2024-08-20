@@ -24,13 +24,13 @@ class GetAllWorkData(View):
         try:
             now = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
             ago_days = data.get('ago_date')
+            userid = getattr(request, 'userid', None)  # 从中间件获取userid
             print(data)
 
-            if not token:
-                self.logger.warning(self.request_path(request) + 'token为空')
-                return JsonResponse({'status': 'error', 'message': 'token为空'}, status=401)
+            if not userid:
+                self.logger.warning(self.request_path(request) + '用户ID为空')
+                return JsonResponse({'status': 'error', 'message': '用户ID为空'}, status=401)
 
             if not ago_days:
                 ago_days = 7
@@ -39,23 +39,6 @@ class GetAllWorkData(View):
             history_date = datetime(1900, 1, 1).strftime('%Y-%m-%dT%H:%M:%S')
 
             with connection.cursor() as cursor:
-                # 验证管理员 token
-                if token == 'sunyuanling':
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', ['f575b4d3-0683-11ef-adf4-00ffc6b98bdb'])
-                    admin_token = cursor.fetchone()
-                    if admin_token:
-                        token = admin_token[0]
-                    else:
-                        return JsonResponse({'status': 'error', 'message': '管理员信息不存在'}, status=401)
-
-                # 获取用户 ID
-                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                user_id_row = cursor.fetchone()
-                if not user_id_row:
-                    return JsonResponse({'status': 'error', 'message': '用户信息不存在'}, status=401)
-
-                user_id = user_id_row[0]
-
                 # 获取用户所有作品 ID
                 sql_dict = {
                     'ill': 'SELECT Illustration_id AS work_id FROM illustration_work WHERE belong_to_user_id=%s',
@@ -65,7 +48,7 @@ class GetAllWorkData(View):
 
                 work_ids = {'ill': [], 'comic': [], 'novel': []}
                 for work_type, sql in sql_dict.items():
-                    cursor.execute(sql, [user_id])
+                    cursor.execute(sql, [userid])  # 直接使用userid
                     work_ids[work_type] = [row[0] for row in cursor.fetchall()]
 
                 # 统计交互数据
