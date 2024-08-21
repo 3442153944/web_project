@@ -23,7 +23,7 @@
                 <interaction :like_status="like_status" :collect_status="collect_status" @like_status="get_like_status"
                     @collect_status="get_collect_status"></interaction>
             </div>
-            <work_info_box :work_data="work_data" :work_create_time="work_info.create_time"></work_info_box>
+            <work_info_box :work_data="work_data" :work_create_time="work_info.create_time" :work_id="work_id"></work_info_box>
             <div class="author_info_box_bottom" v-if="work_info">
                 <author_info_bottom :author_id="work_info.belong_to_userid" @chose_item="get_choose_item"></author_info_bottom>
             </div>

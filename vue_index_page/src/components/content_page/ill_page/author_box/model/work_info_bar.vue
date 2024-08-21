@@ -1,8 +1,7 @@
 <script setup>
-// eslint-disable-next-line no-unused-vars
-import { defineProps } from 'vue'
+import { defineProps, ref, onMounted, computed } from 'vue'
+import { get_ill_workinfo } from '@/assets/js/get_work_info'
 
-// eslint-disable-next-line no-unused-vars
 const props = defineProps({
   title: {
     type: String,
@@ -14,7 +13,7 @@ const props = defineProps({
   },
   age_classification: {
     type: String,
-    default:'18'
+    default: '18'
   },
   tags: {
     type: Array,
@@ -32,6 +31,28 @@ const props = defineProps({
     type: String,
     default: '2024年7月26日13:08:38'
   },
+  work_id: {
+    default: '123456'
+  }
+})
+
+// 获取作品信息
+const work_info = ref(null)
+const work_tags = ref([])
+
+onMounted(async () => {
+  try {
+    const data = await get_ill_workinfo(props.work_id)
+    work_info.value = data
+    console.log(work_info.value)
+    // 检查数据是否存在并更新标签
+    if (work_info.value && work_info.value.data && work_info.value.data.length > 0) {
+      work_tags.value = work_info.value.data[0].work_tags.split(/[,，]/)
+    }
+    console.log(work_info.value)
+  } catch (error) {
+    console.error('获取作品信息失败:', error)
+  }
 })
 </script>
 
@@ -49,7 +70,7 @@ const props = defineProps({
           <span>R-{{ age_classification }}</span>
         </span>
         <div class="tag_item">
-          <div class="tag" v-for="(item, index) in tags" :key="index">
+          <div class="tag" v-for="(item, index) in work_tags" :key="index">
             <span>#&nbsp;{{ item }}</span>
           </div>
         </div>
@@ -74,6 +95,7 @@ const props = defineProps({
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .work_info_bar{
@@ -122,10 +144,12 @@ const props = defineProps({
   padding: 5px;
   width: auto;
   height: auto;
+  max-height: 26px;
 }
 .tag_item{
   width: auto;
   height: auto;
+  display: flex;
   padding: 5px;
   color: rgba(0,150,250,1);
 }

@@ -8,12 +8,13 @@
         <div class="author_name">
           <span>{{ author_info.username }}</span>
         </div>
-      </div>
-      <div class="author_follow" :class="follow_status === '已关注' ? 'off_follow' : 'on_follow'" @click="follow_author">
-        <div class="follow_btn">
-          <span>{{ follow_status }}</span>
+        <div class="author_follow" :class="follow_status === '已关注' ? 'off_follow' : 'on_follow'" @click="follow_author">
+          <div class="follow_btn">
+            <span>{{ follow_status }}</span>
+          </div>
         </div>
       </div>
+      
       <div class="others_work">
         <div class="others_work_title">其他作品</div>
         <scroll_box :msg_list="author_other_work_list_path" @chose_item="get_choose_item"></scroll_box>
@@ -192,7 +193,7 @@ onMounted(() => {
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  max-width: 150px;
+  max-width: 100px;
 }
 
 .author_follow:hover {
