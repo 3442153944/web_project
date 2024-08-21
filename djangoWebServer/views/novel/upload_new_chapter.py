@@ -21,17 +21,11 @@ class UploadNewChapter(View):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
-            if not token:
-                return JsonResponse({'status': 'error', 'message': '上传新章节失败，请先登录！'}, status=401)
+            userid=getattr(request,'userid',None)
+            if not userid:
+                return JsonResponse({'status': 'error', 'message': 'token无效，请重新登陆'}, status=401)
 
             with connection.cursor() as cursor:
-                cursor.execute('SELECT userid FROM users WHERE token = %s', [token])
-                userid_row = cursor.fetchone()
-                if not userid_row:
-                    return JsonResponse({'status': 'error', 'message': 'token无效，请重新登陆'}, status=401)
-                userid = userid_row[0]
-
                 cursor.execute('SELECT work_id, work_series FROM novel_work WHERE belong_to_userid = %s', [userid])
                 columns = [desc[0] for desc in cursor.description]
                 result = cursor.fetchall()

@@ -34,7 +34,7 @@ const get_preview_cover = async () => {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/file/GetPreviewCover/', {
             method: 'post',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' ,'Authorization': 'Bearer ' +localStorage.getItem('token')},
             body: JSON.stringify({
                 token: token,
                 template_name: props.template_name,

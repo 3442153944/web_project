@@ -206,6 +206,9 @@ async function set_send_work_info() {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/file/UploadNewSeries/', {
             method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' +localStorage.getItem('token')
+            },
             body: file
         })
         if (res.ok) {

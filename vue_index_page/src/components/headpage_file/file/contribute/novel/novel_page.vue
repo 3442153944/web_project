@@ -106,7 +106,8 @@ async function get_user_series_list() {
     let res = await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkSeries/', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       },
       body: JSON.stringify({
         token: token,
@@ -138,7 +139,8 @@ async function upload_chapter() {
     const res = await fetch('https://www.sunyuanling.com/api/novel/UploadNewChapter/', {
       method: 'post',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + localStorage.getItem('token')
       },
       body: JSON.stringify({
         token: token,

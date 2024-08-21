@@ -24,21 +24,7 @@ class GetPreviewCover(View):
         try:
             coverhand = CoverHandle()
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
-            if not token:
-                self.logger.warning(self.request_path(request) + ' 请求方式 POST ' + ' 请求数据 ' + str(
-                    data) + ' 错误信息 ' + 'token缺失')
-                return JsonResponse({'status': 'error', 'message': 'token缺失'}, status=400)
-
-            sql = 'SELECT * FROM users WHERE token = %s'
-            with connection.cursor() as cursor:
-                cursor.execute(sql, [token])
-                result = cursor.fetchall()
-
-            if not result:
-                self.logger.warning(self.request_path(request) + ' 请求方式 POST ' + ' 请求数据 ' + str(
-                    data) + ' 错误信息 ' + 'token无效')
-                return JsonResponse({'status': 'error', 'message': 'token无效'}, status=403)
+            userid=getattr(request,'userid',None)
 
             title = data.get('title', '实例标题')
             template_name = data.get('template_name', 'template_1')

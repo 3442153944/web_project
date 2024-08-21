@@ -65,21 +65,11 @@ class UploadNewSeries(View):
             work_info=json.loads(work_info)
             cover_type = work_info.get('cover_type')
             token = work_info.get('token')
+            userid=getattr(request,'userid',None)
             user_info = work_info.get('user_info')
             print(user_info)
             belong_to_user_id = user_info.get('userid')
             belong_to_username = user_info.get('username')
-
-            if not token:
-                self.logger.error(self.request_path(request) + '未提供token' + '请求参数' + request.POST)
-                return JsonResponse({'status': 'error', 'message': '未提供token'}, status=403)
-
-            with connection.cursor() as cursor:
-                cursor.execute('SELECT * FROM users WHERE token=%s', [token])
-                result = cursor.fetchone()
-                if not result:
-                    self.logger.error(self.request_path(request) + 'token错误' + '请求参数' + request.POST)
-                    return JsonResponse({'status': 'error', 'message': 'token错误'}, status=403)
 
             tags = work_info.get('tags')
             str_tag = ','.join(tags)
@@ -100,7 +90,7 @@ class UploadNewSeries(View):
                     return JsonResponse({'status': 'error', 'message': '文件不存在'}, status=404)
 
                 with connection.cursor() as cursor:
-                    cursor.execute(self.sql, [work_info.get('work_name'), belong_to_username, belong_to_user_id,
+                    cursor.execute(self.sql, [work_info.get('work_name'), belong_to_username, userid,
                                               work_info.get('title'), str_tag, work_info.get('age_classification'),
                                               file_name, work_info.get('author_say'), self.now,
                                               work_info.get('introducation'), work_info.get('work_status'),
@@ -120,7 +110,7 @@ class UploadNewSeries(View):
                 thumbnail_path = self.cover_thumbnail_path + file_name
                 self.generate_thumbnail(final_file_path, thumbnail_path)
                 with connection.cursor() as cursor:
-                    cursor.execute(self.sql, [work_info.get('work_name'), belong_to_username, belong_to_user_id,
+                    cursor.execute(self.sql, [work_info.get('work_name'), belong_to_username, userid,
                                               work_info.get('title'), str_tag, work_info.get('age_classification'),
                                               file_name, work_info.get('author_say'), self.now,
                                               work_info.get('introducation'), work_info.get('work_status'),
