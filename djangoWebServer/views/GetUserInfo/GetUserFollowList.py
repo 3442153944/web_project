@@ -25,6 +25,8 @@ class GetUserFollowList(BaseView):
         try:
             data = json.loads(request.body.decode('utf-8'))
             userid = data.get('userid')
+            if userid is None:
+                userid=getattr(request,'userid',None)
             target_id = data.get('target_id')
 
             if not userid:
