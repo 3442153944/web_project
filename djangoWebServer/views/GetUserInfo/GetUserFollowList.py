@@ -58,11 +58,11 @@ class UserAddFollow(BaseView):
     def post(self, request, *args, **kwargs):
         try:
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
-            if token:
+            userid=getattr(request,'userid',None)
+            if userid:
                 with connection.cursor() as cursor:
-                    sql = 'select userid,username from users where token=%s'
-                    cursor.execute(sql, [token])
+                    sql = 'select userid,username from users where userid=%s'
+                    cursor.execute(sql, [userid])
                     columns = [desc[0] for desc in cursor.description]
                     results = cursor.fetchall()
                     rows = [dict(zip(columns, row)) for row in results]
@@ -75,7 +75,7 @@ class UserAddFollow(BaseView):
             target_id = data.get('target_id')
             target_username = data.get('target_username')
 
-            if not userid and not token:
+            if not userid :
                 self.logger.warning(self.get_request_info(request) + ' Missing user ID and token in request body.')
                 return JsonResponse({'status': 'error', 'message': 'Missing user ID and token'}, status=400)
 

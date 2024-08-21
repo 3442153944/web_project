@@ -232,7 +232,7 @@ async function get_work_info() {
 // 查看作品详情
 function show_work_info(item) {
     img_content_page_show.value = true;
-    item_path.value = item;
+    item_path.value = `https://www.sunyuanling.com/image/${item}`;
     store.commit('SET_ITEM_PATH', item)
 }
 

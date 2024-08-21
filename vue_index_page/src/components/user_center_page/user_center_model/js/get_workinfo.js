@@ -13,7 +13,8 @@ async function get_workinfo(token, work_list) {
                 const requestOptions = {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + localStorage.getItem('token')
                     },
                     body: JSON.stringify({
                         token: token,
@@ -70,6 +71,10 @@ async function get_user_all_worklist(token)
         const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserWorkList/',
             {
                 method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
+                },
                 body:JSON.stringify({
                     token:token
                 })
@@ -98,6 +103,10 @@ async function get_user_collect_worklist(token){
     try{
         const res=await fetch('https://www.sunyuanling.com/api/GetUserInfo/GetUserCollect/',{
             method:'POST',
+            headers:{
+                'Content-Type':'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
             body:JSON.stringify({
                 token:token
             })

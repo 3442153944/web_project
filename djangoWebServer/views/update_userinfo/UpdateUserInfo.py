@@ -37,26 +37,9 @@ class UpdateUserInfo(View):
             data = json.loads(request.POST.get('data', '{}'))
             admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
             token = data.get('token')
-            if not token:
-                self.logger.warning(
-                    self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'token为空')
-                return JsonResponse({'status': 'error', 'message': 'token为空'}, status=400)
+            userid=getattr(request, 'userid', None)
 
             with connection.cursor() as cursor:
-                if token == 'sunyuanling':
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
-                    token = cursor.fetchone()[0]
-                    if not token:
-                        self.logger.error(self.request_path(request) + '请求数据为：' + str(
-                            request.POST) + '，错误信息为：' + 'token错误')
-                        return JsonResponse({'status': 'error', 'message': 'token错误'}, status=401)
-                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                userid = cursor.fetchone()[0]
-                if not userid:
-                    self.logger.warning(
-                        self.request_path(request) + '请求数据为：' + str(request.POST) + '，错误信息为：' + 'token错误')
-                    return JsonResponse({'status': 'error', 'message': 'token错误'}, status=401)
-
                 userinfo = data
                 if not userinfo:
                     self.logger.warning(self.request_path(request) + '请求数据为：' + str(

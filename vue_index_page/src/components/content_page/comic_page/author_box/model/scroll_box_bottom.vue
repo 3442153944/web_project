@@ -234,6 +234,7 @@ async function get_work_info(work_id) {
   scrollbar-width: none;
   white-space: nowrap;
   transition: transform 0.3s ease;
+  gap: 10px;
 }
 
 .item {
@@ -265,8 +266,8 @@ async function get_work_info(work_id) {
   justify-content: center;
   cursor: pointer;
   border-radius: 10px;
-  min-width: 50px;
-  min-height: 100px;
+  min-width: 200px;
+  min-height: 200px;
   max-height: 200px;
   max-width: 200px;
   margin: 0px 5px;

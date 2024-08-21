@@ -46,12 +46,9 @@ watch(() => store.getters.indexPage, (newValue) => {
 
 onMounted(async () => {
   choosePage(pageIndex.value);
-  console.log(store.getters.token);
-
   // 声明 tags_list 变量，不初始化
   let tagsData = await get_user_follow_work_tags(cookies.get_cookie('token'));
   tags_list.value = tagsData;
-  console.log(tags_list.value);
 });
 </script>
 <style scoped>

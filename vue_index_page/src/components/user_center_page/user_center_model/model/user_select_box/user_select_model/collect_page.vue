@@ -57,7 +57,7 @@
                   <span class="work_num">{{ get_file_count(item) }}</span>
                 </div>
                 <div class="choose_work_box" v-if="collect_control_box_show"
-                  @click="toggle_choose_collect_work_list(item)">
+                  @click="toggle_choose_collect_work_list($event,item)">
                   <div class="choose_box"
                     :style="{ backgroundColor: choose_collect_work_list.includes(item) ? 'rgba(0,150,250,1)' : '' }">
                     <img class="icon" src="https://www.sunyuanling.com/assets/correct.svg">
@@ -146,7 +146,7 @@ const work_show_type = ref('all')
 const collect_control_box_show = ref(false)
 const choose_collect_work_list = ref([])
 
-function toggle_choose_collect_work_list(item) {
+function toggle_choose_collect_work_list(event,item) {
   const index = choose_collect_work_list.value.indexOf(item)
   if (index > -1) {
     choose_collect_work_list.value.splice(index, 1)
@@ -154,6 +154,8 @@ function toggle_choose_collect_work_list(item) {
     choose_collect_work_list.value.push(item)
   }
   console.log(choose_collect_work_list.value)
+  //阻止点击事件传播
+  event.stopPropagation()
 }
 
 //删除收藏作品
@@ -411,6 +413,8 @@ function get_file_count(item) {
   overflow: hidden;
   transition: all 0.3s;
   border-radius: 15px;
+  z-index:2;
+
 }
 
 .choose_work_box:hover {

@@ -24,52 +24,23 @@ class GetUserCollect(View):
             data = json.loads(request.body.decode("utf-8"))
             token = data.get('token')
             userid = data.get('userid')
+            middleware_userid=getattr(request, 'userid', None)
+
 
             if not token and not userid:
                 self.logger.warning(self.request_path(request) + ' token 和 userid 均为空，请求数据为：' + str(data))
                 return JsonResponse({'status': 'error', 'message': 'token 和 userid 均为空'}, status=403)
 
-            admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-            user_id = None
-
             with connection.cursor() as cursor:
-                # 验证 token 和 userid
-                if token == 'sunyuanling':
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
-                    admin_token = cursor.fetchone()
-                    if admin_token:
-                        token = admin_token[0]
-                        user_id = admin_userid
-                    else:
-                        self.logger.error(self.request_path(request) + ' 无法获取管理员 token')
-                        return JsonResponse({'status': 'error', 'message': '管理员 token 获取失败'}, status=500)
-                else:
-                    if token:
-                        cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
-                        result = cursor.fetchone()
-                        if result:
-                            user_id = result[0]
-                        else:
-                            self.logger.warning(self.request_path(request) + ' 使用 token 获取用户 ID 失败')
-
-                    if not user_id and userid:
-                        cursor.execute('SELECT userid FROM users WHERE userid=%s', [userid])
-                        result = cursor.fetchone()
-                        if result:
-                            user_id = result[0]
-
-                    if not user_id:
-                        self.logger.warning(self.request_path(request) + ' 无法找到有效的用户 ID')
-                        return JsonResponse({'status': 'error', 'message': '无效的 token 和 userid'}, status=403)
 
                 # 查询收藏列表
-                if token:
-                    cursor.execute('SELECT * FROM user_collection_table WHERE userid=%s AND is_collection=%s',
-                                   [user_id, 1])
-                else:
+                if userid:
                     cursor.execute(
                         'SELECT * FROM user_collection_table WHERE userid=%s AND is_open=%s AND is_collection=%s',
-                        [user_id, 1, 1])
+                        [userid, 1, 1])
+                else:
+                    cursor.execute('SELECT * FROM user_collection_table WHERE userid=%s AND is_collection=%s',
+                                   [middleware_userid, 1])
 
                 collect_list = cursor.fetchall()
                 columns = [column[0] for column in cursor.description]

@@ -1,7 +1,7 @@
 <template>
     <div class="img_content_page" @click="close_page_click">
         <div class="img_box">
-            <img :src="'https://www.sunyuanling.com/image/' + item_path" ref="img_content_page_img">
+            <img :src="props.item_path" ref="img_content_page_img">
         </div>
     </div>
   </template>

@@ -7,6 +7,9 @@ async function update_user_back(file, token, user_data) {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/update/UpdateUserBack/', {
             method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
             body: formdata
         });
 
@@ -51,7 +54,8 @@ async function delete_user_back(token) {
         const res = await fetch('https://www.sunyuanling.com/api/update/DeleteUserBack/', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
                 token: token
@@ -83,6 +87,9 @@ async function update_userinfo(token, userinfo, files) {
     try {
         const res = await fetch('https://www.sunyuanling.com/api/update/UpdateUserInfo/', {
             method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
+            },
             body: formdata
         })
         if (res.ok) {
@@ -114,7 +121,7 @@ async function update_user_select_work(token, select_work) {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
+                'Authorization': 'Bearer ' + localStorage.getItem('token')
             },
             body: JSON.stringify({
                 select_work: select_work,
@@ -146,7 +153,7 @@ async function update_user_collect_work(token, collect_id, work_type, operate, o
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
+                    'Authorization': 'Bearer ' + localStorage.getItem('token')
                 },
                 body: JSON.stringify({
                     'token': token,

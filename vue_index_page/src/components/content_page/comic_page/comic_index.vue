@@ -34,8 +34,10 @@
 
                 </comment_section>
             </div>
-            <h3>推荐漫画作品</h3>
-            <recommend :token="store_token" :work_type="'comic'"></recommend>
+            <div class="recommend_box" style="width: 150%; max-width:85vw;">
+                <h3>推荐漫画作品</h3>
+                <recommend :token="store_token" :work_type="'comic'"></recommend>
+            </div>
         </div>
         <div class="author_info_box" v-if="work_info">
             <author_info :author_id="work_info.belong_to_userid" @chose_item="get_choose_item"></author_info>
@@ -229,9 +231,9 @@ async function get_work_info() {
 
 // 查看作品详情
 function show_work_info(item) {
-    img_content_page_show.value = true;
-    item_path.value = item;
+    item_path.value =`https://www.sunyuanling.com/image/comic/${item}`;
     store.commit('SET_ITEM_PATH', item)
+    img_content_page_show.value = true;
 }
 
 watch(img_content_page_show, (newValue) => {
@@ -262,12 +264,13 @@ async function get_choose_item(item) {
     margin: 10px auto;
     background-color: rgba(0, 0, 0, 0.05);
     border-radius: 10px;
+    overflow: hidden;
 }
 
 .content {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    width: 70%;
     height: 100%;
     position: relative;
     gap: 10px;
@@ -302,7 +305,9 @@ async function get_choose_item(item) {
 
 .author_info_box {
     display: flex;
-    width: 40%;
+    width: 30%;
+    max-width: 30%;
+    min-width: 30%;
     height: auto;
     padding-right: 10px;
 }

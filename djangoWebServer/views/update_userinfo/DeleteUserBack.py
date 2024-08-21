@@ -23,31 +23,18 @@ class DeleteUserBack(View):
         try:
             # 解析请求数据
             data = json.loads(request.body.decode('utf-8'))
-            token = data.get('token')
+            userid = getattr(request, 'userid', None)
 
-            if not token:
-                self.logger.warning(self.request_path(request) + ' 请求失败，token缺失')
-                return JsonResponse({'status': 'error', 'message': 'token缺失'}, status=400)
+            if not userid:
+                self.logger.warning(self.request_path(request) + ' 请求失败，用户ID缺失')
+                return JsonResponse({'status': 'error', 'message': '用户ID缺失'}, status=400)
 
-            # 如果token是特定值，则使用管理员的token进行验证
-            if token == 'sunyuanling':
-                admin_userid = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'
-                with connection.cursor() as cursor:
-                    cursor.execute('SELECT token FROM users WHERE userid=%s', [admin_userid])
-                    token = cursor.fetchone()
-                    if token:
-                        token = token[0]
-                    else:
-                        self.logger.warning(self.request_path(request) + ' 管理员token获取失败')
-                        return JsonResponse({'status': 'error', 'message': '管理员token获取失败'}, status=500)
-
-            # 验证用户
+            # 直接使用 `userid` 进行操作
             with connection.cursor() as cursor:
-                cursor.execute('SELECT userid FROM users WHERE token=%s', [token])
+                cursor.execute('SELECT userid FROM users WHERE userid=%s', [userid])
                 user_result = cursor.fetchone()
 
                 if user_result:
-                    userid = user_result[0]
                     # 更新用户的背景图片
                     new_image_filename = '20240525174916_f4f4acc7280f4eabb9fc1712929c3ccc.png'
                     cursor.execute('UPDATE users SET user_back_img=%s WHERE userid=%s',

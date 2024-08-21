@@ -1,8 +1,8 @@
 <template>
   <div class="author_info_page" v-if="props.author_id && author_info">
     <div class="content">
-      <div class="author_info" @click="jump_to_other_user_center(author_info.userid,author_info)">
-        <div class="author_avatar">
+      <div class="author_info" >
+        <div class="author_avatar" @click="jump_to_other_user_center(author_info.userid,author_info)">
           <img :src="'https://www.sunyuanling.com/image/avatar_thumbnail/' + author_info.user_avatar">
         </div>
         <div class="author_name">

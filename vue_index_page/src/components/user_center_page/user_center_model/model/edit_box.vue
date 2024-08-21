@@ -115,6 +115,7 @@ async function sure_btn(){
     left: 0;
     top: 0;
     background-color: rgba(0, 0, 0, 0.5);
+    z-index:11;
 }
 
 .content {

@@ -43,17 +43,17 @@ class UploadFile(View):
             work_info_json = request.POST.get('work_info')
             work_info = json.loads(work_info_json)
             work_type = work_info.get('work_type')
-            token = work_info.get('token')
-            userid = work_info.get('userid')
+            #token = work_info.get('token')
+            userid = getattr(request,'userid',None)
             tags = work_info.get('work_tags')
 
             tag_list = ','.join(tag.strip() for tag in tags)
 
-            if not token or not userid:
+            if  not userid:
                 return JsonResponse({'status': 'error', 'message': '缺少token或userid'}, status=400)
 
             with connection.cursor() as cursor:
-                cursor.execute("SELECT * FROM users WHERE token = %s AND userid = %s LIMIT 1", [token, userid])
+                cursor.execute("SELECT * FROM users WHERE  userid = %s LIMIT 1", [ userid])
                 if cursor.fetchone() is None:
                     return JsonResponse({'status': 'error', 'message': 'token或userid错误'}, status=400)
             if work_type=='get_preview_cover':
