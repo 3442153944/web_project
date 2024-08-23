@@ -67,8 +67,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted ,watch} from 'vue'
 import { get_worklist } from '../../js/get_worklist.js'
+import {search_comic_work} from '../../js/search_work.js'
 
 
 let search_type = ref('')
@@ -124,6 +125,47 @@ async function page_change(direction) {
 
     // 获取新的作品列表
     await fetch_worklist();
+}
+
+watch([search_type, title_choose_index], async () => {
+    // 如果搜索框为空，并且选择的是全部作品
+    if (search_type.value === '' && title_choose_index.value === 0) {
+        // 重新获取作品列表
+        await fetch_worklist();
+    } else {
+        // 否则根据搜索条件获取作品
+        await search_work(search_type.value, title_choose_index.value);
+    }
+});
+
+
+//搜索功能实现
+async function search_work(search_key, work_status) {
+    let status = ''
+    if (work_status == 0) {
+        status = 'all'
+    } else if (work_status == 1) {
+        status = 'pass'
+    } else if (work_status == 2) {
+        status = 'fail'
+    } else if (work_status == 3) {
+        status = 'unaudited'
+    }
+    else {
+        status = 'all'
+    }
+    const data = await search_comic_work(search_key, status)
+    console.log(data)
+    if (data.status == 'success') {
+        work_list.value = data.data
+    }
+    else {
+        console.log(data.message)
+        alert('没有相关作品')
+        await fetch_worklist()
+        title_choose_index.value = 0
+        search_type.value = null
+    }
 }
 </script>
 

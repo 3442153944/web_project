@@ -37,7 +37,7 @@ class SearchComicWork(View):
 
             # 处理关键字搜索（模糊匹配）
             if search_key:
-                base_sql += " AND name LIKE %s"
+                base_sql += " AND work_name LIKE %s"
                 params.append(f"%{search_key}%")  # 模糊匹配，名称包含关键字
 
             # 处理状态筛选
