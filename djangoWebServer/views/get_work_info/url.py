@@ -1,5 +1,6 @@
 from django.urls import path
 
+from .GetChapterList import GetChapterList
 from .GetComicinfo import GetComicinfo
 from .GetIllInfo import GetIllInfo
 from .GetNovelContent import GetNovelContent
@@ -17,4 +18,6 @@ urlpatterns = [
     # 使用作品ID和章节名来获取小说作品的章节内容
     path('GetNovelInfo/', GetNovelInfo.as_view(), name='GetNovelInfo'),
     #使用ID获取小说基本信息
+    path('GetChapterList/',GetChapterList.as_view(),name='GetChapterList'),
+    #使用ID获取章节列表
 ]

@@ -16,6 +16,7 @@
                 <div class="work_cover">
                     <img :src="'https://www.sunyuanling.com/image/comic/thumbnail/' + item.content_file_list.split(/[,，]/)[0]"
                         alt="作品封面">
+                    
                 </div>
                 <div class="work_info">
                     <div class="work_info_item">
@@ -28,7 +29,7 @@
                     </div>
                     <div class="work_info_item">
                         <span class="work_info_title">作品类型：</span>
-                        <span class="work_info_content">插画</span>
+                        <span class="work_info_content">漫画</span>
                     </div>
                     <div class="work_info_item">
                         <span class="work_info_title">作品描述：</span>
@@ -62,11 +63,13 @@
             </div>
         </div>
     </div>
+    
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { get_worklist } from '../../js/get_worklist.js'
+
 
 let search_type = ref('')
 let work_list = ref([])
@@ -223,7 +226,8 @@ async function page_change(direction) {
 
 .work_cover {
     width: 200px;
-    height: 200px;
+    height: auto;
+    min-height: 200px;
     border-radius: 15px 0px 0px 15px;
     max-height: 200px;
     max-width: 200px;
