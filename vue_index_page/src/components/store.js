@@ -17,6 +17,7 @@ const store = createStore({
       user_center_page: false,
       other_user_center_page:false,
       data_analysis_page:false,
+      work_contribute_page:false,
     },
     // 内容页面状态，用于控制内容相关页面的显示状态
     content_page: {
@@ -158,6 +159,7 @@ const store = createStore({
     other_user_center_page:state=>state.pageStatus.other_user_center_page,
     other_userid:state=>state.other_userid,
     data_analysis_page:state=>state.pageStatus.data_analysis_page,
+    work_contribute_page:state=>state.pageStatus.work_contribute_page,
   },
 });
 

@@ -24,6 +24,7 @@
         <div class="data_analysis mt hv" @click="open_data_analysis()"><span>数据分析</span></div>
         <div class="my_works mt hv"><span>我的作品</span></div>
         <div class="appointment_management mt hv"><span>约稿管理</span></div>
+        <div class="mt hv" @click="open_contribute()"><span>投稿作品状态</span></div>
         <br>
         <div class="collection mt hv"><span>收藏</span></div>
         <div class="browseing_history mt hv"><span>浏览历史</span></div>
@@ -174,6 +175,12 @@ function jump_usercenter() {
 function open_data_analysis(){
     console.log("数据分析跳转");
     store.commit('SET_SINGLE_PAGE_STATUS',{'key':'data_analysis_page','value':true})
+}
+
+//投稿作品页面
+function open_contribute(){
+    console.log("投稿作品页面跳转");
+    store.commit('SET_SINGLE_PAGE_STATUS',{'key':'work_contribute_page','value':true})
 }
 //退出登录
 function logout() {

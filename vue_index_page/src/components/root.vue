@@ -16,6 +16,7 @@
       <user_center_page :token="token" v-if="user_center_page_show"></user_center_page>
       <other_user_center_page v-if="other_user_center_page_show" :userid="other_userid"></other_user_center_page>
       <data_analysis :token="token" v-if="data_analysis_page"/>
+      <work_contribute v-if="work_contribute_page"></work_contribute>
     </div>
     <div v-else class="loading">
       <img class="icon" src="https://www.sunyuanling.com/image/loading.gif">
@@ -34,6 +35,7 @@
   import user_center_page from './user_center_page/user_center_page.vue';
   import other_user_center_page from './other_user_center_page/user_center_page.vue';
   import data_analysis from '@/assets/model/data_analysis/components/root.vue';
+  import work_contribute from '@/assets/model/work_contribute_review/components/root.vue';
   
   const store = useStore();
   const cursor_top = ref(0);
@@ -50,6 +52,7 @@
   const other_user_center_page_show = computed(() => store.getters.other_user_center_page);
   const other_userid = computed(() => store.getters.other_userid);
   const data_analysis_page = computed(() => store.getters.data_analysis_page);
+  const work_contribute_page=computed(()=>store.getters.work_contribute_page);
   
   // 读取URL参数设置cookie并清除URL中的token参数
   function setTokenFromURL() {
