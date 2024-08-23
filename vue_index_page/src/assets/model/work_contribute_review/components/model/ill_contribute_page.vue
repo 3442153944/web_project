@@ -1,7 +1,7 @@
 <template>
     <div class="ill_contribute_page">
         <h2>投稿的插画</h2>
-        <div class="content">
+        <div class="content" v-if="work_list && work_list.length > 0">
             <div class="title">
                 <span :class="title_choose_index == 0 ? 'is_choose' : ''" @click="choose_item(0)">全部作品</span>
                 <span :class="title_choose_index == 1 ? 'is_choose' : ''" @click="choose_item(1)">审核通过作品</span>
@@ -49,7 +49,8 @@
                     </div>
                     <div class="work_info_item">
                         <span class="work_info_title">审核意见：</span>
-                        <span class="work_info_content">{{ item.approved_opinion == null ? '无意见' : item.approved_opinion }}</span>
+                        <span class="work_info_content">{{ item.approved_opinion == null ? '无意见' : item.approved_opinion
+                            }}</span>
                     </div>
                 </div>
             </div>
@@ -65,8 +66,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { get_worklist } from '../../js/get_worklist.js'
+import { search_ill_work } from '../../js/search_work'
 
 let search_type = ref('')
 let work_list = ref([])
@@ -81,7 +83,7 @@ let userinfo = ref(JSON.parse(localStorage.getItem('userinfo')))
 // 筛选作品状态
 function choose_item(index) {
     title_choose_index.value = index
-    console.log('前端筛选作品状态')
+    //console.log('前端筛选作品状态')
 }
 
 // 获取作品列表
@@ -121,6 +123,47 @@ async function page_change(direction) {
 
     // 获取新的作品列表
     await fetch_worklist();
+}
+
+watch([search_type, title_choose_index], async () => {
+    // 如果搜索框为空，并且选择的是全部作品
+    if (search_type.value === '' && title_choose_index.value === 0) {
+        // 重新获取作品列表
+        await fetch_worklist();
+    } else {
+        // 否则根据搜索条件获取作品
+        await search_work(search_type.value, title_choose_index.value);
+    }
+});
+
+
+//搜索功能实现
+async function search_work(search_key, work_status) {
+    let status = ''
+    if (work_status == 0) {
+        status = 'all'
+    } else if (work_status == 1) {
+        status = 'pass'
+    } else if (work_status == 2) {
+        status = 'fail'
+    } else if (work_status == 3) {
+        status = 'unaudited'
+    }
+    else {
+        status = 'all'
+    }
+    const data = await search_ill_work(search_key, status)
+    console.log(data)
+    if (data.status == 'success') {
+        work_list.value = data.data
+    }
+    else {
+        console.log(data.message)
+        alert('没有相关作品')
+        await fetch_worklist()
+        title_choose_index.value = 0
+        search_type.value = null
+    }
 }
 </script>
 
