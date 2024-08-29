@@ -1,0 +1,10 @@
+Epoch [1/10], Avg Loss: 0.4154, Time: 463.61s
+Epoch [2/10], Avg Loss: 0.3722, Time: 467.03s
+Epoch [3/10], Avg Loss: 0.3185, Time: 467.15s
+Epoch [4/10], Avg Loss: 0.2641, Time: 460.84s
+Epoch [5/10], Avg Loss: 0.2077, Time: 465.12s
+Epoch [6/10], Avg Loss: 0.1324, Time: 465.73s
+Epoch [7/10], Avg Loss: 0.1193, Time: 465.36s
+Epoch [8/10], Avg Loss: 0.1121, Time: 461.19s
+Epoch [9/10], Avg Loss: 0.1029, Time: 464.87s
+Epoch [10/10], Avg Loss: 0.0959, Time: 462.33s
