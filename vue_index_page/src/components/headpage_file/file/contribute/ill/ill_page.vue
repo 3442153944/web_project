@@ -31,7 +31,7 @@
             <div class="filename">{{ item.filename }}</div>
           </div>
           <div class="add_work_btn" @click="add_work">
-            <img class="add_icon" src="https://www.sunyuanling.com/assets/add.svg">
+            <img  src="https://www.sunyuanling.com/assets/add.svg">
           </div>
         </div>
       </div>
@@ -189,7 +189,7 @@ async function submit_work() {
   justify-content: center;
   width: 100%;
   min-height: 25vh;
-  background-color: #585858;
+  background-color: #d1d1d1;
   color: white;
   padding: 10px;
   box-sizing: border-box;
@@ -259,11 +259,17 @@ async function submit_work() {
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  opacity: 1;
 }
 
 .add_work_btn:hover {
   opacity: 0.8;
   transition: 0.2s;
+}
+.add_work_btn img{
+  width:90%;
+  height: 90%;
+  object-fit: cover;
 }
 
 .delete_btn {

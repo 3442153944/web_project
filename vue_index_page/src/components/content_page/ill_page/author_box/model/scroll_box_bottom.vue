@@ -16,7 +16,7 @@
           </div>
           <div v-if="props.msg_type === 'image'" class="image_item"
             @click="chose_item({ 'item': item, 'work_id': item.Illustration_id })">
-            <img :src="item.item_path" class="image">
+            <img :src="item.item_path" class="image" style="min-height: 200px;min-width:200px;">
             <div class="work_count" v-if="item.work_count>1">
               <img :src="props.page_count_svg" class="icon">
               <span>{{item.work_count}}</span>
@@ -234,6 +234,7 @@ async function get_work_info(work_id) {
   scrollbar-width: none;
   white-space: nowrap;
   transition: transform 0.3s ease;
+  gap: 10px;
 }
 
 .item {
@@ -243,6 +244,8 @@ async function get_work_info(work_id) {
   align-items: center;
   max-width: 200px;
   max-height: 200px;
+  min-height: 200px;
+  min-width: 200px;
 }
 
 .tags_item {

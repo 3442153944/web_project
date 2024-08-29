@@ -12,6 +12,9 @@ from asgiref.sync import sync_to_async
 from ..log.log import Logger
 from .config import settings
 from .CoverHandle import CoverHandle
+from ..ai_review.review import ImageClassifier
+
+img_class_age=ImageClassifier()
 
 cover_handle = CoverHandle()
 class UploadFile(View):
@@ -19,6 +22,9 @@ class UploadFile(View):
 
     ALLOWED_EXTENSIONS = {'.jpg', '.jpeg', '.png', '.tiff'}
     MAX_FILE_SIZE = 50 * 1024 * 1024  # 50 MB
+    age_classification=18
+    work_approved=2
+    work_age_classification=16
 
     def request_path(self, request):
         now = datetime.now()
@@ -81,6 +87,8 @@ class UploadFile(View):
         save_path, save_thumbnail_path = settings['paths'][work_type]
         content_file_list = []
         unique_prefix = self.generate_unique_prefix()
+        temp = []  # 用于记录每个文件的年龄分类标签
+        age_temp_arr = []
 
         for index, file in enumerate(files):
             filename, ext = os.path.splitext(file.name)
@@ -90,6 +98,20 @@ class UploadFile(View):
             if file.size > self.MAX_FILE_SIZE:
                 self.logger.error(f'文件过大: {file.name}')
                 continue
+
+            # 将文件格式化为字节流
+            file_bytes = file.read()
+
+            # 模型年龄识别
+            self.age_classification = img_class_age.classify_r18(file_bytes)
+            age_temp_arr.append(self.age_classification)
+
+            if self.age_classification <= 0.55:
+                temp.append(1)  # 非 R18
+            elif self.age_classification >= 0.75:
+                temp.append(-1)  # R18
+            else:
+                temp.append(0)  # 待审
 
             safe_filename = self.get_safe_filename(unique_prefix, index, ext)
             full_file_path = os.path.join(save_path, safe_filename)
@@ -101,12 +123,30 @@ class UploadFile(View):
             thumbnail_path = os.path.join(save_thumbnail_path, safe_filename)
             self.save_file(thumbnail_path, img_thumbnail)
 
-            #生成内容页的长宽最大1200的缩略图
+            # 生成内容页的长宽最大1200的缩略图
             img_content = self.img_file_convert(file, 1200, 1200)
-            content_path = os.path.join(save_path+'content_thumbnail/', safe_filename)
+            content_path = os.path.join(save_path + 'content_thumbnail/', safe_filename)
             self.save_file(content_path, img_content)
 
         content_file_list_str = ','.join(content_file_list)
+
+        # 判断逻辑：有待审文件、R18 文件或全为非 R18
+        print(temp)
+        print(age_temp_arr)
+
+        if all(t == 1 for t in temp):  # 全部非 R18
+            self.work_age_classification = 16
+            self.work_approved = 1
+            work_info['age_classification'] = 16
+        elif any(t == 0 for t in temp):  # 任何文件需要审核
+            self.work_age_classification = 18
+            self.work_approved = 2
+            work_info['age_classification'] = 18
+        else:  # 有任何一个文件为 R18
+            self.work_age_classification = 18
+            self.work_approved = 1
+            work_info['age_classification'] = 18
+
         self.save_to_db(work_type, work_info, content_file_list_str, now, tag_list)
         self.logger.info(self.request_path(request) + ' 上传成功')
 
@@ -126,14 +166,16 @@ class UploadFile(View):
             params = (
                 work_info['name'], content_file_list_str, work_info['username'],
                 work_info['userid'], tag_list, now,
-                work_info['brief_introduction'], work_info['age_classification']
+                work_info['brief_introduction'], work_info['age_classification'],
+                self.work_approved
             )
         elif work_type == 'comic':
             query = settings['queries']['comic']
             params = (
                 work_info['name'], content_file_list_str, work_info['username'],
                 work_info['userid'], now, tag_list,
-                work_info['age_classification'], work_info['brief_introduction']
+                work_info['age_classification'], work_info['brief_introduction'],
+                self.work_approved
             )
         elif work_type == 'novel':
             temp_path=cover_handle.handle(work_info['name'],None,work_info['template_index'])
