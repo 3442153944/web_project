@@ -126,8 +126,9 @@ function jump_to_other_user_center(userid, item) {
   store.commit('SET_SINGLE_PAGE_STATUS', { key: 'other_user_center_page', value: true });
 }
 
-onMounted(() => {
-  fetchAuthorData();
+onMounted(async () => {
+  await fetchAuthorData();
+  console.log(author_info.value)
 });
 </script>
 

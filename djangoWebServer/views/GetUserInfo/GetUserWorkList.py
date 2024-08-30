@@ -25,6 +25,9 @@ class GetUserWorkList(View):
             userid = getattr(request, 'userid', None)
             offset = data.get('offset', 0)
             limit = data.get('limit', 10000)
+            get_userid=data.get('userid',None)
+            if get_userid:
+                userid=get_userid
 
             if not userid:
                 raise ValueError("用户ID缺失")

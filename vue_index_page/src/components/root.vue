@@ -92,17 +92,17 @@
           load_reading.value = true;
         } else {
           console.log('用户未登录');
-          window.location.href = 'https://localhost:3000';
+          //window.location.href = 'https://localhost:3000';
         }
       } else {
         console.log('网络错误');
         cookies.clearAllCookies();
-        window.location.href = 'https://localhost:3000';
+        //window.location.href = 'https://localhost:3000';
       }
     } catch (err) {
       console.log('获取用户信息失败:', err);
       cookies.clearAllCookies();
-      window.location.href = 'https://localhost:3000';
+      //window.location.href = 'https://localhost:3000';
     }
   }
   

@@ -16,11 +16,18 @@ class GetAllUserInfo(View):
         now = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
         return f'{request_ip} 在 {now} 访问了 {request_path}'
 
-    def fetch_user_data(self, userid, token=None):
-        """从数据库中获取用户信息、粉丝和关注数"""
+    def fetch_user_data(self, userid=None, token=None):
+        """根据用户ID或token从数据库中获取用户信息，默认优先使用userid"""
         with connection.cursor() as cursor:
-            sql = 'SELECT * FROM users WHERE userid = %s OR token = %s'
-            cursor.execute(sql, [userid, token])
+            if userid:
+                sql = 'SELECT * FROM users WHERE userid = %s'
+                cursor.execute(sql, [userid])
+            elif token:
+                sql = 'SELECT * FROM users WHERE token = %s'
+                cursor.execute(sql, [token])
+            else:
+                return []
+
             columns = [desc[0] for desc in cursor.description]
             result = cursor.fetchall()
             rows = [dict(zip(columns, row)) for row in result]
@@ -53,8 +60,18 @@ class GetAllUserInfo(View):
             userid = getattr(request, 'userid', None)
             print(f'中间件认证通过，用户ID为：{str(userid)}')
             print(f'中间件通过状态为：{str(is_authenticated)}')
+            data=json.loads(request.body.decode('utf-8'))
+            get_userid=data.get('userid',None)
+            if get_userid:
+                rows = self.fetch_user_data(userid=get_userid)
+                if rows:
+                    self.logger.info(f'POST request success: {rows}')
+                    return JsonResponse({'status': 'success', 'data': rows})
+                else:
+                    self.logger.warning(f'No data found for request: {data}')
+                    return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=404)
             if is_authenticated:
-                rows = self.fetch_user_data(userid)
+                rows = self.fetch_user_data(userid=userid)
                 if rows:
                     self.logger.info(f'POST request success: {rows}')
                     return JsonResponse({'status': 'success', 'data': rows})
@@ -75,7 +92,8 @@ class GetAllUserInfo(View):
                 if token == 'sunyuanling':
                     userid = admin_userid
 
-                rows = self.fetch_user_data(userid, token)
+                # 优先使用userid查询，若没有提供则使用token查询
+                rows = self.fetch_user_data(userid=userid, token=token)
                 if rows:
                     self.logger.info(f'POST request success: {rows}')
                     return JsonResponse({'status': 'success', 'data': rows})

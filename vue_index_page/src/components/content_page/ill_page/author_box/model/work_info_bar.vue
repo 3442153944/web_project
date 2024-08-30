@@ -57,13 +57,13 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="work_info_bar">
+  <div class="work_info_bar" v-if="work_info">
     <div class="content">
       <div class="title">
-        <span>{{ title }}</span>
+        <span>{{work_info.data[0].name}}</span>
       </div>
       <div class="brief_introduction">
-        <span>{{ brief_introduction }}</span>
+        <span>{{ work_info.data[0].brief_introduction }}</span>
       </div>
       <div class="tags_box">
         <span class="age_classification" v-if="age_classification !== '16'">

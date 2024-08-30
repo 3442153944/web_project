@@ -40,7 +40,7 @@
             </div>
         </div>
         <div class="author_info_box" v-if="work_info">
-            <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item" :key="work_id"></author_info>
+            <author_info :author_id="work_info.belong_to_user_id" @chose_item="get_choose_item" :key="work_info.belong_to_user_id"></author_info>
         </div>
        
         
@@ -220,6 +220,7 @@ async function get_work_info() {
             const data = await res.json();
             if (data.status === 'success') {
                 work_info.value = data.data[0];
+                console.log(work_info.value)
             } else {
                 console.log(data.message);
             }
