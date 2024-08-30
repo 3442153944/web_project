@@ -57,6 +57,7 @@ const search_type = ref('');
 const user_data_info = ref({});
 const offset = ref(0);
 const limit = ref(3);
+const total = ref(0);
 const loadingMore = ref(false);
 
 onMounted(async () => {
@@ -73,12 +74,15 @@ const filteredUserData = computed(() => {
 });
 
 async function loadMoreUsers() {
-    if (loadingMore.value) return;
+    // 检查是否已经加载完所有用户
+    
     
     loadingMore.value = true;
     try {
         const response = await get_user_list(offset.value, limit.value);
+        total.value = response.data.total; // 更新总用户数
         const newUsers = response.data.user_list;
+        
         if (newUsers.length > 0) {
             user_data.value = [...user_data.value, ...newUsers];
             offset.value += limit.value;
@@ -88,7 +92,9 @@ async function loadMoreUsers() {
     } finally {
         loadingMore.value = false;
     }
+    if (loadingMore.value || offset.value >= total.value) return;
 }
+
 
 
 function deleteUser(index) {

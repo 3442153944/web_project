@@ -35,15 +35,19 @@ class GetUserList(View):
                     offset = data.get('offset',0)
                     limit = data.get('limit',10)
                     sql = '''select * from users limit %s offset %s'''
+                    count_sql='''select count(*) from users'''
                     cursor = connection.cursor()
                     cursor.execute(sql,[limit,offset])
                     columns = [col[0] for col in cursor.description]
                     rows = [dict(zip(columns, row)) for row in cursor.fetchall()]
+                    cursor.execute(count_sql)
+                    all_user_count = cursor.fetchone()[0]
                     return JsonResponse({
                         'status': 'success',
                         'message': '获取用户列表成功！',
                         'status_code': 200,
-                        'data': {'user_list':rows}
+                        'data': {'user_list':rows},
+                        'total':all_user_count
                     },status=200)
                 else:
                     return JsonResponse({
