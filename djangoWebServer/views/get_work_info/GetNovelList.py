@@ -35,7 +35,8 @@ class GetNovelList(View):
                         novel_work.work_status, novel_content.*, novel_work.brief_introduction, novel_work.work_id
                         FROM novel_content 
                         JOIN novel_work ON novel_work.work_id = novel_content.belong_to_series_id 
-                        WHERE belong_to_series_id = %s ORDER BY novel_content.create_time'''
+                        WHERE belong_to_series_id = %s and work_approved=1 and chapter_approved=1 
+                        ORDER BY novel_content.create_time'''
 
                 cursor.execute(sql, [work_id])
                 result = cursor.fetchall()

@@ -39,17 +39,17 @@ class GetRankList(View):
                              users.user_avatar AS author_avatar
                           FROM illustration_work 
                           LEFT JOIN users ON users.userid = illustration_work.belong_to_user_id 
-                          WHERE Illustration_id = %s''',
+                          WHERE Illustration_id = %s and work_approved=1''',
                 'comic': '''SELECT comic.*, users.username AS author_username, users.userid AS author_userid,
                              users.user_avatar AS author_avatar 
                             FROM comic 
                             LEFT JOIN users ON users.userid = comic.belong_to_userid 
-                            WHERE comic.id = %s''',
+                            WHERE comic.id = %s and work_approved=1''',
                 'novel': '''SELECT novel_work.*, users.username AS author_username, users.userid AS author_userid,
                              users.user_avatar AS author_avatar
                             FROM novel_work 
                             LEFT JOIN users ON users.userid = novel_work.belong_to_userid 
-                            WHERE work_id = %s'''
+                            WHERE work_id = %s and work_approved=1'''
             }
 
             weights = {

@@ -48,7 +48,7 @@ class GetNovelContent(View):
                     work_id = data.get('work_id')
                     if title and work_id:
                         cursor.execute('SELECT content FROM novel_content '
-                                       'WHERE title=%s AND belong_to_series_id=%s', [title, work_id])
+                                       'WHERE title=%s AND belong_to_series_id=%s and chapter_approved=1', [title, work_id])
                         result = cursor.fetchone()
 
                         if result:

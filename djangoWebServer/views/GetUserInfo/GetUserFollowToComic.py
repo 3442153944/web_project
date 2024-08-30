@@ -23,7 +23,7 @@ class GetUserFollowToComic(View):
                     self.logger.warning(data)
                     return JsonResponse({'status':'failure','message':'No data found'},status=400)
                 #获取漫画信息并按照时间排序
-                sql=('select * from comic where comic.belong_to_userid in %s ' 
+                sql=('select * from comic where comic.belong_to_userid in %s and comic.work_approved=1 ' 
                      'ORDER BY create_time DESC')
                 cursor.execute(sql,[tuple(follow_user_id_list)])
                 columns=[desc[0] for desc in cursor.description]

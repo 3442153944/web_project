@@ -28,16 +28,17 @@ class GetUserFollowToIll(View):
                 if not follow_user_ids:
                     self.logger.warning(f'No followers found for user ID: {userid}')
                     return JsonResponse({'status': 'failure', 'message': 'No data found'}, status=400)
+                follow_user_ids_tuple = tuple(follow_user_ids)
 
                 # 获取插画信息并按照时间排序
-                sql = ('''
+                sql = '''
                     SELECT illustration_work.*, users.user_avatar
                     FROM illustration_work
                     LEFT JOIN users ON illustration_work.belong_to_user_id = users.userid
-                    WHERE illustration_work.belong_to_user_id IN %s
+                    WHERE illustration_work.belong_to_user_id IN %s and work_approved=1 
                     ORDER BY illustration_work.create_time DESC
-                ''')
-                cursor.execute(sql, [tuple(follow_user_ids)])
+                '''
+                cursor.execute(sql, [tuple(follow_user_ids_tuple)])
                 columns = [desc[0] for desc in cursor.description]
                 ill_result = cursor.fetchall()
                 ill_list = [dict(zip(columns, row)) for row in ill_result]

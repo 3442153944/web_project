@@ -261,6 +261,7 @@ function set_work_count(item)
   align-items: center;
   margin-bottom: 30px;
   cursor: default;
+  cursor: pointer;
 }
 
 /*倒序*/

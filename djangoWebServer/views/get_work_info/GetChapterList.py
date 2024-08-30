@@ -32,7 +32,7 @@ class GetChapterList(View):
             if work_id:
                 with connection.cursor() as cursor:
                     sql="""
-                        select * from novel_content where belong_to_series_id=%s
+                        select * from novel_content where belong_to_series_id=%s 
                     """
                     cursor.execute(sql,[work_id])
                     result=cursor.fetchall()

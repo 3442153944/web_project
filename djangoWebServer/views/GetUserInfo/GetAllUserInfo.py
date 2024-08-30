@@ -58,8 +58,8 @@ class GetAllUserInfo(View):
             # 如果已通过中间件认证
             is_authenticated = getattr(request, 'is_authenticated', False)
             userid = getattr(request, 'userid', None)
-            print(f'中间件认证通过，用户ID为：{str(userid)}')
-            print(f'中间件通过状态为：{str(is_authenticated)}')
+            #print(f'中间件认证通过，用户ID为：{str(userid)}')
+            #print(f'中间件通过状态为：{str(is_authenticated)}')
             data=json.loads(request.body.decode('utf-8'))
             get_userid=data.get('userid',None)
             if get_userid:

@@ -35,12 +35,12 @@ class GetUserWorkList(View):
             # SQL查询字典
             sql_query_dict = {
                 'ill': 'SELECT *, "ill" AS type FROM illustration_work '
-                       'WHERE belong_to_user_id=%s '
+                       'WHERE belong_to_user_id=%s and work_approved=1 '
                        'ORDER BY create_time DESC LIMIT %s OFFSET %s',
-                'comic': 'SELECT *, "comic" AS type FROM comic WHERE belong_to_userid=%s'
+                'comic': 'SELECT *, "comic" AS type FROM comic WHERE belong_to_userid=%s and work_approved=1'
                          ' ORDER BY create_time DESC LIMIT %s OFFSET %s',
                 'novel': 'SELECT *, "novel" AS type FROM novel_work'
-                         ' WHERE belong_to_userid=%s '
+                         ' WHERE belong_to_userid=%s and work_approved=1 '
                          'ORDER BY work_create_time DESC LIMIT %s OFFSET %s'
             }
 

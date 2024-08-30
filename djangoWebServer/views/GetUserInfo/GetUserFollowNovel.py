@@ -22,7 +22,7 @@ class GetUserFollowNovel(View):
                     self.logger.warning(data)
                     return JsonResponse({'status':'failure','message':'No data found'},status=400)
                 #获取小说信息并按照时间排序
-                sql=('select * from novel_work where belong_to_userid in %s ' 
+                sql=('select * from novel_work where belong_to_userid in %s and work_approved=1 ' 
                      'ORDER BY work_create_time DESC')
                 cursor.execute(sql,[tuple(follow_user_id_list)])
                 columns=[desc[0] for desc in cursor.description]

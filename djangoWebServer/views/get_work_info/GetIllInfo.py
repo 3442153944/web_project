@@ -25,7 +25,7 @@ class GetIllInfo(View):
             sql = '''
             SELECT illustration_work.*,users.user_avatar as author_avatar 
             FROM illustration_work left join  users on illustration_work.belong_to_user_id=users.userid 
-            where Illustration_id=%s
+            where Illustration_id=%s and work_approved=1
             '''
             work_id = data.get('work_id')
             with connection.cursor() as cursor:
