@@ -32,17 +32,23 @@ class GetIllList(View):
                     sql = '''select account_permissions from users where userid=%s'''
                     cursor.execute(sql, (userid,))
                     account_permissions = cursor.fetchone()[0]
-                if account_permissions in ['1', '2', 1, 2]:
-                    offset = data.get('offset')
-                    limit = data.get('limit')
-                    sql = 'select * from illustration_work limit %s offset %s'
-                    cursor.execute(sql, (limit, offset))
-                    result = cursor.fetchall()
-                    columns = [col[0] for col in cursor.description]
-                    rows = [dict(zip(columns, row)) for row in result]
-                    return JsonResponse({'status': 'success', 'message': '请求成功',
-                                         'data': {'work_list': rows, 'work_type': 'ill'}, 'status_code': 200},
-                                        status=200)
+                    if account_permissions in ['1', '2', 1, 2]:
+                        offset = data.get('offset')
+                        limit = data.get('limit')
+                        sql = ('select illustration_work.*,users.userid,users.user_avatar,users.username'
+                               ' from illustration_work '
+                               'left join users on users.userid=illustration_work.belong_to_user_id limit %s offset %s')
+                        cursor.execute(sql, (limit, offset))
+                        result = cursor.fetchall()
+                        columns = [col[0] for col in cursor.description]
+                        rows = [dict(zip(columns, row)) for row in result]
+                        count_sql = '''select count(*) from illustration_work'''
+                        cursor.execute(count_sql)
+                        total = cursor.fetchone()[0]
+                        return JsonResponse({'status': 'success', 'message': '请求成功',
+                                             'data': {'work_list': rows, 'work_type': 'ill', 'total': total},
+                                             'status_code': 200},
+                                            status=200)
                 return JsonResponse({'status': 'error', 'message': '权限不足', 'data': None, 'status_code': 403},
                                     status=403)
         except Exception as e:

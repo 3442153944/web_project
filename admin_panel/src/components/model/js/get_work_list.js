@@ -1,7 +1,7 @@
 async function get_ill_worklist(limit=10,offset=0)
 {
     try{
-        const res=await fetch("https://www.sunyualing.com/api/admin_control/GetIllList/",{
+        const res=await fetch("https://www.sunyuanling.com/api/admin_control/GetIllList/",{
             method:"post",
             headers:{
                 "Content-Type":"application/json",
@@ -23,7 +23,7 @@ async function get_ill_worklist(limit=10,offset=0)
 async function get_comic_worklist(limit=10,offset=0)
 {
     try{
-        const res=await fetch("https://www.sunyualing.com/api/admin_control/GetComicList/",{
+        const res=await fetch("https://www.sunyuanling.com/api/admin_control/GetComicList/",{
             method:"post",
             headers:{
                 "Content-Type":"application/json",
