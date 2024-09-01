@@ -5,8 +5,10 @@ from .model.edit_user_info import EditUserInfo
 from .model.get_comic_list import GetComicList
 from .model.get_ill_list import GetIllList
 from .model.get_userlist import GetUserList
+from .model.search_comic import SearchComic
 from .model.search_ill import SearchIll
 from .model.updata_ill_status import UpdateIll
+from .model.update_comic_status import UpdateComic
 
 urlpatterns = [
     path('AdminLogin/',AdminLogin.as_view(),name='AdminLogin'),
@@ -23,4 +25,8 @@ urlpatterns = [
     #搜索插画作品
     path('UpdateIll/',UpdateIll.as_view(),name='UpdateIll'),
     #更新插画作品
+    path('SearchComic/',SearchComic.as_view(),name='SearchComic'),
+    #搜索漫画作品
+    path('UpdateComic/',UpdateComic.as_view(),name='UpdateComic'),
+    #更新漫画作品
 ]
