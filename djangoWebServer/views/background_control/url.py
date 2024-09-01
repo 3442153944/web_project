@@ -4,6 +4,7 @@ from .model.admin_login import AdminLogin
 from .model.edit_user_info import EditUserInfo
 from .model.get_comic_list import GetComicList
 from .model.get_ill_list import GetIllList
+from .model.get_novel_work import GetNovelWork
 from .model.get_userlist import GetUserList
 from .model.search_comic import SearchComic
 from .model.search_ill import SearchIll
@@ -29,4 +30,6 @@ urlpatterns = [
     #搜索漫画作品
     path('UpdateComic/',UpdateComic.as_view(),name='UpdateComic'),
     #更新漫画作品
+    path('GetNovelWork/',GetNovelWork.as_view(),name='GetNovelWork'),
+    #获取小说作品
 ]
