@@ -202,4 +202,20 @@ onMounted(async () => {
   transform: scale(1.03);
   transform: translateY(-1px);
 }
+.novel_work_info{
+  width:auto;
+  height: auto;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap:10px;
+}
+.info_item{
+  width:100%;
+  display: flex;
+  flex-direction: row;
+  gap:10px;
+  word-wrap: break-word;
+}
 </style>
