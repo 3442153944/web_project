@@ -1,12 +1,15 @@
 from django.urls import path
 
 from .model.admin_login import AdminLogin
+from .model.delete_comment import DeleteComment
 from .model.edit_user_info import EditUserInfo
 from .model.get_comic_list import GetComicList
+from .model.get_comment_list import GetCommentList
 from .model.get_ill_list import GetIllList
 from .model.get_novel_work import GetNovelWork
 from .model.get_userlist import GetUserList
 from .model.search_comic import SearchComic
+from .model.search_comment import SearchComment
 from .model.search_ill import SearchIll
 from .model.search_novel_content import SearchNovelContent
 from .model.search_novel_work import SearchNovelWork
@@ -44,4 +47,10 @@ urlpatterns = [
     #更新小说作品
     path('UpdateNovelContent/',UpdateNovelContent.as_view(),name='UpdateNovelContent'),
     #更新小说内容
+    path('GetCommentList/',GetCommentList.as_view(),name='GetCommentList'),
+    #获取评论列表
+    path('SearchComment/',SearchComment.as_view(),name='SearchComment'),
+    #搜索评论，支持精准搜索和模糊搜索
+    path('DeleteComment/',DeleteComment.as_view(),name='DeleteComment'),
+    #删除评论
 ]
