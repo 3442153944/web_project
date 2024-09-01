@@ -8,8 +8,12 @@ from .model.get_novel_work import GetNovelWork
 from .model.get_userlist import GetUserList
 from .model.search_comic import SearchComic
 from .model.search_ill import SearchIll
+from .model.search_novel_content import SearchNovelContent
+from .model.search_novel_work import SearchNovelWork
 from .model.updata_ill_status import UpdateIll
 from .model.update_comic_status import UpdateComic
+from .model.update_novel_content import UpdateNovelContent
+from .model.update_novel_work import UpdateNovelWork
 
 urlpatterns = [
     path('AdminLogin/',AdminLogin.as_view(),name='AdminLogin'),
@@ -32,4 +36,12 @@ urlpatterns = [
     #更新漫画作品
     path('GetNovelWork/',GetNovelWork.as_view(),name='GetNovelWork'),
     #获取小说作品
+    path('SearchNovelWork/',SearchNovelWork.as_view(),name='SearchNovelWork'),
+    #搜索小说作品
+    path('SearchNovelContent/',SearchNovelContent.as_view(),name='SearchNovelContent'),
+    #搜索小说内容或者章节，前提为指定小说的ID
+    path('UpdateNovelWork/',UpdateNovelWork.as_view(),name='UpdateNovelWork'),
+    #更新小说作品
+    path('UpdateNovelContent/',UpdateNovelContent.as_view(),name='UpdateNovelContent'),
+    #更新小说内容
 ]
