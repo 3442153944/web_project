@@ -30,17 +30,25 @@ class GetComicList(View):
                 sql='select account_permissions from users where userid=%s'
                 with connection.cursor() as cursor:
                     cursor.execute(sql,[userid])
-                    result=cursor.fetchone()
+                    result=cursor.fetchone()[0]
                     if result in ['1','2',1,2]:
-                        sql='select * from comic limit %s offset %s'
+                        sql=('select comic.*,users.userid,users.user_avatar,users.username'
+                             ' from comic left join users on users.userid=comic.belong_to_userid'
+                             ' limit %s offset %s')
                         cursor.execute(sql,[limit,offset])
                         result=cursor.fetchall()
+                        sql_count='select count(*) from comic'
+                        cursor.execute(sql_count)
+                        total=cursor.fetchone()[0]
                         if result:
                             columns = [col[0] for col in cursor.description]
                             rows=[dict(zip(columns,row)) for row in result]
                             return JsonResponse({
                                 'status':'success',
-                                'data':rows
+                                'data':{
+                                    'work_list':rows,
+                                    'total':total
+                                }
                             },status=200)
                         else:
                             return JsonResponse({'status':'success','data':[]},status=200)
