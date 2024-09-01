@@ -6,6 +6,7 @@ from .model.edit_user_info import EditUserInfo
 from .model.get_comic_list import GetComicList
 from .model.get_comment_list import GetCommentList
 from .model.get_ill_list import GetIllList
+from .model.get_novel_content_list import GetNovelContentList
 from .model.get_novel_work import GetNovelWork
 from .model.get_userlist import GetUserList
 from .model.search_comic import SearchComic
@@ -39,6 +40,8 @@ urlpatterns = [
     #更新漫画作品
     path('GetNovelWork/',GetNovelWork.as_view(),name='GetNovelWork'),
     #获取小说作品
+    path('GetNovelContentList/',GetNovelContentList.as_view(),name='GetNovelContentList'),
+    #获取小说作品内容，需要指定作品ID
     path('SearchNovelWork/',SearchNovelWork.as_view(),name='SearchNovelWork'),
     #搜索小说作品
     path('SearchNovelContent/',SearchNovelContent.as_view(),name='SearchNovelContent'),

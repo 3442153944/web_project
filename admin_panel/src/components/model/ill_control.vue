@@ -1,11 +1,11 @@
 <template>
   <div class="ill_control" v-if="work_list_info">
     <h1>插画审核</h1>
-    <div class="control_box">
+    <div class="control_box" ref="content">
       <div class="search_box">
         <span>搜索：</span>
         <input type="text" placeholder="请输入搜索内容" v-model="search_key">
-        <button>搜索</button>
+        <button @click="performSearch">搜索</button>
       </div>
       <div class="work_status">
         <label>作品状态：</label>
@@ -57,6 +57,10 @@
           </div>
         </div>
       </div>
+      <div class="scroll_tag" ref="scroll_tag" style="width:1px;height:1px;overflow:hidden;"></div>
+      <div class="loading" v-if="loading">
+        <span>加载中……</span>
+      </div>
     </div>
   </div>
   <div class="show_ill_content" v-if="show_ill_content">
@@ -71,68 +75,97 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { get_ill_worklist } from './js/get_work_list'
 import { search_ill_work } from './js/search_work'
 import { update_ill_work_status } from './js/update_work'
 
-const ill_worklist = ref()
+const ill_worklist = ref([])
 const work_list_info = ref()
-const limit = ref(10)
+const limit = ref(5)
 const offset = ref(0)
 const total = ref(0)
 const show_ill_content = ref(false)
 const ill_list = ref([])
 const search_key = ref('')
 const work_status = ref('all')
+const loading = ref(false)
 
 function show_ill(item) {
   ill_list.value = item.content_file_list.split(/[,，]/)
   show_ill_content.value = true
 }
 
-//获取作品列表
+// 获取作品列表
 async function get_worklist() {
-  work_list_info.value = await get_ill_worklist(limit.value, offset.value)
-  console.log(work_list_info.value)
-  ill_worklist.value = work_list_info.value.data.work_list
-  total.value = work_list_info.value.data.total
-  console.log(ill_worklist.value)
+  let response = await get_ill_worklist(limit.value, offset.value)
+  console.log(response)
+  work_list_info.value = response
+  if (offset.value == 0) {
+    ill_worklist.value = response.data.work_list
+  } else {
+    ill_worklist.value = [...ill_worklist.value, ...response.data.work_list]
+  }
+  total.value = response.data.total
 }
 
-onMounted(async () => {
-  await get_worklist();
-})
-
-//搜索实现
-
-async function search_ill(search_key, work_status = 'all') {
-  work_list_info.value = await search_ill_work(search_key, work_status, limit.value, offset.value)
-  ill_worklist.value = work_list_info.value.data.work_list
-  total.value = work_list_info.value.data.total
-  console.log(ill_worklist.value)
+// 搜索实现
+async function search_ill() {
+  offset.value = 0 // 重置偏移量
+  let response = await search_ill_work(search_key.value, work_status.value, limit.value, offset.value)
+  ill_worklist.value = response.data.work_list
+  total.value = response.data.total
 }
 
 watch([search_key, work_status], async () => {
-  await search_ill(search_key.value, work_status.value)
+  await search_ill()
 })
 
-//更新作品状态
-async function update_work_status(work_status, work_id) {
-  let data = await update_ill_work_status(work_status, work_id)
-  if (data.status == 'success') {
-    alert('修改成功')
-    await get_worklist()
-  }
-  else {
-    alert(data.message)
-  }
-  await get_worklist()
+function performSearch() {
+  search_ill()
 }
 
+// 更新作品状态
+async function update_work_status(work_status, work_id) {
+  let data = await update_ill_work_status(work_status, work_id)
+  if (data.status === 'success') {
+    alert('修改成功')
+    offset.value = 0 // 重置偏移量
+    await get_worklist()
+  } else {
+    alert(data.message)
+  }
+}
+
+// 滚动加载
+let scroll_tag = ref(null)
+let content = ref(null)
+const observer = new IntersectionObserver(async (entries) => {
+  if (entries[0].isIntersecting && !loading.value && ill_worklist.value.length < total.value) {
+    loading.value = true;
+    offset.value += limit.value; // 增加偏移量
+    await get_worklist(); // 加载更多内容
+    loading.value = false;
+  }
+}, {
+  root: null,
+  rootMargin: '400px',
+  threshold: 0
+});
+//const observer=null
+onMounted(async () => {
+  await get_worklist();
+
+
+  observer.observe(scroll_tag.value);
+})
+
+onUnmounted(() => {
+  observer.disconnect();
+})
 </script>
+
 
 <style scoped>
 .ill_control {

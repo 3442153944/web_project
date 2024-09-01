@@ -48,9 +48,11 @@ class SearchNovelWork(View):
 
                 # 构建 SQL 查询
                 base_sql = '''
-                    SELECT novel_work.*, users.userid, users.user_avatar, users.username
+                    SELECT novel_work.*, users.userid, users.user_avatar, users.username,
+                    sum(char_length(novel_content.content)) as "novel_word_count"
                     FROM novel_work
-                    LEFT JOIN users ON users.userid = novel_work.belong_to_userid
+                    LEFT JOIN users ON users.userid = novel_work.belong_to_userid 
+                    left join novel_content on novel_content.belong_to_series_id=novel_work.work_id
                     WHERE (novel_work.work_name LIKE %s OR novel_work.work_id LIKE %s OR novel_work.category LIKE %s)
                 '''
                 params = [f'%{search_type}%', f'%{search_type}%', f'%{search_type}%']
@@ -61,7 +63,7 @@ class SearchNovelWork(View):
                     params.append(work_status)
 
                 # 限制和偏移量
-                base_sql += ' ORDER BY novel_work.create_time DESC LIMIT %s OFFSET %s'
+                base_sql += 'group by novel_work.work_id ORDER BY novel_work.create_time DESC LIMIT %s OFFSET %s'
                 params.extend([limit, offset])
 
                 # 执行查询

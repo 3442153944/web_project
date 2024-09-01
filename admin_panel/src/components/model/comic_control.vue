@@ -57,6 +57,10 @@
           </div>
         </div>
       </div>
+      <div class="scroll_tag" ref="scroll_tag" style="width:1px;height:1px;overflow:hidden;"></div>
+      <div class="loading" v-if="loading">
+        <span>加载中……</span>
+      </div>
     </div>
   </div>
   <div class="show_ill_content" v-if="show_comic_content">
@@ -73,20 +77,21 @@
 
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import { get_comic_worklist } from './js/get_work_list'
 import { search_comic_work } from './js/search_work'
 import { update_comic_work_status } from './js/update_work'
 
 const work_info_list = ref()
-const limit = ref(10)
+const limit = ref(5)
 const offset = ref(0)
 const total = ref(0)
 const work_list = ref([])
 const search_key = ref('')
 const show_comic_content = ref(false)
 const work_status = ref('all')
-const comic_list=ref([])
+const comic_list = ref([])
+const loading = ref(false)
 
 
 function show_ill(item) {
@@ -100,7 +105,7 @@ async function get_comic_list() {
   work_info_list.value = await get_comic_worklist(limit.value, offset.value)
   console.log(work_info_list.value)
   total.value = work_info_list.value.data.total
-  work_list.value = work_info_list.value.data.work_list
+  work_list.value = [...work_list.value, ...work_info_list.value.data.work_list]
 }
 
 onMounted(async () => {
@@ -130,6 +135,25 @@ async function update_work_status(work_status, work_id) {
   }
   await get_comic_list()
 }
+let scroll_tag = ref(null)
+const obsserver = new IntersectionObserver(async (entries) => {
+  if (entries[0].isIntersecting && total.value > work_list.value.length) {
+    loading.value = true
+    offset.value += limit.value
+    await get_comic_list()
+    loading.value = false
+  }
+}, {
+  root: null,
+  rootMargin: '400px',
+  threshold: 0
+},100)
+onMounted(async () => {
+  obsserver.observe(scroll_tag.value)
+})
+onUnmounted(() => {
+  obsserver.disconnect()
+})
 
 </script>
 

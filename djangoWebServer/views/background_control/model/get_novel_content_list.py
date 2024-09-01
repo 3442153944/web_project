@@ -48,6 +48,7 @@ class GetNovelContentList(View):
                 limit = data.get('limit', 10)
                 offset = data.get('offset', 0)
 
+                # 分页查询小说内容
                 query_sql = '''
                 SELECT novel_content.*, users.userid, users.username, users.user_avatar, novel_work.work_cover,
                 novel_work.work_name, novel_work.is_vip_work
@@ -64,6 +65,14 @@ class GetNovelContentList(View):
                 if result:
                     columns = [col[0] for col in cursor.description]
                     rows = [dict(zip(columns, row)) for row in result]
+                    # 计算小说内容的总字数，不受分页限制
+                    word_count_sql = '''
+                                    SELECT SUM(CHAR_LENGTH(novel_content.content))
+                                    FROM novel_content
+                                    WHERE novel_content.belong_to_series_id = %s
+                                    '''
+                    cursor.execute(word_count_sql, [work_id])
+                    total_word_count = cursor.fetchone()[0] or 0  # 防止空值返回None
 
                     # 计算总条数
                     count_sql = 'SELECT COUNT(*) FROM novel_content WHERE belong_to_series_id=%s'
@@ -74,7 +83,8 @@ class GetNovelContentList(View):
                         'status': 'success',
                         'data': {
                             'work_list': rows,
-                            'total': total
+                            'total': total,
+                            'total_word_count': total_word_count  # 总字数统计
                         }
                     }, status=200)
                 else:
