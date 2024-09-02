@@ -71,10 +71,29 @@
         <div class="content_novel_cover">
           <img :src="'https://www.sunyuanling.com/image/novel/thumbnail/'+title_list[0].work_cover" alt="小说封面">
         </div>
+        <div class="novel_info_item_box">
+          <div class="info_item_box">
+            <span>作品名称：{{title_list[0].work_name}}</span>
+            <span>作品类型：{{title_list[0].is_series}}</span>
+            <span>作者：{{title_list[0].username}}</span>
+            <span>作品字数：{{content_info_list.total_word_count}}</span>
+          </div>
+        </div>
       </div>
       <div class="title_list">
         <div class="title_item" v-for="(item,index) in title_list" :key="index">
-          <span>{{item.title}}</span>
+          <span>章节名称：&nbsp;{{item.title}}</span>
+          <span>章节审核状态：&nbsp;{{item.chapter_approved==1?'通过':item.chapter_approved==0?'未通过':'未审核'}}</span>
+          <div class="read_content">
+            阅读章节
+          </div>
+          选择该节：<input type="checkbox">
+        </div>
+        <div class="read_box" v-if="read_box_show">
+          <div class="close">
+            <img src="https://www.sunyuanling.com/assets/close.svg" alt="关闭">
+          </div>
+          <span></span>
         </div>
       </div>
     </div>
@@ -93,6 +112,8 @@ const total = ref(0)
 const show_novel_content_page_show = ref(false)
 const content_info_list = ref()
 const title_list = ref([])
+const read_box_content=ref()
+const read_box_show=ref(false)
 
 //获取小说作品列表
 async function get_novel_work() {
@@ -110,11 +131,11 @@ async function get_novel_work() {
 
 //获取指定ID的小说章节列表
 async function get_title_list(work_id) {
-  let res = await get_novel_work_content_list(work_id)
+  let res = await get_novel_work_content_list(work_id,9999999,0)
   if (res.status == 'success') {
     content_info_list.value = res.data
     console.log(content_info_list.value)
-    title_list.value=[...title_list.value,...content_info_list.value.work_list]
+    title_list.value=content_info_list.value.work_list
   }
 }
 
@@ -217,5 +238,70 @@ onMounted(async () => {
   flex-direction: row;
   gap:10px;
   word-wrap: break-word;
+}
+.show_novel_content_page{
+  width:100vw;
+  height:100vh;
+  position: fixed;
+  top:0;
+  left:0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  flex-direction: column;
+  z-index: 5;
+  gap:20px;
+  justify-content: center;
+  align-items: center;
+}
+.close{
+  width:35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index:6;
+  position: fixed;
+  top:30px;
+  right: 30px;
+  background-color: rgba(211,211,211,1);
+  border-radius: 15px;
+}
+.close:hover{
+  cursor: pointer;
+  opacity: 0.8;
+  background-color: rgba(255,255,255,0.6);
+  border-radius: 50%;
+  transition: all 0.2s;
+  transform: scale(1.05);
+  transform: translateY(-1px);
+}
+.close img{
+  width:25px;
+  height: 25px;
+  object-fit: cover;
+}
+.novel_content_page{
+  width:90%;
+  height: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  display: flex;
+  background-color: rgba(233,233,233,1);
+  flex-direction: column;
+}
+.novel_info{
+  width:100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  border-bottom: 1px solid rgba(0,0,0,0.2);
+}
+.info_item_box{
+  width:100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
 }
 </style>
