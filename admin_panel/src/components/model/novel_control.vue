@@ -62,6 +62,10 @@
           </div>
         </div>
       </div>
+      <div class="check_points" ref="check_points" style="display: none; width:1px;height:1px;"></div>
+      <div class="loding" v-if="is_loding">
+        加载中……
+      </div>
     </div>
   </div>
   <div class="show_novel_content_page" v-if="show_novel_content_page_show">
@@ -159,6 +163,22 @@ const selectAll = ref('all_none')  // 全选状态
 const chapter_search_key = ref()
 let novel_work_search_key = ref()
 let novel_work_search_status = ref('all')
+let check_points = ref(null)
+let is_loding=ref(false)
+
+//滚动加载实现
+const observer =new IntersectionObserver(async (entries) => {
+  if (entries[0].isIntersecting && total.value >= novel_info_list.value.length) {
+    is_loding.value=true
+    offset.value += limit.value
+    await get_novel_work_list(limit.value, offset.value)
+    is_loding.value=false
+  }
+},{
+  root:null,
+  rootMargin:'400px',
+  threshold: 0
+},100)
 
 //监听多选状态
 watch(choose_chapter_list, (newVal) => {
@@ -283,6 +303,10 @@ async function show_novel_content_page(work_id) {
 
 onMounted(async () => {
   await get_novel_work()
+  observer.observe(check_points.value)
+})
+onUnmounted(() => {
+  observer.disconnect()
 })
 
 </script>
