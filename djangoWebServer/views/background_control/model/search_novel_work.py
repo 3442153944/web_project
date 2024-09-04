@@ -44,7 +44,7 @@ class SearchNovelWork(View):
                 limit = data.get('limit', 10)
                 offset = data.get('offset', 0)
                 work_status = data.get('work_status', 'all')
-                search_type = data.get('search_type', 'all')
+                search_type = data.get('search_type', '*')
 
                 # 构建 SQL 查询
                 base_sql = '''
@@ -63,22 +63,20 @@ class SearchNovelWork(View):
                     params.append(work_status)
 
                 # 限制和偏移量
-                base_sql += 'group by novel_work.work_id ORDER BY novel_work.create_time DESC LIMIT %s OFFSET %s'
+                base_sql += 'group by novel_work.work_id ORDER BY novel_work.work_create_time DESC LIMIT %s OFFSET %s'
                 params.extend([limit, offset])
 
                 # 执行查询
                 cursor.execute(base_sql, params)
                 result = cursor.fetchall()
-
-                # 获取总条数
-                count_sql = ('SELECT COUNT(*) FROM novel_work WHERE '
-                             '(novel_work.work_name LIKE %s OR novel_work.work_id LIKE %s OR novel_work.category LIKE %s)')
-                cursor.execute(count_sql, [f'%{search_type}%', f'%{search_type}%', f'%{search_type}%'])
-                total = cursor.fetchone()[0]
-
                 # 构建返回数据
                 columns = [col[0] for col in cursor.description]
                 rows = [dict(zip(columns, row)) for row in result]
+
+                # 获取总条数
+                count_sql = 'SELECT COUNT(*) FROM novel_work'
+                cursor.execute(count_sql)
+                total = cursor.fetchone()[0]
 
                 return JsonResponse({
                     'status': 'success',
@@ -93,5 +91,6 @@ class SearchNovelWork(View):
             return JsonResponse({'status': 'fail', 'message': '无效的JSON数据'}, status=400)
 
         except Exception as e:
+            print('\n',e)
             self.logger.error(f'服务器错误：{self._request_path(request)} - 错误详情：{str(e)}')
             return JsonResponse({'status': 'fail', 'message': '服务器错误'}, status=500)

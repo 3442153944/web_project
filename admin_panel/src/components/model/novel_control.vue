@@ -3,11 +3,11 @@
     <h1>小说审核</h1>
     <div class="search_box">
       <span>搜索：</span>
-      <input type="text" placeholder="请输入小说名/ID">
+      <input type="text" placeholder="请输入小说名/ID" v-model="novel_work_search_key">
       <div class="search_btn"><span>搜索</span></div>
       <div class="novel_work_status">
         <span>小说状态：</span>
-        <select>
+        <select v-model="novel_work_search_status">
           <option value="all">全部</option>
           <option value="1">已上架</option>
           <option value="0">未上架</option>
@@ -57,8 +57,8 @@
             <span>{{ item.work_approved == 1 ? '已上架' : item.work_approved == 0 ? '未上架' : '未审核' }}</span>
           </div>
           <div class="novel_work_control">
-            <span class="novel_work_control_btn">上架</span>
-            <span class="novel_work_control_btn">下架</span>
+            <span class="novel_work_control_btn" @click="update_work_status(1, item.work_id)">上架</span>
+            <span class="novel_work_control_btn" @click="update_work_status(0, item.work_id)">下架</span>
           </div>
         </div>
       </div>
@@ -109,8 +109,8 @@
           </select>
         </div>
         <div class="novel_info_item_control_btn">
-          <span>批量通过</span>
-          <span>批量未通过</span>
+          <span @click="update_novel_chapter_status_list(1)">批量通过</span>
+          <span @click="update_novel_chapter_status_list(0)">批量未通过</span>
         </div>
       </div>
       <div class="title_list">
@@ -140,6 +140,8 @@
 <script setup>
 import { get_novel_work_list, get_novel_work_content_list } from './js/get_work_list'
 import { ref, onMounted, watch, onUnmounted, computed } from 'vue'
+import { search_novel_work } from './js/search_work'
+import { update_novel_work_status, update_novel_chapter_status } from './js/update_work'
 
 const novel_info_list = ref([])
 const novel_work_list = ref([])
@@ -155,6 +157,33 @@ const choose_chapter_list = ref([])
 const selectedStatus = ref('all')  // 筛选状态
 const selectAll = ref('all_none')  // 全选状态
 const chapter_search_key = ref()
+let novel_work_search_key = ref()
+let novel_work_search_status = ref('all')
+
+//监听多选状态
+watch(choose_chapter_list, (newVal) => {
+  console.log(newVal)
+})
+
+//批量更新章节状态
+async function update_novel_chapter_status_list(status) {
+  let work_id = choose_chapter_list.value[0].belong_to_series_id
+  let chapter_id = choose_chapter_list.value.map(item => item.id)
+  //确定数组长度大于等于1
+  if (chapter_id.length >= 1) {
+    let res = await update_novel_chapter_status(status, work_id, chapter_id)
+    if (res.status == 'success') {
+      alert('更新成功')
+    }
+    else {
+      alert(res.message)
+    }
+  }
+  else {
+    console.log('请选择章节')
+  }
+
+}
 
 // 过滤章节列表
 const filteredTitles = computed(() => {
@@ -182,6 +211,15 @@ watch(chapter_search_key, (newVal) => {
   }
 })
 
+//搜索小说作品实现
+watch([novel_work_search_key, novel_work_search_status], async (newVal) => {
+  console.log(newVal)
+  await search_novel_work_list()
+  if (novel_work_search_key.value == '' || novel_work_search_key.value == null && novel_work_search_status.value == 'all') {
+    await get_novel_work()
+  }
+})
+
 //设置阅读内容
 function set_red_box_content(item) {
   read_box_content.value = item.replace(/\\n/g, '<br>')
@@ -202,6 +240,20 @@ async function get_novel_work() {
   }
 }
 
+//搜索小说作品
+async function search_novel_work_list() {
+  const res = await search_novel_work(novel_work_search_key.value, novel_work_search_status.value, 999, 0)
+  if (res.status == 'success') {
+    novel_info_list.value = res.data
+    total.value = novel_info_list.value.total
+    console.log(novel_info_list.value)
+    novel_work_list.value = novel_info_list.value.work_list
+  }
+  else {
+    console.log(res.message)
+  }
+}
+
 //获取指定ID的小说章节列表
 async function get_title_list(work_id) {
   let res = await get_novel_work_content_list(work_id, 9999999, 0)
@@ -209,6 +261,18 @@ async function get_title_list(work_id) {
     content_info_list.value = res.data
     console.log(content_info_list.value)
     title_list.value = content_info_list.value.work_list
+  }
+}
+
+//更新小说状态
+async function update_work_status(status, work_id) {
+  let res = await update_novel_work_status(status, work_id)
+  if (res.status == 'success') {
+    await get_novel_work()
+    alert('更新成功')
+  }
+  else {
+    alert(res.message)
   }
 }
 
@@ -321,14 +385,16 @@ onMounted(async () => {
   gap: 10px;
   word-wrap: break-word;
 }
-.novel_work_control{
-  width:100%;
+
+.novel_work_control {
+  width: 100%;
   height: auto;
   display: flex;
   gap: 20px;
 }
-.novel_work_control_btn{
-  width:auto;
+
+.novel_work_control_btn {
+  width: auto;
   height: auto;
   padding: 5px 15px;
   cursor: pointer;
@@ -337,21 +403,22 @@ onMounted(async () => {
   color: white;
   font-weight: bold;
 }
-.novel_work_control_btn:hover{
+
+.novel_work_control_btn:hover {
   opacity: 0.8;
   transition: all 0.2s;
   transform: scale(1.03);
   transform: translateY(-1px);
 }
 
-.novel_work_control_btn:active{
+.novel_work_control_btn:active {
   opacity: 0.6;
   transition: all 0.2s;
   transform: scale(1.01);
   transform: translateY(1px);
 }
 
-.novel_work_control_btn:disabled{
+.novel_work_control_btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transition: all 0.2s;

@@ -40,17 +40,24 @@ class UpdateNovelContent(View):
                     self.logger.warning(f'用户权限不足：{self._request_path(request)}')
                     return JsonResponse({'status': 'fail', 'message': '权限不足'}, status=403)
 
-                work_id = data.get('work_id')
+                work_id = data.get('work_id', None)
                 if not work_id:
                     self.logger.warning(f'缺少work_id参数：{self._request_path(request)}')
                     return JsonResponse({'status': 'fail', 'message': '缺少参数'}, status=400)
 
                 work_status = data.get('work_status', 2)
+                chapter_ids = data.get('chapter_id', [])
+                if not chapter_ids or not isinstance(chapter_ids, list):
+                    self.logger.warning(f'缺少chapter_id参数或格式错误：{self._request_path(request)}')
+                    return JsonResponse({'status': 'fail', 'message': '缺少参数或格式错误'}, status=400)
 
                 # 开始事务
                 with transaction.atomic():
-                    sql = 'UPDATE novel_content SET novel_content.chapter_approved= %s WHERE id = %s'
-                    cursor.execute(sql, [work_status, work_id])
+                    # 使用IN语句更新多个chapter_id
+                    sql = ('UPDATE novel_content SET novel_content.chapter_approved = %s '
+                           'WHERE novel_content.belong_to_series_id = %s AND id IN %s')
+                    # 将chapter_ids转换为元组，以便用于SQL的IN子句
+                    cursor.execute(sql, [work_status, work_id, tuple(chapter_ids)])
 
                     if cursor.rowcount >= 1:
                         return JsonResponse({'status': 'success', 'message': '更新成功'}, status=200)
