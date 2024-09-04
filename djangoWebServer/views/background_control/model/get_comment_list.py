@@ -42,25 +42,63 @@ class GetCommentList(View):
 
                 limit = data.get('limit', 10)
                 offset = data.get('offset', 0)
-                sql='''select comment.*,users.userid,users.username,users.user_avatar
-                 from comment left join users on users.userid=comment.send_userid
-                 order by date desc limit %s offset %s'''
+                sql = '''SELECT comment.*, users.userid, users.username, users.user_avatar
+                         FROM comment 
+                         LEFT JOIN users ON users.userid = comment.send_userid
+                         ORDER BY date DESC 
+                         LIMIT %s OFFSET %s'''
                 cursor.execute(sql, [limit, offset])
                 result = cursor.fetchall()
                 columns = [col[0] for col in cursor.description]
                 rows = [dict(zip(columns, row)) for row in result]
+
                 if result:
-                    count_sql='''select count(*) from comment'''
+                    # 获取评论总数
+                    count_sql = '''SELECT COUNT(*) FROM comment'''
                     cursor.execute(count_sql)
                     total = cursor.fetchone()[0]
+
+                    # 获取每条评论关联的作品详情
+                    for row in rows:
+                        work_type = row.get("work_type", None)
+                        work_id = row.get("work_id", None)
+                        work_data = {}
+
+                        if work_type == 'ill':
+                            work_sql = """SELECT * FROM illustration_work WHERE Illustration_id = %s"""
+                            cursor.execute(work_sql, [work_id])
+                            result = cursor.fetchone()
+                            if result:
+                                columns = [desc[0] for desc in cursor.description]
+                                work_data = dict(zip(columns, result))
+
+                        elif work_type == 'comic':
+                            work_sql = """SELECT * FROM comic WHERE id = %s"""
+                            cursor.execute(work_sql, [work_id])
+                            result = cursor.fetchone()
+                            if result:
+                                columns = [desc[0] for desc in cursor.description]
+                                work_data = dict(zip(columns, result))
+
+                        elif work_type == 'novel':
+                            work_sql = """SELECT * FROM novel_work WHERE work_id = %s"""
+                            cursor.execute(work_sql, [work_id])
+                            result = cursor.fetchone()
+                            if result:
+                                columns = [desc[0] for desc in cursor.description]
+                                work_data = dict(zip(columns, result))
+
+                        # 将作品详情附加到对应的评论
+                        row['work_data'] = work_data
+
                     return JsonResponse({
                         'status': 'success',
                         'message': '获取成功',
                         'data': {
-                            'comment_list':rows,
+                            'comment_list': rows,
                             'total': total
                         }
-                    },status=200)
+                    }, status=200)
 
         except json.JSONDecodeError:
             self.logger.error(f'请求数据格式错误：{self._request_path(request)}')
