@@ -16,6 +16,7 @@ from .model.search_novel_content import SearchNovelContent
 from .model.search_novel_work import SearchNovelWork
 from .model.updata_ill_status import UpdateIll
 from .model.update_comic_status import UpdateComic
+from .model.update_comment import UpdateComment
 from .model.update_novel_content import UpdateNovelContent
 from .model.update_novel_work import UpdateNovelWork
 
@@ -56,4 +57,6 @@ urlpatterns = [
     #搜索评论，支持精准搜索和模糊搜索
     path('DeleteComment/',DeleteComment.as_view(),name='DeleteComment'),
     #删除评论
+    path('UpdateComment/',UpdateComment.as_view(),name='UpdateComment'),
+    #更新评论
 ]

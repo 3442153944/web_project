@@ -29,6 +29,7 @@ onMounted(async () => {
   console.log(data);
   //设置localStrong的token属性
   localStorage.setItem('token', data.token);
+  
   // 判断是否登录
   if (data.is_login != 1) {
     store.commit('change_page', { 'page_key': 'login_page', 'page_value': true });

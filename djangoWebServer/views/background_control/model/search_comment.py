@@ -48,54 +48,61 @@ class SearchComment(View):
                 send_userid = data.get('send_userid', '')
                 main_userid = data.get('main_userid', '')
 
-                # 处理查询精确度
-                accuracy = data.get('accuracy_type', 'vague')
-                if accuracy == 'accuracy':
-                    comment_id = comment_id or None
-                    work_id = work_id or None
-                    work_type = work_type or None
-                    send_userid = send_userid or None
-                    main_userid = main_userid or None
-                    sql = '''
-                        SELECT comment.*, users.userid, users.username, users.user_avatar
-                        FROM comment
-                        LEFT JOIN users ON users.userid = comment.send_userid
-                        WHERE (comment.comment_id = %s OR %s IS NULL)
-                        AND (comment.work_id = %s OR %s IS NULL)
-                        AND (comment.work_type = %s OR %s IS NULL)
-                        AND (comment.send_userid = %s OR %s IS NULL)
-                        AND (comment.main_userid = %s OR %s IS NULL)
-                        ORDER BY date DESC
-                        LIMIT %s OFFSET %s
-                    '''
-                    params = [comment_id, comment_id, work_id, work_id, work_type, work_type, send_userid, send_userid, main_userid, main_userid, limit, offset]
-                else:  # 模糊查询
-                    sql = '''
-                        SELECT comment.*, users.userid, users.username, users.user_avatar
-                        FROM comment
-                        LEFT JOIN users ON users.userid = comment.send_userid
-                        WHERE (comment.comment_id LIKE %s OR comment.work_id LIKE %s OR comment.work_type LIKE %s
-                        OR comment.send_userid LIKE %s OR comment.main_userid LIKE %s)
-                        ORDER BY date DESC
-                        LIMIT %s OFFSET %s
-                    '''
-                    params = [f'%{comment_id}%', f'%{work_id}%', f'%{work_type}%', f'%{send_userid}%', f'%{main_userid}%', limit, offset]
+                # 动态构建查询条件
+                query_conditions = []
+                query_params = []
+
+                if comment_id:
+                    query_conditions.append("comment.comment_id LIKE %s")
+                    query_params.append(f'%{comment_id}%')
+
+                if work_id:
+                    query_conditions.append("comment.work_id LIKE %s")
+                    query_params.append(f'%{work_id}%')
+
+                if work_type and work_type!='all':
+                    query_conditions.append("comment.work_type LIKE %s")
+                    query_params.append(f'%{work_type}%')
+
+                if work_type=='all':
+                    query_conditions.append("comment.work_type IN ('ill','comic','novel')")
+
+                if send_userid:
+                    query_conditions.append("comment.send_userid LIKE %s")
+                    query_params.append(f'%{send_userid}%')
+
+                if main_userid:
+                    query_conditions.append("comment.main_userid LIKE %s")
+                    query_params.append(f'%{main_userid}%')
+
+                # 构建SQL查询
+                query_base = '''
+                    SELECT comment.*, users.userid, users.username, users.user_avatar
+                    FROM comment
+                    LEFT JOIN users ON users.userid = comment.send_userid
+                '''
+
+                if query_conditions:
+                    query_conditions_str = " WHERE " + " AND ".join(query_conditions)
+                else:
+                    query_conditions_str = ""
+
+                query_order_limit = ' ORDER BY date DESC LIMIT %s OFFSET %s'
+                query_sql = query_base + query_conditions_str + query_order_limit
+                query_params.extend([limit, offset])
 
                 # 执行查询
-                cursor.execute(sql, params)
+                cursor.execute(query_sql, query_params)
                 result = cursor.fetchall()
                 columns = [column[0] for column in cursor.description]
                 rows = [dict(zip(columns, row)) for row in result]
 
-                if result:
-                    count_sql = '''
-                        SELECT COUNT(*) FROM comment
-                        WHERE (comment.comment_id LIKE %s OR comment.work_id LIKE %s OR comment.work_type LIKE %s
-                        OR comment.send_userid LIKE %s OR comment.main_userid LIKE %s)
-                    '''
-                    cursor.execute(count_sql, [f'%{comment_id}%', f'%{work_id}%', f'%{work_type}%', f'%{send_userid}%', f'%{main_userid}%'])
-                    total = cursor.fetchone()[0]
+                # 统计总数
+                count_sql = 'SELECT COUNT(*) FROM admin.comment' + query_conditions_str
+                cursor.execute(count_sql, query_params[:-2])  # 去掉分页参数
+                total = cursor.fetchone()[0]
 
+                if result:
                     return JsonResponse({
                         'status': 'success',
                         'message': '查询成功',
@@ -121,3 +128,4 @@ class SearchComment(View):
         except Exception as e:
             self.logger.error(f'服务器错误：{self._request_path(request)} - 错误详情：{str(e)}')
             return JsonResponse({'status': 'fail', 'message': '服务器错误'}, status=500)
+
