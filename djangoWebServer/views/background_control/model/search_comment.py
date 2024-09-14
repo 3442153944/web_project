@@ -6,6 +6,7 @@ import json
 from datetime import datetime
 from .log.log import Logger
 
+
 class SearchComment(View):
     logger = Logger()
 
@@ -60,12 +61,12 @@ class SearchComment(View):
                     query_conditions.append("comment.work_id LIKE %s")
                     query_params.append(f'%{work_id}%')
 
-                if work_type and work_type!='all':
+                if work_type and work_type != 'all':
                     query_conditions.append("comment.work_type LIKE %s")
                     query_params.append(f'%{work_type}%')
 
-                if work_type=='all':
-                    query_conditions.append("comment.work_type IN ('ill','comic','novel')")
+                if work_type == 'all':
+                    query_conditions.append("comment.work_type IN ('ill', 'comic', 'novel')")
 
                 if send_userid:
                     query_conditions.append("comment.send_userid LIKE %s")
@@ -98,9 +99,42 @@ class SearchComment(View):
                 rows = [dict(zip(columns, row)) for row in result]
 
                 # 统计总数
-                count_sql = 'SELECT COUNT(*) FROM admin.comment' + query_conditions_str
+                count_sql = 'SELECT COUNT(*) FROM comment' + query_conditions_str
                 cursor.execute(count_sql, query_params[:-2])  # 去掉分页参数
                 total = cursor.fetchone()[0]
+
+                # 获取每条评论关联的作品详情
+                for row in rows:
+                    work_type = row.get("work_type", None)
+                    work_id = row.get("work_id", None)
+                    work_data = {}
+
+                    if work_type == 'ill':
+                        work_sql = """SELECT * FROM illustration_work WHERE Illustration_id = %s"""
+                        cursor.execute(work_sql, [work_id])
+                        work_result = cursor.fetchone()
+                        if work_result:
+                            work_columns = [desc[0] for desc in cursor.description]
+                            work_data = dict(zip(work_columns, work_result))
+
+                    elif work_type == 'comic':
+                        work_sql = """SELECT * FROM comic WHERE id = %s"""
+                        cursor.execute(work_sql, [work_id])
+                        work_result = cursor.fetchone()
+                        if work_result:
+                            work_columns = [desc[0] for desc in cursor.description]
+                            work_data = dict(zip(work_columns, work_result))
+
+                    elif work_type == 'novel':
+                        work_sql = """SELECT * FROM novel_work WHERE work_id = %s"""
+                        cursor.execute(work_sql, [work_id])
+                        work_result = cursor.fetchone()
+                        if work_result:
+                            work_columns = [desc[0] for desc in cursor.description]
+                            work_data = dict(zip(work_columns, work_result))
+
+                    # 将作品详情附加到对应的评论
+                    row['work_data'] = work_data
 
                 if result:
                     return JsonResponse({
@@ -128,4 +162,3 @@ class SearchComment(View):
         except Exception as e:
             self.logger.error(f'服务器错误：{self._request_path(request)} - 错误详情：{str(e)}')
             return JsonResponse({'status': 'fail', 'message': '服务器错误'}, status=500)
-

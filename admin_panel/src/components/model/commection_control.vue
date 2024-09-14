@@ -38,9 +38,9 @@
           </div>
           <div class="work_info">
             <span>作品名称：</span>
-            <span>{{ getWorkName(item) }}</span>
+            <span>{{ item.work_type =='ill'?item.work_data.name:item.work_data.work_name}}</span>
             <span>作品类型：</span>
-            <span>{{ getWorkType(item.work_type) }}</span>
+            <span>{{ item.work_type == 'ill' ? '插画' : item.work_type == 'comic' ? '漫画' : '小说' }}</span>
           </div>
           <div class="comment_content">
             <span>{{item.content}}</span>
@@ -90,8 +90,10 @@ let main_userid=ref('')
 
 async function search_comment_list(){
   const response = await search_comment(999,0,comment_id.value,work_id.value,work_type.value,send_userid.value,main_userid.value)
-  console.log(response)
+  console.log(response.data.rows)
+  comment_list.value= await response.data.rows
 }
+
 
 // IntersectionObserver 回调函数
 const observer = new IntersectionObserver(async (entries) => {
@@ -109,7 +111,7 @@ const observer = new IntersectionObserver(async (entries) => {
 
 const getAvatarUrl = (avatar) => `https://www.sunyuanling.com/image/avatar_thumbnail/${avatar}`
 
-const getWorkName = (item) => {
+const getWorkName =(item) => {
   if (item.work_type === 'ill') {
     return item.work_data.name
   }
