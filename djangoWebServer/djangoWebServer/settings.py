@@ -124,6 +124,7 @@ INSTALLED_APPS = [
     'views.data_analysis',
     'rest_framework',  # 确保只添加一次
     'rest_framework_simplejwt',
+    'views.get_browse_history',
 ]
 
 

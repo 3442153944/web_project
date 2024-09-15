@@ -39,4 +39,6 @@ urlpatterns = [
     #数据分析
     path('admin_control/',include('views.background_control.url')),
     #管理员后台管理
+    path('get_browse_history/',include('views.get_browse_history.url')),
+    #获取浏览记录
 ]
