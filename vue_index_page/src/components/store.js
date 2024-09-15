@@ -18,6 +18,7 @@ const store = createStore({
       other_user_center_page:false,
       data_analysis_page:false,
       work_contribute_page:false,
+      br_his_page:false, //浏览历史页面
     },
     // 内容页面状态，用于控制内容相关页面的显示状态
     content_page: {
@@ -124,6 +125,10 @@ const store = createStore({
     SET_OTHER_USERID(state, userid) {
       state.other_userid = userid;
     },
+    //设置浏览页面显示状态
+    SET_BR_HIS_PAGE(state, br_his_page) {
+      state.pageStatus.br_his_page = br_his_page;
+    }
   },
   actions: {
     // 页面回退
@@ -160,6 +165,8 @@ const store = createStore({
     other_userid:state=>state.other_userid,
     data_analysis_page:state=>state.pageStatus.data_analysis_page,
     work_contribute_page:state=>state.pageStatus.work_contribute_page,
+    //暴露浏览历史页面状态
+    br_his_page:state=>state.pageStatus.br_his_page
   },
 });
 
