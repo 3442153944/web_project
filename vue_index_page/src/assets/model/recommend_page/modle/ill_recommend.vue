@@ -104,6 +104,7 @@ let work_cover = computed(() => props.work_info)
     min-height: 200px;
     object-fit: cover;
     border-radius: 10px;
+    max-height: 200px;
 }
 
 .page_count {

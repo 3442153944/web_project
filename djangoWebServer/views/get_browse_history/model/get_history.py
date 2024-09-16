@@ -43,7 +43,7 @@ class GetHistory(View):
             for row in history_rows:
                 work_type = row.get('type')
                 if work_type:
-                    row['work'] = self._get_work_details(cursor, row['work_id'], work_type)
+                    row['work'] = self._get_work_details(cursor, row.get('workid',''), work_type)
         return history_rows
 
     def get(self, request):
@@ -64,7 +64,7 @@ class GetHistory(View):
                 self.logger.warning(f'非法用户尝试访问：{self._request_info(request)}')
                 return JsonResponse({'status': 'fail', 'message': '非法用户'}, status=401)
 
-            limit = data.get('limit', 10)
+            limit = data.get('limit', 1000)
             offset = data.get('offset', 0)
             history = self._fetch_user_history(userid, limit, offset)
             enriched_history = self._enrich_history(history)
@@ -72,5 +72,6 @@ class GetHistory(View):
             return JsonResponse({'status': 'success', 'message': '获取成功', 'data': enriched_history})
 
         except Exception as e:
+            print(e)
             self.logger.error(f'服务器内部错误；{self._request_info(request)},错误信息：{str(e)}')
             return JsonResponse({'status': 'fail', 'message': '服务器内部错误'}, status=500)
