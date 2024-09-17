@@ -136,6 +136,7 @@ const bubbleStyle = computed(function () {
     min-width: 100px;
     display: flex;
     min-height: 30px;
+    z-index:99999;
 }
 
 .msg_box_show {

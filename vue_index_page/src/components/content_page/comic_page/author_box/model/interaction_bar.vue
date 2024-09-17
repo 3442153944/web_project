@@ -1,6 +1,8 @@
 <script setup>
 // eslint-disable-next-line no-unused-vars
 import { ref, defineProps, defineEmits, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+const store = useStore()
 
 let interaction_bar = ref(null)
 let props = defineProps({
@@ -52,6 +54,12 @@ function like_status() {
     debounce.value.like = true
     let new_status = !localState.value.like_status
     emit('like_status', new_status)
+    if(new_status) {
+      store.commit('set_cursor_msg','还有许多精彩的漫画作品，多看看哦~')
+    }
+    else{
+      store.commit('set_cursor_msg','不喜欢吗？那再看看其他的吧说不定就遇到喜欢的作品了呢~')
+    }
     localState.value.like_status = new_status
     setTimeout(() => { debounce.value.like = false }, 50) // 50ms的延迟
   }
@@ -62,6 +70,12 @@ function collect_status() {
     debounce.value.collect = true
     let new_status = !localState.value.collect_status
     emit('collect_status', new_status)
+    if(new_status) {
+      store.commit('set_cursor_msg','收藏成功，可以在个人中心查看哦~')
+    }
+    else{
+      store.commit('set_cursor_msg','取消收藏成功~')
+    }
     localState.value.collect_status = new_status
     setTimeout(() => { debounce.value.collect = false }, 50) // 50ms的延迟
   }

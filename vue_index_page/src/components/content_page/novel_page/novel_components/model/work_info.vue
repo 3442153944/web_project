@@ -60,6 +60,8 @@ import { ref, defineProps, onMounted, computed } from 'vue'
 import { watch_work, like_work, collect_work } from '@/assets/js/interaction.js'
 import * as cookies from '@/assets/js/cookies.js'
 import float_msg_box from '@/assets/model/float_msg_box.vue';
+import { useStore } from 'vuex'
+const store = useStore()
 
 let token = cookies.get_cookie('token')
 let float_msg_box_show = ref(false)
@@ -108,17 +110,21 @@ async function add_like_work(event,work_id) {
   let data = await like_work(work_id, 'add', token, 'novel', props.work_info[0].work_name)
 
   if (data == 1) {
+    
     float_msg_box_msg.value = '感谢达令的点赞！'
     float_msg_box_show.value=true
     //获取点击位置鼠标的坐标
     float_msg_box_x.value = event.clientX
     float_msg_box_y.value = event.clientY
     setTimeout(()=>{
-      //float_msg_box_show.value=false
+      float_msg_box_show.value=false
     },1500)
+    
+   store.commit('set_cursor_msg','感谢达令的点赞！')
   }
   else{
     float_msg_box_msg.value='伦家有什么地方做的不好吗？'
+    store.commit('set_cursor_msg','伦家有什么地方做的不好吗？')
   }
 }
 async function add_collect_work(event,work_id) {
@@ -131,11 +137,13 @@ async function add_collect_work(event,work_id) {
     float_msg_box_x.value = event.clientX
     float_msg_box_y.value = event.clientY
     setTimeout(()=>{
-      //float_msg_box_show.value=false
+      float_msg_box_show.value=false
     },1500)
+   store.commit('set_cursor_msg','感谢达令的收藏！')
   }
   else{
     float_msg_box_msg.value='伦家有什么地方做的不好吗？'
+    store.commit('set_cursor_msg','伦家有什么地方做的不好吗？')
   }
 }
 </script>
