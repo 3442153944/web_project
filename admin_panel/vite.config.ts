@@ -48,4 +48,7 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    outDir: 'dist', // 输出目录
+  }  
 });

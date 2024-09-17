@@ -1,6 +1,9 @@
 <script setup>
 // eslint-disable-next-line no-unused-vars
 import { ref, defineProps, defineEmits, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
 
 let interaction_bar = ref(null)
 let props = defineProps({
@@ -52,6 +55,12 @@ function like_status() {
     debounce.value.like = true
     let new_status = !localState.value.like_status
     emit('like_status', new_status)
+    if(new_status){
+      store.commit('set_cursor_msg','非常感谢主人的临幸呢，看看其他作品吧~也许还会有喜欢的哦~')
+    }
+    else{
+      store.commit('set_cursor_msg','呜~主人不爱我了————')
+    }
     localState.value.like_status = new_status
     setTimeout(() => { debounce.value.like = false }, 50) // 50ms的延迟
   }
@@ -62,6 +71,12 @@ function collect_status() {
     debounce.value.collect = true
     let new_status = !localState.value.collect_status
     emit('collect_status', new_status)
+    if(new_status){
+      store.commit('set_cursor_msg','感谢主人的收藏呢~，要看看其他的作品吗？')
+    }
+    else{
+      store.commit('set_cursor_msg','我会努力改进的！')
+    }
     localState.value.collect_status = new_status
     setTimeout(() => { debounce.value.collect = false }, 50) // 50ms的延迟
   }
@@ -102,6 +117,7 @@ onMounted(() => {
   flex-direction: row;
   min-width: 150px;
 }
+
 .content {
   width: 100%;
   height: 100%;
@@ -111,6 +127,7 @@ onMounted(() => {
   justify-content: flex-end;
   align-items: flex-end;
 }
+
 .item {
   width: auto;
   height: auto;
@@ -118,19 +135,26 @@ onMounted(() => {
   display: flex;
   flex-direction: row;
 }
+
 .icon {
   width: 25px;
   height: 25px;
   object-fit: cover;
 }
-.like, .collect, .share {
+
+.like,
+.collect,
+.share {
   width: 30px;
   height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.like:hover, .collect:hover, .share:hover {
+
+.like:hover,
+.collect:hover,
+.share:hover {
   background-color: rgba(133, 133, 133, 0.5);
   cursor: pointer;
   border-radius: 50%;

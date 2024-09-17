@@ -26,7 +26,6 @@
         <div class="mt hv" @click="open_contribute()"><span>投稿作品状态</span></div>
         <br>
         <div class="browseing_history mt hv" @click="open_history()"><span>浏览历史</span></div>
-        <div class="bookmark mt hv"><span>书签</span></div>
         <br>
         <div class="title mt"><span>Language</span></div>
         <div class="setting mt hv"><span>设置</span></div>

@@ -6,6 +6,8 @@
         <img src="https://www.sunyuanling.com/assets/cat.svg" class="icon">
         <span>喵喵喵~</span>
       </div>
+      <float_msg_box></float_msg_box>
+      <float_hand></float_hand>
       <header_box v-if="load_reading"></header_box>
       <index v-if="load_reading&&index_page_show"></index>
       <div class="loading" v-if="!load_reading">
@@ -18,6 +20,7 @@
       <data_analysis :token="token" v-if="data_analysis_page"/>
       <work_contribute v-if="work_contribute_page"></work_contribute>
       <br_his_index_page v-if="br_his_page"></br_his_index_page>
+
     </div>
     <div v-else class="loading">
       <img class="icon" src="https://www.sunyuanling.com/image/loading.gif">
@@ -38,6 +41,8 @@
   import data_analysis from '@/assets/model/data_analysis/components/root.vue';
   import work_contribute from '@/assets/model/work_contribute_review/components/root.vue';
   import br_his_index_page from './browse_history_page/br_his_index_page.vue';
+  import float_msg_box from '../assets/model/float_msg_box.vue'
+  import float_hand from '../assets/model/float_hand.vue'
   
   const store = useStore();
   const cursor_top = ref(0);

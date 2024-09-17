@@ -153,6 +153,9 @@ class PasswordAuthMiddleware:
             return JsonResponse({'status': 'error', 'message': '操作过于频繁，请稍后再试'}, status=429)
 
         user_info, token = self._authenticate_user(userid, password, login_type, username, email, login_type)
+
+        if not token:
+            return JsonResponse({'status': 'error', 'message': '认证失败'}, status=401)
         e_token = encrypt_token(token)
         if user_info:
             request.userinfo = json.dumps(user_info)

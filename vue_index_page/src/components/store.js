@@ -38,6 +38,8 @@ const store = createStore({
     pageStack: [],
     // 定时器，用于页面状态管理
     pushTimer: null,
+    cursor_msg:'喵~',
+    //鼠标随动组件消息
   },
   mutations: {
     // 设置用户信息
@@ -128,6 +130,10 @@ const store = createStore({
     //设置浏览页面显示状态
     SET_BR_HIS_PAGE(state, br_his_page) {
       state.pageStatus.br_his_page = br_his_page;
+    },
+    //设置鼠标随动组件消息
+    set_cursor_msg(state,msg){
+      state.cursor_msg = msg;
     }
   },
   actions: {
@@ -166,7 +172,9 @@ const store = createStore({
     data_analysis_page:state=>state.pageStatus.data_analysis_page,
     work_contribute_page:state=>state.pageStatus.work_contribute_page,
     //暴露浏览历史页面状态
-    br_his_page:state=>state.pageStatus.br_his_page
+    br_his_page:state=>state.pageStatus.br_his_page,
+    //暴露鼠标随动组件消息
+    cursor_msg:state=>state.cursor_msg
   },
 });
 
