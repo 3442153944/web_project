@@ -25,8 +25,8 @@ export default defineConfig({
     port: 2000,
     host: true, // 使得服务器可以通过 IP 地址访问
     https: {
-      key: fs.readFileSync(path.resolve(__dirname, 'H:/web_project/key/server.key')),
-      cert: fs.readFileSync(path.resolve(__dirname, 'H:/web_project/key/server.crt')),
+      key: fs.readFileSync(path.resolve(__dirname, 'key/server.key')),
+      cert: fs.readFileSync(path.resolve(__dirname, 'key/server.crt')),
     },
     proxy: {
       '/api': {
