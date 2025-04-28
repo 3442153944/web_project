@@ -1,6 +1,9 @@
 .DS_Store
 node_modules
 /dist
+# 忽略虚拟环境
+venv/
+
 
 
 # local env files
