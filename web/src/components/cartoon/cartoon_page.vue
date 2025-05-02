@@ -1,11 +1,12 @@
 <template>
   <div class="cartoon_page">
+    <switch_page></switch_page>
     <h3>已关注用户作品</h3>
     <scroll_box :msg_list="comic_list" v-if="comic_list" @chose_item="open_comic_page"></scroll_box>
-    <h4>推荐作品</h4>
-    <div class="recommend_page" style="max-height: 900px; overflow:hidden;">
+    <!-- <div class="recommend_page" style="max-height: 900px; overflow:hidden;">
       <recommendation_cartoon ></recommendation_cartoon>
-    </div>
+    </div> -->
+    <comic_re></comic_re>
       <h4>排行榜</h4>
       <ranking></ranking>
   </div>
@@ -17,7 +18,9 @@ import { useStore } from '@assets/model/store/index';
 import scroll_box from './model/scroll_box.vue';
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import recommendation_cartoon from './recommendation_cartoon.vue';
+import comic_re from '@assets/model/recommend/comic_re.vue';
 import ranking from './ranking.vue';
+import switch_page from '@assets/model/switch_page.vue';
 const store = useStore()
 let userinfo=computed(()=>{
   return store.$state.user

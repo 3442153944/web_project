@@ -13,6 +13,7 @@ from .get_target_func import GetTargetFunc
 from .get_wallet_info import getWalletInfo
 from .init_pay_account import InitPayAccount
 from .pay import OrderHandler
+from .re.re_work import ReWork
 from .recharge import Recharge
 
 #本URL的父路径为api/，以下为具体的接口访问路径
@@ -45,4 +46,6 @@ urlpatterns = [
     # 获取约稿订单信息
     path('ComAnArticleOperate', ComAnArticleOperate.as_view(),name='ComAnArticleOperate'),
     # 约稿订单操作接受或拒绝
+    path('ReWork', ReWork.as_view(),name='ReWork'),
+    # 作品推荐接口
 ]

@@ -182,5 +182,10 @@ export class BaseApi {
             }
         })
     }
+    public async get_user_info(user_id: number): Promise<{ result: Object, status: number }> {
+        return this.post('GetUserInfo/GetUserInfoById', {
+            user_id: user_id
+        })
+    }
 
 }

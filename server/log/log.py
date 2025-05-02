@@ -2,7 +2,7 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
-from djangoWebServer.settings import BASE_DIR
+from server.djangoWebServer.settings import BASE_DIR
 
 class Logger:
     def __init__(self, log_dir="H:/web_project/log/", max_bytes=10 * 1024 * 1024, backup_count=5):

@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 
 import numpy as np
 import pymysql
-from base_api import BaseApi
+from server.base_api import BaseApi
 
 # 数据库连接配置
 sql_info = {
@@ -406,5 +406,5 @@ if __name__ == '__main__':
     recommend_base = RecommendBase()
     # 当 user_id 为空时，直接使用降级推荐；否则使用协同过滤推荐
     user_id = 'f575b4d3-0683-11ef-adf4-00ffc6b98bdb'  # 或设置为 '' 测试空用户降级推荐
-    result = recommend_base.get_item_cf_recommendations(user_id, 'novel', 3, 0)
+    result = recommend_base.get_recommend_work(user_id, 'novel', 3, 0)
     print("推荐结果：{}".format(result))

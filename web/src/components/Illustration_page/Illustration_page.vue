@@ -1,10 +1,12 @@
 <template>
   <div class="illustration_page">
+    <switch_page></switch_page>
     <scroll_box_1 :msg_type="'tags'" :msg_list="tags_list.data" v-if="tags_list.data.length>0" style="max-height:100px;"></scroll_box_1>
+    <!-- <scoll_box_new :type="'text'" :list="tags_list.data"></scoll_box_new> -->
     <h3>用户关注的作品</h3>
     <scroll_box v-if="follow_illustrations_list" :msg_list="follow_illustrations_list" @chose_item="go_to_illustration_page"></scroll_box>
-    <h4>推荐的作品</h4>
-    <div style="max-height: 900px; overflow:hidden;"><recommendation :token="token" :work_type="'ill'" v-if="token"></recommendation></div>
+    <!-- <div style="max-height: 900px; overflow:hidden;"><recommendation :token="token" :work_type="'ill'" v-if="token"></recommendation></div> -->
+    <ill_re></ill_re>
     <h4>排行榜</h4>
     <ranking></ranking>
   </div>
@@ -14,10 +16,13 @@
 import { useStore } from '@/assets/model/store/index';
 import scroll_box from './model/scroll_box.vue'
 import scroll_box_1 from '../models/scroll_box.vue';
+import scoll_box_new from '@assets/model/scoll_box.vue';
 import { ref, reactive, toRefs, watch, onMounted, onUnmounted,computed } from 'vue';
 import recommendation from './recommendation.vue';
+import ill_re from '@assets/model/recommend/ill_re.vue';
 import ranking from './ranking.vue';
 import { get_user_follow_work_tags } from '@/assets/js/get_userinfo';
+import switch_page from '@assets/model/switch_page.vue';
 const store = useStore()
 
 const tags_list = ref({

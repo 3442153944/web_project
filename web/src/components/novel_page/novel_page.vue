@@ -1,5 +1,6 @@
 <template>
   <div class="novel_page">
+    <switch_page></switch_page>
     <h3>已关注用户作品</h3>
     <div class="novel_list">
       <div class="novel_item" v-for="(item,index) in novel_info_list" :key="index">
@@ -53,6 +54,7 @@ import { ref,  onMounted, computed} from 'vue';
 import recommendation_novel from './recommendation_novel.vue';
 import ranking from './ranking.vue';
 import { useStore } from '@/assets/model/store'
+import switch_page from '@assets/model/switch_page.vue';
 const store=useStore();
 
 //进入指定用户的用户中心
