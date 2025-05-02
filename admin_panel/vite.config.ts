@@ -13,7 +13,7 @@ export default defineConfig({
     vue(),
     VueDevTools(),
     VueSetupExtend(),
-    mkcert()
+    //mkcert()
   ],
   resolve: {
     alias: {
