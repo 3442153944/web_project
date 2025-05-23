@@ -2,13 +2,14 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
-
+from server.djangoWebServer.settings import BASE_DIR
 
 class Logger:
     def __init__(self, log_dir="H:/web_project/log/", max_bytes=10 * 1024 * 1024, backup_count=5):
         # 检查 H 盘是否存在，不存在则使用 C 盘
-        if not os.path.exists("H:/"):
-            log_dir = "C:/web_project/log/"
+        # if not os.path.exists("H:/"):
+        #     log_dir = "C:/web_project/log/"
+        log_dir=os.path.join(BASE_DIR, 'log')
         self.log_dir = log_dir
 
         # 确保日志目录存在

@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.views import View
 from datetime import datetime
 from typing import Optional, List, Dict, Union
-from log.log import Logger
+from server.log.log import Logger
 
 logger = Logger()
 

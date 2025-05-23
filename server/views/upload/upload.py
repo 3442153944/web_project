@@ -13,8 +13,11 @@ from ..log.log import Logger
 from .config import settings
 from .CoverHandle import CoverHandle
 from ..ai_review.review import ImageClassifier
+from djangoWebServer.settings import BASE_DIR
 
-img_class_age=ImageClassifier()
+model_path=os.path.join(BASE_DIR, 'final_model.pth')
+
+img_class_age=ImageClassifier(model_path)
 
 cover_handle = CoverHandle()
 class UploadFile(View):
