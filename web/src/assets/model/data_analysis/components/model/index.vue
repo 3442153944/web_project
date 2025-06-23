@@ -264,12 +264,24 @@ const filtered_work_list = computed(() => {
     font-size: 16px;
     transition: all 0.3s, color 0.3s;
 }
-
+.close_data_analysis{
+    cursor: pointer;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s, color 0.3s;
+    color: #fff;
+    background-color: rgb(0,150,250);
+    width: fit-content;
+    height: fit-content;
+}
 
 .appiont_work {
     background-color: #fff;
     color: #007bff;
     border: 1px solid #007bff;
+    width: fit-content;
+    height: fit-content;
 }
 
 .appiont_work:hover {

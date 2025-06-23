@@ -3,7 +3,7 @@ from django.urls import path
 from .GetChapterList import GetChapterList
 from .GetComicinfo import GetComicinfo
 from .GetIllInfo import GetIllInfo
-from .GetNovelContent import GetNovelContent
+from .GetNovelContent import GetNovelContent, GetNovelContentNew
 from .GetNovelInfo import GetNovelInfo
 from .GetNovelList import GetNovelList
 from .SearchComicWork import SearchComicWork
@@ -32,4 +32,6 @@ urlpatterns = [
     # 为前端的小说作品搜索和作品状态筛选提供支持
     path('GetChapterInfo',GetChapterInfo.as_view(),name='GetChapterInfo'),
     #获取章节信息
+    path('GetNovelContentNew',GetNovelContentNew.as_view(),name='GetNovelContentNew'),
+    #获取章节内容该接口为新接口
 ]

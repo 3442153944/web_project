@@ -7,6 +7,7 @@ class GetChapterInfo(BaseApi):
             data=self.format_request(request)
             work_id=data.get('work_id')
             chapter_id=data.get('chapter_id')
+            vip=request.user.is_vip
             sql='''
             select novel_content.*,novel_work.* ,novel_work.work_id as work_id,novel_content.id as chapter_id,
             users.userid as author_id
