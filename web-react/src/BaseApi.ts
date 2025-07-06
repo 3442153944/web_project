@@ -14,6 +14,15 @@ interface RequestOptions {
 }
 
 class BaseApi {
+
+    IMG_URL: string ;
+    avatar_url: string ;
+    static readonly IMG_URL: string = "https://www.sunyuanling.com/server/static/image/";
+    static readonly avatar_url: string = "https://www.sunyuanling.com/server/static/avatar/";
+    constructor() {
+        this.IMG_URL="https://www.sunyuanling.com/server/static/image/";
+        this.avatar_url="https://www.sunyuanling.com/server/static/image/avatar_thumbnail/"
+    }
     private getToken(): string {
         return localStorage.getItem('token') || '';
     }
@@ -33,7 +42,7 @@ class BaseApi {
         return headers;
     }
 
-    async request<T = unknown>(url: string, options: RequestOptions): Promise<T | null> {
+    async request<T = unknown>(url: string, options: RequestOptions): Promise<T> {
         const method = options.method || 'GET';
         const headers = this.buildHeaders(options);
 
@@ -85,12 +94,17 @@ class BaseApi {
     }
     //登录验证方法
     async loginCheck() {
-        const res=await this.post('verify/', {}, 'json') as {code:number,msg:string}
-        if (res.code === 200){
-            return true
+        try {
+            const res = await this.post('verify/', {}, 'json') as { code: number, msg: string }
+            if (res.code === 200) {
+                return true
+            } else {
+                console.log(res.msg)
+                return false
+            }
         }
-        else{
-            console.log(res.msg)
+        catch (e){
+            console.log(e)
             return false
         }
     }

@@ -1,0 +1,83 @@
+// baseUserInfo.module.scss
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 300px;
+  min-width: 300px;
+  height: fit-content;
+  background-color: rgba(0,0,0,0.1);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.background {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 8px;
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.info {
+  display: flex;
+  align-items: center;
+  margin-top: -40px;
+  padding: 12px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.avatarImg{
+  border-radius: 50%;
+}
+.avatarBox {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin-right: 16px;
+
+  .avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #fff;
+  }
+
+
+  .vip {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.userInfo {
+  display: flex;
+  flex-direction: column;
+
+  span:first-child {
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+  span:last-child {
+    color: #888;
+    font-size: 0.9rem;
+  }
+}
+.follow{
+  display: grid;
+  width: 100%;
+  height: fit-content;
+  max-height: 40px;
+  row-gap: 5px;
+  grid-template-columns:repeat(2,1fr);
+}

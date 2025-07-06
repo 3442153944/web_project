@@ -1,0 +1,36 @@
+.content{
+  width:100px;
+  height: 50px;
+  display: flex;
+  gap:5px;
+  align-items: center;
+  justify-content: center;
+  .avatar{
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+  }
+  .ico{
+    width:25px;
+    height:25px;
+    transition: all 0.2s;
+    img{
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+  .show{
+    transform:rotate(180deg);
+  }
+  .hide{
+    transform:rotate(0deg);
+  }
+
+}
