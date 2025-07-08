@@ -3,9 +3,6 @@ import { useEffect, useState, useRef } from 'react';
 import BaseApi from '@/BaseApi.ts';
 import useStore from '@/store.ts';
 
-interface UserInfo {
-    [key: string]: unknown;
-}
 type IsVipType = {
     code: number;
     msg: string;
@@ -28,7 +25,9 @@ const AuthGuard = () => {
             if (loginStatus && !store.is_login && !isInitRef.current) {
                 store.setLogin(true);
                 const userInfo = await api.getUserInfo();
-                store.setUserInfoByObj(userInfo as UserInfo);
+                if (userInfo) {
+                    store.setUserInfoByObj(userInfo);
+                }
                 isInitRef.current = true;
                 console.log(userInfo);
             }
@@ -45,7 +44,7 @@ const AuthGuard = () => {
     }, []); // ✅ 确保只执行一次
 
     if (!checkedLogin) {
-        return null;
+        return <></>;
     }
 
     if (!isLogin) {

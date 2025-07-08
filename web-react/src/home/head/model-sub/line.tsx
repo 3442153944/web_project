@@ -24,7 +24,6 @@ const Line = () => {
                 <SearchBox/>
                 <IsVip/>
                 <SubmitWork/>
-
                 <div className={"ico hover active"}>
                     <img src={msg} alt={"消息"}/>
                 </div>

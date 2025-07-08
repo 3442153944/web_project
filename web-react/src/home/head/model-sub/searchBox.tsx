@@ -8,15 +8,22 @@ const SearchBox = () => {
     const [searchRS, setSearchRS]=useState(false)
     const inputRef:RefObject<HTMLInputElement|null> = useRef<HTMLInputElement>(null);
     const searchBoxRef:RefObject<HTMLDivElement|null> = useRef<HTMLDivElement>(null);
+    const [searchStatus, setSearchStatus]=useState(false);
     useEffect(() => {
         const inputElement = inputRef.current;
         if (!inputElement) return;
 
-        const onFocus = () => setSearchRS(true);
-        inputElement.addEventListener("focus", onFocus);
+        //const onFocus = () => setSearchRS(true);
+        inputElement.addEventListener("focus", ()=>{
+            setSearchRS(true);
+            setSearchStatus(true);
+        });
 
         return () => {
-            inputElement.removeEventListener("focus", onFocus);
+            inputElement.removeEventListener("focus", ()=>{
+                setSearchRS(false);
+                setSearchStatus(false);
+            });
         };
     }, []);
 
@@ -33,7 +40,8 @@ const SearchBox = () => {
                 <img src={search} alt="搜索"/>
             </div>
             {searchRS?<SearchResult SearchKey={searchText}
-                                    offSignal={setSearchRS} searchBox={searchBoxRef}/>:<></>}
+                                    offSignal={setSearchRS} searchBox={searchBoxRef} inputRef={inputRef}
+                                    searchStatus={searchStatus} setSearchText={setSearchText}/>:<></>}
         </div>
     </>);
 };

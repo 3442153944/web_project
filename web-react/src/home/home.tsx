@@ -1,9 +1,11 @@
 import HeadMain from "@/home/head/head-main.tsx";
+import {Outlet} from "react-router-dom";
+
 function Home() {
   return (
     <div className="Home">
         <HeadMain />
-     <span>hello world</span>
+     <Outlet/>
     </div>
   )
 }
