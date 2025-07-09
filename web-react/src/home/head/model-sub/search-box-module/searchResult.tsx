@@ -1,8 +1,6 @@
 import style from "./searchResult.module.scss";
 import React, {
-    type Dispatch,
     type RefObject,
-    type SetStateAction,
     useEffect,
     useState,
     useCallback,
@@ -10,20 +8,20 @@ import React, {
 } from "react";
 import SearchHistory from "@/home/head/model-sub/search-box-module/searchHistory.tsx";
 import { type SearchResponseData } from "@/types/workTypes.ts";
-import { type ResTypes } from "@/types/resTypes.ts";
+import { type ResType } from "@/types/resTypes.ts";
 import baseApi from "@/BaseApi.ts";
 import {motion,AnimatePresence} from "framer-motion";
+import useStore from "@/store.ts";
 
 interface Props {
     SearchKey: string;
-    offSignal?: Dispatch<SetStateAction<boolean>>;
     searchBox?: RefObject<HTMLDivElement | null>;
     inputRef?: RefObject<HTMLInputElement | null>;
-    searchStatus: boolean;
-    setSearchText: Dispatch<SetStateAction<string>>;
 }
 
-const SearchResult = ({ SearchKey, offSignal, searchBox, inputRef, searchStatus, setSearchText }: Props) => {
+const SearchResult = ({ SearchKey,  searchBox, inputRef }: Props) => {
+    const store = useStore();
+    const searchResultStatus=useStore((state)=>state.searchResultVisible)
     const [searchResult, setSearchResult] = useState<SearchResponseData | null>(null);
     const [isComposing, setIsComposing] = useState(false);
     const api = baseApi;
@@ -41,7 +39,7 @@ const SearchResult = ({ SearchKey, offSignal, searchBox, inputRef, searchStatus,
 
     const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
         if (e.target === e.currentTarget) {
-            offSignal?.(false);
+            store.setSearchResultStatus(false)
         }
     };
 
@@ -58,11 +56,11 @@ const SearchResult = ({ SearchKey, offSignal, searchBox, inputRef, searchStatus,
         }
 
         try {
-            const res = await api.post<ResTypes & { data: SearchResponseData }>("api/Search", {
+            const res = await api.post<ResType & { data: SearchResponseData }>("api/Search", {
                 search_key: currentSearchKey
             });
 
-            if (res.code === 200) {
+            if (res&&res.code === 200) {
                 console.log("res:", res.data);
                 setSearchResult(res.data);
             }
@@ -110,7 +108,7 @@ const SearchResult = ({ SearchKey, offSignal, searchBox, inputRef, searchStatus,
     return (
         <div className={style.backGround} onClick={handleBackgroundClick}>
             <AnimatePresence>
-                {searchStatus&&(<motion.div
+                {searchResultStatus&&(<motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{opacity: 0, y: -20}}
@@ -119,7 +117,7 @@ const SearchResult = ({ SearchKey, offSignal, searchBox, inputRef, searchStatus,
                     key="searchResult"
                     style={{width:resultWidth,left:positionLeft}}
                 >
-                    <SearchHistory setSearchText={setSearchText} />
+                    <SearchHistory />
                     {searchResult && (
                         <>
                             <div className="p-2 font-bold">

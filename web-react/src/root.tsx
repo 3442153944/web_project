@@ -4,7 +4,7 @@ import "@/root.scss"
 import "@/main.css"
 
 function Root() {
-    return useRoutes( routes)
+    return useRoutes(routes)
 }
 
 export default Root;

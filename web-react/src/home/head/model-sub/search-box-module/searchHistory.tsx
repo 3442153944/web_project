@@ -1,6 +1,8 @@
 import style from "./searchHistory.module.scss"
-import {type Dispatch, type SetStateAction, useEffect, useState} from "react"
+import {useEffect, useState} from "react"
 import baseApi from "@/BaseApi.ts"
+import useStore from "@/store.ts";
+import type {ResType} from "@/types/resTypes.ts";
 
 interface HistoryItem {
     id: number
@@ -9,30 +11,22 @@ interface HistoryItem {
     date: string
 }
 
-interface ResType {
-    code: number
-    data: HistoryItem[]
-    msg: string
-}
-interface Props{
-    setSearchText:Dispatch<SetStateAction<string>>
-}
-
-const SearchHistory = ({setSearchText}:Props) => {
+const SearchHistory = () => {
+    const store = useStore()
     const [list, setList] = useState<string[]>(["无"])
     const api = baseApi
 
     useEffect(() => {
         (async () => {
-            const getSearchHis = (): Promise<ResType> => api.post("api/GetSearchHis", {})
-            const res = await getSearchHis()
-            console.log("res:", res)
-            if (res.code === 200 && res.data.length > 0) {
-                const keywords = res.data.map(item => item.search_key)
-                setList(keywords)
+            const res = await api.post<ResType<HistoryItem[]>>("api/GetSearchHis", {});
+            console.log("res:", res);
+            if (res&&res.code === 200 && res.data.length > 0) {
+                const keywords = res.data.map(item => item.search_key);
+                setList(keywords);
             }
-        })()
-    }, [])
+        })();
+    }, []);
+
 
     return (
         <div className={style.main}>
@@ -50,7 +44,7 @@ const SearchHistory = ({setSearchText}:Props) => {
                                  padding: "5px 15px"
                              }}
                              onClick={()=>{
-                                 setSearchText(item)
+                                 store.setSearchKey(item)
                              }}
                         >
                             {item}

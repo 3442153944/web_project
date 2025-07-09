@@ -1,49 +1,57 @@
-import search from "@/assets/search.svg"
-import style from "./searchBox.module.scss"
-import {type RefObject, useEffect, useRef, useState} from "react";
+import search from "@/assets/search.svg";
+import style from "./searchBox.module.scss";
+import {useEffect, useRef, type RefObject, useState} from "react";
 import SearchResult from "./search-box-module/searchResult";
+import useStore from "@/store.ts";
 
 const SearchBox = () => {
-    const [searchText, setSearchText] = useState("");
-    const [searchRS, setSearchRS]=useState(false)
-    const inputRef:RefObject<HTMLInputElement|null> = useRef<HTMLInputElement>(null);
-    const searchBoxRef:RefObject<HTMLDivElement|null> = useRef<HTMLDivElement>(null);
-    const [searchStatus, setSearchStatus]=useState(false);
+    const store = useStore();
+    const inputRef: RefObject<HTMLInputElement | null> = useRef(null);
+    const searchBoxRef: RefObject<HTMLDivElement | null> = useRef(null);
+
+    const searchKey = useStore((state) => state.searchKey);
+    const showSearchResult = useStore((state)=>state.searchResultVisible)
+    const setShowSearchResult = store.setSearchResultStatus;
+
+    // 全局点击判断是否点击了组件外部
     useEffect(() => {
-        const inputElement = inputRef.current;
-        if (!inputElement) return;
+        const handleClickOutside = (e: MouseEvent) => {
+            const box = searchBoxRef.current;
+            // if (box && !box.contains(e.target as Node)) {
+            //     console.log("点击了外部");
+            //     setShowSearchResult(false);
+            // }
+        };
 
-        //const onFocus = () => setSearchRS(true);
-        inputElement.addEventListener("focus", ()=>{
-            setSearchRS(true);
-            setSearchStatus(true);
-        });
-
+        document.addEventListener("click", handleClickOutside);
         return () => {
-            inputElement.removeEventListener("focus", ()=>{
-                setSearchRS(false);
-                setSearchStatus(false);
-            });
+            document.removeEventListener("click", handleClickOutside);
         };
     }, []);
 
-    return (<>
+    return (
         <div className={`focus ${style.searchBox}`} ref={searchBoxRef}>
             <input
                 className={style.input}
-                value={searchText}
+                value={searchKey}
                 placeholder="请输入关键字"
                 ref={inputRef}
-                onChange={(e) => setSearchText(e.target.value)}
+                onFocus={() => setShowSearchResult(true)}
+                onChange={(e) => store.setSearchKey(e.target.value)}
             />
             <div className={"ico hover active"}>
-                <img src={search} alt="搜索"/>
+                <img src={search} alt="搜索" />
             </div>
-            {searchRS?<SearchResult SearchKey={searchText}
-                                    offSignal={setSearchRS} searchBox={searchBoxRef} inputRef={inputRef}
-                                    searchStatus={searchStatus} setSearchText={setSearchText}/>:<></>}
+
+            {showSearchResult && (
+                <SearchResult
+                    SearchKey={searchKey}
+                    searchBox={searchBoxRef}
+                    inputRef={inputRef}
+                />
+            )}
         </div>
-    </>);
+    );
 };
 
 export default SearchBox;
