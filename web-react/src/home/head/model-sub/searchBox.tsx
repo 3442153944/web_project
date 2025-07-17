@@ -36,6 +36,8 @@ const SearchBox = () => {
                 value={searchKey}
                 placeholder="请输入关键字"
                 ref={inputRef}
+                id={"search"}
+                name={"search"}
                 onFocus={() => setShowSearchResult(true)}
                 onChange={(e) => store.setSearchKey(e.target.value)}
             />

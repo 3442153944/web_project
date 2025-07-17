@@ -7,6 +7,7 @@ import {type ResType} from "@/types/resTypes.ts";
 const IllMain = () => {
     const api=baseApi;
     const [tags,setTags]=useState<string[]|undefined>(undefined)
+    const [reIll,setReIll]=useState()
     const tagTest=()=>{
         const tag=[]
         for(let i=0;i<10;i++){
@@ -14,6 +15,11 @@ const IllMain = () => {
         }
         return tag
     }
+    useEffect(() => {
+        (async()=>{
+
+        })()
+    }, []);
     useEffect(() => {
         (async()=>{
             const getTags=async()=>{

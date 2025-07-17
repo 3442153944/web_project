@@ -24,13 +24,10 @@ const Tags = ({ tags = ["默认测试项一"] }: Props) => {
     const scrollToTag = (direction: number) => {
         if (tagsRef.current) {
             const tagsBox = tagsRef.current;
-            console.log("滑动");
-
             // 获取当前滚动位置
             const startPosition = tagsBox.scrollLeft;
             // 计算目标位置（每次滚动300px）
             const targetPosition = startPosition + (direction * 300);
-
             // 确保目标位置在有效范围内
             const maxScroll = tagsBox.scrollWidth - tagsBox.clientWidth;
             const finalPosition = Math.max(0, Math.min(targetPosition, maxScroll));
@@ -41,7 +38,9 @@ const Tags = ({ tags = ["默认测试项一"] }: Props) => {
 
             // 缓动函数 - 加速减速效果
             const easeInOutQuad = (t: number) => {
-                return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+                return t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
             };
 
             // 动画函数

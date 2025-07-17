@@ -1,0 +1,94 @@
+{
+	"pages": [
+		{
+			"path": "pages/login/login_verify",
+			"style": {
+				"navigationBarTitleText": "验证登录状态"
+			}
+		},
+		{
+			"path": "pages/login/login_page",
+			"style": {
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "插画社区"
+			}
+		},
+		{
+			"path": "pages/content/content_index",
+			"style": {
+				"navigationBarTitleText": "内容详情"
+			}
+		},
+		{
+			"path": "pages/other_user_center/user_center_index",
+			"style": {
+				"navigationBarTitleText": "用户中心"
+			}
+		},
+		{
+			"path": "pages/forgot/forgot",
+			"style": {
+				"navigationBarTitleText": "忘记密码"
+			}
+		},
+		{
+			"path": "pages/register/register",
+			"style": {
+				"navigationBarTitleText": "注册"
+			}
+		},
+		{
+			"path": "pages/search/search_index",
+			"style": {
+				"navigationBarTitleText": "搜索"
+			}
+		},
+		{
+			"path": "pages/notice/notice_index",
+			"style": {
+				"navigationBarTitleText": "公告"
+			}
+		},
+		{
+			"path": "pages/user_center/user_center",
+			"style": {
+				"navigationBarTitleText": "我的"
+			}
+		}
+	],
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#F8F8F8",
+		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"backgroundColor": "#F8F8F8",
+		"color": "#666666",
+		"selectedColor": "#007AFF",
+		"borderStyle": "black",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"text": "首页"
+			},
+			{
+				"pagePath": "pages/search/search_index",
+				"text": "搜索"
+			},
+			{
+				"pagePath": "pages/notice/notice_index",
+				"text": "公告"
+			},
+			{
+				"pagePath": "pages/user_center/user_center",
+				"text": "我的"
+			}
+		]
+	}
+}
