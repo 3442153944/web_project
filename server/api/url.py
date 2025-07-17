@@ -1,5 +1,7 @@
 from django.urls import path
 
+from .GetFollowUserIllTags import GetFollowUserIllTags
+from .GetVipStatus import GetVipStatus
 from .add_func import AddFunc
 from .com_an_article_operate import ComAnArticleOperate
 from .get_func_list import GetFuncList
@@ -16,7 +18,7 @@ from .pay import OrderHandler
 from .re.re_work import ReWork
 from .recharge import Recharge
 
-#本URL的父路径为api/，以下为具体的接口访问路径
+# 本URL的父路径为api/，以下为具体的接口访问路径
 urlpatterns = [
     path('GetSelfFunc', GetSelfFunc.as_view(), name='GetSelfFunc'),
     # 获取用户约稿方案列表
@@ -44,8 +46,12 @@ urlpatterns = [
     # 获取发送的约稿方案列表
     path('GetOrderInfoById', GetOrderInfoById.as_view(), name='GetOrderInfoById'),
     # 获取约稿订单信息
-    path('ComAnArticleOperate', ComAnArticleOperate.as_view(),name='ComAnArticleOperate'),
+    path('ComAnArticleOperate', ComAnArticleOperate.as_view(), name='ComAnArticleOperate'),
     # 约稿订单操作接受或拒绝
-    path('ReWork', ReWork.as_view(),name='ReWork'),
+    path('ReWork', ReWork.as_view(), name='ReWork'),
     # 作品推荐接口
+    path('GetVipStatus', GetVipStatus.as_view(), name='GetVipStatus'),
+    # 获取会员状态
+    path('GetFollowUserIllTags', GetFollowUserIllTags.as_view(), name='GetFollowUserIllTags'),
+    # 获取用户关注的画师的标签
 ]
