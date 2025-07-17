@@ -3,6 +3,8 @@ node_modules
 /dist
 # 忽略虚拟环境
 venv/
+.venv/
+/_pycache_/
 
 
 
@@ -25,5 +27,7 @@ pnpm-debug.log*
 *.sln
 *.sw?
 *.pyc
+*.pyd
+*.cpython.pyc
 
 /vendor/
