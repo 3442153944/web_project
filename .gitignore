@@ -3,6 +3,7 @@ node_modules
 /dist
 # 忽略虚拟环境
 venv/
+log/*.log
 
 
 
