@@ -156,7 +156,7 @@ class RecommendBase(BaseApi):
         union = set1 | set2
         return len(intersection) / len(union) if union else 0.0
 
-    def get_item_cf_recommendations(self, userid, content_type, limit=10, offset=0):
+    def get_item_cf_recommendations_1(self, userid, content_type, limit=10, offset=0):
         """
         基于物品协同过滤（标签集合的 Jaccard 相似度）的推荐：
           1. 获取用户历史作品（直接消费过的作品），构建其标签集合；
@@ -216,12 +216,8 @@ class RecommendBase(BaseApi):
         return items[offset:] + items[:end - total]
 
     def get_fallback_recommend(self, content_type, limit):
-        """
-        降级推荐：
-          采用观看历史统计标签热度进行简单排序
-        """
+        """降级推荐：标签热度排序 + 完整字段输出，结构与主推荐保持一致"""
         try:
-            # 此处复用之前的降级策略
             tag_popularity = defaultdict(int)
             with self.conn.cursor() as cursor:
                 cursor.execute(
@@ -229,35 +225,27 @@ class RecommendBase(BaseApi):
                     [content_type]
                 )
                 work_ids = [row[0] for row in cursor.fetchall()]
-            if work_ids:
-                work_freq = defaultdict(int)
-                for wid in work_ids:
-                    work_freq[wid] += 1
-                config = self.CONTENT_CONFIG[content_type]
-                with self.conn.cursor() as cursor:
-                    cursor.execute(
-                        f"SELECT {config['id_field']}, work_tags FROM {config['table']} "
-                        f"WHERE {config['id_field']} IN %s",
-                        [tuple(work_freq.keys())]
-                    )
-                    for row in cursor.fetchall():
-                        wid, tags = row
-                        for tag in self.parse_tags(tags):
-                            tag_popularity[tag] += work_freq[wid]
-            # 根据标签热度对候选作品打分
+
+            work_freq = defaultdict(int)
+            for wid in work_ids:
+                work_freq[wid] += 1
+
             config = self.CONTENT_CONFIG[content_type]
             with self.conn.cursor() as cursor:
                 cursor.execute(
-                    f"SELECT {config['id_field']}, work_tags, {config['time_field']} "
-                    f"FROM {config['table']}"
+                    f"SELECT * FROM {config['table']}"
                 )
                 candidates = self.dictfetchall(cursor)
+
             scored = []
             for work in candidates:
-                score = sum(tag_popularity.get(tag, 0) for tag in self.parse_tags(work['work_tags']))
+                tags = self.parse_tags(work['work_tags'])
+                score = sum(work_freq.get(work[config['id_field']], 0) for tag in tags)
                 scored.append((work, score))
+
             scored.sort(key=lambda x: x[1], reverse=True)
             return [x[0] for x in scored][:limit]
+
         except Exception as e:
             print(f"获取降级推荐失败: {str(e)}")
             return []
@@ -355,30 +343,23 @@ class RecommendBase(BaseApi):
 
     def get_item_cf_recommendations(self, userid, content_type, limit=10, offset=0):
         """优化后的基于物品协同过滤的推荐算法（使用numpy加速）"""
-        # 获取用户历史行为数据
         history = self.get_user_history(userid, content_type)
         user_items = set(history['watch'] + history['collect'] + history['like'] + history['follow_work'])
+
         if not user_items:
             return self.get_fallback_recommend(content_type, limit)
 
         config = self.CONTENT_CONFIG[content_type]
 
-        # 步骤1: 构建全局标签索引
         all_tags, tag_idx = self.build_global_tag_index(content_type)
-
-        # 步骤2: 批量获取特征矩阵
         candidate_matrix, candidate_ids = self.get_candidate_matrix(content_type, all_tags, tag_idx)
         history_matrix, history_ids = self.get_history_matrix(content_type, user_items, all_tags, tag_idx)
 
-        # 步骤3: 矩阵化计算相似度
         similarity_matrix = self.calculate_jaccard_similarity(candidate_matrix, history_matrix)
-
-        # 步骤4: 获取最大相似度并排序
         max_similarities = np.max(similarity_matrix, axis=1)
         sorted_indices = np.argsort(-max_similarities)
 
-        # 步骤5: 构建结果并分页
-        return self.build_paginated_results(
+        results = self.build_paginated_results(
             candidate_ids,
             sorted_indices,
             user_items,
@@ -386,6 +367,14 @@ class RecommendBase(BaseApi):
             limit,
             config
         )
+
+        # 兜底机制
+        if not results:
+            print("协同过滤无推荐结果，启用降级推荐")
+            return self.get_fallback_recommend(content_type, limit)
+
+        return results
+
     def get_recommend_work(self, userid, content_type='ill', limit=10, offset=0):
         """
         综合推荐算法：

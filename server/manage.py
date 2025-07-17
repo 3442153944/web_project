@@ -8,6 +8,12 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'djangoWebServer.settings')
 
+    # 如果没有传入任何参数，或只是传了 runserver，则附加默认地址
+    if len(sys.argv) == 1:
+        sys.argv += ['runserver', '0.0.0.0:2233']
+    elif sys.argv[1] == 'runserver' and len(sys.argv) == 2:
+        sys.argv.append('0.0.0.0:2233')
+
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
@@ -16,11 +22,8 @@ def main():
             "available on your PYTHONPATH environment variable? Did you "
             "forget to activate a virtual environment?"
         ) from exc
+
     execute_from_command_line(sys.argv)
-    if len(sys.argv) > 1:
-        sys.argv += ['runserver', '0.0.0.0:2233']
-    elif sys.argv[1] == 'runserver' and len(sys.argv) == 2:
-        sys.argv.append('0.0.0.0:2233')
 
 
 if __name__ == '__main__':
