@@ -21,7 +21,7 @@ class GetUserFollowToIll(View):
 
             with connection.cursor() as cursor:
                 # 获取关注列表
-                sql = 'SELECT follow_user_id FROM user_follow WHERE user_id=%s'
+                sql = 'SELECT follow_user_id FROM user_follow WHERE user_id=%s limit 20'
                 cursor.execute(sql, [userid])
                 follow_user_ids = [row[0] for row in cursor.fetchall()]
 
@@ -36,7 +36,7 @@ class GetUserFollowToIll(View):
                     FROM illustration_work
                     LEFT JOIN users ON illustration_work.belong_to_user_id = users.userid
                     WHERE illustration_work.belong_to_user_id IN %s and work_approved=1 
-                    ORDER BY illustration_work.create_time DESC
+                    ORDER BY illustration_work.create_time DESC limit 10
                 '''
                 cursor.execute(sql, [tuple(follow_user_ids_tuple)])
                 columns = [desc[0] for desc in cursor.description]

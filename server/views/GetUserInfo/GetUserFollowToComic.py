@@ -15,7 +15,7 @@ class GetUserFollowToComic(View):
             userid=request.user.id
             follow_user_id_list=[]
             with connection.cursor() as cursor:
-                sql='select follow_user_id from user_follow where user_id=%s'
+                sql='select follow_user_id from user_follow where user_id=%s limit 20'
                 cursor.execute(sql,[userid])
                 follow_user_id_list=cursor.fetchall()
                 print(follow_user_id_list)
@@ -24,7 +24,7 @@ class GetUserFollowToComic(View):
                     return JsonResponse({'status':'failure','message':'No data found'},status=400)
                 #获取漫画信息并按照时间排序
                 sql=('select * from comic where comic.belong_to_userid in %s and comic.work_approved=1 ' 
-                     'ORDER BY create_time DESC')
+                     'ORDER BY create_time DESC limit 10')
                 cursor.execute(sql,[tuple(follow_user_id_list)])
                 columns=[desc[0] for desc in cursor.description]
                 comic_result=cursor.fetchall()

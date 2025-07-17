@@ -14,7 +14,7 @@ class GetUserFollowNovel(View):
             userid=request.user.id
             follow_user_id_list=[]
             with connection.cursor() as cursor:
-                sql='select follow_user_id from user_follow where user_id=%s'
+                sql='select follow_user_id from user_follow where user_id=%s limit 20'
                 cursor.execute(sql,[userid])
                 follow_user_id_list=cursor.fetchall()
                 print(follow_user_id_list)
@@ -23,7 +23,7 @@ class GetUserFollowNovel(View):
                     return JsonResponse({'status':'failure','message':'No data found'},status=400)
                 #获取小说信息并按照时间排序
                 sql=('select * from novel_work where belong_to_userid in %s and work_approved=1 ' 
-                     'ORDER BY work_create_time DESC')
+                     'ORDER BY work_create_time DESC limit 10')
                 cursor.execute(sql,[tuple(follow_user_id_list)])
                 columns=[desc[0] for desc in cursor.description]
                 novel_result=cursor.fetchall()
