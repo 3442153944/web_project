@@ -7,7 +7,11 @@ const useStore = defineStore("store", {
 
             },
             other_user_id: "",
-            now_page:0
+            now_page:0,
+            jump_page_info:{
+                work_id:'',
+                work_type:''
+            }
         }
     }
 })

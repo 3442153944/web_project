@@ -18,6 +18,7 @@
           :src="static_url + (item.content_file_list?.[0] ?? '图像.png')"
           mode="aspectFill"
           @error="onImageError"
+          @click="to_content_page(item.Illustration_id)"
         />
         <text class="page_count">{{ item.content_file_list?.length ?? 0 }}</text>
       </view>
@@ -31,6 +32,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import BaseApi from '@/BaseApi'
+import { useStore } from '@/store';
+const store = useStore();
+const to_content_page=(work_id)=>{
+    uni.navigateTo({url:'../content/content_index'})
+    store.$state.jump_page_info={work_id:work_id,work_type:'ill'}
+}
 
 const re_work = ref([])
 const limit = 10
