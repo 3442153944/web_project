@@ -7,6 +7,7 @@ from .com_an_article_operate import ComAnArticleOperate
 from .get_func_list import GetFuncList
 from .get_order_info_by_id import GetOrderInfoById
 from .get_receiver_list import GetReceiverList
+from .get_search_his import GetSearchHis
 from .get_self_func import GetSelfFunc
 from .get_self_order import GetSelfOrder
 from .get_send_list import GetSendList
@@ -17,6 +18,7 @@ from .init_pay_account import InitPayAccount
 from .pay import OrderHandler
 from .re.re_work import ReWork
 from .recharge import Recharge
+from .search import Search
 
 # 本URL的父路径为api/，以下为具体的接口访问路径
 urlpatterns = [
@@ -54,4 +56,8 @@ urlpatterns = [
     # 获取会员状态
     path('GetFollowUserIllTags', GetFollowUserIllTags.as_view(), name='GetFollowUserIllTags'),
     # 获取用户关注的画师的标签
+    path('Search', Search.as_view(), name='Search'),
+    # 搜索接口
+    path('GetSearchHis', GetSearchHis.as_view(), name='GetSearchHis'),
+    # 获取搜索历史
 ]
