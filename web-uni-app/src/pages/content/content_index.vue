@@ -1,8 +1,8 @@
 <template>
     <div class="content">
         <ill_index v-if="page_info.work_type=='ill'" :work_id="page_info.work_id" :key="'ill_'+page_info.work_id"></ill_index>
-        <comic_index v-if="page_info.work_type=='comic'" :key="'comic_'+page_info.work_id"></comic_index>
-        <novel_index v-if="page_info.work_type=='novel'" :key="'novel_'+page_info.work_id"></novel_index>
+        <comic_index v-if="page_info.work_type=='comic'" :work_id="page_info.work_id" :key="'comic_'+page_info.work_id"></comic_index>
+        <novel_index v-if="page_info.work_type=='novel'" :work_id="page_info.work_id" :key="'novel_'+page_info.work_id"></novel_index>
     </div>
 </template>
 
