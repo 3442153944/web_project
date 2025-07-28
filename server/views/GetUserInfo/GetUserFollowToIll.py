@@ -13,7 +13,7 @@ class GetUserFollowToIll(View):
 
     def post(self, request, *args, **kwargs):
         try:
-            data = json.loads(request.body.decode('utf-8'))
+            # data = json.loads(request.body.decode('utf-8'))
             userid = request.user.id
 
             if not userid:

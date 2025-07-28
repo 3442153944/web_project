@@ -27,7 +27,7 @@ class JWTGenerateMiddleware(MiddlewareMixin):
             password = data.get('password')
             if not login_key or not password:
                 return JsonResponse({'code': 400, 'msg': '参数错误'}, status=400)
-
+            admin_id='ec6866d3-128c-4281-8fef-76beb6b29508'
             # 查询数据库
             with connection.cursor() as cursor:
                 login_sql = '''
