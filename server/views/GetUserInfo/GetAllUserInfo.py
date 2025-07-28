@@ -19,9 +19,9 @@ class GetAllUserInfo(BaseApi):
                 if result:
                     result[0]['fans'] = self.execute_sql(fans_count_sql, [request.user.id])[0]['total']
                     result[0]['follow'] = self.execute_sql(follow_count_sql, [request.user.id])[0]['total']
-                    return JsonResponse({'status': 'success', 'data': result}, status=200)
+                    return JsonResponse({'status': 'success', 'data': result, 'code': 200}, status=200)
                 else:
-                    return JsonResponse({'status': 'error', 'message': '用户不存在'}, status=404)
+                    return JsonResponse({'status': 'error', 'message': '用户不存在', 'code': 404}, status=404)
             else:
                 data = self.format_request(request)
                 user_id = data.get('userid', None)
@@ -33,9 +33,9 @@ class GetAllUserInfo(BaseApi):
                 if result:
                     result[0]['fans'] = self.execute_sql(fans_count_sql, [user_id])[0]['total']
                     result[0]['follow'] = self.execute_sql(follow_count_sql, [user_id])[0]['total']
-                    return JsonResponse({'status': 'success', 'data': result}, status=200)
+                    return JsonResponse({'status': 'success', 'data': result, 'code': 200}, status=200)
                 else:
-                    return JsonResponse({'status': 'error', 'message': '用户不存在'}, status=404)
+                    return JsonResponse({'status': 'error', 'message': '用户不存在', 'code': 404}, status=404)
 
         except Exception as e:
             print(e)
