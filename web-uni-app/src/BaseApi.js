@@ -13,11 +13,27 @@ class BaseApi {
   async getToken() {
     try {
       const res = await uni.getStorage({ key: 'token' });
-      return res.data || '';
+      //console.log("getToken", res);
+      if (res?.data && res.data.trim().length>0) return res.data;
     } catch (e) {
-      return '';
+      // 存储不存在
+
     }
+
+    // fallback 逻辑，开发模式自动使用默认 token
+    
+      console.warn('使用预设token（开发调试用）');
+      return `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+      eyJ1c2VyaWQiOiJlYzY4NjZkMy0xMjhjLTQyODEtOGZlZi03NmJlYjZiMjk1MDgiLCJ1c2VybmFtZSI6InVzZXIxIiwiZW1haWwiOiIy
+      MjIiLCJwaG9uZSI6IjIyMjIyIiwic2V4IjoiXHU1OTczIiwiYXZhdGFyIjoiNjUwMTQyMjBfcDAuanBnIiwidXNlcl9sZXZlbCI6IjEiL
+      CJiYWNrZ3JvdW5kIjoiMjAyNDA1MjUxNzQ5MTZfZjRmNGFjYzcyODBmNGVhYmI5ZmMxNzEyOTI5YzNjY2MucG5nIiwibm93IjoiMjAyNS
+      0wNy0yN1QxMzoyMjoyMy44NTAxMzMrMDA6MDAiLCJpc19sb2dpbiI6dHJ1ZSwic3RhdHVzIjoiMSIsInZpcCI6IjEiLCJyb2xlIjoiYWRt
+      aW4iLCJleHAiOjE3NTYyMTQ1NDN9.38THp3pwyilRDX6m3ypzgibx5Uyk8jwT--WEnPuACGY`;
+    
+
+    return '';
   }
+
 
   async buildHeaders(options) {
     const token = await this.getToken(); // 添加 await
@@ -113,7 +129,8 @@ class BaseApi {
   async loginCheck() {
     try {
       const res = await this.post('verify/', {}, 'json');
-      return res?.code === 200;
+      console.log('登录检查',res)
+      return res?.code == 200;
     } catch (e) {
       console.error('登录检查失败:', e);
       return false;
