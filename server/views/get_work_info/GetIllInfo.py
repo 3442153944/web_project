@@ -34,16 +34,16 @@ class GetIllInfo(View):
                 result = cursor.fetchall()
                 if not result:
                     self.logger.info(self.request_path(request) + '获取失败，请求数据为：' + str(request.body))
-                    return JsonResponse({'status': 'error', 'message': '获取失败'}, status=404)
+                    return JsonResponse({'status': 'error', 'message': '获取失败','code':404}, status=404)
                 columns = [desc[0] for desc in cursor.description]
                 rows = [dict(zip(columns, row)) for row in result]
                 self.logger.info(self.request_path(request) + '获取成功，请求数据为：' + str(request.body))
-            return JsonResponse({'status': 'success', 'message': '获取成功', 'data': rows}, status=200)
+            return JsonResponse({'status': 'success', 'message': '获取成功', 'data': rows,'code':200}, status=200)
         except json.JSONDecodeError as e:
             print(e)
             self.logger.error(self.request_path(request) + str(e) + '请求数据为：' + str(request.body))
-            return JsonResponse({'status': 'error', 'message': '请求数据格式错误'}, status=400)
+            return JsonResponse({'status': 'error', 'message': '请求数据格式错误','code':400}, status=400)
         except Exception as e:
             print(e)
             self.logger.error(self.request_path(request) + str(e) + '请求数据为：' + str(request.body))
-            return JsonResponse({'status': 'error', 'message': '服务器内部错误'}, status=500)
+            return JsonResponse({'status': 'error', 'message': '服务器内部错误','code':500}, status=500)

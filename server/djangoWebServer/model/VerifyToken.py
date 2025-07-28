@@ -18,6 +18,7 @@ class VerifyToken(MiddlewareMixin):
         try:
             # Token验证
             auth_header = request.META.get('HTTP_AUTHORIZATION')
+            admin_id='ec6866d3-128c-4281-8fef-76beb6b29508'
             if not auth_header or not auth_header.startswith('token '):
                 return JsonResponse({'code': 400, 'msg': 'Token 必须作为 Authorization 头传递'}, status=400)
 
