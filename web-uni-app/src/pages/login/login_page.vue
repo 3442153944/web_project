@@ -90,7 +90,7 @@ const handleLogin = async () => {
     })
     console.log(res)
     if (res.code === 200) {
-      uni.setStorageSync('token', res.token)
+      uni.setStorage('token', res.token)
       uni.showToast({ title: '登录成功', icon: '../../static/正确.svg' })
       const user_info=await BaseApi.getUserInfo();
       if(user_info){

@@ -9,6 +9,7 @@
                         <image
                             :src="cover_url + item.work_cover"
                             mode="aspectFill"
+                            @click="to_content_page(item.work_id)"
                         />
                         <text class="work_name">{{ item.work_name }}</text>
                     </view>
@@ -22,9 +23,16 @@
 import { ref, computed, onMounted } from 'vue'
 import BaseApi from '@/BaseApi';
 import user_box from './user_box.vue';
+import { useStore } from '@/store';
+const store = useStore();
 
 const work_list = ref({});
 const cover_url = computed(() => { return BaseApi.IMG_URL + 'novel/' });
+
+const to_content_page=(work_id)=>{
+    uni.navigateTo({url:'../content/content_index'})
+    store.$state.jump_page_info={work_id:work_id,work_type:'novel'}
+}
 
 const get_work_list = async () => {
     try {

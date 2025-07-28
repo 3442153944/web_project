@@ -12,6 +12,7 @@
                         mode="aspectFill"
                         @load="(e) => setAspectRatio(e, key, index)"
                         :style="{ aspectRatio: aspectRatios[`${key}_${index}`] || '3/4' }"
+                        @click="to_content_page(item.id)"
                     />
                     <view class="page_count">
                         <text>{{ item.content_file_list.length ?? 0 }}</text>
@@ -26,12 +27,19 @@
 import { ref, onMounted, computed } from 'vue';
 import BaseApi from "@/BaseApi";
 import user_box from './user_box.vue';
+import { useStore } from '@/store';
+const store = useStore();
 
 const api = BaseApi;
 const work_list = ref({});
 const static_url = computed(() => BaseApi.IMG_URL+'comic/');
 const is_loding = ref(false);
 const aspectRatios = ref({}); // 存储宽高比
+
+const to_content_page=(work_id)=>{
+    uni.navigateTo({url:'../content/content_index'})
+    store.$state.jump_page_info={work_id:work_id,work_type:'comic'}
+}
 
 const get_re_work = async () => {
     try {
