@@ -12,7 +12,7 @@ const store=useStore();
 
 onMounted(async ()=>{
     const res=await api.loginCheck();
-    if(res.code==200){
+    if(res){
         uni.switchTab({url:'/pages/index/index'})
         const user_info=await api.getUserInfo();
         if(user_info){

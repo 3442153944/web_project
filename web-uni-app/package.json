@@ -36,7 +36,7 @@
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union"
   },
   "dependencies": {
-    "@dcloudio/uni-app": "3.0.0-4070520250711001",
+    "@dcloudio/uni-app": "^3.0.0-4070520250711001",
     "@dcloudio/uni-app-harmony": "3.0.0-4070520250711001",
     "@dcloudio/uni-app-plus": "3.0.0-4070520250711001",
     "@dcloudio/uni-components": "3.0.0-4070520250711001",
@@ -52,18 +52,20 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-4070520250711001",
     "@dcloudio/uni-mp-xhs": "3.0.0-4070520250711001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4070520250711001",
+    "element-plus": "^2.10.4",
     "pinia": "^3.0.3",
     "sass": "^1.89.2",
-    "uni-simple-router": "^2.0.8-beta.4",
-    "vue": "^3.4.21",
-    "vue-i18n": "^9.1.9"
+    "uview-plus": "^3.4.65",
+    "vue": "^3.5.18",
+    "vue-i18n": "^9.9.0",
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@dcloudio/types": "^3.4.8",
     "@dcloudio/uni-automator": "3.0.0-4070520250711001",
     "@dcloudio/uni-cli-shared": "3.0.0-4070520250711001",
     "@dcloudio/uni-stacktracey": "3.0.0-4070520250711001",
-    "@dcloudio/vite-plugin-uni": "3.0.0-4070520250711001",
+    "@dcloudio/vite-plugin-uni": "^3.0.0-4070520250711001",
     "@vue/runtime-core": "^3.4.21",
     "vite": "5.2.8"
   }
