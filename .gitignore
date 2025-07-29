@@ -32,3 +32,6 @@ pnpm-debug.log*
 *.cpython.pyc
 
 /vendor/
+C:/web_project/log/error.log
+C:/web_project/log/info.log
+C:/web_project/log/warning.log
