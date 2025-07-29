@@ -142,6 +142,13 @@ class BaseApi {
     return res?.code === 200 ? res.data : null;
   }
 
+  async getUserInfoById(id){
+    const res=await this.post('GetUserInfo/GetUserInfoById',{
+      user_id:id
+    })
+    return res?.code === 200 ? res.data : null;
+  }
+
   getRandomColor() {
     const colorList = [
       '#a0f8f5', '#89f7d4', '#9beb9f', '#9ee1f7', '#f6caca',

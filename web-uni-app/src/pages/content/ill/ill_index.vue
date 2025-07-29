@@ -2,6 +2,8 @@
 import { defineProps, ref, onMounted } from 'vue'
 import BaseApi from '@/BaseApi'
 import content_head from "@/pages/content/content_head.vue"
+import user_box_min from './user_box_min.vue'
+import work_details from './work_details.vue'
 
 const props = defineProps({ work_id: String })
 const work_info = ref()
@@ -10,6 +12,8 @@ const size_dict = ref({})
 const file_list = ref([])
 const max_show = ref(1)
 const now_file_list = ref([])
+const is_loding = ref(false)
+const author_id=ref('')
 
 // 获取设备宽度
 const device_width = ref(375) // 默认值，onMounted中获取
@@ -42,6 +46,7 @@ const get_work_info = async () => {
       let data = res.data[0]
       data.content_file_list = data.content_file_list.split(/[,，]+/).map(f => f.trim())
       work_info.value = data
+      author_id.value = data.author_id
       file_list.value = data.content_file_list
       now_file_list.value.push(data.content_file_list[0])
     }
@@ -50,25 +55,29 @@ const get_work_info = async () => {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   // 获取系统信息
   uni.getSystemInfo({
     success: res => {
       device_width.value = res.windowWidth
     },
   })
-  get_work_info()
+  await get_work_info()
+  is_loding.value=true
 })
 </script>
 
 
 <template>
-  <view class="work_content">
+  <view class="work_content" v-if="is_loding">
     <content_head></content_head>
     <view class="item" v-for="(item, index) in now_file_list" :key="index">
-      <image :src="img_url + item" mode="widthFix" @load="(e) => get_size(e, index)"
-        :style="{ width: device_width + 'px', height: size_dict[index]?.display_height + 'px' }" />
+      <image :src="img_url + item" mode="aspectFit" @load="(e) => get_size(e, index)"
+        :style="{ width: device_width + 'px', height: size_dict[index]?.display_height + 'px' }"
+         />
     </view>
+    <user_box_min :userid="author_id" :work_name="work_info.name" v-if="author_id"></user_box_min>
+    <work_details :work_info="work_info"></work_details>
   </view>
 </template>
 
