@@ -1,21 +1,21 @@
 package com.yl.springserverill.token
 
 import com.google.gson.*
-import org.apache.commons.codec.binary.Base64
+import org.springframework.stereotype.Component
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
+@Component
 class TokenService(private val cryptOp: CryptOp) {
 
     companion object {
-        private const val TOKEN_VERSION = "1.0"
+        private const val TOKEN_VERSION = "1.1"
         private const val DEFAULT_EXPIRATION_DAYS = 30
     }
 
     // Gson实例
     private val gson = Gson()
 
-    // 这里你之前的code变量内容不应该Base64解码（内容本身不是Base64），这里示范一个签名key
     private val signingKey: SecretKey by lazy {
         // 这里示范一个简单固定签名Key（32字节）
         val keyBytes = "0123456789abcdef0123456789abcdef".toByteArray(Charsets.UTF_8)
@@ -25,7 +25,7 @@ class TokenService(private val cryptOp: CryptOp) {
     /**
      * 生成Token
      */
-    fun generateToken(claims: Map<String, Any>, expirationDays: Int = DEFAULT_EXPIRATION_DAYS): String {
+    fun generateToken(claims: Map<String, Any?>, expirationDays: Int = DEFAULT_EXPIRATION_DAYS): String {
         val now = System.currentTimeMillis()
         val expiration = now + expirationDays * 86400000L
 
@@ -49,10 +49,12 @@ class TokenService(private val cryptOp: CryptOp) {
     /**
      * 解密并解析Token
      */
-    fun decodeToken(encryptedToken: String): Map<String, Any> {
+    fun decodeToken(encryptedToken: String): Map<String, Any?> {
         try {
             val json = cryptOp.decrypt(encryptedToken)
+            println("获取到的原始token为：$json")
             val jsonObj = JsonParser.parseString(json).asJsonObject
+            println("经过格式化的token为：$jsonObj")
 
             // 验证过期
             val exp = jsonObj.get("exp")?.asLong ?: throw TokenInvalidException("Missing exp")
@@ -60,20 +62,27 @@ class TokenService(private val cryptOp: CryptOp) {
                 throw TokenExpiredException()
             }
 
-            val claims = mutableMapOf<String, Any>()
+            val claims = mutableMapOf<String, Any?>()  // 允许值为null
             jsonObj.entrySet().forEach { (k, v) ->
                 if (k !in listOf("ver", "iat", "exp")) {
                     claims[k] = when {
+                        v.isJsonNull -> null  // 专门处理null值
                         v.isJsonPrimitive -> {
                             val prim = v.asJsonPrimitive
                             when {
                                 prim.isString -> prim.asString
                                 prim.isNumber -> prim.asNumber
                                 prim.isBoolean -> prim.asBoolean
-                                else -> prim.toString()
+                                else -> prim.toString()  // 其他基本类型转为字符串
                             }
                         }
-                        else -> gson.fromJson(v, Any::class.java)
+                        else -> try {
+                            // 尝试解析为对象
+                            gson.fromJson(v, Any::class.java)
+                        } catch (e: Exception) {
+                            // 解析失败时转为字符串
+                            v.toString()
+                        }
                     }
                 }
             }

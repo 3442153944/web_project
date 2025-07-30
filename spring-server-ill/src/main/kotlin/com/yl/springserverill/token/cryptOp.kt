@@ -6,7 +6,9 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.SecretKeySpec
 import org.apache.commons.codec.binary.Base64
+import org.springframework.stereotype.Component
 
+@Component
 class CryptOp {
     companion object {
         private const val ALGORITHM = "AES/GCM/NoPadding"
@@ -41,7 +43,8 @@ class CryptOp {
             val encryptedData = iv + cipherText
             return Base64.encodeBase64String(encryptedData)
         } catch (e: Exception) {
-            throw CryptoException("Encryption failed", e)
+            println("加密失败，失败原因：${e.message}")
+            return  ""
         }
     }
 
@@ -64,9 +67,8 @@ class CryptOp {
 
             return String(cipher.doFinal(actualCipherText), Charsets.UTF_8)
         } catch (e: Exception) {
-            throw CryptoException("Decryption failed", e)
+            println("解密失败，失败原因：${e.message}")
+            return ""
         }
     }
 }
-
-class CryptoException(message: String, cause: Throwable? = null) : RuntimeException(message, cause)
