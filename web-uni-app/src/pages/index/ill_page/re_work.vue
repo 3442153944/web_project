@@ -47,7 +47,7 @@ const loading = ref(false)
 const hasMore = ref(true)
 const api = BaseApi
 const static_url = BaseApi.IMG_URL
-const defaultImage = static_url + '图像.png'
+const defaultImage = static_url + 'default.jpg'
 const onImageError = (item) => {
   item.imgSrc = defaultImage
 }
